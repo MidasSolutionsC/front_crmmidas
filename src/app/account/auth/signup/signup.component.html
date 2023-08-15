@@ -7,8 +7,8 @@
             <div class="row">
               <div class="col-7">
                 <div class="text-primary p-4">
-                  <h5 class="text-primary">Free Register</h5>
-                  <p>Get your free Skote account now.</p>
+                  <h5 class="text-primary">Regístrese aquí</h5>
+                  <p>Obtén tu cuenta CRM ahora.</p>
                 </div>
               </div>
               <div class="col-5 align-self-end">
@@ -31,17 +31,17 @@
               <form class="needs-validation" name="signupForm" [formGroup]="signupForm" (ngSubmit)="onSubmit()"
                 novalidate>
 
-                <alert type="success" *ngIf="successmsg" [dismissible]="false">Registeration successfull.
+                <alert type="success" *ngIf="successmsg" [dismissible]="false">Registro realizado con éxito.
                 </alert>
 
                 <alert type="danger" *ngIf="error" [dismissible]="false">{{ error }}</alert>
 
                 <div class="mb-3">
-                  <label for="username" class="form-label">Username</label>
+                  <label for="username" class="form-label">Nombre de usuario</label>
 
                   <input type="text" formControlName="username" class="form-control"
                     [ngClass]="{ 'is-invalid': submitted && f.username.errors }" id="username"
-                    placeholder="Enter username" />
+                    placeholder="Ingresar Nombre" />
 
                   <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
                     <div *ngIf="f.username.errors.required">Userame is required</div>
