@@ -24,12 +24,12 @@ import { JwtInterceptor } from './core/helpers/jwt.interceptor';
 import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 import { ToastrModule } from 'ngx-toastr';
 
-if (environment.defaultauth === 'firebase') {
-  initFirebaseBackend(environment.firebaseConfig);
-} else {
-  // tslint:disable-next-line: no-unused-expression
-  FakeBackendInterceptor;
-}
+// if (environment.defaultauth === 'firebase') {
+//   initFirebaseBackend(environment.firebaseConfig);
+// } else {
+//   // tslint:disable-next-line: no-unused-expression
+//   FakeBackendInterceptor;
+// }
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');

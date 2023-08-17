@@ -335,6 +335,13 @@
           }
         }
       }
+    },
+    "SETTINGS": {
+      "TEXT": "Configuraciones",
+      "LIST": {
+        "CAMPUS": "Sedes",
+        "PRODUCT": "Producto"
+      }
     }
   }
 }

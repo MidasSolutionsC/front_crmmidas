@@ -66,6 +66,9 @@
     }
   },
   "MENUITEMS": {
+    "MAIN": {
+      "TEXT": "Inicio"
+    },
     "MENU": {
       "TEXT": "Menú"
     },
@@ -77,62 +80,32 @@
         "SAAS": "Saas",
         "CRYPTO": "Cripto",
         "BLOG": "Blog",
-        "JOBS": "Trabajos"
-      }
-    },
-    "LAYOUTS": {
-      "TEXT": "Diseños",
-      "LIST": {
-        "HORIZONTAL": "Horizontal",
-        "LIGHTSIDEBAR": "Barra lateral ligera",
-        "COMPACTSIDEBAR": "Barra lateral compacta",
-        "ICONSIDEBAR": "Barra lateral de iconos",
-        "BOXED": "Diseño en caja",
-        "COLOREDSIDEBAR": "Barra lateral de color",
-        "VERTICAL": "Vertical",
-        "LIGHTTOPBAR": "Barra superior ligera",
-        "COLOREDHEADER": "Encabezado de color",
-        "SCROLLABLE": "Desplazable"
+        "JOBS": "Trabajos",
+        "ADVERTISEMENT": "Anuncios"
       }
     },
     "APPS": {
       "TEXT": "Aplicaciones"
     },
+    "SALE": {
+      "TEXT": "Ventas",
+      "BADGE": "01"
+    },
+    "CALL": {
+      "TEXT": "Llamadas",
+      "BADGE": "01"
+    },
     "CALENDAR": {
-      "TEXT": "Calendario"
+      "TEXT": "Calendario",
+      "BADGE": "01"
     },
     "CHAT": {
-      "TEXT": "Charla",
+      "TEXT": "Chats",
       "BADGE": "Nueva"
     },
     "FILEMANAGER": {
       "TEXT": "Administradora de archivos",
       "BADGE": "Nueva"
-    },
-    "ECOMMERCE": {
-      "TEXT": "Comercio electrónico",
-      "LIST": {
-        "PRODUCTS": "Productos",
-        "PRODUCTDETAIL": "Detalle del producto",
-        "ORDERS": "Pedidos",
-        "CUSTOMERS": "Clientes",
-        "CART": "Carro",
-        "CHECKOUT": "Revisa",
-        "SHOPS": "Tiendas",
-        "ADDPRODUCT": "Añadir Producto"
-      }
-    },
-    "CRYPTO": {
-      "TEXT": "Cripto",
-      "LIST": {
-        "WALLET": "Billetera",
-        "BUY/SELL": "Compra venta",
-        "EXCHANGE": "Intercambiar",
-        "LENDING": "Préstamo",
-        "ORDERS": "Pedidos",
-        "KYCAPPLICATION": "Solicitud KYC",
-        "ICOLANDING": "Aterrizaje ICO"
-      }
     },
     "EMAIL": {
       "TEXT": "Email",
@@ -157,15 +130,6 @@
         "INVOICEDETAIL": "Detalle de factura"
       }
     },
-    "PROJECTS": {
-      "TEXT": "Proyectos",
-      "LIST": {
-        "GRID": "Cuadrícula de proyectos",
-        "PROJECTLIST": "Lista de proyectos",
-        "OVERVIEW": "Descripción del proyecto",
-        "CREATE": "Crear nueva"
-      }
-    },
     "TASKS": {
       "TEXT": "Tareas",
       "LIST": {
@@ -181,36 +145,6 @@
         "USERLIST": "Lista de usuarios",
         "PROFILE": "Perfil"
       }
-    },
-    "BLOG": {
-      "TEXT": "Blog",
-      "BADGE": "Nueva",
-      "LIST": {
-        "BLOGLIST": "Lista de blogs",
-        "BLOGGRID": "Blog Grid",
-        "DETAIL": "Detalles del blog"
-      }
-    },
-    "JOBS": {
-      "TEXT": "Trabajos",
-      "BADGE": "Nueva",
-      "LIST": {
-        "JOBLIST": "Lista de trabajo",
-        "JOBGRID": "Cuadrícula de trabajo",
-        "APPLYJOB": "Aplicar al trabajo",
-        "JOBDETAILS": "Detalles del trabajo",
-        "JOBCATEGORIES": "Categorías de trabajos",
-        "CANDIDATE": {
-          "TEXT": "Candidata",
-          "LIST": {
-            "LIST": "Lista",
-            "OVERVIEW": "Visión general"
-          }
-        }
-      }
-    },
-    "PAGES": {
-      "TEXT": "Páginas"
     },
     "AUTHENTICATION": {
       "TEXT": "Autenticación",
@@ -247,34 +181,6 @@
     "COMPONENTS": {
       "TEXT": "Componentes"
     },
-    "UIELEMENTS": {
-      "TEXT": "Elementos de la IU",
-      "LIST": {
-        "ALERTS": "Alertas",
-        "BUTTONS": "Botones",
-        "CARDS": "Tarjetas",
-        "CAROUSEL": "Carrusel",
-        "DROPDOWNS": "Listas deplegables",
-        "GRID": "Cuadrícula",
-        "IMAGES": "Imágenes",
-        "LIGHTBOX": "Caja ligera",
-        "MODALS": "modales",
-        "RANGESLIDER": "Deslizador de rango",
-        "PROGRESSBAR": "Barras de progreso",
-        "PLACEHOLDER": "Marcador de posición",
-        "SWEETALERT": "dulce alerta",
-        "TABS": "Tablaturas y acordeones",
-        "TYPOGRAPHY": "Typography",
-        "TOASTS": "tostadas",
-        "VIDEO": "Video",
-        "GENERAL": "General",
-        "COLORS": "Colores",
-        "RATING": "Clasificación",
-        "NOTIFICATION": "Notificación",
-        "UTILITIES": "Utilidades",
-        "CROPPER": "Recortador de imágenes"
-      }
-    },
     "FORMS": {
       "TEXT": "Formas",
       "BADGE": "09",
@@ -291,7 +197,7 @@
       }
     },
     "TABLES": {
-      "TEXT": "Mesas",
+      "TEXT": "Tablas",
       "LIST": {
         "BASIC": "Tablas Básicas",
         "DataTables": "Tablas de datos",
@@ -304,23 +210,10 @@
         "APEX": "Gráfico de Apex",
         "CHARTJS": "Chartjs Chart",
         "CHARTIST": "Chartist Chart",
-        "ECHART": "Gráfico E"
-      }
-    },
-    "ICONS": {
-      "TEXT": "Íconos",
-      "LIST": {
-        "BOXICONS": "Boxicones",
-        "MATERIALDESIGN": "Diseño de materiales",
-        "DRIPICONS": "Dripicons",
-        "FONTAWESOME": "Fuente impresionante"
-      }
-    },
-    "MAPS": {
-      "TEXT": "Mapas",
-      "LIST": {
-        "GOOGLEMAP": "mapas de Google",
-        "LEAFLETMAP": "Mapas de folletos"
+        "ECHART": "Gráfico E",
+        "ALL": "Todos",
+        "COMERCIAL": "Por comercial",
+        "COORDINATION": "Por coordinación"
       }
     },
     "MULTILEVEL": {
@@ -336,11 +229,32 @@
         }
       }
     },
+    "MAINTENANCE": {
+      "TEXT": "Mantenimiento",
+      "LIST": {
+        "COUNTRY": "País",
+        "TYPE_BANK_ACCOUNT": "Tipo de cuenta bancaria",
+        "TYPE_USER": "Tipo de usuario",
+        "TYPE_STATUS": "Tipo de estado",
+        "TYPE_DOCUMENT": "Tipo de documento",
+        "TYPE_SERVICE": "Tipo de servicio",
+        "PROMOTION": "Promociones",
+        "ADVERTISEMENT": "Anuncios",
+        "MANUAL": "Manuales",
+        "PERMISSION_ACCOUNT": "Permisos de usuario",
+        "USER": "Usuarios",
+        "COORDINATION": "Coordinaciones",
+        "GROUP": "Grupos",
+        "CAMPUS": "Sedes",
+        "PRODUCT": "Productos",
+        "SUBTITLE": "Mant. de tipos"
+      }
+    },
     "SETTINGS": {
       "TEXT": "Configuraciones",
       "LIST": {
-        "CAMPUS": "Sedes",
-        "PRODUCT": "Producto"
+        "ALLOWED_IPS": "IP permitidas",
+        "PERMISSION_ACCOUNT": "Permisos de usuario"
       }
     }
   }

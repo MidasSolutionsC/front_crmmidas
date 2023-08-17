@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   submitted:boolean = false;
   error:string = '';
   returnUrl: string;
+  showPassword : boolean = false;
 
   // set the currenr year
   year: number = new Date().getFullYear();
@@ -77,5 +78,12 @@ export class LoginComponent implements OnInit {
             });
       }
     }
+  }
+
+  /**
+   * Mostrar/Ocultar contraseña
+   */
+  toggleShowPassword() {
+    this.showPassword = !this.showPassword;
   }
 }

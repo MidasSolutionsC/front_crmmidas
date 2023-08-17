@@ -14,6 +14,19 @@ export const environment = {
     messagingSenderId: '',
     appId: '',
     measurementId: ''
+  },
+  appConfig: {
+    // apiUrl: 'http://localhost:80/apicrmmidas/public/v1/', // Ruta de la API
+    apiUrl: 'http://localhost:8000/api/v1/', // Ruta de la API
+    apiKey: 'CRM_MIDAS_2023', // Clave permitida 
+    apiUrlSocket: '',
+    configFile: {
+      nroCharactersNameFile: 30,
+      sizeMaxImg: 10490000, // 10.49 MB
+      sizeMaxFile: 10490000, // 10.49 MB
+      audioExtensions: ['mp3', 'wav', 'ogg', 'aac'],
+      videoExtensions: ['mp4', 'avi', 'mov', 'mkv', 'wmv', 'flv']
+    }
   }
 };
 

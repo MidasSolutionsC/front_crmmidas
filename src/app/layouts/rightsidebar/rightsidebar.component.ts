@@ -34,13 +34,13 @@ export class RightsidebarComponent implements OnInit {
      * horizontal-vertical layput set
      */
     this.attribute = document.body.getAttribute('data-layout');
-    const vertical = document.getElementById('is-layout');
-    if (vertical != null) {
-      vertical.setAttribute('checked', 'true');
-    }
-    if (this.attribute == 'horizontal') {
-      vertical.removeAttribute('checked');
-    }
+    // const vertical = document.getElementById('is-layout');
+    // if (vertical != null) {
+    //   vertical.setAttribute('checked', 'true');
+    // }
+    // if (this.attribute == 'horizontal') {
+    //   vertical.removeAttribute('checked');
+    // }
   }
 
   /**

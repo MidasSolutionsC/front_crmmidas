@@ -8,112 +8,194 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 2,
-        label: 'MENUITEMS.DASHBOARDS.TEXT',
+        label: 'MENUITEMS.MAIN.TEXT',
         icon: 'bx-home-circle',
-        subItems: [
-            {
-                id: 3,
-                label: 'MENUITEMS.DASHBOARDS.LIST.DEFAULT',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 4,
-                label: 'MENUITEMS.DASHBOARDS.LIST.SAAS',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 5,
-                label: 'MENUITEMS.DASHBOARDS.LIST.CRYPTO',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 6,
-                label: 'MENUITEMS.DASHBOARDS.LIST.BLOG',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 7,
-                label: 'MENUITEMS.DASHBOARDS.LIST.JOBS',
-                link: '/',
-                parentId: 2,
-            },
-        ]
+        link: '/main'
     },
     {
-        id: 8,
+        id: 3,
+        label: 'MENUITEMS.SALE.TEXT',
+        icon: 'bx bx-cart-alt ',
+        link: '/'
+    },
+    {
+        id: 4,
+        label: 'MENUITEMS.CALL.TEXT',
+        icon: 'bx bxs-phone-call ',
+        link: '/'
+    },
+    {
+        id: 5,
         label: 'MENUITEMS.APPS.TEXT',
         isTitle: true
     },
     {
-        id: 9,
-        label: 'MENUITEMS.ECOMMERCE.TEXT',
-        icon: 'bx-store',
-        subItems: [
-            {
-                id: 10,
-                label: 'MENUITEMS.ECOMMERCE.LIST.PRODUCTS',
-                link: '/',
-                parentId: 9
-            },
-            {
-                id: 11,
-                label: 'MENUITEMS.ECOMMERCE.LIST.PRODUCTDETAIL',
-                link: '/',
-                parentId: 9
-            },
-            {
-                id: 12,
-                label: 'MENUITEMS.ECOMMERCE.LIST.ORDERS',
-                link: '/',
-                parentId: 9
-            },
-            {
-                id: 13,
-                label: 'MENUITEMS.ECOMMERCE.LIST.CUSTOMERS',
-                link: '/',
-                parentId: 9
-            },
-            {
-                id: 14,
-                label: 'MENUITEMS.ECOMMERCE.LIST.CART',
-                link: '/',
-                parentId: 9
-            },
-            {
-                id: 15,
-                label: 'MENUITEMS.ECOMMERCE.LIST.CHECKOUT',
-                link: '/',
-                parentId: 9
-            },
-            {
-                id: 16,
-                label: 'MENUITEMS.ECOMMERCE.LIST.SHOPS',
-                link: '/',
-                parentId: 9
-            },
-            {
-                id: 17,
-                label: 'MENUITEMS.ECOMMERCE.LIST.ADDPRODUCT',
-                link: '/',
-                parentId: 9
-            },
-        ]
+        id: 6,
+        label: 'MENUITEMS.CALENDAR.TEXT',
+        icon: 'bx bx-calendar ',
+        badge: {
+            variant: 'success',
+            text: 'MENUITEMS.CALENDAR.BADGE',
+        },
+        link: '/'
+    },
+    // {
+    //     id: 5,
+    //     label: 'MENUITEMS.CHAT.TEXT',
+    //     icon: 'bx bx-chat',
+    //     badge: {
+    //         variant: 'primary',
+    //         text: 'MENUITEMS.CHAT.BADGE',
+    //     },
+    //     link: '/',
+    // },
+    {
+        id: 7,
+        label: 'MENUITEMS.MAINTENANCE.TEXT',
+        isTitle: true
     },
     {
-        id: 18,
+        id: 8,
+        label: 'MENUITEMS.MAINTENANCE.LIST.COUNTRY',
+        icon: 'bx bxs-flag',
+        link: '/'
+    },
+    {
+        id: 9,
+        label: 'MENUITEMS.MAINTENANCE.LIST.CAMPUS',
+        icon: 'bx bx-buildings',
+        link: '/'
+    },
+    {
+        id: 10,
+        label: 'MENUITEMS.MAINTENANCE.LIST.USER',
+        icon: 'bx bx-user',
+        link: '/'
+    },
+    {
+        id: 11,
+        label: 'MENUITEMS.MAINTENANCE.LIST.COORDINATION',
+        icon: 'bx bxs-user-detail  ',
+        link: '/'
+    },
+    {
+        id: 12,
+        label: 'MENUITEMS.MAINTENANCE.LIST.GROUP',
+        icon: 'bx bx-group ',
+        link: '/'
+    },
+    {
+        id: 13,
+        label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT',
+        icon: 'bx bxl-dropbox ',
+        link: '/'
+    },
+    {
+        id: 14,
+        label: 'MENUITEMS.MAINTENANCE.LIST.PROMOTION',
+        icon: 'bx bx-purchase-tag-alt ',
+        link: '/'
+    },
+    {
+        id: 15,
+        label: 'MENUITEMS.MAINTENANCE.LIST.ADVERTISEMENT',
+        icon: 'bx bxs-megaphone ',
+        link: '/'
+    },
+    {
+        id: 16,
+        label: 'MENUITEMS.MAINTENANCE.LIST.MANUAL',
+        icon: 'bx bxs-book ',
+        link: '/'
+    },
+    {
+        id: 17,
+        label: 'MENUITEMS.MAINTENANCE.LIST.SUBTITLE',
+        icon: 'bx bxs-cog ',
+        link: '/',
+        subItems: [
+            {
+                id: 18,
+                parentId: 17, 
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_BANK_ACCOUNT',
+                link: '/'
+            },
+            {
+                id: 19,
+                parentId: 17, 
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_DOCUMENT',
+                link: '/maintenances/typeDocument'
+            },
+            {
+                id: 20,
+                parentId: 17, 
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_USER',
+                link: '/'
+            },
+            {
+                id: 21,
+                parentId: 17, 
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_STATUS',
+                link: '/'
+            },
+            {
+                id: 22,
+                parentId: 17, 
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_SERVICE',
+                link: '/'
+            },
+
+        ]
+    },
+
+    {
+        id: 23,
         label: 'MENUITEMS.SETTINGS.TEXT',
         isTitle: true
     },
     {
-        id: 19,
-        label: 'MENUITEMS.SETTINGS.LIST.CAMPUS',
-        icon: 'bx bx-buildings',
+        id: 24,
+        label: 'MENUITEMS.SETTINGS.LIST.ALLOWED_IPS',
+        icon: 'bx bx-link-external  ',
         link: '/'
-    }
+    },
+    {
+        id: 25,
+        label: 'MENUITEMS.SETTINGS.LIST.PERMISSION_ACCOUNT',
+        icon: 'bx bx-shield-quarter',
+        link: '/'
+    },
+
+    {
+        id: 26,
+        label: 'MENUITEMS.CHARTS.TEXT',
+        isTitle: true
+    },
+    {
+        id: 27,
+        icon: 'bxs-bar-chart-alt-2',
+        label: 'MENUITEMS.CHARTS.TEXT',
+        subItems: [
+            {
+                id: 28,
+                label: 'MENUITEMS.CHARTS.LIST.ALL',
+                link: '/',
+                parentId: 27
+            },
+            {
+                id: 29,
+                label: 'MENUITEMS.CHARTS.LIST.COMERCIAL',
+                link: '/',
+                parentId: 27
+            },
+            {
+                id: 30,
+                label: 'MENUITEMS.CHARTS.LIST.COORDINATION',
+                link: '/',
+                parentId: 27
+            }
+        ]
+    },
 
 ];
 
