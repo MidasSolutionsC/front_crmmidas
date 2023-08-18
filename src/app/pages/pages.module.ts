@@ -23,11 +23,9 @@ import { PagesRoutingModule } from './pages-routing.module';
 
 import { DashboardsModule } from './dashboards/dashboards.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { MainComponent } from './main/main.component';
 
 @NgModule({
   declarations: [
-    MainComponent
   ],
   imports: [
     CommonModule,

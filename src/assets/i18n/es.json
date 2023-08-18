@@ -257,5 +257,11 @@
         "PERMISSION_ACCOUNT": "Permisos de usuario"
       }
     }
+  },
+  "FORMS": {
+    "USER": {
+      "TITLE": "Usuario",
+      "LABEL": ""
+    }
   }
 }

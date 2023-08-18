@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ResponseApi } from 'src/app/core/models/response-api.model';
+import { User } from 'src/app/core/models/user.model';
 import { TypeDocumentService } from 'src/app/core/services/type-document.service';
 
 @Component({
@@ -7,8 +8,7 @@ import { TypeDocumentService } from 'src/app/core/services/type-document.service
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit {
-
+export class MainComponent {
   // bread crumb items
   breadCrumbItems: Array<{}>;
 
@@ -21,12 +21,8 @@ export class MainComponent implements OnInit {
   }
 
   private listDocument(){
-    this.typeDocumentService.getAll().subscribe((response: ResponseApi) => {
-      if(response.code == 200){
-        console.log(response.data);
-      }
-    }, (error: ResponseApi) => {
-      console.log(error);
+    this.typeDocumentService.getAll().subscribe((result: User[]) => {
+      console.log(result)
     });
   }
 }

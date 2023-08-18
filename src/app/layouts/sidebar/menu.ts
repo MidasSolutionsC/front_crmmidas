@@ -136,7 +136,7 @@ export const MENU: MenuItem[] = [
                 id: 21,
                 parentId: 17, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_STATUS',
-                link: '/'
+                link: '/maintenances/typeStatus'
             },
             {
                 id: 22,

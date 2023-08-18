@@ -4,11 +4,13 @@ import { BsDropdownModule,BsDropdownConfig} from 'ngx-bootstrap/dropdown';
 
 import { MaintenanceRoutingModule } from './maintenance-routing.module';
 import { TypeDocumentComponent } from './type-document/type-document.component';
+import { TypeStatusComponent } from './type-status/type-status.component';
 
 
 @NgModule({
   declarations: [
-    TypeDocumentComponent
+    TypeDocumentComponent,
+    TypeStatusComponent
   ],
   imports: [
     CommonModule,
