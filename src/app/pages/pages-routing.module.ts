@@ -8,7 +8,7 @@ const routes: Routes = [
   // { path: '', redirectTo: 'dashboard' },
   {
     path: "",
-    component: DefaultComponent
+    component: MainComponent
   },
   { path: 'dashboard', component: DefaultComponent },
   { path: 'main', component: MainComponent },

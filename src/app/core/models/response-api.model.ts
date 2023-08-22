@@ -9,7 +9,7 @@ export class ResponseApi extends Model{
 
   constructor(data?: object){
     super(data);
-    this.code = this.code || 0;
+    this.code = this.code || 200;
     this.status = this.status || '';
     this.message = this.message || '';
     this.data = this.data || '';

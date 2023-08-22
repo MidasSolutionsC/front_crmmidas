@@ -259,9 +259,148 @@
     }
   },
   "FORMS": {
-    "USER": {
-      "TITLE": "Usuario",
-      "LABEL": ""
+    "FIELD_NAMES": {
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre..."
+      },
+      "first_name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre..."
+      },
+      "last_name": {
+        "label": "Apellido",
+        "placeholder": "Ingrese el apellido..."
+      },
+      "father_last_name": {
+        "label": "Apellido Paterno",
+        "placeholder": "Ingrese el apellido paterno..."
+      },
+      "mother_last_name": {
+        "label": "Apellido Materno",
+        "placeholder": "Ingrese el apellido materno..."
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "Ingrese el correo electrónico..."
+      },
+      "phone": {
+        "label": "Teléfono",
+        "placeholder": "Ingrese el número de teléfono..."
+      },
+      "address": {
+        "label": "Dirección",
+        "placeholder": "Ingrese la dirección..."
+      },
+      "country": {
+        "label": "País",
+        "placeholder": "Ingrese el país...",
+        "default_option": "Seleccione un país..."
+      },
+      "department": {
+        "label": "Departamento",
+        "placeholder": "Ingrese el departamento...",
+        "default_option": "Seleccione un departamento..."
+      },
+      "province": {
+        "label": "Provincia",
+        "placeholder": "Ingrese la provincia...",
+        "default_option": "Seleccione una provincia..."
+      },
+      "district": {
+        "label": "Distrito",
+        "placeholder": "Ingrese el distrito...",
+        "default_option": "Seleccione un distrito..."
+      },
+      "city": {
+        "label": "Ciudad",
+        "placeholder": "Ingrese la ciudad..."
+      },
+      "state": {
+        "label": "Estado",
+        "placeholder": "Ingrese el estado...",
+        "default_option": "Seleccione un estado..."
+
+      },
+      "postal_code": {
+        "label": "Código Postal",
+        "placeholder": "Ingrese el código postal..."
+      },
+      "company": {
+        "label": "Compañía",
+        "placeholder": "Ingrese el nombre de la compañía..."
+      },
+      "job_title": {
+        "label": "Puesto",
+        "placeholder": "Ingrese el puesto..."
+      },
+      "abbreviation": {
+        "label": "Abreviación",
+        "placeholder": "Ingrese la abreviación..."
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Ingrese la descripción..."
+      },
+      "notes": {
+        "label": "Notas",
+        "placeholder": "Ingrese notas adicionales...",
+        "default_option": "Seleccione una opción...",
+        "default_check": "Marque esta casilla si es necesario"
+      }
+    },
+    "VALIDATION": {
+      "required": "El campo :attribute es obligatorio.",
+      "email": "El campo :attribute debe ser una dirección de correo electrónico válida.",
+      "minlength": "El campo :attribute debe tener al menos :minlength caracteres.",
+      "maxlength": "El campo :attribute no debe tener más de :maxlength caracteres.",
+      "pattern": "El campo :attribute no cumple con el patrón requerido.",
+      "min": "El campo :attribute debe ser mayor o igual a :min.",
+      "max": "El campo :attribute debe ser menor o igual a :max."
+    }
+  },
+  "MODALS": {
+    "BUTTONS": {
+      "ADD": "Registrar",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "PREV": "Anterior",
+      "NEXT": "Siguiente",
+      "CLOSE": "Cerrar",
+      "CANCEL": "Cancelar"
+    }
+  },
+  "PAGES": {
+    "MAINTENANCE": {
+      "TYPE_DOCUMENT": {
+        "TITLE": "Tipo de documentos",
+        "FORM": {
+          "nombre": {
+            "label": "Nombre del tipo de documento",
+            "placeholder": "Ingrese el nombre...",
+            "validation": {
+                "required": "El nombre es obligatorio.",
+                "invalid": "El nombre es invalido. Proporcione un nombre válido."
+            }
+          },
+          "abreviacion": {
+            "label": "Abreviación del tipo documento",
+            "placeholder": "Ingrese el nombre...",
+            "validation": {
+                "required": "El nombre es obligatorio.",
+                "invalid": "El nombre es invalido. Proporcione un nombre válido."
+            }
+          },
+          "is_active": {
+            "label": "Nombre del tipo de documento",
+            "placeholder": "Ingrese el nombre...",
+            "validation": {
+                "required": "El nombre es obligatorio.",
+                "invalid": "El nombre es invalido. Proporcione un nombre válido."
+            }
+          }
+        }
+      }
     }
   }
 }

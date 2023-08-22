@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { AuthenticationService } from '../../core/services/auth.service';
-import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
+import { AuthenticationService } from '../../core/services/auth/auth.service';
+import { AuthfakeauthenticationService } from '../../core/services/auth/authfake.service';
 import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { LanguageService } from '../../core/services/language.service';
@@ -29,7 +29,7 @@ export class TopbarComponent implements OnInit {
               private authFackservice: AuthfakeauthenticationService,
               public languageService: LanguageService,
               public translate: TranslateService,
-              public _cookiesService: CookieService) {
+              public _cookiesService: CookieService) {                
   }
 
   listLang = [
@@ -53,7 +53,7 @@ export class TopbarComponent implements OnInit {
     const val = this.listLang.filter(x => x.lang === this.cookieValue);
     this.countryName = val.map(element => element.text);
     if (val.length === 0) {
-      if (this.flagvalue === undefined) { this.valueset = 'assets/images/flags/us.jpg'; }
+      if (this.flagvalue === undefined) { this.valueset = 'assets/images/flags/spain.jpg'; }
     } else {
       this.flagvalue = val.map(element => element.flag);
     }

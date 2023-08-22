@@ -13,10 +13,10 @@ export class LanguageService {
       browserLang = this.cookieService.get('lang');
     }
     else {
-      this.setLanguage('en');
+      this.setLanguage('es');
       browserLang = translate.getBrowserLang();
     }
-    translate.use(browserLang.match(/en|es|de|it|ru/) ? browserLang : 'en');
+    translate.use(browserLang.match(/en|es|de|it|ru/) ? browserLang : 'es');
   }
 
   public setLanguage(lang) {

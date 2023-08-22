@@ -118,7 +118,7 @@ export const MENU: MenuItem[] = [
                 id: 18,
                 parentId: 17, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_BANK_ACCOUNT',
-                link: '/'
+                link: '/maintenances/typeBankAccount'
             },
             {
                 id: 19,

@@ -23,6 +23,8 @@ import { PagesRoutingModule } from './pages-routing.module';
 
 import { DashboardsModule } from './dashboards/dashboards.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
+import { MaintenanceModule } from './maintenance/maintenance.module';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
   imports: [
     CommonModule,
     FormsModule,
+    MaintenanceModule,
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
     PagesRoutingModule,
@@ -45,7 +48,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
     CollapseModule.forRoot(),
     SimplebarAngularModule,
     LightboxModule,
-    PickerModule
+    PickerModule,
   ],
 })
 export class PagesModule { }
