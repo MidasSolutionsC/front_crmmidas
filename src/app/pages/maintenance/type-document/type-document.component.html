@@ -9,15 +9,7 @@
             <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
             <div class="flex-shrink-0 d-flex gap-1">
               <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
-              <a href="javascript:void(0);" (click)="listDocument(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
-              <!-- <div class="dropdown d-inline-block" dropdown>
-                <button type="menu" class="btn btn-success" id="*dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" dropdownToggle><i class="mdi mdi-dots-vertical"></i></button>
-                <ul class="dropdown-menu dropdown-menu dropdown-menu-end show" aria-labelledby="*dropdownMenuButton1" *dropdownMenu>
-                  <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
-                  <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
-                  <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
-                </ul>
-              </div> -->
+              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
             </div>
           </div>
         </div>
@@ -73,33 +65,40 @@
     <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
   </div>
-  <form (ngSubmit)="saveTypeDocument()" [formGroup]="typeDocumentForm" autocomplete="off">
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="typeDocumentForm" autocomplete="off">
     <div class="modal-body">
       <input type="hidden" name="id" value="" formControlName="id" />
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
         <label for="nombre" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="nombre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" required formControlName="nombre" [ngClass]="{ 'is-invalid': submitted && form['nombre'].errors }" />
-        <div *ngIf="submitted && form['nombre'].errors" class="invalid-feedback" align="left">
+        <input type="text" id="nombre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" required formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)}" />
+        <div *ngIf="( form['nombre'].errors) && (form.nombre.dirty || form.nombre.touched || submitted)" class="invalid-feedback" align="left">
           <div *ngIf="form['nombre'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+          <div *ngIf="form['nombre'].errors['maxlength']">
+            {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': form['nombre'].errors.maxlength.requiredLength}}
           </div>
         </div>
       </div>
 
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.abbreviation.label' | translate as translatedLabel;">
         <label for="customername-field" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="customername-field" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.abbreviation.placeholder' | translate}}" required formControlName="abreviacion" [ngClass]="{ 'is-invalid': submitted && form['abreviacion'].errors }" />
-        <div *ngIf="submitted && form['abreviacion'].errors" class="invalid-feedback" align="left">
+        <input type="text" id="customername-field" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.abbreviation.placeholder' | translate}}" required formControlName="abreviacion" [ngClass]="{ 'is-invalid': form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted)}" />
+        <div *ngIf="form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted)" class="invalid-feedback" align="left">
           <div *ngIf="form['abreviacion'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+          <div *ngIf="form['abreviacion'].errors['maxlength']">
+            {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': form['abreviacion'].errors.maxlength.requiredLength}}
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <div class="hstack gap-2 justify-content-end">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{dataModal.btnCancel}}</button>
-        <button type="submit" class="btn btn-success" id="add-btn">{{dataModal.btnAdd}}</button>
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
       </div>
     </div>
   </form>

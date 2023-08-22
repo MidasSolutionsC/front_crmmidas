@@ -1,69 +1,71 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Breadcrumb, TypeDocument, TypeDocumentList } from 'src/app/core/models';
-import { ResponseApi } from 'src/app/core/models/response-api.model';
-import { User } from 'src/app/core/models/user.model';
-import { TypeDocumentListService } from './list.service';
-import { TypeDocumentService } from 'src/app/core/services/maintenance';
+import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, ResponseApi, TypeUser, TypeUserList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
-import { Subscription, catchError, distinctUntilChanged, map, throwError } from 'rxjs';
+import { TypeUserService } from 'src/app/core/services/maintenance';
 
 @Component({
-  selector: 'app-type-document',
-  templateUrl: './type-document.component.html',
-  styleUrls: ['./type-document.component.scss']
+  selector: 'app-type-user',
+  templateUrl: './type-user.component.html',
+  styleUrls: ['./type-user.component.scss']
 })
-export class TypeDocumentComponent implements OnInit, OnDestroy {
+export class TypeUserComponent implements OnInit, OnDestroy{
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar tipo de documento',
+    title: 'Agregar tipo de cuentas de usuarios',
   }
 
   // bread crumb items
-  titleBreadCrumb: string = 'Tipo de documentos';
+  titleBreadCrumb: string = 'Tipo de usuarios';
   breadCrumbItems: Array<{}>;
-
-  // FORM
+  
+  // Form 
   isNewData: boolean = true;
-  typeDocumentForm!: FormGroup;
   submitted: boolean = false;
+  typeUserForm: FormGroup;
+
 
   // Table data
   // content?: any;
-  lists?: TypeDocumentList[];
+  lists?: TypeUserList[];
   
   private subscription: Subscription = new Subscription();
 
   constructor(
     private modalService: BsModalService, 
-    private _typeDocumentService: TypeDocumentService,
+    private _typeUserService: TypeUserService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private formBuilder: FormBuilder) {
-      
+
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de documentos', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de usuario', active: true }]);
 
     this.initForm();
     this.listDataApi();
     this.subscription.add(
-      this._typeDocumentService.typeDocuments$
+      this._typeUserService.listObserver$
       // .pipe(distinctUntilChanged())
       .pipe(
         distinctUntilChanged(
           (prevList, currentList) =>
-          prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-          )
-          )
-          .subscribe((list: TypeDocumentList[]) => {
-            this.lists = list;
+            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+        )
+      )
+      .subscribe((list: TypeUserList[]) => {
+        this.lists = list;
       })
     );
+  }
+  
+  ngAfterViewInit(): void {
+
   }
 
   ngOnDestroy(): void {
@@ -77,7 +79,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    */
   public listDataApi(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+    this._typeUserService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this.lists = response.data;
@@ -94,17 +96,17 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
     });
   }
 
-  private saveDataApi(data: TypeDocument){
+  private saveDataApi(data: TypeUser){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
-      this._typeDocumentService.register(data).subscribe((response: ResponseApi) => {
+      this._typeUserService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
-          const data = response.data[0];
-          if(data){
-            const object: TypeDocumentList = TypeDocumentList.cast(data);
-            this._typeDocumentService.addObjectObserver(object);
+          if(response.data[0]){
+            const data: TypeUserList = TypeUserList.cast(response.data[0]);
+            this._typeUserService.addObjectObserver(data);
           }
+
           this.modalRef?.hide();
         }
 
@@ -127,13 +129,13 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
     )
   }
 
-  private updateDataApi(data: TypeDocument, id: number){
+  private updateDataApi(data: TypeUser, id: number){
     this._sweetAlertService.loadingUp()
-    this._typeDocumentService.update(data, id).subscribe((response: ResponseApi) => {
+    this._typeUserService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        const data: TypeDocumentList = TypeDocumentList.cast(response.data[0]);
-        this._typeDocumentService.updateObjectObserver(data);
+        const data: TypeUserList = TypeUserList.cast(response.data[0]);
+        this._typeUserService.updateObjectObserver(data);
         this.modalRef?.hide();
       }
 
@@ -157,11 +159,11 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
 
   private deleteDataApi(id: number){
     this._sweetAlertService.loadingUp()
-    this._typeDocumentService.delete(id).subscribe((response: ResponseApi) => {
+    this._typeUserService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        const data: TypeDocumentList = TypeDocumentList.cast(response.data[0]);
-        this._typeDocumentService.removeObjectObserver(data.id);
+        const data: TypeUserList = TypeUserList.cast(response.data[0]);
+        this._typeUserService.removeObjectObserver(data.id);
       }
 
       if(response.code == 422){
@@ -188,7 +190,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * Form data get
    */
   get form() {
-    return this.typeDocumentForm.controls;
+    return this.typeUserForm.controls;
   }
 
   /**
@@ -196,9 +198,9 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * @param model 
    */
   private initForm(){
-    const typeDocument = new TypeDocument();
-    const formGroupData = this.getFormGroupData(typeDocument);
-    this.typeDocumentForm = this.formBuilder.group(formGroupData);
+    const typeUser = new TypeUser();
+    const formGroupData = this.getFormGroupData(typeUser);
+    this.typeUserForm = this.formBuilder.group(formGroupData);
   }
 
   /**
@@ -206,12 +208,20 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * @param model 
    * @returns 
    */
-  private getFormGroupData(model: TypeDocument): object {
+  private getFormGroupData(model: TypeUser): object {
     return {
       ...this._formService.modelToFormGroupData(model),
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      abreviacion: ['', [Validators.required, Validators.maxLength(15)]],
-      is_active: [true, [Validators.nullValidator]]
+      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
+      is_active: [true, [Validators.required]],
+    //   descripcion: new FormControl(
+    //     {
+    //       value: model.descripcion,
+    //       disabled: false,
+
+    //     },
+    //     [Validators.nullValidator, Validators.minLength(5)]
+    //   ),
     }
   }
 
@@ -222,10 +232,10 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * @param content modal content
    */
   openModal(content: any) {
-    // this.initForm();
-    this.dataModal.title = 'Agregar tipo de documento';
-    this.submitted = false;
+    this.initForm();
     this.isNewData = true;
+    this.dataModal.title = 'Agregar tipo de usuario';
+    this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});
   }
@@ -235,21 +245,21 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
     * Save
   */
   saveData() {
-    if(!this.typeDocumentForm.valid){
+    if(!this.typeUserForm.valid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
-      const values: TypeDocument = this.typeDocumentForm.value;
+      const values: TypeUser = this.typeUserForm.value;
 
       if(this.isNewData){
         // Crear nuevo registro
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el tipo de documento?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el tipo de usuario?').then((confirm) => {
           if(confirm.isConfirmed){
             this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de documento?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de usuario?').then((confirm) => {
           if(confirm.isConfirmed){
             this.updateDataApi(values, values.id);
           }
@@ -257,7 +267,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.submitted = true
+    this.submitted = true;
   }
 
   /**
@@ -265,15 +275,14 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
  * @param content modal content
  */
   editDataGet(id: any, content: any) {
-    this.submitted = false;
-    this.isNewData = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.dataModal.title = 'Editar tipo de documento';
-
+    this.dataModal.title = 'Editar tipo de usuario';
+    this.isNewData = false;
+    this.submitted = false;
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
-    const typeDocument = TypeDocument.cast(data);
-    this.typeDocumentForm = this.formBuilder.group({...this._formService.modelToFormGroupData(typeDocument), id: [data.id]});
+    const typeUser = TypeUser.cast(data);
+    this.typeUserForm = this.formBuilder.group({...this._formService.modelToFormGroupData(typeUser), id: [data.id]});
   }
 
 
@@ -288,6 +297,4 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-
 }

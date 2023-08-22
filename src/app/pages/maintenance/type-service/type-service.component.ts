@@ -1,71 +1,69 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Breadcrumb, TypeDocument, TypeDocumentList } from 'src/app/core/models';
-import { ResponseApi } from 'src/app/core/models/response-api.model';
-import { User } from 'src/app/core/models/user.model';
-import { TypeDocumentListService } from './list.service';
-import { TypeDocumentService } from 'src/app/core/services/maintenance';
+import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, ResponseApi, TypeService, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
-import { Subscription, catchError, distinctUntilChanged, map, throwError } from 'rxjs';
+import { TypeServiceService } from 'src/app/core/services/maintenance';
 
 @Component({
-  selector: 'app-type-document',
-  templateUrl: './type-document.component.html',
-  styleUrls: ['./type-document.component.scss']
+  selector: 'app-type-service',
+  templateUrl: './type-service.component.html',
+  styleUrls: ['./type-service.component.scss']
 })
-export class TypeDocumentComponent implements OnInit, OnDestroy {
+export class TypeServiceComponent implements OnInit, OnDestroy {
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar tipo de documento',
+    title: 'Agregar tipo de servicios',
   }
 
   // bread crumb items
-  titleBreadCrumb: string = 'Tipo de documentos';
+  titleBreadCrumb: string = 'Tipo de servicios';
   breadCrumbItems: Array<{}>;
-
-  // FORM
+  
+  // Form 
   isNewData: boolean = true;
-  typeDocumentForm!: FormGroup;
   submitted: boolean = false;
+  typeServiceForm: FormGroup;
+
 
   // Table data
   // content?: any;
-  lists?: TypeDocumentList[];
+  lists?: TypeServiceList[];
   
   private subscription: Subscription = new Subscription();
 
   constructor(
     private modalService: BsModalService, 
-    private _typeDocumentService: TypeDocumentService,
+    private _typeServiceService: TypeServiceService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private formBuilder: FormBuilder) {
-      
+
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de documentos', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de servicios', active: true }]);
 
     this.initForm();
     this.listDataApi();
     this.subscription.add(
-      this._typeDocumentService.typeDocuments$
+      this._typeServiceService.listObserver$
       // .pipe(distinctUntilChanged())
       .pipe(
         distinctUntilChanged(
           (prevList, currentList) =>
-          prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-          )
-          )
-          .subscribe((list: TypeDocumentList[]) => {
-            this.lists = list;
+            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+        )
+      )
+      .subscribe((list: TypeServiceList[]) => {
+        this.lists = list;
       })
     );
   }
-
+  
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
@@ -77,7 +75,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    */
   public listDataApi(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+    this._typeServiceService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this.lists = response.data;
@@ -94,17 +92,17 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
     });
   }
 
-  private saveDataApi(data: TypeDocument){
+  private saveDataApi(data: TypeService){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
-      this._typeDocumentService.register(data).subscribe((response: ResponseApi) => {
+      this._typeServiceService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
-          const data = response.data[0];
-          if(data){
-            const object: TypeDocumentList = TypeDocumentList.cast(data);
-            this._typeDocumentService.addObjectObserver(object);
+          if(response.data[0]){
+            const data: TypeServiceList = TypeServiceList.cast(response.data[0]);
+            this._typeServiceService.addObjectObserver(data);
           }
+
           this.modalRef?.hide();
         }
 
@@ -127,13 +125,13 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
     )
   }
 
-  private updateDataApi(data: TypeDocument, id: number){
+  private updateDataApi(data: TypeService, id: number){
     this._sweetAlertService.loadingUp()
-    this._typeDocumentService.update(data, id).subscribe((response: ResponseApi) => {
+    this._typeServiceService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        const data: TypeDocumentList = TypeDocumentList.cast(response.data[0]);
-        this._typeDocumentService.updateObjectObserver(data);
+        const data: TypeServiceList = TypeServiceList.cast(response.data[0]);
+        this._typeServiceService.updateObjectObserver(data);
         this.modalRef?.hide();
       }
 
@@ -157,11 +155,11 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
 
   private deleteDataApi(id: number){
     this._sweetAlertService.loadingUp()
-    this._typeDocumentService.delete(id).subscribe((response: ResponseApi) => {
+    this._typeServiceService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        const data: TypeDocumentList = TypeDocumentList.cast(response.data[0]);
-        this._typeDocumentService.removeObjectObserver(data.id);
+        const data: TypeServiceList = TypeServiceList.cast(response.data[0]);
+        this._typeServiceService.removeObjectObserver(data.id);
       }
 
       if(response.code == 422){
@@ -188,7 +186,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * Form data get
    */
   get form() {
-    return this.typeDocumentForm.controls;
+    return this.typeServiceForm.controls;
   }
 
   /**
@@ -196,9 +194,9 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * @param model 
    */
   private initForm(){
-    const typeDocument = new TypeDocument();
-    const formGroupData = this.getFormGroupData(typeDocument);
-    this.typeDocumentForm = this.formBuilder.group(formGroupData);
+    const typeService = new TypeService();
+    const formGroupData = this.getFormGroupData(typeService);
+    this.typeServiceForm = this.formBuilder.group(formGroupData);
   }
 
   /**
@@ -206,12 +204,12 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * @param model 
    * @returns 
    */
-  private getFormGroupData(model: TypeDocument): object {
+  private getFormGroupData(model: TypeService): object {
     return {
       ...this._formService.modelToFormGroupData(model),
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      abreviacion: ['', [Validators.required, Validators.maxLength(15)]],
-      is_active: [true, [Validators.nullValidator]]
+      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
+      is_active: [true, [Validators.required]],
     }
   }
 
@@ -222,10 +220,10 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * @param content modal content
    */
   openModal(content: any) {
-    // this.initForm();
-    this.dataModal.title = 'Agregar tipo de documento';
-    this.submitted = false;
+    this.initForm();
     this.isNewData = true;
+    this.dataModal.title = 'Agregar tipo de servicio';
+    this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});
   }
@@ -235,21 +233,21 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
     * Save
   */
   saveData() {
-    if(!this.typeDocumentForm.valid){
+    if(!this.typeServiceForm.valid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
-      const values: TypeDocument = this.typeDocumentForm.value;
+      const values: TypeService = this.typeServiceForm.value;
 
       if(this.isNewData){
         // Crear nuevo registro
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el tipo de documento?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el tipo de servicio?').then((confirm) => {
           if(confirm.isConfirmed){
             this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de documento?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de servicio?').then((confirm) => {
           if(confirm.isConfirmed){
             this.updateDataApi(values, values.id);
           }
@@ -257,7 +255,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.submitted = true
+    this.submitted = true;
   }
 
   /**
@@ -265,15 +263,14 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
  * @param content modal content
  */
   editDataGet(id: any, content: any) {
-    this.submitted = false;
-    this.isNewData = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.dataModal.title = 'Editar tipo de documento';
-
+    this.dataModal.title = 'Editar tipo de servicio';
+    this.isNewData = false;
+    this.submitted = false;
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
-    const typeDocument = TypeDocument.cast(data);
-    this.typeDocumentForm = this.formBuilder.group({...this._formService.modelToFormGroupData(typeDocument), id: [data.id]});
+    const typeService = TypeService.cast(data);
+    this.typeServiceForm = this.formBuilder.group({...this._formService.modelToFormGroupData(typeService), id: [data.id]});
   }
 
 
@@ -288,6 +285,4 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-
 }

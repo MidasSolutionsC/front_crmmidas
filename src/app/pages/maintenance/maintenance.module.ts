@@ -14,6 +14,8 @@ import { ReplaceAttributePipe } from 'src/app/core/pipes';
 import { CoreModule } from 'src/app/core/core.module';
 import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { TypeBankAccountComponent } from './type-bank-account/type-bank-account.component';
+import { TypeUserComponent } from './type-user/type-user.component';
+import { TypeServiceComponent } from './type-service/type-service.component';
 
 
 @NgModule({
@@ -21,6 +23,8 @@ import { TypeBankAccountComponent } from './type-bank-account/type-bank-account.
     TypeDocumentComponent,
     TypeStatusComponent,
     TypeBankAccountComponent,
+    TypeUserComponent,
+    TypeServiceComponent,
   ],
   imports: [
     CommonModule,

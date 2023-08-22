@@ -130,7 +130,7 @@ export const MENU: MenuItem[] = [
                 id: 20,
                 parentId: 17, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_USER',
-                link: '/'
+                link: '/maintenances/typeUser'
             },
             {
                 id: 21,
@@ -142,7 +142,7 @@ export const MENU: MenuItem[] = [
                 id: 22,
                 parentId: 17, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_SERVICE',
-                link: '/'
+                link: '/maintenances/typeService'
             },
 
         ]

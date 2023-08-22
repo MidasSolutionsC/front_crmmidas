@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { TypeDocumentComponent } from './type-document/type-document.component';
 import { TypeStatusComponent } from './type-status/type-status.component';
 import { TypeBankAccountComponent } from './type-bank-account/type-bank-account.component';
+import { TypeUserComponent } from './type-user/type-user.component';
+import { TypeServiceComponent } from './type-service/type-service.component';
 
 const routes: Routes = [
   {
@@ -16,6 +18,14 @@ const routes: Routes = [
   {
     path: 'typeBankAccount',
     component: TypeBankAccountComponent
+  },
+  {
+    path: 'typeUser',
+    component: TypeUserComponent
+  },
+  {
+    path: 'typeService',
+    component: TypeServiceComponent
   },
 ];
 

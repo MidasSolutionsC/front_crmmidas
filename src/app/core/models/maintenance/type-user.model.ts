@@ -1,10 +1,11 @@
 import { Model } from "../model";
 
-export class TypeStatus extends Model{
+export class TypeUser extends Model{
   public id: number;
   public nombre: string;
   public descripcion: string;
   public is_active: boolean;
+
   constructor(data?: object){
     super(data);
     this.id = this.id || undefined;
@@ -13,18 +14,18 @@ export class TypeStatus extends Model{
     this.is_active = this.is_active || true;
   }
 
-  public static cast(data: object): TypeStatus{
-    const typeStatus= new TypeStatus(data);
-    const { id, nombre, descripcion, is_active } = typeStatus;
+  public static cast(data: object): TypeUser{
+    const typeUser = new TypeUser(data);
+    const {id, nombre, descripcion, is_active} = typeUser;
     return {id, nombre, descripcion, is_active};
   }
 
-  public static cats(dataArray: object[]): TypeStatus[]{
-    return dataArray.map((data) => TypeStatus.cast(data));
+  public static cats(dataArray: object[]): TypeUser[]{
+    return dataArray.map((data) => TypeUser.cast(data));
   }
 }
 
-export class TypeStatusList extends Model{
+export class TypeUserList extends Model{
   public id: number;
   public nombre: string;
   public descripcion: string;
@@ -44,13 +45,13 @@ export class TypeStatusList extends Model{
     this.deleted_at = this.deleted_at || '';
   }
 
-  public static cast(data: object): TypeStatusList{
-    const typeStatusList = new TypeStatusList(data);
-    const { id, nombre, descripcion, is_active, created_at, updated_at, deleted_at } = typeStatusList;
+  public static cast(data: object): TypeUserList{
+    const typeUserList = new TypeUserList(data);
+    const { id, nombre, descripcion, is_active, created_at, updated_at, deleted_at } = typeUserList;
     return {id, nombre, descripcion, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): TypeStatusList[]{
-    return dataArray.map((data) => TypeStatusList.cast(data));
+  public static cats(dataArray: object[]): TypeUserList[]{
+    return dataArray.map((data) => TypeUserList.cast(data));
   }
 }

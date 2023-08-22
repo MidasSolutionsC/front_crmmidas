@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, ResponseApi, TypeBankAccount, TypeBankAccountList } from 'src/app/core/models';
@@ -11,21 +11,22 @@ import { TypeBankAccountService } from 'src/app/core/services/maintenance/type-b
   templateUrl: './type-bank-account.component.html',
   styleUrls: ['./type-bank-account.component.scss']
 })
-export class TypeBankAccountComponent {
+export class TypeBankAccountComponent implements OnInit, AfterViewInit{
   modalRef?: BsModalRef;
 
   dataModal = {
     title: 'Agregar tipo de cuentas bancarias',
-    isNew: true,
-    btnCancel: 'Cancelar',
-    btnAdd: 'Registrar'
   }
 
   // bread crumb items
   titleBreadCrumb: string = 'Tipo de cuentas bancarias';
   breadCrumbItems: Array<{}>;
-  typeBankAccountForm!: UntypedFormGroup;
+  
+  // Form 
+  isNewData: boolean = true;
   submitted: boolean = false;
+  typeBankAccountForm: FormGroup;
+
 
   // Table data
   // content?: any;
@@ -39,8 +40,8 @@ export class TypeBankAccountComponent {
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
-    private formBuilder: UntypedFormBuilder) {
-      
+    private formBuilder: FormBuilder) {
+
   }
 
   ngOnInit(): void {
@@ -62,6 +63,10 @@ export class TypeBankAccountComponent {
       })
     );
   }
+  
+  ngAfterViewInit(): void {
+
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -76,7 +81,9 @@ export class TypeBankAccountComponent {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._typeBankAccountService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){}
+      if(response.code == 200){
+        this.lists = response.data;
+      }
 
       if(response.code == 500){
         if(response.errors){
@@ -95,8 +102,11 @@ export class TypeBankAccountComponent {
       this._typeBankAccountService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
-          const data: TypeBankAccountList = TypeBankAccountList.cast(response.data[0]);
-          this._typeBankAccountService.addObjectObserver(data);
+          if(response.data[0]){
+            const data: TypeBankAccountList = TypeBankAccountList.cast(response.data[0]);
+            this._typeBankAccountService.addObjectObserver(data);
+          }
+
           this.modalRef?.hide();
         }
 
@@ -203,15 +213,16 @@ export class TypeBankAccountComponent {
       ...this._formService.modelToFormGroupData(model),
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
       abreviacion: ['', [Validators.required, Validators.maxLength(15)]],
-      // descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
-      is_active: [true, [Validators.nullValidator]],
-      descripcion: new FormControl(
-        {
-          value: model.descripcion,
-          disabled: false
-        },
-        [Validators.nullValidator, Validators.minLength(5)]
-      ),
+      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
+      is_active: [true, [Validators.required]],
+    //   descripcion: new FormControl(
+    //     {
+    //       value: model.descripcion,
+    //       disabled: false,
+
+    //     },
+    //     [Validators.nullValidator, Validators.minLength(5)]
+    //   ),
     }
   }
 
@@ -224,13 +235,10 @@ export class TypeBankAccountComponent {
   openModal(content: any) {
     this.initForm();
     this.dataModal.title = 'Agregar tipo de cuenta bancarias';
-    this.dataModal.btnAdd = 'Registrar';
-    this.dataModal.isNew = true;
+    this.isNewData = true;
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.modalRef.onHide.subscribe(() => {
-      console.log("Modal formulario cerrado");
-    });
+    this.modalRef.onHide.subscribe(() => {});
   }
 
 
@@ -238,29 +246,29 @@ export class TypeBankAccountComponent {
     * Save
   */
   saveData() {
-    if (this.typeBankAccountForm.valid) {
-      if (this.typeBankAccountForm.get('id')?.value) {
-        const id = this.typeBankAccountForm.get('id')?.value;
-        const values = this.typeBankAccountForm.value;
+    if(!this.typeBankAccountForm.valid){
+      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    } else {
+      const values: TypeBankAccount = this.typeBankAccountForm.value;
 
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de cuenta bancaria?').then((confirm) => {
-          if(confirm.isConfirmed){
-            this.updateDataApi(values, id);
-          }
-        });
-
-      } else {
-        const values = this.typeBankAccountForm.value;
+      if(this.isNewData){
+        // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el tipo de cuenta bancaria?').then((confirm) => {
           if(confirm.isConfirmed){
             this.saveDataApi(values);
           }
         });
-
+      } else {
+        // Actualizar datos
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de cuenta bancaria?').then((confirm) => {
+          if(confirm.isConfirmed){
+            this.updateDataApi(values, values.id);
+          }
+        });
       }
     }
 
-    this.submitted = true
+    this.submitted = true;
   }
 
   /**
@@ -268,11 +276,10 @@ export class TypeBankAccountComponent {
  * @param content modal content
  */
   editDataGet(id: any, content: any) {
-    this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.dataModal.title = 'Editar tipo de cuenta bancaria';
-    this.dataModal.btnAdd = 'Actualizar';
-
+    this.isNewData = false;
+    this.submitted = false;
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const typeBankAccount = TypeBankAccount.cast(data);
