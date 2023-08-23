@@ -316,6 +316,24 @@
         "label": "Ciudad",
         "placeholder": "Ingrese la ciudad..."
       },
+      "file": {
+        "label": "Archivo",
+        "placeholder": "Subir el archivo...",
+        "default_option": "Seleccione un archivo..."
+
+      },
+      "image": {
+        "label": "Imagen",
+        "placeholder": "Subir la imagen...",
+        "default_option": "Seleccione un imagen..."
+
+      },
+      "type": {
+        "label": "Tipo",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+
+      },
       "state": {
         "label": "Estado",
         "placeholder": "Ingrese el estado...",

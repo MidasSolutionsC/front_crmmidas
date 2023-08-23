@@ -5,6 +5,7 @@ import { TypeStatusComponent } from './type-status/type-status.component';
 import { TypeBankAccountComponent } from './type-bank-account/type-bank-account.component';
 import { TypeUserComponent } from './type-user/type-user.component';
 import { TypeServiceComponent } from './type-service/type-service.component';
+import { ManualComponent } from './manual/manual.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: 'typeService',
     component: TypeServiceComponent
+  },
+  {
+    path: 'manual',
+    component: ManualComponent
   },
 ];
 

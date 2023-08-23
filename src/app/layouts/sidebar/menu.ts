@@ -100,7 +100,7 @@ export const MENU: MenuItem[] = [
         id: 15,
         label: 'MENUITEMS.MAINTENANCE.LIST.MANUAL',
         icon: 'bx bxs-book ',
-        link: '/'
+        link: '/maintenances/manual'
     },
     {
         id: 16,
