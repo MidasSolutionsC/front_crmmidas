@@ -212,16 +212,8 @@ export class TypeUserComponent implements OnInit, OnDestroy{
     return {
       ...this._formService.modelToFormGroupData(model),
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
-      is_active: [true, [Validators.required]],
-    //   descripcion: new FormControl(
-    //     {
-    //       value: model.descripcion,
-    //       disabled: false,
-
-    //     },
-    //     [Validators.nullValidator, Validators.minLength(5)]
-    //   ),
+      descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
+      is_active: [true, [Validators.nullValidator]],
     }
   }
 

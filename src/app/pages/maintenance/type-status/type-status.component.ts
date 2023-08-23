@@ -208,8 +208,8 @@ export class TypeStatusComponent {
     return {
       ...this._formService.modelToFormGroupData(model),
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
-      is_active: [true, [Validators.required]],
+      descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
+      is_active: [true, [Validators.nullValidator]],
     }
   }
 

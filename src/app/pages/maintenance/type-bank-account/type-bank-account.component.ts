@@ -213,8 +213,8 @@ export class TypeBankAccountComponent implements OnInit, AfterViewInit{
       ...this._formService.modelToFormGroupData(model),
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
       abreviacion: ['', [Validators.required, Validators.maxLength(15)]],
-      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
-      is_active: [true, [Validators.required]],
+      descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
+      is_active: [true, [Validators.nullValidator]],
     //   descripcion: new FormControl(
     //     {
     //       value: model.descripcion,

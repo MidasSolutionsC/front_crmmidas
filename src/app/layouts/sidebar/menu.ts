@@ -80,67 +80,61 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 12,
-        label: 'MENUITEMS.MAINTENANCE.LIST.GROUP',
-        icon: 'bx bx-group ',
-        link: '/'
-    },
-    {
-        id: 13,
         label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT',
         icon: 'bx bxl-dropbox ',
         link: '/'
     },
     {
-        id: 14,
+        id: 13,
         label: 'MENUITEMS.MAINTENANCE.LIST.PROMOTION',
         icon: 'bx bx-purchase-tag-alt ',
         link: '/'
     },
     {
-        id: 15,
+        id: 14,
         label: 'MENUITEMS.MAINTENANCE.LIST.ADVERTISEMENT',
         icon: 'bx bxs-megaphone ',
         link: '/'
     },
     {
-        id: 16,
+        id: 15,
         label: 'MENUITEMS.MAINTENANCE.LIST.MANUAL',
         icon: 'bx bxs-book ',
         link: '/'
     },
     {
-        id: 17,
+        id: 16,
         label: 'MENUITEMS.MAINTENANCE.LIST.SUBTITLE',
         icon: 'bx bxs-cog ',
         link: '/',
         subItems: [
             {
-                id: 18,
-                parentId: 17, 
+                id: 17,
+                parentId: 16, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_BANK_ACCOUNT',
                 link: '/maintenances/typeBankAccount'
             },
             {
-                id: 19,
-                parentId: 17, 
+                id: 18,
+                parentId: 16, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_DOCUMENT',
                 link: '/maintenances/typeDocument'
             },
             {
-                id: 20,
-                parentId: 17, 
+                id: 19,
+                parentId: 16, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_USER',
                 link: '/maintenances/typeUser'
             },
             {
-                id: 21,
-                parentId: 17, 
+                id: 20,
+                parentId: 16, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_STATUS',
                 link: '/maintenances/typeStatus'
             },
             {
-                id: 22,
-                parentId: 17, 
+                id: 21,
+                parentId: 16, 
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_SERVICE',
                 link: '/maintenances/typeService'
             },
@@ -149,50 +143,50 @@ export const MENU: MenuItem[] = [
     },
 
     {
-        id: 23,
+        id: 22,
         label: 'MENUITEMS.SETTINGS.TEXT',
         isTitle: true
     },
     {
-        id: 24,
+        id: 23,
         label: 'MENUITEMS.SETTINGS.LIST.ALLOWED_IPS',
         icon: 'bx bx-link-external  ',
         link: '/'
     },
     {
-        id: 25,
+        id: 24,
         label: 'MENUITEMS.SETTINGS.LIST.PERMISSION_ACCOUNT',
         icon: 'bx bx-shield-quarter',
         link: '/'
     },
 
     {
-        id: 26,
+        id: 25,
         label: 'MENUITEMS.CHARTS.TEXT',
         isTitle: true
     },
     {
-        id: 27,
+        id: 26,
         icon: 'bxs-bar-chart-alt-2',
         label: 'MENUITEMS.CHARTS.TEXT',
         subItems: [
             {
-                id: 28,
+                id: 27,
                 label: 'MENUITEMS.CHARTS.LIST.ALL',
                 link: '/',
-                parentId: 27
+                parentId: 26
+            },
+            {
+                id: 28,
+                label: 'MENUITEMS.CHARTS.LIST.COMERCIAL',
+                link: '/',
+                parentId: 26
             },
             {
                 id: 29,
-                label: 'MENUITEMS.CHARTS.LIST.COMERCIAL',
-                link: '/',
-                parentId: 27
-            },
-            {
-                id: 30,
                 label: 'MENUITEMS.CHARTS.LIST.COORDINATION',
                 link: '/',
-                parentId: 27
+                parentId: 26
             }
         ]
     },

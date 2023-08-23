@@ -70,7 +70,7 @@
       <input type="hidden" name="id" value="" formControlName="id" />
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
         <label for="nombre" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="nombre" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" required formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted) }" />
+        <input type="text" id="nombre" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted) }" />
         <div *ngIf="form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)" class="invalid-feedback" align="left">
           <div *ngIf="form['nombre'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
@@ -80,7 +80,7 @@
 
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">
         <label for="descripcion" class="form-label">{{translatedLabel}}</label>
-        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" required formControlName="descripcion" [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
+        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion" [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
         <div *ngIf="form.descripcion.errors && (form.descripcion.dirty || form.descripcion.touched || submitted)" class="invalid-feedback" align="left">
           <div *ngIf="form['descripcion'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}

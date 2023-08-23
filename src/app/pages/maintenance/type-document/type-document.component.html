@@ -70,7 +70,7 @@
       <input type="hidden" name="id" value="" formControlName="id" />
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
         <label for="nombre" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="nombre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" required formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)}" />
+        <input type="text" id="nombre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)}" />
         <div *ngIf="( form['nombre'].errors) && (form.nombre.dirty || form.nombre.touched || submitted)" class="invalid-feedback" align="left">
           <div *ngIf="form['nombre'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
@@ -83,7 +83,7 @@
 
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.abbreviation.label' | translate as translatedLabel;">
         <label for="customername-field" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="customername-field" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.abbreviation.placeholder' | translate}}" required formControlName="abreviacion" [ngClass]="{ 'is-invalid': form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted)}" />
+        <input type="text" id="customername-field" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.abbreviation.placeholder' | translate}}" formControlName="abreviacion" [ngClass]="{ 'is-invalid': form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted)}" />
         <div *ngIf="form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted)" class="invalid-feedback" align="left">
           <div *ngIf="form['abreviacion'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
