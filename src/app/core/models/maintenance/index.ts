@@ -1,6 +1,0 @@
-export * from './type-document.model'
-export * from './type-status.model'
-export * from './type-bank-account.model'
-export * from './type-user.model'
-export * from './type-service.model'
-export * from './manual.model'

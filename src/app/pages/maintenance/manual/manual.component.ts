@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, Manual, ManualList, ResponseApi } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
-import { ManualService } from 'src/app/core/services/maintenance/manual.service';
+import { ManualService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
 
 @Component({
@@ -16,7 +16,7 @@ export class ManualComponent {
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar manual',
+    title: 'Crear manual',
   }
 
   // bread crumb items
@@ -225,8 +225,9 @@ export class ManualComponent {
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Agregar tipo de servicio';
+    this.dataModal.title = 'Crear manual';
     this.submitted = false;
+    this.uploadFiles = [];
     this.modalRef = this.modalService.show(content, { class: 'modal-md modal-dialog-centered' });
     this.modalRef.onHide.subscribe(() => {});
   }
@@ -237,13 +238,11 @@ export class ManualComponent {
    * @param fileInput elemento input
    */
   async onFileSelected(fileInput: HTMLInputElement){
-    const { files, error } = FileUploadUtil.handleFileUpload(fileInput, ['jpg', 'png', 'pdf'], 0);
+    const { files, error } = FileUploadUtil.handleFileUpload(fileInput, [], 0);
 
     if (files.length > 0) {
       this.form.file.setValue('file_upload');
       this.uploadFiles = files;
-      // Realiza acciones adicionales con los archivos, como subirlos al servidor
-      console.log('Archivos seleccionados:', files);
     } else {
       // Maneja el error, por ejemplo, muestra un mensaje de error al usuario
       // console.error(error);
@@ -262,7 +261,7 @@ export class ManualComponent {
       const values: Manual = this.manualForm.value;
       const formData = new FormData();
 
-      // Iterar a través de las propiedades de 'values' y agregarlas al FormData
+      // Iterar a través de las propiedades de 'values' y Crearlas al FormData
       for (const key of Object.keys(values)) {
         formData.append(key, values[key]);
       }
@@ -301,7 +300,7 @@ export class ManualComponent {
  */
   editDataGet(id: any, content: any) {
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.dataModal.title = 'Editar tipo de servicio';
+    this.dataModal.title = 'Editar manual';
     this.isNewData = false;
     this.submitted = false;
     // Cargando datos al formulario 
@@ -316,7 +315,7 @@ export class ManualComponent {
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de documento?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el manual?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

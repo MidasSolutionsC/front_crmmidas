@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 
-import { EventService } from '../core/services/event.service';
+import { EventService } from '../core/services/config/event.service';
 
 import {
   LAYOUT_VERTICAL, LAYOUT_HORIZONTAL, LAYOUT_WIDTH, TOPBAR, LAYOUT_MODE, SIDEBAR_TYPE
@@ -28,8 +28,15 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     this.layoutType = LAYOUT_VERTICAL;
     this.layoutwidth = LAYOUT_WIDTH;
     this.topbar = TOPBAR;
-    this.mode = LAYOUT_MODE;
     this.sidebartype = SIDEBAR_TYPE;
+
+    const theme = localStorage.getItem('theme_mode');
+    if(theme){
+      this.mode = theme;
+    } else {
+      this.mode = LAYOUT_MODE;
+    }
+
 
     // document.body.setAttribute('data-bs-theme', this.mode);
 

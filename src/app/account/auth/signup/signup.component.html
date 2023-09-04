@@ -1,13 +1,13 @@
 <div class="account-pages my-5 pt-sm-5">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6 col-xl-5">
+      <div class="col-md-8 col-lg-8 col-xl-8">
         <div class="card overflow-hidden">
           <div class="bg-primary-subtle">
             <div class="row">
               <div class="col-7">
                 <div class="text-primary p-4">
-                  <h5 class="text-primary">Regístrese aquí</h5>
+                  <h5 class="text-primary">Regístrate aquí</h5>
                   <p>Obtén tu cuenta CRM ahora.</p>
                 </div>
               </div>
@@ -29,14 +29,162 @@
             <div class="p-2">
 
               <form class="needs-validation" name="signupForm" [formGroup]="signupForm" (ngSubmit)="onSubmit()"
-                novalidate>
+                novalidate autocomplete="off">
 
-                <alert type="success" *ngIf="successmsg" [dismissible]="false">Registro realizado con éxito.
+                <alert type="success" *ngIf="successmsg" [dismissible]="false">
+                  Registro realizado con éxito.
                 </alert>
 
                 <alert type="danger" *ngIf="error" [dismissible]="false">{{ error }}</alert>
 
-                <div class="mb-3">
+                <!-- Inicio formulario -->
+                <div class="row g-2">
+                  <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.country.label' | translate as translatedLabel;">
+                    <label for="paises_id" class="form-label">{{translatedLabel}} *</label>
+                    <select class="form-select custom-select" id="paises_id" formControlName="paises_id" [ngClass]="{ 'is-invalid': f.paises_id.errors && (f.paises_id.dirty || f.paises_id.touched || submitted) }">
+                      <option value="">{{'FORMS.FIELD_NAMES.country.default_option' | translate}}</option>
+                      <option *ngFor="let country of listCountries" [value]="country.id">{{country.nombre}}</option>
+                    </select>
+                    <div *ngIf="f.paises_id.errors && (f.paises_id.dirty || f.paises_id.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.paises_id.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                      <div *ngIf="f.paises_id.errors.min">
+                        {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.paises_id.errors.min.requiredLength}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.names.label' | translate as translatedLabel;">
+                    <label for="nombres" class="form-label">{{translatedLabel}} *</label>
+                    <input type="text" id="nombres" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.names.placeholder' | translate}}" formControlName="nombres" [ngClass]="{ 'is-invalid': f.nombres.errors && (f.nombres.dirty || f.nombres.touched || submitted) }" />
+                    <div *ngIf="f.nombres.errors && (f.nombres.dirty || f.nombres.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.nombres.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.father_last_name.label' | translate as translatedLabel;">
+                    <label for="apellido_paterno" class="form-label">{{translatedLabel}} *</label>
+                    <input type="text" id="apellido_paterno" class="form-control"  placeholder="{{'FORMS.FIELD_NAMES.father_last_name.placeholder' | translate}}" formControlName="apellido_paterno" [ngClass]="{ 'is-invalid': f.apellido_paterno.errors && (f.apellido_paterno.dirty || f.apellido_paterno.touched || submitted) }" />
+                    <div *ngIf="f.apellido_paterno.errors && (f.apellido_paterno.dirty || f.apellido_paterno.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.apellido_paterno.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                      <div *ngIf="f.apellido_paterno.errors.maxlength">
+                        {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.apellido_paterno.errors.maxlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.apellido_paterno.errors.minlength">
+                        {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.apellido_paterno.errors.minlength.requiredLength}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.mother_last_name.label' | translate as translatedLabel;">
+                    <label for="apellido_materno" class="form-label">{{translatedLabel}} *</label>
+                    <input type="text" id="apellido_materno" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.mother_last_name.placeholder' | translate}}" formControlName="apellido_materno" [ngClass]="{ 'is-invalid': f.apellido_materno.errors && (f.apellido_materno.dirty || f.apellido_materno.touched || submitted) }" />
+                    <div *ngIf="f.apellido_materno.errors && (f.apellido_materno.dirty || f.apellido_materno.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.apellido_materno.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                      <div *ngIf="f.apellido_materno.errors.maxlength">
+                        {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.apellido_materno.errors.maxlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.apellido_materno.errors.minlength">
+                        {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.apellido_materno.errors.minlength.requiredLength}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-md-7 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
+                    <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
+                    <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': f.tipo_documentos_id.errors && (f.tipo_documentos_id.dirty || f.tipo_documentos_id.touched || submitted) }">
+                      <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
+                      <option *ngFor="let typeDocument of listDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
+                    </select>
+
+                    <!-- <input type="text" id="apellido_materno" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.type_document.placeholder' | translate}}" formControlName="apellido_materno" [ngClass]="{ 'is-invalid': f.apellido_materno.errors && (f.apellido_materno.dirty || f.apellido_materno.touched || submitted) }" /> -->
+                    <div *ngIf="f.tipo_documentos_id.errors && (f.tipo_documentos_id.dirty || f.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.tipo_documentos_id.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-5 mb-3" *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
+                    <label for="documento" class="form-label">{{translatedLabel}} *</label>
+                    <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': f.documento.errors && (f.documento.dirty || f.documento.touched || submitted) }" />
+                    <div *ngIf="f.documento.errors && (f.documento.dirty || f.documento.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.documento.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                      <div *ngIf="f.documento.errors.maxlength">
+                        {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.documento.errors.maxlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.documento.errors.minlength">
+                        {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.documento.errors.minlength.requiredLength}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.user_name.label' | translate as translatedLabel;">
+                    <label for="nombre_usuario" class="form-label">{{translatedLabel}} *</label>
+                    <input type="text" maxlength="15" id="nombre_usuario" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.user_name.placeholder' | translate}}" formControlName="nombre_usuario" [ngClass]="{ 'is-invalid': f.nombre_usuario.errors && (f.nombre_usuario.dirty || f.nombre_usuario.touched || submitted) }" />
+                    <div *ngIf="f.nombre_usuario.errors && (f.nombre_usuario.dirty || f.nombre_usuario.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.nombre_usuario.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                      <div *ngIf="f.nombre_usuario.errors.maxlength">
+                        {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.nombre_usuario.errors.maxlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.nombre_usuario.errors.minlength">
+                        {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.nombre_usuario.errors.minlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.nombre_usuario.errors.pattern">
+                        {{'FORMS.VALIDATION.pattern' | translate | replaceAttribute: ':attribute': translatedLabel}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.password.label' | translate as translatedLabel;">
+                    <label for="clave" class="form-label">{{translatedLabel}} *</label>
+                    <input type="password" id="clave" maxlength="16" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.password.placeholder' | translate}}" formControlName="clave" [ngClass]="{ 'is-invalid': f.clave.errors && (f.clave.dirty || f.clave.touched || submitted) }" />
+                    <div *ngIf="f.clave.errors && (f.clave.dirty || f.clave.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.clave.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                      <div *ngIf="f.clave.errors.maxlength">
+                        {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.clave.errors.maxlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.clave.errors.minlength">
+                        {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.clave.errors.minlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.clave.errors.pattern">
+                        {{'FORMS.VALIDATION.pattern' | translate | replaceAttribute: ':attribute': translatedLabel}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.password_confirmation.label' | translate as translatedLabel;">
+                    <label for="clave_confirmation" class="form-label">{{translatedLabel}} *</label>
+                    <input type="password" id="clave" maxlength="16" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.password_confirmation.placeholder' | translate}}" formControlName="clave_confirmation" [ngClass]="{ 'is-invalid': f.clave_confirmation.errors && (f.clave_confirmation.dirty || f.clave_confirmation.touched || submitted) }" />
+                    <div *ngIf="f.clave_confirmation.errors && (f.clave_confirmation.dirty || f.clave_confirmation.touched || submitted)" class="invalid-feedback" align="left">
+                      <div *ngIf="f.clave_confirmation.errors.required">
+                        {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                      </div>
+                      <div *ngIf="f.clave_confirmation.errors.maxlength">
+                        {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.clave_confirmation.errors.maxlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.clave_confirmation.errors.minlength">
+                        {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.clave_confirmation.errors.minlength.requiredLength}}
+                      </div>
+                      <div *ngIf="f.clave_confirmation.errors.pattern">
+                        {{'FORMS.VALIDATION.pattern' | translate | replaceAttribute: ':attribute': translatedLabel}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div class="mb-3">
                   <label for="username" class="form-label">Nombre de usuario</label>
 
                   <input type="text" formControlName="username" class="form-control"
@@ -69,11 +217,14 @@
                   <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
                     <div *ngIf="f.password.errors.required">La contraseña es obligatorio</div>
                   </div>
-                </div>
+                </div> -->
 
                 <div class="mt-4 d-grid">
                   <button class="btn btn-primary" type="submit">Registrarse</button>
                 </div>
+                <!-- Fin formulario -->
+
+
                 <!-- <div class="mt-4 text-center">
                   <h5 class="font-size-14 mb-3">Sign in with</h5>
 
@@ -96,7 +247,7 @@
                   </ul>
                 </div> -->
                 <div class="mt-4 text-center">
-                  <p class="mb-0">Al registrarse usted acepta los Terminos <a href="javascript: void(0);"
+                  <p class="mb-0">Al registrarse usted acepta los Términos y <a href="javascript: void(0);"
                       class="text-primary">Condiciones de uso</a></p>
                 </div>
               </form>

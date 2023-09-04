@@ -1,12 +1,12 @@
 import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { AuthenticationService } from '../../core/services/auth/auth.service';
-import { AuthfakeauthenticationService } from '../../core/services/auth/authfake.service';
 import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
-import { LanguageService } from '../../core/services/language.service';
+import { LanguageService } from '../../core/services/config/language.service';
 import { TranslateService } from '@ngx-translate/core';
+import { AuthService } from 'src/app/core/services';
+import { ResponseApi, User } from 'src/app/core/models';
 
 @Component({
   selector: 'app-topbar',
@@ -25,12 +25,16 @@ export class TopbarComponent implements OnInit {
   countryName;
   valueset;
 
-  constructor(@Inject(DOCUMENT) private document: any, private router: Router, private authService: AuthenticationService,
-              private authFackservice: AuthfakeauthenticationService,
-              public languageService: LanguageService,
-              public translate: TranslateService,
-              public _cookiesService: CookieService) {                
-  }
+  dataUser: User;
+
+  constructor(
+    @Inject(DOCUMENT) private document: any, 
+    private router: Router,
+    public languageService: LanguageService,
+    public translate: TranslateService,
+    public _cookiesService: CookieService,
+    private _authService: AuthService
+  ) {}
 
   listLang = [
     { text: 'Spanish', flag: 'assets/images/flags/spain.jpg', lang: 'es' },
@@ -57,6 +61,8 @@ export class TopbarComponent implements OnInit {
     } else {
       this.flagvalue = val.map(element => element.flag);
     }
+
+    this.getDataUserSession();
   }
 
   setLanguage(text: string, lang: string, flag: string) {
@@ -64,6 +70,16 @@ export class TopbarComponent implements OnInit {
     this.flagvalue = flag;
     this.cookieValue = lang;
     this.languageService.setLanguage(lang);
+  }
+
+
+  getDataUserSession(){
+    const dataSession = localStorage.getItem('dataUser');
+    if(dataSession){
+      const data = JSON.parse(dataSession);
+      this.dataUser = data.user;
+    }
+
   }
 
   /**
@@ -85,12 +101,11 @@ export class TopbarComponent implements OnInit {
    * Logout the user
    */
   logout() {
-    if (environment.defaultauth === 'firebase') {
-      this.authService.logout();
-    } else {
-      this.authFackservice.logout();
-    }
-    this.router.navigate(['/account/login']);
+    this._authService.logout(this.dataUser.id).subscribe((response: ResponseApi) => {
+      if(response.code == 200){
+        this.router.navigate(['/account/login']);
+      }
+    });
   }
 
   /**

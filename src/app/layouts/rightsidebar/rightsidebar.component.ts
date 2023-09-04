@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EventService } from '../../core/services/event.service';
+import { EventService } from '../../core/services/config/event.service';
 
 import { LAYOUT_WIDTH, SIDEBAR_TYPE, TOPBAR, LAYOUT_MODE } from '../layouts.model';
 
@@ -28,8 +28,14 @@ export class RightsidebarComponent implements OnInit {
     this.width = LAYOUT_WIDTH;
     this.sidebartype = SIDEBAR_TYPE;
     this.topbar = TOPBAR;
-    this.mode = LAYOUT_MODE;
+    const theme = localStorage.getItem('theme_mode');
+    if(theme){
+      this.mode = theme;
+    } else {
+      this.mode = LAYOUT_MODE;
+    }
 
+  
     /**
      * horizontal-vertical layput set
      */
@@ -84,6 +90,7 @@ export class RightsidebarComponent implements OnInit {
 
   changeMode(themeMode: string) {
     this.mode = themeMode;
+    localStorage.setItem('theme_mode', themeMode);
     this.eventService.broadcast('changeMode', themeMode);
   }
 }

@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, ResponseApi, TypeBankAccount, TypeBankAccountList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
-import { TypeBankAccountService } from 'src/app/core/services/maintenance/type-bank-account.service';
+import { TypeBankAccountService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-type-bank-account',
@@ -15,7 +15,7 @@ export class TypeBankAccountComponent implements OnInit, AfterViewInit{
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar tipo de cuentas bancarias',
+    title: 'Crear tipo de cuentas bancarias',
   }
 
   // bread crumb items
@@ -234,7 +234,7 @@ export class TypeBankAccountComponent implements OnInit, AfterViewInit{
    */
   openModal(content: any) {
     this.initForm();
-    this.dataModal.title = 'Agregar tipo de cuenta bancarias';
+    this.dataModal.title = 'Crear tipo de cuenta bancarias';
     this.isNewData = true;
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
@@ -292,7 +292,7 @@ export class TypeBankAccountComponent implements OnInit, AfterViewInit{
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de documento?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de cuenta bancaria?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

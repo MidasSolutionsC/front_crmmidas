@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { DefaultComponent } from './dashboards/default/default.component';
 import { MainComponent } from './main/main/main.component';
+import { jwtAuthGuard } from '../core/guards';
 
 const routes: Routes = [
   // { path: '', redirectTo: 'dashboard' },

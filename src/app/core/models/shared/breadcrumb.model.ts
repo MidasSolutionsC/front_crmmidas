@@ -1,4 +1,4 @@
-import { Model } from "../model";
+import { Model } from "../api/model";
 
 export class Breadcrumb extends Model{
   public label: string;

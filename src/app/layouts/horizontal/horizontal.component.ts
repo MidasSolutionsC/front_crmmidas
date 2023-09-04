@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { TOPBAR } from "../layouts.model";
-import { EventService } from '../../core/services/event.service';
+import { EventService } from '../../core/services/config/event.service';
 
 @Component({
   selector: 'app-horizontal',

@@ -264,6 +264,14 @@
         "label": "Nombre",
         "placeholder": "Ingrese el nombre..."
       },
+      "names": {
+        "label": "Nombres",
+        "placeholder": "Ingrese sus nombres..."
+      },
+      "user_name": {
+        "label": "Nombre de usuario",
+        "placeholder": "Ingrese el nombre de usuario..."
+      },
       "first_name": {
         "label": "Nombre",
         "placeholder": "Ingrese el nombre..."
@@ -273,28 +281,50 @@
         "placeholder": "Ingrese el apellido..."
       },
       "father_last_name": {
-        "label": "Apellido Paterno",
+        "label": "Apellido paterno",
         "placeholder": "Ingrese el apellido paterno..."
       },
       "mother_last_name": {
-        "label": "Apellido Materno",
+        "label": "Apellido materno",
         "placeholder": "Ingrese el apellido materno..."
       },
       "email": {
         "label": "Correo electrónico",
         "placeholder": "Ingrese el correo electrónico..."
       },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Ingrese la contraseña..."
+      },
+      "password_confirmation": {
+        "label": "Contraseña de confirmación",
+        "placeholder": "Ingrese la contraseña de confirmación..."
+      },
       "phone": {
         "label": "Teléfono",
         "placeholder": "Ingrese el número de teléfono..."
+      },
+      "responsible": {
+        "label": "Responsable",
+        "placeholder": "Ingrese al responsable..."
       },
       "address": {
         "label": "Dirección",
         "placeholder": "Ingrese la dirección..."
       },
+      "campus": {
+        "label": "Sede",
+        "placeholder": "Ingrese la sede...",
+        "default_option": "Seleccione una sede..."
+      },
       "country": {
         "label": "País",
         "placeholder": "Ingrese el país...",
+        "default_option": "Seleccione un país..."
+      },
+      "iso_code": {
+        "label": "Código ISO",
+        "placeholder": "Ingrese el código iso...",
         "default_option": "Seleccione un país..."
       },
       "department": {
@@ -328,11 +358,52 @@
         "default_option": "Seleccione un imagen..."
 
       },
+      "logo": {
+        "label": "Logo",
+        "placeholder": "Subir el logo...",
+        "default_option": "Seleccione un imagen..."
+
+      },
       "type": {
         "label": "Tipo",
         "placeholder": "Ingrese el tipo...",
         "default_option": "Seleccione un tipo..."
 
+      },
+      "type_user": {
+        "label": "Tipo de usuario",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "type_discount": {
+        "label": "Tipo de descuento",
+        "placeholder": "Ingrese el tipo de descuento...",
+        "default_option": "Seleccione un tipo..."
+
+      },
+      "type_document": {
+        "label": "Tipo de documento",
+        "placeholder": "Ingrese el tipo de documento...",
+        "default_option": "Seleccione un tipo..."
+
+      },
+      "type_service": {
+        "label": "Tipo de servicio",
+        "placeholder": "Ingrese el tipo de servicio...",
+        "default_option": "Seleccione un tipo..."
+
+      },
+      "document": {
+        "label": "Documento",
+        "placeholder": "Ingrese el documento..."
+      },
+      "discount": {
+        "label": "Descuento",
+        "placeholder": "Ingrese el descuento..."
+      },
+      "price": {
+        "label": "Precio",
+        "placeholder": "Ingrese el precio..."
       },
       "state": {
         "label": "Estado",
@@ -340,7 +411,41 @@
         "default_option": "Seleccione un estado..."
 
       },
-      "postal_code": {
+      "first_date": {
+        "label": "Fecha inicio",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+
+      },
+      "last_date": {
+        "label": "Fecha final",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+
+      },
+      "opening_date": {
+        "label": "Fecha apertura",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+
+      },
+      "count_min": {
+        "label": "Cantidad minima",
+        "placeholder": "Ingrese la cantidad..."
+      },
+      "count_max": {
+        "label": "Cantidad maxima",
+        "placeholder": "Ingrese la cantidad..."
+      },
+      "code": {
+        "label": "Código",
+        "placeholder": "Ingrese el código..."
+      },
+      "code_ubigeo": {
+        "label": "Código de ubigeo",
+        "placeholder": "Ingrese el código..."
+      },
+      "code_postal": {
         "label": "Código Postal",
         "placeholder": "Ingrese el código postal..."
       },
@@ -355,6 +460,14 @@
       "abbreviation": {
         "label": "Abreviación",
         "placeholder": "Ingrese la abreviación..."
+      },
+      "search": {
+        "label": "Buscar",
+        "placeholder": "Escriba aquí..."
+      },
+      "title": {
+        "label": "Titulo",
+        "placeholder": "Ingrese el titulo..."
       },
       "description": {
         "label": "Descripción",
@@ -375,6 +488,22 @@
       "pattern": "El campo :attribute no cumple con el patrón requerido.",
       "min": "El campo :attribute debe ser mayor o igual a :min.",
       "max": "El campo :attribute debe ser menor o igual a :max."
+    },
+    "BUTTONS": {
+      "SEARCH": "Buscar",
+      "ADD": "Registrar",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "PREV": "Anterior",
+      "NEXT": "Siguiente",
+      "END": "Finalizar",
+      "CLOSE": "Cerrar",
+      "CANCEL": "Cancelar"
+    },
+    "FILES": {
+      "PREVIEW": {
+        "label": "Previsualización"
+      }
     }
   },
   "MODALS": {
@@ -385,7 +514,8 @@
       "PREV": "Anterior",
       "NEXT": "Siguiente",
       "CLOSE": "Cerrar",
-      "CANCEL": "Cancelar"
+      "CANCEL": "Cancelar",
+      "ACCEPT": "Aceptar"
     }
   },
   "PAGES": {

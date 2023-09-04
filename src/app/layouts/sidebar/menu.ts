@@ -58,43 +58,43 @@ export const MENU: MenuItem[] = [
         id: 8,
         label: 'MENUITEMS.MAINTENANCE.LIST.COUNTRY',
         icon: 'bx bxs-flag',
-        link: '/'
+        link: '/maintenances/country'
     },
     {
         id: 9,
         label: 'MENUITEMS.MAINTENANCE.LIST.CAMPUS',
         icon: 'bx bx-buildings',
-        link: '/'
+        link: '/maintenances/campus'
     },
     {
         id: 10,
         label: 'MENUITEMS.MAINTENANCE.LIST.USER',
         icon: 'bx bx-user',
-        link: '/'
+        link: '/maintenances/user'
     },
     {
         id: 11,
-        label: 'MENUITEMS.MAINTENANCE.LIST.COORDINATION',
-        icon: 'bx bxs-user-detail  ',
-        link: '/'
+        label: 'MENUITEMS.MAINTENANCE.LIST.GROUP',
+        icon: 'bx bx-group  ',
+        link: '/maintenances/group'
     },
     {
         id: 12,
         label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT',
         icon: 'bx bxl-dropbox ',
-        link: '/'
+        link: '/maintenances/product'
     },
     {
         id: 13,
         label: 'MENUITEMS.MAINTENANCE.LIST.PROMOTION',
         icon: 'bx bx-purchase-tag-alt ',
-        link: '/'
+        link: '/maintenances/promotion'
     },
     {
         id: 14,
         label: 'MENUITEMS.MAINTENANCE.LIST.ADVERTISEMENT',
         icon: 'bx bxs-megaphone ',
-        link: '/'
+        link: '/maintenances/advertisement'
     },
     {
         id: 15,

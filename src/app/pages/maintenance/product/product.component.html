@@ -1,0 +1,134 @@
+<div class="container-fluid">
+  <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body border-bottom">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
+            <div class="flex-shrink-0 d-flex gap-1">
+              <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
+              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body border-bottom">
+
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+              <thead>
+                <tr>
+                  <th scope="col">N°</th>
+                  <th scope="col">Tipo de servicio</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Fecha creado</th>
+                  <th scope="col">Fecha modificado</th>
+                  <th scope="col">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of lists; let i = index">
+                  <th scope="row">{{i + 1}}</th>
+                  <td>{{data.tipo_servicios_nombre}}</td>
+                  <td>{{data.nombre}}</td>
+                  <td>{{data.descripcion}}</td>
+                  <td>{{data.precio}}</td>
+                  <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
+                  <td>{{data.created_at}}</td>
+                  <td>{{data.updated_at}}</td>
+                  <td>
+                    <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
+                      </li>
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FORMULARIO -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+  </div>
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="productForm" autocomplete="off">
+    <div class="modal-body">
+      <input type="hidden" name="id" value="" formControlName="id" />
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
+        <label for="tipo_servicios_id" class="form-label">{{translatedLabel}} *</label>
+        <select class="form-select custom-select" id="tipo_servicios_id" formControlName="tipo_servicios_id" [ngClass]="{ 'is-invalid': form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted) }">
+          <option value="">{{'FORMS.FIELD_NAMES.type_service.default_option' | translate}}</option>
+          <option *ngFor="let service of listServices" [value]="service.id">{{service.nombre}}</option>
+        </select>
+        <div *ngIf="form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form.tipo_servicios_id.errors.required">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+          <div *ngIf="form.tipo_servicios_id.errors.min">
+            {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.tipo_servicios_id.errors.min.requiredLength}}
+          </div>
+        </div>
+      </div>
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
+        <label for="nombre" class="form-label">{{translatedLabel}} *</label>
+        <input type="text" id="nombre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted) }" />
+        <div *ngIf="form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['nombre'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">
+        <label for="descripcion" class="form-label">{{translatedLabel}}</label>
+        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion" [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
+        <div *ngIf="form.descripcion.errors && (form.descripcion.dirty || form.descripcion.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['descripcion'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.price.label' | translate as translatedLabel;">
+          <label for="precio" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="precio" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.price.placeholder' | translate}}" formControlName="precio" [ngClass]="{ 'is-invalid': form.precio.errors && (form.precio.dirty || form.precio.touched || submitted) }" />
+          <div *ngIf="form.precio.errors && (form.precio.dirty || form.precio.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.precio.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+            <div *ngIf="form.precio.errors.min">
+              {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.precio.errors.min.requiredLength}}
+            </div>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!--End Modal -->

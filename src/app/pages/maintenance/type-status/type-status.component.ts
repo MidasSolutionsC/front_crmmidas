@@ -1,21 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, ResponseApi, TypeStatus, TypeStatusList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService, TypeStatusService } from 'src/app/core/services';
-import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-type-status',
   templateUrl: './type-status.component.html',
   styleUrls: ['./type-status.component.scss']
 })
-export class TypeStatusComponent {
+export class TypeStatusComponent implements OnInit, OnDestroy{
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar tipo de estados',
+    title: 'Crear tipo de estados',
   }
 
   // bread crumb items
@@ -222,7 +221,7 @@ export class TypeStatusComponent {
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Agregar tipo de estado';
+    this.dataModal.title = 'Crear tipo de estado';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});
@@ -279,7 +278,7 @@ export class TypeStatusComponent {
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de documento?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de estado?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

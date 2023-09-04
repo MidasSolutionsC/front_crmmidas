@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, ResponseApi, TypeUser, TypeUserList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
-import { TypeUserService } from 'src/app/core/services/maintenance';
+import { TypeUserService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-type-user',
@@ -15,7 +15,7 @@ export class TypeUserComponent implements OnInit, OnDestroy{
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar tipo de cuentas de usuarios',
+    title: 'Crear tipo de cuentas de usuarios',
   }
 
   // bread crumb items
@@ -226,7 +226,7 @@ export class TypeUserComponent implements OnInit, OnDestroy{
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Agregar tipo de usuario';
+    this.dataModal.title = 'Crear tipo de usuario';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});
@@ -283,7 +283,7 @@ export class TypeUserComponent implements OnInit, OnDestroy{
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de documento?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de usuario?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

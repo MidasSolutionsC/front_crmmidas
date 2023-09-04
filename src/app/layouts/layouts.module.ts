@@ -14,7 +14,7 @@ import { RightsidebarComponent } from './rightsidebar/rightsidebar.component';
 import { HorizontalComponent } from './horizontal/horizontal.component';
 import { VerticalComponent } from './vertical/vertical.component';
 import { HorizontaltopbarComponent } from './horizontaltopbar/horizontaltopbar.component';
-import { LanguageService } from '../core/services/language.service';
+import { LanguageService } from '../core/services/config/language.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({

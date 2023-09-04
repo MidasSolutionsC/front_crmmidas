@@ -35,8 +35,8 @@
                 <tr *ngFor="let data of lists; let i = index">
                   <th scope="row">{{i + 1}}</th>
                   <td>{{data.nombre}}</td>
-                  <td>{{data.tipo}}</td>
-                  <td>{{data.archivo}}</td>
+                  <td>{{data.tipo_text}}</td>
+                  <td><a [href]="'http://localhost:8000/files/manual/' + data.archivo" target="_blank">Ver archivo</a></td>
                   <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
                   <td>{{data.created_at}}</td>
                   <td>{{data.updated_at}}</td>

@@ -1,0 +1,203 @@
+<div class="container-fluid">
+  <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body border-bottom">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
+            <div class="flex-shrink-0 d-flex gap-1">
+              <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
+              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body border-bottom">
+
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+              <thead>
+                <tr>
+                  <th scope="col">N°</th>
+                  <th scope="col">Tipo de servicio</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Código</th>
+                  <th scope="col">Fecha inicio</th>
+                  <th scope="col">Fecha final</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Fecha creado</th>
+                  <th scope="col">Fecha modificado</th>
+                  <th scope="col">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of lists; let i = index">
+                  <th scope="row">{{i + 1}}</th>
+                  <td>{{data.tipo_servicios_nombre}}</td>
+                  <td>{{data.nombre}}</td>
+                  <td>{{data.descripcion}}</td>
+                  <td>{{data.codigo}}</td>
+                  <td>{{data.fecha_inicio}}</td>
+                  <td>{{data.fecha_fin}}</td>
+                  <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
+                  <td>{{data.created_at}}</td>
+                  <td>{{data.updated_at}}</td>
+                  <td>
+                    <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
+                      </li>
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FORMULARIO -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+  </div>
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="promotionForm" autocomplete="off">
+    <div class="modal-body">
+      <input type="hidden" name="id" value="" formControlName="id" />
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
+        <label for="tipo_servicios_id" class="form-label">{{translatedLabel}} *</label>
+        <select class="form-select custom-select" id="tipo_servicios_id" formControlName="tipo_servicios_id" [ngClass]="{ 'is-invalid': form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted) }">
+          <option value="">{{'FORMS.FIELD_NAMES.type_service.default_option' | translate}}</option>
+          <option *ngFor="let service of listServices" [value]="service.id">{{service.nombre}}</option>
+        </select>
+        <div *ngIf="form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form.tipo_servicios_id.errors.required">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+          <div *ngIf="form.tipo_servicios_id.errors.min">
+            {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.tipo_servicios_id.errors.min.requiredLength}}
+          </div>
+        </div>
+      </div>
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
+        <label for="nombre" class="form-label">{{translatedLabel}} *</label>
+        <input type="text" id="nombre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted) }" />
+        <div *ngIf="form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['nombre'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">
+        <label for="descripcion" class="form-label">{{translatedLabel}}</label>
+        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion" [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
+        <div *ngIf="form.descripcion.errors && (form.descripcion.dirty || form.descripcion.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['descripcion'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_discount.label' | translate as translatedLabel;">
+          <label for="tipo_descuento" class="form-label">{{translatedLabel}}</label>
+          <select class="form-select custom-select" id="tipo_descuento" formControlName="tipo_descuento" [ngClass]="{ 'is-invalid': form.tipo_descuento.errors && (form.tipo_descuento.dirty || form.tipo_descuento.touched || submitted) }">
+            <option value="">{{'FORMS.FIELD_NAMES.type_discount.default_option' | translate}}</option>
+            <option value="C">Cantidad</option>
+            <option value="P">Porcentual</option>
+          </select>
+          <div *ngIf="form.tipo_descuento.errors && (form.tipo_descuento.dirty || form.tipo_descuento.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.tipo_descuento.errors.required">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+            <div *ngIf="form.tipo_descuento.errors.min">
+              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': form.tipo_descuento.errors.min.requiredLength}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.discount.label' | translate as translatedLabel;">
+          <label for="descuento" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="descuento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.discount.placeholder' | translate}}" formControlName="descuento" [ngClass]="{ 'is-invalid': form.descuento.errors && (form.descuento.dirty || form.descuento.touched || submitted) }" />
+          <div *ngIf="form.descuento.errors && (form.descuento.dirty || form.descuento.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.descuento.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+            <div *ngIf="form.descuento.errors.min">
+              {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.descuento.errors.min.requiredLength}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.code.label' | translate as translatedLabel;">
+          <label for="codigo" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="codigo" class="form-control" maxlength="15" placeholder="{{'FORMS.FIELD_NAMES.code.placeholder' | translate}}" formControlName="codigo" [ngClass]="{ 'is-invalid': form.codigo.errors && (form.codigo.dirty || form.codigo.touched || submitted) }" />
+          <div *ngIf="form.codigo.errors && (form.codigo.dirty || form.codigo.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.codigo.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.count_min.label' | translate as translatedLabel;">
+          <label for="cantidad_minima" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="cantidad_minima" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.count_min.placeholder' | translate}}" formControlName="cantidad_minima" [ngClass]="{ 'is-invalid': form.cantidad_minima.errors && (form.cantidad_minima.dirty || form.cantidad_minima.touched || submitted) }" />
+          <div *ngIf="form.cantidad_minima.errors && (form.cantidad_minima.dirty || form.cantidad_minima.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.cantidad_minima.errors.required">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.count_max.label' | translate as translatedLabel;">
+          <label for="cantidad_maxima" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="cantidad_maxima" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.count_max.placeholder' | translate}}" formControlName="cantidad_maxima" [ngClass]="{ 'is-invalid': form.cantidad_maxima.errors && (form.cantidad_maxima.dirty || form.cantidad_maxima.touched || submitted) }" />
+          <div *ngIf="form.cantidad_maxima.errors && (form.cantidad_maxima.dirty || form.cantidad_maxima.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.cantidad_maxima.errors.required">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.first_date.label' | translate as translatedLabel;">
+          <label for="fecha_inicio" class="form-label">{{translatedLabel}} *</label>
+          <input type="date" id="fecha_inicio" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.first_date.placeholder' | translate}}" formControlName="fecha_inicio" [ngClass]="{ 'is-invalid': form.fecha_inicio.errors && (form.fecha_inicio.dirty || form.fecha_inicio.touched || submitted) }" />
+          <div *ngIf="form.fecha_inicio.errors && (form.fecha_inicio.dirty || form.fecha_inicio.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.fecha_inicio.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.last_date.label' | translate as translatedLabel;">
+          <label for="fecha_fin" class="form-label">{{translatedLabel}}</label>
+          <input type="date" id="fecha_fin" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.last_date.placeholder' | translate}}" formControlName="fecha_fin" [ngClass]="{ 'is-invalid': form.fecha_fin.errors && (form.fecha_fin.dirty || form.fecha_fin.touched || submitted) }" />
+          <div *ngIf="form.fecha_fin.errors && (form.fecha_fin.dirty || form.fecha_fin.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.fecha_fin.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!--End Modal -->

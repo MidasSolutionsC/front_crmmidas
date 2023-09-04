@@ -27,33 +27,31 @@
               </a>
             </div>
             <div class="p-2">
-              <form class="form-horizontal" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <form class="form-horizontal" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
 
                 <alert type="danger" *ngIf="error" [dismissible]="false">{{ error }}</alert>
 
                 <div class="mb-3">
-                  <label for="email">Correo</label>
-                  <input type="email" formControlName="email" class="form-control" id="email" placeholder="Correo electrónico"
-                    [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
-                  <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-                    <div *ngIf="f.email.errors.required">Email is required</div>
-                    <div *ngIf="f.email.errors.email">Email must be a valid email address</div>
+                  <label for="nombre_usuario">Nombre de usuario</label>
+                  <input type="text" formControlName="nombre_usuario" class="form-control" id="nombre_usuario" placeholder="Nombre de usuario"
+                    [ngClass]="{ 'is-invalid': f.nombre_usuario.errors && (f.nombre_usuario.dirty || f.nombre_usuario.touched || submitted)}" />
+                  <div *ngIf="f.nombre_usuario.errors && (f.nombre_usuario.dirty || f.nombre_usuario.touched || submitted)" class="invalid-feedback">
+                    <div *ngIf="f.nombre_usuario.errors.required">El nombre usuario es requerido</div>
                   </div>
                 </div>
 
                 <div class="mb-3">
-                  <label for="password">Contraseña</label>
+                  <label for="clave">Contraseña</label>
                   <div class="input-group auth-pass-inputgroup">
-                    <input [type]="showPassword? 'text': 'password'" class="form-control" formControlName="password" placeholder="Enter contraseña"
-                      [ngClass]="{ 'is-invalid': submitted && f.password.errors }" aria-label="Password"
+                    <input [type]="showPassword? 'text': 'password'" class="form-control" formControlName="clave" placeholder="Ingrese su clave"
+                      [ngClass]="{ 'is-invalid': f.clave.errors && (f.clave.dirty || f.clave.touched || submitted)}" aria-label="Password"
                       aria-describedby="password-addon">
 
                     <button class="btn btn-light ms-0" type="button" id="password-addon" (click)="toggleShowPassword()">
-                      <!-- <i class="mdi mdi-eye-outline"></i> -->
                       <i class="mdi" [ngClass]="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"></i>
                     </button>
-                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-                      <span *ngIf="f.password.errors.required">Password is required</span>
+                    <div *ngIf="f.clave.errors && (f.clave.dirty || f.clave.touched || submitted)" class="invalid-feedback">
+                      <span *ngIf="f.clave.errors.required">La clave es requerida</span>
                     </div>
                   </div>
                 </div>

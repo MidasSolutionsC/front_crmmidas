@@ -137,23 +137,23 @@
     }
 }
 
-.ng-dropdown-panel {
-    border-color: $input-border-color;
-    background-color: var(--#{$prefix}custom-white);
-}
+// .ng-dropdown-panel {
+//     border-color: $input-border-color;
+//     background-color: var(--#{$prefix}custom-white);
+// }
 
-.ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
-    background-color: var(--#{$prefix}custom-white);
-    color: var(--#{$prefix}body-color);
-}
+// .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+//     background-color: var(--#{$prefix}custom-white);
+//     color: var(--#{$prefix}body-color);
+// }
 
-.ng-dropdown-panel.ng-select-bottom {
-    border-top-color: $input-border-color;
-}
+// .ng-dropdown-panel.ng-select-bottom {
+//     border-top-color: $input-border-color;
+// }
 
-.ng-dropdown-panel.ng-select-top {
-    border-bottom-color: $input-border-color;
-}
+// .ng-dropdown-panel.ng-select-top {
+//     border-bottom-color: $input-border-color;
+// }
 
 //dropzone
 
@@ -419,5 +419,38 @@ a.ck.ck-button.ck-on {
 .nav-justify-center {
     .nav-tabs {
         justify-content: center;
+    }
+}
+
+// MODAL SCROLLABLE
+.modal-dialog-scrollable{
+    .modal-body{
+        max-height: calc(100vh - 180px);
+    }
+}
+
+// PREVIAZULIZADOR DE IMÁGENES
+.content-preview-image{
+    position: relative;
+    max-height: 180px;
+    max-width: fit-content;
+    height: auto;
+    width: fit-content;
+    margin: auto;
+    
+    .image{
+        background-size: contain;
+        position: relative;
+        object-fit: contain;
+        object-position: center;
+        height: 100%;
+        width: 100%;
+    }
+
+    .btn-delete{
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-radius: 50%;
     }
 }

@@ -6,8 +6,19 @@ import { TypeBankAccountComponent } from './type-bank-account/type-bank-account.
 import { TypeUserComponent } from './type-user/type-user.component';
 import { TypeServiceComponent } from './type-service/type-service.component';
 import { ManualComponent } from './manual/manual.component';
+import { AdvertisementComponent } from './advertisement/advertisement.component';
+import { CountryComponent } from './country/country.component';
+import { PromotionComponent } from './promotion/promotion.component';
+import { ProductComponent } from './product/product.component';
+import { UserComponent } from './user/user.component';
+import { GroupComponent } from './group/group.component';
+import { CampusComponent } from './campus/campus.component';
 
 const routes: Routes = [
+  {
+    path: 'country',
+    component: CountryComponent
+  },
   {
     path: 'typeDocument',
     component: TypeDocumentComponent
@@ -32,6 +43,31 @@ const routes: Routes = [
     path: 'manual',
     component: ManualComponent
   },
+  {
+    path: 'advertisement',
+    component: AdvertisementComponent
+  },
+  {
+    path: 'promotion',
+    component: PromotionComponent
+  },
+  {
+    path: 'product',
+    component: ProductComponent
+  },
+  {
+    path: 'user',
+    component: UserComponent
+  },
+  {
+    path: 'group',
+    component: GroupComponent
+  },
+  {
+    path: 'campus',
+    component: CampusComponent
+  },
+
 ];
 
 @NgModule({

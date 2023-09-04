@@ -2,10 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Breadcrumb, TypeDocument, TypeDocumentList } from 'src/app/core/models';
-import { ResponseApi } from 'src/app/core/models/response-api.model';
-import { User } from 'src/app/core/models/user.model';
-import { TypeDocumentListService } from './list.service';
-import { TypeDocumentService } from 'src/app/core/services/maintenance';
+import { ResponseApi } from 'src/app/core/models/api/response-api.model';
+import { TypeDocumentService } from 'src/app/core/services';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
 import { Subscription, catchError, distinctUntilChanged, map, throwError } from 'rxjs';
 
@@ -18,7 +16,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar tipo de documento',
+    title: 'Crear tipo de documento',
   }
 
   // bread crumb items
@@ -223,7 +221,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    */
   openModal(content: any) {
     // this.initForm();
-    this.dataModal.title = 'Agregar tipo de documento';
+    this.dataModal.title = 'Crear tipo de documento';
     this.submitted = false;
     this.isNewData = true;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });

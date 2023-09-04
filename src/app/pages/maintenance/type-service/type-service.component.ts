@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, ResponseApi, TypeService, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
-import { TypeServiceService } from 'src/app/core/services/maintenance';
+import { TypeServiceService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-type-service',
@@ -15,7 +15,7 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Agregar tipo de servicios',
+    title: 'Crear tipo de servicios',
   }
 
   // bread crumb items
@@ -222,7 +222,7 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Agregar tipo de servicio';
+    this.dataModal.title = 'Crear tipo de servicio';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});
@@ -279,7 +279,7 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de documento?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de servicio?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

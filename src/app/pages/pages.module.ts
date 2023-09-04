@@ -25,6 +25,7 @@ import { DashboardsModule } from './dashboards/dashboards.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaintenanceModule } from './maintenance/maintenance.module';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { MaintenanceModule } from './maintenance/maintenance.module';
     SimplebarAngularModule,
     LightboxModule,
     PickerModule,
+    NgxPaginationModule
   ],
 })
 export class PagesModule { }
