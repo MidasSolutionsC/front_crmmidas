@@ -305,6 +305,19 @@
             </ngx-datatable>
             <pagination-controls (pageChange)="onPage($event)" [maxSize]="7" [directionLinks]="true" [autoHide]="false"></pagination-controls>
           </div> -->
+
+          
+          <!-- <ul class="meal-list">
+            <li *ngFor="let meal of asyncMeals | async | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+                {{ meal }}
+            </li>
+          </ul>
+
+          <div class="has-text-centered">
+            <div class="spinner" [ngClass]="{ 'hidden': !loading }"></div>
+            <pagination-controls (pageChange)="getPage($event)" id="server"></pagination-controls>
+          </div> -->
+
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
             <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
             <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext (click)="processingMemberGroup()" [disabled]="!listUserSelected.length">{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
