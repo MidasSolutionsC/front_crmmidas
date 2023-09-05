@@ -411,11 +411,30 @@
         "default_option": "Seleccione un estado..."
 
       },
+      "date": {
+        "label": "Fecha",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "time": {
+        "label": "Hora",
+        "placeholder": "Ingrese la hora...",
+        "default_option": "Seleccione una hora..."
+      },
+      "first_time": {
+        "label": "Hora inicio",
+        "placeholder": "Ingrese la hora...",
+        "default_option": "Seleccione una hora..."
+      },
+      "last_time": {
+        "label": "Hora final",
+        "placeholder": "Ingrese la hora...",
+        "default_option": "Seleccione una hora..."
+      },
       "first_date": {
         "label": "Fecha inicio",
         "placeholder": "Ingrese la fecha...",
         "default_option": "Seleccione una fecha..."
-
       },
       "last_date": {
         "label": "Fecha final",
@@ -466,12 +485,17 @@
         "placeholder": "Escriba aquí..."
       },
       "title": {
-        "label": "Titulo",
+        "label": "Título",
         "placeholder": "Ingrese el titulo..."
       },
       "description": {
         "label": "Descripción",
         "placeholder": "Ingrese la descripción..."
+      },
+      "color": {
+        "label": "Color",
+        "placeholder": "Ingrese el color...",
+        "default_option": "Seleccione el color..."
       },
       "notes": {
         "label": "Notas",

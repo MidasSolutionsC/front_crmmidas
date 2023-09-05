@@ -26,14 +26,19 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaintenanceModule } from './maintenance/maintenance.module';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { CalendarComponent } from './calendar/calendar.component';
+import { CoreModule } from '../core/core.module';
 
 @NgModule({
   declarations: [
+  
+    CalendarComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     MaintenanceModule,
+    TranslateModule,
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
     PagesRoutingModule,
@@ -50,7 +55,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
     SimplebarAngularModule,
     LightboxModule,
     PickerModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    CoreModule
   ],
 })
 export class PagesModule { }

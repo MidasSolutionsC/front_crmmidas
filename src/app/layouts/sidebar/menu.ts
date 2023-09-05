@@ -37,7 +37,7 @@ export const MENU: MenuItem[] = [
             variant: 'success',
             text: 'MENUITEMS.CALENDAR.BADGE',
         },
-        link: '/'
+        link: '/calendar'
     },
     // {
     //     id: 5,
