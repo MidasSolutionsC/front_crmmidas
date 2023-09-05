@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
@@ -8,7 +8,8 @@ import { ApiErrorFormattingService, CampusService, CountryService, FormService, 
 @Component({
   selector: 'app-group',
   templateUrl: './group.component.html',
-  styleUrls: ['./group.component.scss']
+  styleUrls: ['./group.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GroupComponent {
   public get modalService(): BsModalService {
