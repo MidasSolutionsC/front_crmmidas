@@ -1,0 +1,83 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+</div>
+<div class="modal-body">
+  <div class="card">
+    <div class="card-body">
+      <div class="mb-2 d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+        <h5 class="card-title">Sede:</h5>
+        <span class="card-sub-title">{{dataGroup.sedes_nombre}}</span>
+      </div>
+      <div class="mb-2 d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+        <h5 class="card-title">Nombre del grupo:</h5>
+        <span class="card-sub-title">{{dataGroup.nombre}}</span>
+      </div>
+      <div class="mb-2 d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+        <h5 class="card-title">Descripción:</h5>
+        <span class="card-sub-title">{{dataGroup.descripcion || 'S/N'}}</span>
+      </div>
+      <div class="mb-2 d-flex flex-row flex-wrap gap-4 justify-content-start align-items-center">
+        <div class="d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+          <h5 class="card-title">Creado por:</h5>
+          <span class="card-sub-title">{{dataGroup.usuarios_create_nombre_usuario}}</span>
+        </div>
+        <div class="d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+          <h5 class="card-title">Modificado por:</h5>
+          <span class="card-sub-title">{{dataGroup.usuarios_update_nombre_usuario || 'S/N'}}</span>
+        </div>
+      </div>
+      <div class="mb-2 d-flex flex-row flex-wrap gap-4 justify-content-start align-items-center">
+        <div class="d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+          <h5 class="card-title">Fecha de creación:</h5>
+          <span class="card-sub-title">{{dataGroup.created_at}}</span>
+        </div>
+        <div class="d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+          <h5 class="card-title">Fecha de modificación:</h5>
+          <span class="card-sub-title">{{dataGroup.updated_at || 'S/N'}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h4 class="card-title">Lista de usuarios</h4>
+      <p class="card-sub-title">
+        Integrantes del grupo
+      </p>
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+          <thead>
+            <tr>
+              <th scope="col">N°</th>
+              <th scope="col">Nombres</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Tipo Doc.</th>
+              <th scope="col">N° Doc.</th>
+              <th scope="col">Usuario</th>
+              <th scope="col">Tipo de usuario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of listMembers; let i = index">
+              <th scope="row">{{i + 1}}</th>
+              <td>{{data.nombres}}</td>
+              <td>{{data.apellido_paterno}} {{data.apellido_materno}}</td>
+              <td>{{data.tipo_documentos_abreviacion}}</td>
+              <td>{{data.documento}}</td>
+              <td>{{data.nombre_usuario}}</td>
+              <td>{{data.tipo_usuarios_nombre}}</td>
+            </tr>
+            <tr *ngIf="!listMembers.length"><td colspan="7" class="text-center">Sin registros.</td></tr>
+          </tbody>
+        </table>
+      </div> 
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="hstack gap-2 justify-content-end">
+    <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+    <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+    <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
+  </div>
+</div>

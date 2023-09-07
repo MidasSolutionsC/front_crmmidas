@@ -16,7 +16,8 @@
       "es2020",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "types": ["datatables.net"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

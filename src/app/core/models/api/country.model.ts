@@ -19,7 +19,7 @@ export class Country extends Model{
     return {id, nombre, iso_code};
   }
 
-  public static cats(dataArray: object[]): Country[]{
+  public static casts(dataArray: object[]): Country[]{
     return dataArray.map((data) => Country.cast(data));
   }
 }
@@ -48,7 +48,7 @@ export class CountryList extends Model{
     return {id, nombre, iso_code, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): CountryList[]{
+  public static casts(dataArray: object[]): CountryList[]{
     return dataArray.map((data) => CountryList.cast(data));
   }
 }

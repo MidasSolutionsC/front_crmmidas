@@ -37,7 +37,6 @@ export class AdvertisementComponent {
   // Table data
   // content?: any;
   lists?: AdvertisementList[];
-  
   private subscription: Subscription = new Subscription();
 
   constructor(

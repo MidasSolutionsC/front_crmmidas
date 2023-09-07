@@ -22,7 +22,7 @@ export class Manual extends Model{
     return {id, nombre, tipo, archivo, is_active};
   }
 
-  public static cats(dataArray: object[]): Manual[]{
+  public static casts(dataArray: object[]): Manual[]{
     return dataArray.map((data) => Manual.cast(data));
   }
 }
@@ -63,7 +63,7 @@ export class ManualList extends Model{
     return {id, nombre, tipo, tipo_text, archivo, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): ManualList[]{
+  public static casts(dataArray: object[]): ManualList[]{
     return dataArray.map((data) => ManualList.cast(data));
   }
 }

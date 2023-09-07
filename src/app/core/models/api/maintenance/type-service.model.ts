@@ -20,7 +20,7 @@ export class TypeService extends Model{
     return {id, nombre, descripcion, is_active};
   }
 
-  public static cats(dataArray: object[]): TypeService[]{
+  public static casts(dataArray: object[]): TypeService[]{
     return dataArray.map((data) => TypeService.cast(data));
   }
 }
@@ -51,7 +51,7 @@ export class TypeServiceList extends Model{
     return {id, nombre, descripcion, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): TypeServiceList[]{
+  public static casts(dataArray: object[]): TypeServiceList[]{
     return dataArray.map((data) => TypeServiceList.cast(data));
   }
 }

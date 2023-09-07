@@ -32,7 +32,7 @@ export class Calendar extends Model{
     return {id, titulo, descripcion, color, fecha_inicio, fecha_final, hora_inicio, hora_final, is_seen, is_active};
   }
 
-  public static cats(dataArray: object[]): Calendar[]{
+  public static casts(dataArray: object[]): Calendar[]{
     return dataArray.map((data) => Calendar.cast(data));
   }
 }
@@ -69,7 +69,7 @@ export class CalendarList extends Model{
     return {id, titulo, descripcion, color, fecha_inicio, fecha_final, hora_inicio, hora_final, is_seen, is_active};
   }
 
-  public static cats(dataArray: object[]): CalendarList[]{
+  public static casts(dataArray: object[]): CalendarList[]{
     return dataArray.map((data) => CalendarList.cast(data));
   }
 }

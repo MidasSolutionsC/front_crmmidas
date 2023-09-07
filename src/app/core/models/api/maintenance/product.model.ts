@@ -24,7 +24,7 @@ export class Product extends Model{
     return {id, tipo_servicios_id, nombre, descripcion, precio, is_active};
   }
 
-  public static cats(dataArray: object[]): Product[]{
+  public static casts(dataArray: object[]): Product[]{
     return dataArray.map((data) => Product.cast(data));
   }
 }
@@ -61,7 +61,7 @@ export class ProductList extends Model{
     return {id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): ProductList[]{
+  public static casts(dataArray: object[]): ProductList[]{
     return dataArray.map((data) => ProductList.cast(data));
   }
 }

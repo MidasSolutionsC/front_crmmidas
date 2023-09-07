@@ -53,6 +53,14 @@ export class GroupService {
     }
   }
 
+  public getPagination(data: any): Observable<ResponseApi> {
+    const queryParams = new URLSearchParams();
+    queryParams.set('data', JSON.stringify(data));
+    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
+
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
@@ -64,7 +72,7 @@ export class GroupService {
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/${id}`;
+    const endpoint = `${this.baseUrl}/update/${id}`;
     return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 

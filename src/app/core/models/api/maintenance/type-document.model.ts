@@ -20,7 +20,7 @@ export class TypeDocument extends Model{
     return {id, nombre, abreviacion, is_active};
   }
 
-  public static cats(dataArray: object[]): TypeDocument[]{
+  public static casts(dataArray: object[]): TypeDocument[]{
     return dataArray.map((data) => TypeDocument.cast(data));
   }
 }
@@ -51,7 +51,7 @@ export class TypeDocumentList extends Model{
     return {id, nombre, abreviacion, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): TypeDocumentList[]{
+  public static casts(dataArray: object[]): TypeDocumentList[]{
     return dataArray.map((data) => TypeDocumentList.cast(data));
   }
 }

@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, CountryList, ResponseApi, TypeDocumentList, TypeUserList, UserPerson, UserPersonList } from 'src/app/core/models';
+import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, CountryList, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPerson, UserPersonList } from 'src/app/core/models';
 import { ApiErrorFormattingService, CountryService, FormService, SweetAlertService, TypeDocumentService, TypeUserService, UserService } from 'src/app/core/services';
 
 @Component({
@@ -26,10 +26,20 @@ export class UserComponent {
   submitted: boolean = false;
   userForm: FormGroup;
 
+  // TABLE USUARIOS - SERVER SIDE
+  page: number = 1;
+  perPage: number = 5;
+  search: string = '';
+  column: string = '';
+  order: 'asc' | 'desc' = 'desc';
+  countElements: number[] = [5, 10, 25, 50, 100];
+  total: number = 0;
+  pagination: Pagination = new Pagination();
+
 
   // Table data
   // content?: any;
-  lists?: UserPersonList[];
+  lists?: UserPersonList[] = [];
 
   // Tipo documentos
   listDocuments?: TypeDocumentList[];
@@ -43,6 +53,7 @@ export class UserComponent {
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private modalService: BsModalService, 
     private _typeDocumentService: TypeDocumentService,
     private _countryService: CountryService,
@@ -59,24 +70,25 @@ export class UserComponent {
     this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Usuarios', active: true }]);
 
     this.initForm();
-    this.listDataApi();
+    // this.listDataApi();
     this.apiCountryList();
     this.apiTypeDocumentList();
     this.apiTypeUserList();
+    this.apiUserListPagination();
 
-    this.subscription.add(
-      this._userService.listObserver$
-      // .pipe(distinctUntilChanged())
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-        )
-      )
-      .subscribe((list: UserPersonList[]) => {
-        this.lists = list;
-      })
-    );
+    // Usuarios
+    // this.subscription.add(
+    //   this._userService.listObserver$
+    //   .pipe(
+    //     distinctUntilChanged(
+    //       (prevList, currentList) =>
+    //         prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+    //     )
+    //   )
+    //   .subscribe((list: UserPersonList[]) => {
+    //     this.lists = list;
+    //   })
+    // );
 
     // Tipo de documentos
     this.subscription.add(
@@ -162,6 +174,7 @@ export class UserComponent {
             this._userService.addObjectObserver(data);
           }
 
+          this.apiUserListPagination();
           this.modalRef?.hide();
         }
 
@@ -214,6 +227,7 @@ export class UserComponent {
           this._userService.updateObjectObserver(data);
         }
 
+        this.apiUserListPagination();
         this.modalRef?.hide();
       }
 
@@ -258,6 +272,7 @@ export class UserComponent {
       if(response.code == 200){
         const data: UserPersonList = UserPersonList.cast(response.data[0]);
         this._userService.removeObjectObserver(data.id);
+        this.apiUserListPagination();
       }
 
       if(response.code == 422){
@@ -278,6 +293,63 @@ export class UserComponent {
     });
   }
 
+
+  /**
+   * ***************************************************************
+   * SERVER SIDE - USERS
+   * ***************************************************************
+   */
+  apiUserListPagination(): void {
+    this.subscription.add(
+      this._userService.getPagination({
+        page: this.page.toString(),
+        perPage: this.perPage.toString(),
+        search: this.search,
+        column: this.column,
+        order: this.order
+      })
+      .pipe(debounceTime(250))
+      .subscribe((response: ResponsePagination) => {
+        if(response.code == 200){
+          this.pagination = Pagination.cast(response.data);
+          this.lists = response.data.data;
+          this.page = response.data.current_page;
+          this.total = response.data.total;
+        }
+        
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error: any) => {
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar usuarios', message: error.message, timer: 2500});
+        }
+      })
+    ); 
+  }
+
+  getPage(event: any){
+    const {page, itemsPerPage} = event;
+    this.page = page;
+    this.perPage = itemsPerPage;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiUserListPagination();
+    }, 0);
+  }
+
+  getPageRefresh(){
+    this.page = 1;
+    this.perPage = 10;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiUserListPagination();
+    }, 0);
+  }
 
   
   /**
@@ -440,7 +512,6 @@ export class UserComponent {
     this.submitted = false;
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
-    console.log(data);
     const userPerson = UserPerson.cast(data);
     this.userForm = this.formBuilder.group({
       ...this._formService.modelToFormGroupData(userPerson), 

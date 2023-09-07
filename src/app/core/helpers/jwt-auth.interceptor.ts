@@ -26,20 +26,16 @@ export class JwtAuthInterceptor implements HttpInterceptor {
       // Enviar ID del usuario
       if(request.body){
         let dataUser: any = localStorage.getItem('dataUser');
-        let user_create_id: any = 0;
+        let user_auth_id: any = 0;
         if(dataUser){
           dataUser = JSON.parse(dataUser);
-          user_create_id = dataUser.user.id;
+          user_auth_id = dataUser.user.id;
         }
   
         if(request.body instanceof FormData){
-          request.body.set('user_create_id', user_create_id);
-          request.body.set('user_update_id', user_create_id);
-          request.body.set('user_delete_id', user_create_id);
+          request.body.set('user_auth_id', user_auth_id);
         } else {
-          request.body['user_create_id'] = user_create_id;
-          request.body['user_update_id'] = user_create_id;
-          request.body['user_delete_id'] = user_create_id;
+          request.body['user_auth_id'] = user_auth_id;
         }
       }
 

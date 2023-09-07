@@ -20,7 +20,7 @@ export class TypeUser extends Model{
     return {id, nombre, descripcion, is_active};
   }
 
-  public static cats(dataArray: object[]): TypeUser[]{
+  public static casts(dataArray: object[]): TypeUser[]{
     return dataArray.map((data) => TypeUser.cast(data));
   }
 }
@@ -51,7 +51,7 @@ export class TypeUserList extends Model{
     return {id, nombre, descripcion, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): TypeUserList[]{
+  public static casts(dataArray: object[]): TypeUserList[]{
     return dataArray.map((data) => TypeUserList.cast(data));
   }
 }

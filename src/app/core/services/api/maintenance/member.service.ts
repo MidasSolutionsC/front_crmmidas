@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import { ResponseApi, User, UserPersonList } from '../../models';
-import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ConfigService } from '../config';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
+import { MemberList, ResponseApi } from 'src/app/core/models';
+import { ConfigService } from '../../config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class MemberService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<UserPersonList[]> = new BehaviorSubject<UserPersonList[]>([]);
-  public listObserver$: Observable<UserPersonList[]> = this.listSubject.asObservable();
+  private listSubject: BehaviorSubject<MemberList[]> = new BehaviorSubject<MemberList[]>([]);
+  public listObserver$: Observable<MemberList[]> = this.listSubject.asObservable();
   
   constructor(
     private http: HttpClient,
@@ -18,7 +18,7 @@ export class UserService {
   ) { 
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: UserPersonList[]) => {
+      .subscribe((list: MemberList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
@@ -27,7 +27,7 @@ export class UserService {
 
 
   private get baseUrl(){
-    return this.configService.apiUrl + 'user';
+    return this.configService.apiUrl + 'member';
   }
 
   private get requestOptions(){
@@ -53,17 +53,8 @@ export class UserService {
     }
   }
 
-  public getPagination(data: any): Observable<ResponseApi> {
-    const queryParams = new URLSearchParams();
-    queryParams.set('data', JSON.stringify(data));
-    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
-    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
-  }
-
-  public getServerSide(data: any): Observable<ResponseApi> {
-    const queryParams = new URLSearchParams();
-    queryParams.set('data', JSON.stringify(data));
-    const endpoint = `${this.baseUrl}/serverSide?${queryParams.toString()}`;
+  public getByGroup(groupId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterGroup/${groupId}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
@@ -97,23 +88,23 @@ export class UserService {
    * FUNCIONES PARA LOS OBSERVABLES
    */
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(userPersonList: UserPersonList) {
+  addObjectObserver(memberList: MemberList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(userPersonList);
+    currentData.push(memberList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(userPersonList: UserPersonList[]) {
-    this.listSubject.next(userPersonList);
+  addArrayObserver(memberList: MemberList[]) {
+    this.listSubject.next(memberList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(userPersonList: UserPersonList) {
+  updateObjectObserver(memberList: MemberList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === userPersonList.id);
+    const index = currentData.findIndex(item => item.id === memberList.id);
     if (index !== -1) {
-      currentData[index] = userPersonList;
+      currentData[index] = memberList;
       this.listSubject.next(currentData);
     }
   }
