@@ -30,6 +30,7 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { CoreModule } from '../core/core.module';
 import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { SaleComponent } from './sale/sale.component';
     TabsModule.forRoot(),
     TooltipModule.forRoot(),
     CollapseModule.forRoot(),
+    PaginationModule.forRoot(),
     SimplebarAngularModule,
     LightboxModule,
     PickerModule,

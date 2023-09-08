@@ -53,7 +53,13 @@ export class CallService {
       );
     }
   }
-
+  public getPagination(data: any): Observable<ResponseApi> {
+    const queryParams = new URLSearchParams();
+    queryParams.set('data', JSON.stringify(data));
+    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+  
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
@@ -65,8 +71,8 @@ export class CallService {
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/update/${id}`;
-    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+    const endpoint = `${this.baseUrl}/${id}`;
+    return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
   public delete(id: any): Observable<ResponseApi>{
