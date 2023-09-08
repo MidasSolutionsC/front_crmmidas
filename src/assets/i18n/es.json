@@ -393,6 +393,12 @@
         "default_option": "Seleccione un tipo..."
 
       },
+      "type_status": {
+        "label": "Tipo de estado",
+        "placeholder": "Ingrese el tipo de estado...",
+        "default_option": "Seleccione un tipo..."
+
+      },
       "document": {
         "label": "Documento",
         "placeholder": "Ingrese el documento..."
@@ -509,11 +515,28 @@
       },
       "operator": {
         "label": "Operador",
-        "placeholder": "Ingrese el operador..."
+        "placeholder": "Ingrese el operador...",
+        "default_option": "Seleccione un operador..."
       },
-      "user_create_id": {
-        "label": "Usuario que lo crea",
-        "placeholder": "Ingrese el id del usuario .."
+      "operator_call": {
+        "label": "Operador al que llamó",
+        "placeholder": "Ingrese el operador...",
+        "default_option": "Seleccione un operador..."
+      },
+      "typification": {
+        "label": "Tipificación",
+        "placeholder": "Ingrese la tipificación...",
+        "default_option": "Seleccione una tipificación..."
+      },
+      "permanence": {
+        "label": "Permanencia",
+        "placeholder": "Ingrese la permanencia...",
+        "default_option": "Seleccione la permanencia..."
+      },
+      "permanence_time": {
+        "label": "Tiempo de permanencia",
+        "placeholder": "Ingrese el tiempo...",
+        "default_option": "Seleccione el tiempo..."
       },
       "dni": {
         "label": "DNI",

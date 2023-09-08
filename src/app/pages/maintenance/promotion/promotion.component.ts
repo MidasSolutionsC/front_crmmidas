@@ -212,7 +212,7 @@ export class PromotionComponent implements OnInit, OnDestroy{
 
   /**
  * ***************************************************************
- * SERVER SIDE - USERS
+ * SERVER SIDE - PROMOCIÓN
  * ***************************************************************
  */
   apiPromotionListPagination(): void {

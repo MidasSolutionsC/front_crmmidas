@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import {  Breadcrumb, ResponseApi } from 'src/app/core/models';
+import {  Breadcrumb, Pagination, ResponseApi, ResponsePagination, TypeStatusList } from 'src/app/core/models';
 import { Call, CallList } from 'src/app/core/models/api/call.model';
-import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SweetAlertService, TypeStatusService } from 'src/app/core/services';
 import { CallService} from 'src/app/core/services/api/call.service';
 
 @Component({
@@ -29,21 +29,31 @@ export class CallComponent {
   submitted: boolean = false;
   callForm: FormGroup;
 
-  // Archivos subidos
-  uploadFiles: File[];
-
-  // Previsualizar foto subido
-  previewImage: any;
-
+    
+  // TABLE SERVER SIDE
+  page: number = 1;
+  perPage: number = 5;
+  search: string = '';
+  column: string = '';
+  order: 'asc' | 'desc' = 'desc';
+  countElements: number[] = [5, 10, 25, 50, 100];
+  total: number = 0;
+  pagination: Pagination = new Pagination();
 
   // Table data
   // content?: any;
   lists?: CallList[];
 
+  // Tipo de servicios;
+  listTypeStatus?: TypeStatusList[];
+
+
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private modalService: BsModalService,
+    private _typeStatusService: TypeStatusService,
     private _callService: CallService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -56,17 +66,29 @@ export class CallComponent {
 
     this.initForm();
     this.listDataApi();
+    // this.apiTypeStatusList();
+    this.apiTypeStatusList();
+    this.apiCallListPagination();
+
+    // this.subscription.add(
+    //   this._callService.listObserver$
+    //   .pipe(
+    //     distinctUntilChanged(
+    //       (prevList, currentList) =>
+    //         prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+    //     )
+    //   )
+    //   .subscribe((list: CallList[]) => {
+    //     this.lists = list;
+    //   })
+    // );
+
+    // Tipo de estados
     this.subscription.add(
-      this._callService.listObserver$
-      // .pipe(distinctUntilChanged())
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-        )
-      )
-      .subscribe((list: CallList[]) => {
-        this.lists = list;
+      this._typeStatusService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: TypeStatusList[]) => {
+        this.listTypeStatus = list;
       })
     );
   }
@@ -112,7 +134,7 @@ export class CallComponent {
             this._callService.addObjectObserver(data);
           }
 
-          this.uploadFiles = [];
+          this.apiCallListPagination();
           this.modalRef?.hide();
         }
 
@@ -142,7 +164,8 @@ export class CallComponent {
       if(response.code == 200){
         const data: CallList = CallList.cast(response.data[0]);
         this._callService.updateObjectObserver(data);
-        this.uploadFiles = [];
+
+        this.apiCallListPagination();
         this.modalRef?.hide();
       }
 
@@ -191,6 +214,88 @@ export class CallComponent {
     });
   }
 
+    /**
+   * ***************************************************************
+   * SERVER SIDE - PROMOCIÓN
+   * ***************************************************************
+   */
+  apiCallListPagination(): void {
+    this.subscription.add(
+      this._callService.getPagination({
+        page: this.page.toString(),
+        perPage: this.perPage.toString(),
+        search: this.search,
+        column: this.column,
+        order: this.order
+      })
+      .pipe(debounceTime(250))
+      .subscribe((response: ResponsePagination) => {
+        if(response.code == 200){
+          this.pagination = Pagination.cast(response.data);
+          this.lists = response.data.data;
+          this.page = response.data.current_page;
+          this.total = response.data.total;
+        }
+        
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error: any) => {
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar promociones', message: error.message, timer: 2500});
+        }
+      })
+    ); 
+  }
+
+  getPage(event: any){
+    const {page, itemsPerPage} = event;
+    this.page = page;
+    this.perPage = itemsPerPage;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiCallListPagination();
+    }, 0);
+  }
+
+  getPageRefresh(){
+    this.page = 1;
+    this.perPage = 10;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiCallListPagination();
+    }, 0);
+  }
+
+    
+  /**
+   * *******************************************************
+   * OPERACIONES DE TABLAS FORÁNEAS
+   * *******************************************************
+   */
+  // Tipo documento
+  public apiTypeStatusList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._typeStatusService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listTypeStatus = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
 
 
   /**
@@ -218,9 +323,17 @@ export class CallComponent {
   private getFormGroupData(model: Call): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      numero: ['', [Validators.required, Validators.maxLength(50)]],
-      operador: ['', [Validators.nullValidator, Validators.maxLength(550)]],
-      user_create_id: ['', [Validators.required, Validators.maxLength(1)]],
+      numero: ['', [Validators.required, Validators.maxLength(11)]],
+      operador: ['', [Validators.required, Validators.maxLength(30)]],
+      operador_llamo: ['', [Validators.nullValidator, Validators.maxLength(30)]],
+      tipificacion: ['', [Validators.nullValidator, Validators.maxLength(30)]],
+      nombres: ['', [Validators.nullValidator, Validators.maxLength(60)]],
+      apellido_paterno: ['', [Validators.nullValidator, Validators.maxLength(60)]],
+      apellido_materno: ['', [Validators.nullValidator, Validators.maxLength(60)]],
+      direccion: ['', [Validators.nullValidator, Validators.maxLength(250)]],
+      permanencia: [false, [Validators.nullValidator]],
+      permanencia_tiempo: ['', [Validators.nullValidator, Validators.maxLength(150)]],
+      tipo_estados_id: ['', [Validators.required, Validators.min(1)]],
       is_active: [1, [Validators.nullValidator]],
     }
   }
@@ -234,9 +347,7 @@ export class CallComponent {
     this.isNewData = true;
     this.dataModal.title = 'Crear Llamada';
     this.submitted = false;
-    this.previewImage = null;
-    this.uploadFiles = [];
-    this.modalRef = this.modalService.show(content, { class: 'modal-md modal-dialog-centered' });
+    this.modalRef = this.modalService.show(content, { class: 'modal-lg modal-dialog-centered' });
     this.modalRef.onHide.subscribe(() => {});
   }
 
@@ -252,27 +363,19 @@ export class CallComponent {
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: Call = this.callForm.value;
-      const formData = new FormData();
-
-      // Iterar a través de las propiedades de 'values' y agregarlas al FormData
-      for (const key of Object.keys(values)) {
-        formData.append(key, values[key]);
-      }
-
-
 
       if(this.isNewData){
         // Crear nuevo registro
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar La llamada?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la llamada?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.saveDataApi(formData);
+            this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar La llamada?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar la llamada?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.updateDataApi(formData, values.id);
+            this.updateDataApi(values, values.id);
           }
         });
       }
@@ -286,11 +389,10 @@ export class CallComponent {
  * @param content modal content
  */
   editDataGet(id: any, content: any) {
-    this.modalRef = this.modalService.show(content, { class: 'modal-md' });
+    this.openModal(content);
     this.dataModal.title = 'Editar Llamada';
     this.isNewData = false;
     this.submitted = false;
-    this.previewImage = '';
     // Cargando datos al formulario
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const call= Call.cast(data);
@@ -303,7 +405,7 @@ export class CallComponent {
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar La llamada?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la llamada?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }
