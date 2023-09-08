@@ -28,11 +28,15 @@ import { MaintenanceModule } from './maintenance/maintenance.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CalendarComponent } from './calendar/calendar.component';
 import { CoreModule } from '../core/core.module';
+import { CallComponent } from './call/call.component';
+import { SaleComponent } from './sale/sale.component';
 
 @NgModule({
   declarations: [
   
-    CalendarComponent
+    CalendarComponent,
+        CallComponent,
+        SaleComponent
   ],
   imports: [
     CommonModule,

@@ -502,6 +502,26 @@
         "placeholder": "Ingrese notas adicionales...",
         "default_option": "Seleccione una opción...",
         "default_check": "Marque esta casilla si es necesario"
+      },
+       "number": {
+        "label": "Numero",
+        "placeholder": "Ingrese el número.."
+      },
+      "operator": {
+        "label": "Operador",
+        "placeholder": "Ingrese el operador..."
+      },
+      "user_create_id": {
+        "label": "Usuario que lo crea",
+        "placeholder": "Ingrese el id del usuario .."
+      },
+      "dni": {
+        "label": "DNI",
+        "placeholder": "Ingrese el DNI.."
+      },
+      "client": {
+        "label": "Cliente",
+        "placeholder": "Ingrese el cliente.."
       }
     },
     "VALIDATION": {

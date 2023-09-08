@@ -1,0 +1,128 @@
+<div class="container-fluid">
+  <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body border-bottom">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
+            <div class="flex-shrink-0 d-flex gap-1">
+              <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
+              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body border-bottom">
+
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="call-list">
+              <thead>
+                <tr>
+                  <th scope="col">N°</th>
+                  <th scope="col">Número</th>
+                  <th scope="col">Operador</th>
+                  <th scope="col">Operador al que llamó</th>
+                  <th scope="col">Tipificación</th>
+                  <th scope="col">Nombres</th>
+                  <th scope="col">Apellido Paterno</th>
+                  <th scope="col">Apellido Materno</th>
+                  <th scope="col">Dirección</th>
+                  <th scope="col">¿Tiene permanencia?</th>
+                  <th scope="col">¿Cuánto le queda de permanencia?</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Hora</th>
+                  <th scope="col">Usuario id</th>
+                  <th scope="col">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of lists; let i = index">
+                  <th scope="row">{{i + 1}}</th>
+                  <td>{{data.numero}}</td>
+                  <td>{{data.operador}}</td>
+                  <td>{{data.operador_llamo}}</td>
+                  <td>{{data.tipificacion}}</td>
+                  <td>{{data.nombres}}</td>
+                  <td>{{data.apellido_paterno}}</td>
+                  <td>{{data.apellido_materno}}</td>
+                  <td>{{data.direccion}}</td>
+                  <td>{{data.permanencia}}</td>
+                  <td>{{data.permanecia_tiempo}}</td>
+                  <td>{{data.fecha}}</td>
+                  <td>{{data.hora}}</td>
+                  <td>{{data.user_create_id}}</td>
+                  <td>
+                    <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id, content)"><i class="mdi mdi-pencil-outline"></i></a>
+                      </li>
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FORMULARIO -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+  </div>
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="callForm" autocomplete="off">
+    <div class="modal-body">
+      <input type="hidden" name="id" value="" formControlName="id" />
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.number.label' | translate as translatedLabel;">
+        <label for="numero" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="numero" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.number.placeholder' | translate}}" formControlName="numero" [ngClass]="{ 'is-invalid': form['numero'].errors && (form.numero.dirty || form.numero.touched || submitted) }" />
+        <div *ngIf="form['numero'].errors && (form.numero.dirty || form.numero.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['numero'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.operator.label' | translate as translatedLabel;">
+        <label for="operador" class="form-label">{{translatedLabel}}</label>
+        <textarea id="operador" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.operator.placeholder' | translate}}" formControlName="operador" [ngClass]="{ 'is-invalid': form['operador'].errors && (form.operador.dirty || form.operador.touched || submitted)}"></textarea>
+        <div *ngIf="form.operador.errors && (form.operador.dirty || form.operador.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['operador'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.user_create_id.label' | translate as translatedLabel;">
+        <label for="user_create_id" class="form-label">{{translatedLabel}}</label>
+        <textarea id="user_create_id" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.user_create_id.placeholder' | translate}}" formControlName="user_create_id" [ngClass]="{ 'is-invalid': form['user_create_id'].errors && (form.user_create_id.dirty || form.user_create_id.touched || submitted)}"></textarea>
+        <div *ngIf="form.user_create_id.errors && (form.user_create_id.dirty || form.user_create_id.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['user_create_id'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!--End Modal -->
