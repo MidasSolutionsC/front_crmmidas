@@ -9,21 +9,63 @@
             <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
             <div class="flex-shrink-0 d-flex gap-1">
               <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
-              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+              <a href="javascript:void(0);" (click)="apiGroupListPagination();" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
             </div>
           </div>
         </div>
         <div class="card-body border-bottom">
+          <h4 class="card-title">Lista de grupos</h4>
+          <p class="card-sub-title">
+            Los datos cargados en esta tabla son dinámicos
+          </p>
+          <div class="row mb-md-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length" id="table-group-length"><label
+                class="d-inline-flex align-items-center">Mostrar
+                <select name="table-group-length" aria-controls="table-group-length" name="pageSize"
+                  [(ngModel)]="groupPerPage" class="form-control form-control-sm mx-2" (change)="apiGroupListPagination()">
+                  <option *ngFor="let count of groupCountElements;" [ngValue]="count">{{count}}</option>
+                </select> registros</label>
+              </div>
+            </div>
+            <!-- Search -->
+            <div class="col-sm-12 col-md-6">
+              <div id="group-table-filter" class="dataTables_filter text-md-end">
+                <label class="d-inline-flex align-items-center">Buscar:
+                  <input type="search" name="searchTermGroup" class="form-control form-control-sm ms-2"
+                    aria-controls="group-table-filter" [(ngModel)]="groupSearch" (input)="apiGroupListPagination()">
+                </label>
+              </div>
+            </div>
+            <!-- End search -->
+          </div>
 
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+            <div class="d-flex flex-row flex-wrap gap-1">
+              <!-- Add the ngx-export-as directive to the button or element -->
+              <!-- <button type="button" class="btn btn-info" ngx-export-as exportAs="csv">Export as CSV</button>
+              <button type="button" class="btn btn-info" ngx-export-as exportAs="xlsx">Export as Excel</button>
+              <button type="button" class="btn btn-info" ngx-export-as exportAs="pdf">Export as PDF</button> -->
+
+              <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'portrait')">PDF VERTICAL</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'landscape')">PDF HORIZONTAL</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('png')">PNG</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('csv')">CSV</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('xlsx')">Ms-Excel</button>
+              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('txt')">txt</button> -->
+              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('docx')">MS-Word</button> -->
+              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('json')">json</button> -->
+              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('xml')">xml</button> -->
+            </div>
+            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="tableGroup">
               <thead>
                 <tr>
                   <th scope="col">N°</th>
-                  <th scope="col">Nombre</th>
                   <th scope="col">Sede</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Descripción</th>
                   <th scope="col">Estado</th>
                   <th scope="col">Fecha creado</th>
                   <th scope="col">Fecha modificado</th>
@@ -33,13 +75,17 @@
               <tbody>
                 <tr *ngFor="let data of lists; let i = index">
                   <th scope="row">{{i + 1}}</th>
-                  <td>{{data.nombre}}</td>
                   <td>{{data.sedes_nombre}}</td>
+                  <td>{{data.nombre}}</td>
+                  <td>{{data.descripcion}}</td>
                   <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
                   <td>{{data.created_at}}</td>
                   <td>{{data.updated_at}}</td>
                   <td>
                     <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary" (click)="openModalDetailGroup(data)"><i class="bx bx-detail"></i></a>
+                      </li>
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
                         <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
                       </li>
@@ -49,8 +95,28 @@
                     </ul>
                   </td>
                 </tr>
+                <tr *ngIf="!lists.length"><td colspan="7" class="text-center">Sin registros.</td></tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- End table -->
+          <div class="row justify-content-md-between align-items-md-center mt-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_info mb-2" id="table-group-length" role="status" aria-live="polite">
+                Mostrando de 
+                <b>{{groupPagination.from}}</b> al
+                <b>{{groupPagination.to}}</b> de <b>{{groupPagination.total}}</b>
+                registros
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="col-sm-12 col-md-6">
+              <div class="text-md-right float-md-end pagination-rounded">
+                <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="groupTotal" [(ngModel)]="groupPage" [itemsPerPage]="groupPerPage" (pageChanged)="getPageGroup($event)"></pagination>
+              </div>
+            </div>
+            <!-- End Pagination -->
           </div>
         </div>
       </div>
@@ -65,8 +131,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
   </div>
   <div class="modal-body">
-    <ng-stepper #cdkStepper [linear]="true" class="wizard">
-  
+    <ng-stepper #cdkStepper [linear]="true" class="wizard" >  
       <cdk-step [stepControl]="groupForm" [optional]="false">
         <ng-template cdkStepLabel>
           <span class="number">1.</span>
@@ -89,9 +154,9 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-8 mb-3" *ngIf="'FORMS.FIELD_NAMES.title.label' | translate as translatedLabel;">
+              <div class="col-md-8 mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
                 <label for="nombre" class="form-label">{{translatedLabel}} *</label>
-                <input type="text" id="nombre" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.title.placeholder' | translate}}" formControlName="nombre" [ngClass]="{ 'is-invalid': f.nombre.errors && (f.nombre.dirty || f.nombre.touched || submitted) }" />
+                <input type="text" id="nombre" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre" [ngClass]="{ 'is-invalid': f.nombre.errors && (f.nombre.dirty || f.nombre.touched || submitted) }" />
                 <div *ngIf="f.nombre.errors && (f.nombre.dirty || f.nombre.touched || submitted)" class="invalid-feedback" align="left">
                   <div *ngIf="f.nombre.errors.required">
                     {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
@@ -125,7 +190,7 @@
       <cdk-step [stepControl]="userSearchForm" [optional]="true">
         <ng-template cdkStepLabel>
           <span class="number">2.</span>
-          <span>Integrantes</span>
+          <span>Usuarios</span>
         </ng-template>
         <section *ngIf="cdkStepper.selectedIndex === 1">
           <form (keydown.enter)="$event.preventDefault()" [formGroup]="userSearchForm" autocomplete="off">
@@ -191,17 +256,17 @@
                   <div class="dataTables_length" id="tickets-table_length"><label
                     class="d-inline-flex align-items-center">Mostrar
                     <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
-                      [(ngModel)]="perPage" class="form-control form-control-sm mx-2" (change)="getPageDataTable()">
+                      [(ngModel)]="perPage" class="form-control form-control-sm mx-2" (change)="apiUserListPagination()">
                       <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
-                    </select> elementos</label>
+                    </select> registros</label>
                   </div>
                 </div>
                 <!-- Search -->
                 <div class="col-sm-12 col-md-6">
                   <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
                       class="d-inline-flex align-items-center">Buscar:
-                      <input type="text" name="searchTerm" class="form-control form-control-sm ms-2"
-                        aria-controls="tickets-table" [(ngModel)]="search" (input)="getPageDataTable()"></label>
+                      <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
+                        aria-controls="tickets-table" [(ngModel)]="search" (input)="apiUserListPagination()"></label>
                   </div>
                 </div>
                 <!-- End search -->
@@ -228,16 +293,17 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let data of pagination.data; let i = index"  id="o_{{data.id}}">
+                    <tr *ngFor="let data of pagination.data; let i = index"  id="o_{{data.id}}" [ngClass]="{'table-success': getRowIsMember(data.id), 'table-active': getCheckedRowUser(data.id)}">
                       <td>
                         <div class="form-check font-size-16">
                           <input class="form-check-input" type="checkbox" id="transactionCheck{{data.id}}" value="{{data.id}}" 
                           [checked]="getCheckedRowUser(data.id)"
+                          [hidden]="getRowIsMember(data.id)"
                           (change)="toggleSelection(data)">
                           <label class="form-check-label" for="transactionCheck{{data.id}}"></label>
                         </div>
                       </td>
-                      <th scope="row">{{i + 1}}</th>
+                      <th scope="row">{{data.index}}</th>
                       <td>{{data.nombres}}</td>
                       <td>{{data.apellido_paterno}} {{data.apellido_materno}}</td>
                       <td>{{data.tipo_documentos_abreviacion}}</td>
@@ -245,27 +311,39 @@
                       <td>{{data.nombre_usuario}}</td>
                       <td>{{data.tipo_usuarios_nombre}}</td>
                     </tr>
+                    <tr *ngIf="!pagination.data.length" class="bg-danger"><td colspan="8" class="text-center">Sin registros.</td></tr>
                   </tbody>
                 </table>
               </div> 
 
               <!-- End table -->
               <div class="row justify-content-md-between align-items-md-center mt-2">
-                <div class="col-sm-12 col-md-5">
+                <div class="col-sm-12 col-md-6">
                   <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
                     Mostrando de 
                     <b>{{pagination.from}}</b> al
                     <b>{{pagination.to}}</b> de <b>{{pagination.total}}</b>
-                    elementos
+                    registros
                   </div>
                 </div>
                 <!-- Pagination -->
-                <div class="col-sm-12 col-md-5">
+                <div class="col-sm-12 col-md-6">
                   <div class="text-md-right float-md-end pagination-rounded">
-                    <pagination [(ngModel)]="page" previousText="Anterior" nextText="Siguiente">
-                    </pagination>
+                    <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="total" [(ngModel)]="page" [itemsPerPage]="perPage" (pageChanged)="getPage($event)"></pagination>
                   </div>
                 </div>
+
+                <div class="col-sm-12 col-md-6 text-end">
+                  <!-- <div class="spinner" [ngClass]="{ 'hidden': !loadingDataUsers }"></div> -->
+                  <!-- <pagination-controls 
+                    (pageChange)="getPage($event)" 
+                    [maxSize]="7" 
+                    [previousLabel]="'Anterior'"
+                    [nextLabel]="'Siguiente'"
+                    [directionLinks]="true" 
+                    [autoHide]="false" id="server">
+                  </pagination-controls> -->
+                </div> 
                 <!-- End Pagination -->
               </div>
             </div>
@@ -305,6 +383,19 @@
             </ngx-datatable>
             <pagination-controls (pageChange)="onPage($event)" [maxSize]="7" [directionLinks]="true" [autoHide]="false"></pagination-controls>
           </div> -->
+
+          
+          <!-- <ul class="meal-list">
+            <li *ngFor="let meal of asyncMeals | async | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+                {{ meal }}
+            </li>
+          </ul>
+
+          <div class="has-text-centered">
+            <div class="spinner" [ngClass]="{ 'hidden': !loading }"></div>
+            <pagination-controls (pageChange)="getPage($event)" id="server"></pagination-controls>
+          </div> -->
+
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
             <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
             <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext (click)="processingMemberGroup()" [disabled]="!listUserSelected.length">{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
@@ -318,18 +409,19 @@
           <span>Detalle del grupo</span>
         </ng-template>
         <section *ngIf="cdkStepper.selectedIndex === 2">
-          <div>
-            
-          </div>
           <div class="card">
             <div class="card-body">
+              <div class="mb-2 d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
+                <h5 class="card-title">Sede:</h5>
+                <span class="card-sub-title">{{nameSede}}</span>
+              </div>
               <div class="mb-2 d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
                 <h5 class="card-title">Nombre del grupo:</h5>
                 <span class="card-sub-title">{{f.nombre.value}}</span>
               </div>
               <div class="mb-2 d-flex flex-row flex-wrap gap-2 justify-content-start align-items-center">
                 <h5 class="card-title">Descripción:</h5>
-                <p class="card-sub-title">{{f.descripcion.value}}</p>
+                <span class="card-sub-title">{{f.descripcion.value}}</span>
               </div>
             </div>
             <div class="card-body">
@@ -349,10 +441,11 @@
                       <th scope="col">N° Doc.</th>
                       <th scope="col">Usuario</th>
                       <th scope="col">Tipo de usuario</th>
+                      <th scope="col">Opciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let data of listUserSelected; let i = index"  id="o_{{data.id}}">
+                    <tr *ngFor="let data of listMembers; let i = index">
                       <th scope="row">{{i + 1}}</th>
                       <td>{{data.nombres}}</td>
                       <td>{{data.apellido_paterno}} {{data.apellido_materno}}</td>
@@ -360,10 +453,110 @@
                       <td>{{data.documento}}</td>
                       <td>{{data.nombre_usuario}}</td>
                       <td>{{data.tipo_usuarios_nombre}}</td>
+                      <td>
+                        <ul class="list-unstyled hstack gap-1 mb-0">
+                          <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                            <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteMemberUser(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                          </li>
+                        </ul>
+                      </td>
                     </tr>
+
+                    <tr *ngFor="let data of listUserSelected; let i = index">
+                      <th scope="row">{{i + 1}}</th>
+                      <td>{{data.nombres}}</td>
+                      <td>{{data.apellido_paterno}} {{data.apellido_materno}}</td>
+                      <td>{{data.tipo_documentos_abreviacion}}</td>
+                      <td>{{data.documento}}</td>
+                      <td>{{data.nombre_usuario}}</td>
+                      <td>{{data.tipo_usuarios_nombre}}</td>
+                      <td>
+                        <ul class="list-unstyled hstack gap-1 mb-0">
+                          <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                            <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteUserSelected(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+
+                    <tr *ngIf="!listMembers.length && !listUserSelected.length"><td colspan="8" class="text-center">Sin registros.</td></tr>
                   </tbody>
                 </table>
               </div> 
+
+              <!-- ANGULAR - DATATABLE -->
+              <!-- <table datatable [dtOptions]="dtOptions" class="table align-middle dt-responsive nowrap w-100 table-check hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Foo</td>
+                    <td>Bar</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Someone</td>
+                    <td>Youknow</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Iamout</td>
+                    <td>Ofinspiration</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>Yoda</td>
+                    <td>Skywalker</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>Patrick</td>
+                    <td>Dupont</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>Barack</td>
+                    <td>Obama</td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td>François</td>
+                    <td>Holland</td>
+                  </tr>
+                  <tr>
+                    <td>8</td>
+                    <td>Michel</td>
+                    <td>Popo</td>
+                  </tr>
+                  <tr>
+                    <td>9</td>
+                    <td>Chuck</td>
+                    <td>Norris</td>
+                  </tr>
+                  <tr>
+                    <td>10</td>
+                    <td>Simon</td>
+                    <td>Robin</td>
+                  </tr>
+                  <tr>
+                    <td>11</td>
+                    <td>Louis</td>
+                    <td>Lin</td>
+                  </tr>
+                  <tr>
+                    <td>12</td>
+                    <td>Zelda</td>
+                    <td>Link</td>
+                  </tr>
+                </tbody>
+              </table>               -->
+            
             </div>
           </div>
   
@@ -412,3 +605,6 @@
   </div>
 </ng-template>
 <!--End Modal -->
+
+
+<!-- MODAL -->

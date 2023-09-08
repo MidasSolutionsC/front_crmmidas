@@ -38,7 +38,7 @@ export class Campus extends Model{
     return {id, paises_id, nombre, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active};
   }
 
-  public static cats(dataArray: object[]): Campus[]{
+  public static casts(dataArray: object[]): Campus[]{
     return dataArray.map((data) => Campus.cast(data));
   }
 }
@@ -86,7 +86,7 @@ export class CampusList extends Model{
     return {id, paises_id, nombre, paises_nombre, ubigeos_ciudad, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active};
   }
 
-  public static cats(dataArray: object[]): CampusList[]{
+  public static casts(dataArray: object[]): CampusList[]{
     return dataArray.map((data) => CampusList.cast(data));
   }
 }

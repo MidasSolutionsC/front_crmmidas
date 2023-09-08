@@ -33,7 +33,9 @@ import { CampusComponent } from './campus/campus.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
-
+import { ModalDetailComponent } from './group/modals/modal-detail/modal-detail.component';
+import { ExportAsModule } from 'ngx-export-as';
+import { DataTablesModule} from 'angular-datatables'
 
 @NgModule({
   declarations: [
@@ -50,6 +52,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     UserComponent,
     GroupComponent,
     CampusComponent,
+    ModalDetailComponent,
   ],
   imports: [
     CommonModule,
@@ -65,13 +68,15 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     NgxMaskDirective,
     NgxMaskPipe,
     NgSelectModule,
-    // NgxPaginationModule,
+    NgxPaginationModule,
     NgxDatatableModule,
     MaintenanceRoutingModule,
+    ExportAsModule,
     PaginationModule.forRoot(),
     ModalModule.forRoot(),
     BsDropdownModule.forRoot(),
-    CoreModule
+    CoreModule,
+    DataTablesModule
   ],
   providers: [BsDropdownConfig, provideNgxMask()]
 })

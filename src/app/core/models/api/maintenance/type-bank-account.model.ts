@@ -22,7 +22,7 @@ export class TypeBankAccount extends Model{
     return {id, nombre, abreviacion, descripcion, is_active};
   }
 
-  public static cats(dataArray: object[]): TypeBankAccount[]{
+  public static casts(dataArray: object[]): TypeBankAccount[]{
     return dataArray.map((data) => TypeBankAccount.cast(data));
   }
 }
@@ -55,7 +55,7 @@ export class TypeBankAccountList extends Model{
     return {id, nombre, abreviacion, descripcion, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): TypeBankAccountList[]{
+  public static casts(dataArray: object[]): TypeBankAccountList[]{
     return dataArray.map((data) => TypeBankAccountList.cast(data));
   }
 }

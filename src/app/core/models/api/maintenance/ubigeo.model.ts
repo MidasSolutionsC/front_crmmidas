@@ -20,7 +20,7 @@ export class Ubigeo extends Model{
     return {id, nombre, descripcion, is_active};
   }
   
-  public static cats(dataArray: object[]): Ubigeo[]{
+  public static casts(dataArray: object[]): Ubigeo[]{
     return dataArray.map((data) => Ubigeo.cast(data));
   }
 }
@@ -51,7 +51,7 @@ export class UbigeoList extends Model{
     return {ubigeo, dpto, prov, distrito, ubigeo2, orden, ciudad };
   }
 
-  public static cats(dataArray: object[]): UbigeoList[]{
+  public static casts(dataArray: object[]): UbigeoList[]{
     return dataArray.map((data) => UbigeoList.cast(data));
   }
 }

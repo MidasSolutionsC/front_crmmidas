@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { Breadcrumb, Calendar, CalendarList, ResponseApi } from 'src/app/core/models';
 
 import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, EventInput, EventSourceFuncArg, EventSourceInput, EventDropArg } from '@fullcalendar/core';
@@ -9,7 +9,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription, distinctUntilChanged, of } from 'rxjs';
 import { ApiErrorFormattingService, CalendarService, FormService, SweetAlertService } from 'src/app/core/services';
 import * as moment from 'moment'
 import { FullCalendarComponent } from '@fullcalendar/angular';
@@ -23,6 +23,7 @@ import { FullCalendarComponent } from '@fullcalendar/angular';
 export class CalendarComponent implements OnInit, OnDestroy {
   modalRef?: BsModalRef;
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
+  @ViewChild('calendar') calendarComponent: FullCalendarComponent;
 
   dataModal = {
     title: 'Crear tipo de servicios',
@@ -32,12 +33,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
   titleBreadCrumb: string = 'Calendario';
   breadCrumbItems: Array<{}>;
 
-  // Calendar
-  @ViewChild('calendar', { static: true }) calendar: FullCalendarComponent; // Asegúrate de importar FullCalendarComponent desde 'ng-fullcalendar'
-
   categories: any[];
   calendarEvents: EventInput[] = [];
   calendarEventSource: any[] = [];
+  eventsPromise: Promise<EventInput>;
+  
   newEventDate: DateClickArg;
 
   // Datos iniciales del calendario
@@ -89,8 +89,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       hour12: true
     },
   };
-
-
     
   // Form 
   isNewData: boolean = true;
@@ -122,12 +120,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this._calendarService.listObserver$
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-        )
-      )
+      // .pipe(distinctUntilChanged())
       .subscribe((list: CalendarList[]) => {
         this.lists = list;
         if(this.lists){
@@ -141,7 +134,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
             return data;
           });
 
-          this.calendarOptions.events = this.calendarEventSource;
+          this.eventsPromise = Promise.resolve(this.calendarEventSource);
+          // this.calendarOptions.events = this.calendarEventSource;
         }
       })
     );
@@ -159,6 +153,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * FULL CALENDAR EVENTS
    * ****************************************************************
    */
+  showMonthEvents() {
+    // Este método muestra los eventos de un mes dado
+    const calendarApi = this.calendarComponent.getApi();
+    const view = calendarApi.view; // Obtener la vista actual
+    console.log("VISTA ACTUAL:",view);
+    // const start = view.start; // Obtener el inicio del intervalo visible
+    // const end = view.end; // Obtener el fin del intervalo visible
+    // console.log(start.format('YYYY-MM-DD')); // Mostrar el inicio en formato año-mes-día
+    // console.log(end.format('YYYY-MM-DD')); // Mostrar el fin en formato año-mes-día
+    // Aquí puedes aplicar los filtros a la API usando start y end
+  }
+  
    
   /**
    * Event click modal show
@@ -221,6 +227,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * @param events events
    */
   handleEvents(events: EventApi[]) {
+    // console.log("Events:", events)
     // this.currentEvents = events;  
     // console.log("HANDLE EMIT:",events)
   }
@@ -264,36 +271,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     ];
 
     // Calender Event Data
-    this.calendarEvents = [
-      {
-        id: createEventId(),
-        title: 'Meeting',
-        start: new Date().setDate(new Date().getDate() + 1),
-        end: new Date().setDate(new Date().getDate() + 2),
-        className: 'bg-warning text-white',
-      },
-      {
-        id: createEventId(),
-        title: 'Lunch',
-        start: new Date(),
-        end: new Date(),
-        className: 'bg-success text-white',
-      },
-      {
-        id: createEventId(),
-        title: 'Birthday - party',
-        start: new Date().setDate(new Date().getDate() + 8),
-        className: 'bg-info text-white',
-      },
-      {
-        id: createEventId(),
-        title: 'Long Event',
-        start: new Date().setDate(new Date().getDate() + 7),
-        end: new Date().setDate(new Date().getDate() + 8),
-        className: 'bg-primary text-white'
-      }
-    ]
-    
+    this.calendarEvents = [];    
   }
 
 
@@ -487,7 +465,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la agenda?').then((confirm) => {
           if(confirm.isConfirmed){
             this.saveDataApi(values);
-
           }
         });
       } else {

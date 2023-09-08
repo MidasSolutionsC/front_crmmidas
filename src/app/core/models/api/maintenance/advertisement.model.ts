@@ -24,7 +24,7 @@ export class Advertisement extends Model{
     return {id, titulo, descripcion, tipo, imagen, is_active};
   }
 
-  public static cats(dataArray: object[]): Advertisement[]{
+  public static casts(dataArray: object[]): Advertisement[]{
     return dataArray.map((data) => Advertisement.cast(data));
   }
 }
@@ -67,7 +67,7 @@ export class AdvertisementList extends Model{
     return {id, titulo, descripcion, tipo, tipo_text, imagen, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): AdvertisementList[]{
+  public static casts(dataArray: object[]): AdvertisementList[]{
     return dataArray.map((data) => AdvertisementList.cast(data));
   }
 }

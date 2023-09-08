@@ -48,6 +48,7 @@ export class CountryComponent implements OnInit, OnDestroy{
 
     this.initForm();
     this.listDataApi();
+    
     this.subscription.add(
       this._countryService.listObserver$
       // .pipe(distinctUntilChanged())

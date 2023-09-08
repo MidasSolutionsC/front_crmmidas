@@ -36,7 +36,7 @@ export class Promotion extends Model{
     return {id, tipo_servicios_id, nombre, descripcion, tipo_descuento, descuento, fecha_inicio, fecha_fin, codigo, cantidad_minima, cantidad_maxima, is_active};
   }
 
-  public static cats(dataArray: object[]): Promotion[]{
+  public static casts(dataArray: object[]): Promotion[]{
     return dataArray.map((data) => Promotion.cast(data));
   }
 }
@@ -85,7 +85,7 @@ export class PromotionList extends Model{
     return {id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, tipo_descuento, descuento, fecha_inicio, fecha_fin, codigo, cantidad_minima, cantidad_maxima, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): PromotionList[]{
+  public static casts(dataArray: object[]): PromotionList[]{
     return dataArray.map((data) => PromotionList.cast(data));
   }
 }

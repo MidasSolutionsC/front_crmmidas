@@ -24,7 +24,7 @@ export class Group extends Model{
     return {id, sedes_id, nombre, descripcion, integrantes, is_active};
   }
 
-  public static cats(dataArray: object[]): Group[]{
+  public static casts(dataArray: object[]): Group[]{
     return dataArray.map((data) => Group.cast(data));
   }
 }
@@ -34,6 +34,11 @@ export class GroupList extends Model{
   public nombre: string;
   public sedes_nombre: string;
   public descripcion: string;
+  public usuarios_create_nombre_usuario: string;
+  public usuarios_update_nombre_usuario: string;
+  public personas_create_nombres: string;
+  public personas_create_apellido_paterno: string;
+  public personas_create_apellido_materno: string;
   public is_active: boolean;
   public user_create_id: number;
   public user_update_id: number;
@@ -48,6 +53,11 @@ export class GroupList extends Model{
     this.sedes_nombre = this.sedes_nombre || '';
     this.nombre = this.nombre || '';
     this.descripcion = this.descripcion || '';
+    this.usuarios_create_nombre_usuario = this.usuarios_create_nombre_usuario || '';
+    this.usuarios_update_nombre_usuario = this.usuarios_update_nombre_usuario || '';
+    this.personas_create_nombres = this.personas_create_nombres || '';
+    this.personas_create_apellido_paterno = this.personas_create_apellido_paterno || '';
+    this.personas_create_apellido_materno = this.personas_create_apellido_materno || '';
     this.is_active = this.is_active || false;
     this.user_create_id = this.user_create_id || 0;
     this.user_update_id = this.user_update_id || 0;
@@ -59,11 +69,44 @@ export class GroupList extends Model{
 
   public static cast(data: object): GroupList{
     const groupList = new GroupList(data);
-    const { id,sedes_nombre, nombre, descripcion, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at } = groupList;
-    return {id,sedes_nombre, nombre, descripcion, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at};
+    const { 
+      id,
+      sedes_nombre, 
+      nombre, 
+      descripcion,
+      usuarios_create_nombre_usuario, 
+      usuarios_update_nombre_usuario, 
+      personas_create_nombres, 
+      personas_create_apellido_paterno, 
+      personas_create_apellido_materno, 
+      is_active, 
+      user_create_id, 
+      user_update_id, 
+      user_delete_id, 
+      created_at, 
+      updated_at, 
+      deleted_at 
+    } = groupList;
+
+    return {
+      id,
+      sedes_nombre, 
+      nombre, 
+      descripcion,
+      usuarios_create_nombre_usuario, 
+      usuarios_update_nombre_usuario,
+      personas_create_nombres, 
+      personas_create_apellido_paterno, 
+      personas_create_apellido_materno, 
+      is_active, user_create_id,
+      user_update_id, 
+      user_delete_id, 
+      created_at, 
+      updated_at, 
+      deleted_at};
   }
 
-  public static cats(dataArray: object[]): GroupList[]{
+  public static casts(dataArray: object[]): GroupList[]{
     return dataArray.map((data) => GroupList.cast(data));
   }
 }

@@ -74,7 +74,7 @@ export class UserPersonSignup extends Model{
     return {id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_documentos_id, documento, nombre_usuario, clave};
   }
 
-  public static cats(dataArray: object[]): UserPersonSignup[]{
+  public static casts(dataArray: object[]): UserPersonSignup[]{
     return dataArray.map((data) => UserPersonSignup.cast(data));
   }
 }
@@ -112,7 +112,7 @@ export class UserPerson extends Model{
     return {id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_usuarios_id, tipo_documentos_id, documento, nombre_usuario, clave};
   }
 
-  public static cats(dataArray: object[]): UserPerson[]{
+  public static casts(dataArray: object[]): UserPerson[]{
     return dataArray.map((data) => UserPerson.cast(data));
   }
 }
@@ -120,6 +120,7 @@ export class UserPerson extends Model{
 
 export class UserPersonList extends Model{
   public id: number;
+  public index: number;
   public nombres: string;
   public apellido_paterno: string;
   public apellido_materno: string;
@@ -132,7 +133,6 @@ export class UserPersonList extends Model{
   public tipo_documentos_abreviacion: string;
   public documento: string;
   public nombre_usuario: string;
-  public clave: string;
   public is_active: boolean;
   public created_at: string;
   public updated_at: string;
@@ -142,6 +142,7 @@ export class UserPersonList extends Model{
   constructor(data?: object){
     super(data);
     this.id = this.id || 0;
+    this.index = this.index || 0;
     this.nombres = this.nombres || '';
     this.apellido_paterno = this.apellido_paterno || '';
     this.apellido_materno = this.apellido_materno || '';
@@ -153,8 +154,7 @@ export class UserPersonList extends Model{
     this.tipo_usuarios_nombre = this.tipo_usuarios_nombre || ''; 
     this.tipo_documentos_abreviacion = this.tipo_documentos_abreviacion || ''; 
     this.documento = this.documento || '';
-    this.nombre_usuario = this.nombre_usuario || '';
-    this.clave = this.clave || '';
+    this.nombre_usuario = this.nombre_usuario || '';;
     this.is_active = this.is_active || false;
     this.created_at = this.created_at || '';
     this.updated_at = this.updated_at || '';
@@ -163,11 +163,11 @@ export class UserPersonList extends Model{
 
   public static cast(data: object): UserPersonList{
     const userPersonList = new UserPersonList(data);
-    const {id, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, clave, is_active, created_at, updated_at, deleted_at} = userPersonList;
-    return {id, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, clave, is_active, created_at, updated_at, deleted_at};
+    const {id, index, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, created_at, updated_at, deleted_at} = userPersonList;
+    return {id, index, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, created_at, updated_at, deleted_at};
   }
 
-  public static cats(dataArray: object[]): UserPersonList[]{
+  public static casts(dataArray: object[]): UserPersonList[]{
     return dataArray.map((data) => UserPersonList.cast(data));
   }
 }

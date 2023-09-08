@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Manual, ManualList, ResponseApi } from 'src/app/core/models';
+import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, Manual, ManualList, Pagination, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
 import { ManualService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
@@ -28,17 +28,28 @@ export class ManualComponent {
   submitted: boolean = false;
   manualForm: FormGroup;
 
+  // TABLE SERVER SIDE
+  page: number = 1;
+  perPage: number = 5;
+  search: string = '';
+  column: string = '';
+  order: 'asc' | 'desc' = 'desc';
+  countElements: number[] = [5, 10, 25, 50, 100];
+  total: number = 0;
+  pagination: Pagination = new Pagination();
+
   // Archivos subidos
   uploadFiles: File[];
 
 
   // Table data
   // content?: any;
-  lists?: ManualList[];
+  lists?: ManualList[] = [];
   
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private modalService: BsModalService, 
     private _manualService: ManualService,
     private _formService: FormService,
@@ -53,19 +64,20 @@ export class ManualComponent {
 
     this.initForm();
     this.listDataApi();
-    this.subscription.add(
-      this._manualService.listObserver$
-      // .pipe(distinctUntilChanged())
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-        )
-      )
-      .subscribe((list: ManualList[]) => {
-        this.lists = list;
-      })
-    );
+    this.apiManualListPagination();
+
+    // this.subscription.add(
+    //   this._manualService.listObserver$
+    //   .pipe(
+    //     distinctUntilChanged(
+    //       (prevList, currentList) =>
+    //         prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+    //     )
+    //   )
+    //   .subscribe((list: ManualList[]) => {
+    //     this.lists = list;
+    //   })
+    // );
   }
   
   ngOnDestroy(): void {
@@ -107,6 +119,7 @@ export class ManualComponent {
             this._manualService.addObjectObserver(data);
           }
 
+          this.apiManualListPagination();
           this.modalRef?.hide();
         }
 
@@ -136,6 +149,8 @@ export class ManualComponent {
       if(response.code == 200){
         const data: ManualList = ManualList.cast(response.data[0]);
         this._manualService.updateObjectObserver(data);
+
+        this.apiManualListPagination();
         this.modalRef?.hide();
       }
 
@@ -164,6 +179,7 @@ export class ManualComponent {
       if(response.code == 200){
         const data: ManualList = ManualList.cast(response.data[0]);
         this._manualService.removeObjectObserver(data.id);
+        this.apiManualListPagination();
       }
 
       if(response.code == 422){
@@ -184,6 +200,63 @@ export class ManualComponent {
     });
   }
 
+  /**
+ * ***************************************************************
+ * SERVER SIDE - USERS
+ * ***************************************************************
+ */
+  apiManualListPagination(): void {
+    this.subscription.add(
+      this._manualService.getPagination({
+        page: this.page.toString(),
+        perPage: this.perPage.toString(),
+        search: this.search,
+        column: this.column,
+        order: this.order
+      })
+      .pipe(debounceTime(250))
+      .subscribe((response: ResponsePagination) => {
+        if(response.code == 200){
+          this.pagination = Pagination.cast(response.data);
+          this.lists = response.data.data;
+          this.page = response.data.current_page;
+          this.total = response.data.total;
+        }
+        
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error: any) => {
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar manuales', message: error.message, timer: 2500});
+        }
+      })
+    ); 
+  }
+
+  getPage(event: any){
+    const {page, itemsPerPage} = event;
+    this.page = page;
+    this.perPage = itemsPerPage;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiManualListPagination();
+    }, 0);
+  }
+
+  getPageRefresh(){
+    this.page = 1;
+    this.perPage = 10;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiManualListPagination();
+    }, 0);
+  }
+  
 
 
   /**

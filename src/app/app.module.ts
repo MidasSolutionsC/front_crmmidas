@@ -23,6 +23,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { CoreModule } from './core/core.module';
 import { JwtAuthInterceptor } from './core/helpers';
 
+import { DataTablesModule} from 'angular-datatables'
+
 // if (environment.defaultauth === 'firebase') {
 //   initFirebaseBackend(environment.firebaseConfig);
 // } else {
@@ -58,6 +60,7 @@ export function createTranslateLoader(http: HttpClient): any {
     TooltipModule.forRoot(),
     ScrollToModule.forRoot(),
     ToastrModule.forRoot(),
+    DataTablesModule
   ],
   bootstrap: [AppComponent],
   providers: [

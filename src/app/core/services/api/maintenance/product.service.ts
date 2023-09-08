@@ -54,6 +54,13 @@ export class ProductService {
     }
   }
 
+  public getPagination(data: any): Observable<ResponseApi> {
+    const queryParams = new URLSearchParams();
+    queryParams.set('data', JSON.stringify(data));
+    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))

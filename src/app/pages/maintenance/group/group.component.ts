@@ -1,15 +1,17 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CdkStepper } from '@angular/cdk/stepper';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, CampusList, CountryList, Group, GroupList, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPersonList } from 'src/app/core/models';
-import { ApiErrorFormattingService, CampusService, CountryService, FormService, GroupService, SweetAlertService, TypeDocumentService, TypeUserService, UserService } from 'src/app/core/services';
+import { Observable, Subscription, debounceTime, distinctUntilChanged, of } from 'rxjs';
+import { Breadcrumb, CampusList, CountryList, Group, GroupList, MemberList, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPersonList } from 'src/app/core/models';
+import { ApiErrorFormattingService, CampusService, CountryService, FormService, GroupService, MemberService, SweetAlertService, TypeDocumentService, TypeUserService, UserService } from 'src/app/core/services';
+import { ModalDetailComponent } from './modals/modal-detail/modal-detail.component';
+import { ExportAsService, ExportAsConfig, SupportedExtensions } from 'ngx-export-as';
 
 @Component({
   selector: 'app-group',
   templateUrl: './group.component.html',
-  styleUrls: ['./group.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./group.component.scss']
 })
 export class GroupComponent {
   public get modalService(): BsModalService {
@@ -18,6 +20,7 @@ export class GroupComponent {
   public set modalService(value: BsModalService) {
     this._modalService = value;
   }
+
   modalRef?: BsModalRef;
 
   dataModal = {
@@ -36,10 +39,41 @@ export class GroupComponent {
   // Formulario para buscar usuarios
   userSearchForm: FormGroup;
 
-
   // Table data
   // content?: any;
-  lists?: GroupList[];
+  lists?: GroupList[] = [];
+
+
+  // EXPORTS DATA TABLE
+  exportAsConfig: ExportAsConfig = {
+    type: 'pdf', // the type you want to download
+    elementIdOrContent: 'tableGroup', // the id of html/table element
+  }
+
+  config: ExportAsConfig = {
+    type: 'pdf',
+    elementIdOrContent: 'tableGroup',
+    options: {
+      jsPDF: {
+        orientation: 'landscape'
+      },
+      pdfCallbackFn: this.pdfCallbackFn // to add header and footer
+    }
+  };
+
+  // SERVER SIDE - GROUP
+  groupPage: number = 1;
+  groupPerPage: number = 5;
+  groupSearch: string = '';
+  groupColumn: string = '';
+  groupOrder: 'asc' | 'desc' = 'desc';
+  groupCountElements: number[] = [2, 5, 10, 25, 50, 100];
+  groupTotal: number = 0;
+  groupPagination: Pagination = new Pagination();
+
+  // Integrantes
+  listMembers: MemberList[] = [];
+  listMemberIdDeleted: number[] = [];
 
   // Sedes
   listDocuments?: TypeDocumentList[];
@@ -47,24 +81,31 @@ export class GroupComponent {
 
 
   // Listar usuarios
+  loadingDataUsers: boolean = false;
+  asyncUsers: Observable<UserPersonList[]>;
   listUsers?: UserPersonList[];
   listUserSelected?: UserPersonList[] = [];
   listUserSelectedId?: any[] = [];
 
-  // PAGINATION
-  countTableUser: number;
-  pageTableUser: number = 1;
-  limitTableUser: number = 10;
+  // USUARIO - NGX DATA TABLE
+  userRows: any[] = [];
+  // userColumns: any[] = [];
+  userOffset: number = 0;
+  userCount: number = 3;
+  userLimit = 10;
+  userColumns = [
+    { prop: 'nombre_usuario', name: 'Usuario' },
+    { prop: 'nombres', name: 'Nombres' },
+    { prop: 'apellido_paterno', name: 'Apellido paterno' },
+    { prop: 'apellido_materno', name: 'Apellido materno' }
+  ];
 
-  // DATA TABLE
-  rows: UserPersonList[];
-  columns: any[];
-  count: number;
-  offset: number = 0;
-  limit: number = 2;
-  loadingIndicator: boolean = true;
-  rorderable: boolean = true;
-  sorts: any[] = [];
+
+  // TABLE USER - ANGULAR DATA TABLE
+  dtOptions: any = {};
+  dtColumns: DataTables.ColumnSettings[] = [];
+
+
 
   // TABLE USUARIOS - SERVER SIDE
   page: number = 1;
@@ -73,18 +114,21 @@ export class GroupComponent {
   column: string = '';
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [2, 5, 10, 25, 50, 100];
-  total: number = 3;
+  total: number = 0;
   pagination: Pagination;
 
-  // CHECKED USERS
+  // CHECKED USERS - SELECCIÓN DE USUARIOS EN LA TABLA
   selectAll: boolean = false;
   
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private exportAsService: ExportAsService,
+    private cdr: ChangeDetectorRef,
     private _modalService: BsModalService, 
     private _typeDocumentService: TypeDocumentService,
     private _campusService: CampusService,
+    private _memberService: MemberService,
     private _userService: UserService,
     private _groupService: GroupService,
     private _formService: FormService,
@@ -102,34 +146,59 @@ export class GroupComponent {
     this.initFormUserSearch();
 
     // Lista de datos
-    this.listDataApi();
+    // this.listDataApi();
 
     this.apiTypeDocumentList();
     this.apiCampusList();
 
 
     // PAGINACIÓN DATA TABLE
-    this.columns = [
-      {name: 'id', prop: 'id'},
-      {name: 'usuario', prop: 'nombre_usuario'},
-      {name: 'nombres', prop: 'personas_nombres'},
-      {name: 'apellidos', prop: 'personas_apellido_paterno'},
-    ];
-    this.getPageDataTable();
+    this.apiGroupListPagination();
+    this.apiUserListPagination();
 
-    this.subscription.add(
-      this._groupService.listObserver$
-      // .pipe(distinctUntilChanged())
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-        )
-      )
-      .subscribe((list: GroupList[]) => {
-        this.lists = list;
-      })
-    );
+    // CONFIG - ANGULAR DATATABLE
+    this.dtOptions = {
+      pagingType: 'full_numbers',
+      pageLength: 10,
+      responsive: true,
+      // dom: 'Bfrtip',
+      // dom: 'lBfrtip',
+      // dom: 'lftiprB',
+      dom: '<"top d-flex flex-wrap justify-content-sm-between justify-content-center"lf>Brt<"bottom d-flex flex-wrap justify-content-sm-between justify-content-center"ip><"clear">',
+      language: {
+        url: 'assets/languages/dataTable/spanish.json'
+      },
+      buttons: [
+        // 'columnsToggle',
+        'colvis',
+        'copy',
+        'print',
+        'excel',
+        {
+          text: 'PDF',
+          key: '1',
+          action: function (e: any, dt: any, node: any, config: any) {
+            console.log(dt, node)
+          }
+        }
+      ],
+      noJquery: true,
+    };
+
+    // Grupos
+    // this.subscription.add(
+    //   this._groupService.listObserver$
+    //   // .pipe(distinctUntilChanged())
+    //   .pipe(
+    //     distinctUntilChanged(
+    //       (prevList, currentList) =>
+    //         prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+    //     )
+    //   )
+    //   .subscribe((list: GroupList[]) => {
+    //     this.lists = list;
+    //   })
+    // );
 
     // Tipo de documentos
     this.subscription.add(
@@ -148,7 +217,6 @@ export class GroupComponent {
     // Sedes
     this.subscription.add(
       this._campusService.listObserver$
-      .pipe(distinctUntilChanged())
       .pipe(
         distinctUntilChanged((prevList, currentList) =>
             prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
@@ -159,11 +227,65 @@ export class GroupComponent {
       })
     );
 
-
   }
   
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+
+  /**
+   * ****************************************************************
+   * GENERAR EXPORTACIONES DE DATOS - TABLE
+   * ****************************************************************
+   */
+  exportAsString(type: SupportedExtensions, opt?: string) {
+    this.config.elementIdOrContent = '<div> test string </div>';
+    this.exportAs(type, opt);
+    setTimeout(() => {
+      this.config.elementIdOrContent = 'tableGroup';
+    }, 1000);
+  }
+
+  exportAs(type: SupportedExtensions, opt?: string) {
+    this.config.type = type;
+    if (opt) {
+      this.config.options.jsPDF.orientation = opt;
+      // this.config.options.jsPDF.orientation = 'portrait';
+      this.config.options.jsPDF.unit = 'mm';
+      this.config.options.jsPDF.format = 'a4';
+      this.config.options.jsPDF.compress = true;
+      this.config.options.jsPDF.scale = 3;
+      this.config.options.jsPDF.fonts = [
+        {
+          family: 'Arial',
+          style: 'normal',
+          src: 'path/to/arial.ttf' // Ruta a la fuente TrueType (ttf) incrustada
+        }
+      ];
+    }
+    this.exportAsService.save(this.config, 'grupos').subscribe(() => {
+      // save started
+    });
+    
+    // this.exportAsService.get(this.config).subscribe(content => {
+    //   const link = document.createElement('a');
+    //   const fileName = 'export.pdf';
+
+    //   link.href = content;
+    //   link.download = fileName;
+    //   link.click();
+    //   console.log(content);
+    // });
+  }
+  
+  pdfCallbackFn (pdf: any) {
+    // example to add page number as footer to every page of pdf
+    const noOfPages = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= noOfPages; i++) {
+      pdf.setPage(i);
+      pdf.text('Pagina ' + i + ' de ' + noOfPages, pdf.internal.pageSize.getWidth() - 50, pdf.internal.pageSize.getHeight() - 10);
+    }
   }
 
   /**
@@ -186,7 +308,9 @@ export class GroupComponent {
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      console.log(error);
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error', message: error.message, timer: 2500});
+      }
     });
   }
 
@@ -203,6 +327,7 @@ export class GroupComponent {
             this._groupService.addObjectObserver(data);
           }
 
+          this.apiGroupListPagination();
           this.modalRef?.hide();
         }
 
@@ -235,9 +360,7 @@ export class GroupComponent {
       }, (error) => {
         this._sweetAlertService.stop();
         if(error?.error){
-          console.log(error);
           this._sweetAlertService.showTopEnd({type: 'error', title: 'Error', message: error?.error?.message});
-
         }
       })
     )
@@ -255,6 +378,7 @@ export class GroupComponent {
           this._groupService.updateObjectObserver(data);
         }
 
+        this.apiGroupListPagination();
         this.modalRef?.hide();
       }
 
@@ -286,9 +410,11 @@ export class GroupComponent {
           this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
         }
       }
-    }, (error: ResponseApi) => {
+    }, (error: any) => {
       this._sweetAlertService.stop();
-      console.log(error);
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al actualizar grupo', message: error.message, timer: 2500});
+      }
     });
   }
 
@@ -299,6 +425,7 @@ export class GroupComponent {
       if(response.code == 200){
         const data: GroupList = GroupList.cast(response.data[0]);
         this._groupService.removeObjectObserver(data.id);
+        this.apiGroupListPagination();
       }
 
       if(response.code == 422){
@@ -315,14 +442,64 @@ export class GroupComponent {
       }
     }, (error: ResponseApi) => {
       this._sweetAlertService.stop();
-      console.log(error);
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al eliminar grupo', message: error.message, timer: 2500});
+      }
     });
+  }
+
+
+  /**
+   * ****************************************************************
+   * SERVER SIDE - GRUPOS
+   * ****************************************************************
+   */
+  // DATA TABLE
+  apiGroupListPagination(): void {
+    this.subscription.add(
+      this._groupService.getPagination({
+        page: this.groupPage.toString(),
+        perPage: this.groupPerPage.toString(),
+        search: this.groupSearch,
+        column: this.groupColumn,
+        order: this.groupOrder
+      }).pipe(debounceTime(250)).subscribe((response: ResponsePagination) => {
+        if(response.code == 200){
+          this.groupPagination = Pagination.cast(response.data);
+          this.groupPage = response.data.current_page;
+          this.groupTotal = response.data.total;
+          this.lists = this.groupPagination.data;
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error: any) => {
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar grupos', message: error.message, timer: 2500});
+        }
+      })
+    ); 
+  }
+
+  getPageGroup(event: any){
+    const {page, itemsPerPage} = event;
+    this.groupPage = page;
+    this.groupPerPage = itemsPerPage;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.apiGroupListPagination();
+    }, 0);
   }
 
 
   
   /**
+   * ****************************************************************
    * OPERACIONES DE TABLAS FORÁNEAS
+   * ****************************************************************
    */
   // Tipo documento
   public apiTypeDocumentList(forceRefresh: boolean = false){
@@ -339,8 +516,11 @@ export class GroupComponent {
         }
       }
     }, (error: any) => {
-      this._sweetAlertService.stop();
       console.log(error);
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar tipo de documentos', message: error.message, timer: 2500});
+      }
     });
   }
   
@@ -359,11 +539,36 @@ export class GroupComponent {
         }
       }
     }, (error: any) => {
-      this._sweetAlertService.stop();
       console.log(error);
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar sedes', message: error.message, timer: 2500});
+      }
     });
   }
   
+  // Obtener lista de integrantes
+  public apiMemberListByGroup(groupId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos de integrantes')
+    this._memberService.getByGroup(groupId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listMembers = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      console.log(error);
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar integrantes', message: error.message, timer: 2500});
+      }
+    });
+  }
 
 
   /**
@@ -371,57 +576,68 @@ export class GroupComponent {
    */
 
   // DATA TABLE
-  getPageDataTable(): void {
-    this.loadingIndicator = true;
-    this._userService.getServerSide({
-      page: this.page.toString(),
-      perPage: this.perPage.toString(),
-      search: this.search,
-      column: this.column,
-      order: this.order
-    }).subscribe((response: ResponsePagination) => {
-      if(response.code == 200){
-        this.pagination = Pagination.cast(response.data);
-        this.page = response.data.current_page;
-        // this.listUsers = this.pagination.data;
-      }
-    }, (error: any) => {
-      console.log(error);
-    });
+  apiUserListPagination(): void {
+    this.subscription.add(
+      this._userService.getPagination({
+        page: this.page.toString(),
+        perPage: this.perPage.toString(),
+        search: this.search,
+        column: this.column,
+        order: this.order
+      }).pipe(debounceTime(250)).subscribe((response: ResponsePagination) => {
+        if(response.code == 200){
+          this.pagination = Pagination.cast(response.data);
+          this.asyncUsers = of(this.pagination.data);
+          this.page = response.data.current_page;
+          this.total = response.data.total;
+          // this.listUsers = this.pagination.data;
+
+          this.userRows = response.data.data;
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error: any) => {
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar usuarios', message: error.message, timer: 2500});
+        }
+      })
+    ); 
   }
 
-  // getPage(): void {
-  //   this._userService.getPagination({
-  //     params: {
-  //       offset: ((this.pageTableUser - 1) * this.limitTableUser).toString(),
-  //       limit: this.limitTableUser.toString()
-  //     }
-  //   }).subscribe((response: ResponseApi) => {
-  //     if(response.code == 200){
-  //       this.listUsers = response.data.data;
-  //       this.countTableUser = response.data.total;
-  //     }
-  //   });
-  // }
-  
+  getPage(event: any){
+    const {page, itemsPerPage} = event;
+    this.page = page;
+    this.perPage = itemsPerPage;
+    this.cdr.detectChanges();
 
-  // onPage(event: any): void {
-  //   this.offset = event.offset;
-  //   this.limit = event.limit;
-  //   this.getPageDataTable();
-  // }
+    setTimeout(() => {
+      this.apiUserListPagination();
+    }, 0);
+  }
 
-  // onSort(event: any): void {
-  //   this.sorts = event.sorts;
-  //   this.getPageDataTable();
-  // }
+
+  // EVENTOS DEL NGX DATA TABLE - USUARIO
+  onPageUser(event: any) {
+    this.userOffset = event.offset;
+  }
+
+  onActivateUser(event: any) {
+    console.log(event);
+  }
+
+  onSelectUser(event: any) {
+    console.log(event);
+  }
+
 
 
   /**
    * SELECCIÓN DE USUARIOS - INTEGRANTES DEL  GRUPO
    */
-
-
   
   /**
    * Seleccionar o quitar a todos os usuarios
@@ -432,6 +648,10 @@ export class GroupComponent {
     } else {
       this.listUserSelected = this.pagination.data.map((obj: any) => obj);
     }
+
+    setTimeout(() => {
+      this.processingMemberGroup();
+    }, 0);
   }
 
   /**
@@ -445,8 +665,20 @@ export class GroupComponent {
     } else {
       this.listUserSelected.splice(index, 1); // Quitar el ID si ya está en la lista
     }
+
+    setTimeout(() => {
+      this.processingMemberGroup();
+    }, 0);
   }
 
+  /**
+   * PROCESAR LOS INTEGRANTES SELECCIONADOS - CAPTURAR SOLO LOS ID
+   */
+  processingMemberGroup(){
+    this.listUserSelectedId = this.listUserSelected.map((data) => data.id);
+  }
+
+  
   /**
    * Verificar si el usuario se encuentra agregado en el array de usuarios seleccionados para agregar al grupo
    * @param id id del usuario
@@ -456,14 +688,61 @@ export class GroupComponent {
     return this.listUserSelected.some((item) => item.id === id);
   }
 
-
   /**
-   * PROCESAR LOS INTEGRANTES SELCCIONADOS
+   * Validar si el usuario ya es un miembro del grupo 
+   * @param id id del usuario
+   * @returns 
    */
-  processingMemberGroup(){
-    this.listUserSelectedId = this.listUserSelected.map((data) => data.id);
+  getRowIsMember(id: any){
+    return this.listMembers.some((item) => item.usuarios_id === id);
   }
 
+
+
+
+
+  /**
+   * ELIMINAR USUARIO - MIEMBRO DEL GRUPO
+   */
+  deleteMemberUser(memberId: number){
+    // Buscar en el array de nuevos integrantes
+    const member = this.listMembers.find((member) => member.id === memberId);
+
+    if(member){
+      this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar al integrante?').then((confirm) => {
+        if(confirm.isConfirmed){
+          this.listMemberIdDeleted.push(member.id);
+          this.listMembers = this.listMembers.filter((item) => item.id !== member.id);
+        }
+      });
+    }
+
+  }
+
+  /**
+   * ELIMINAR USUARIO - SELECCIONADO
+   */
+  deleteUserSelected(userId: number){
+    // Buscar en el array de nuevos integrantes
+    const userSelected = this.listUserSelected.find((item) => item.id == userId);
+
+    if(userSelected){
+      this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar al integrante?').then((confirm) => {
+        if(confirm.isConfirmed){
+          this.toggleSelection(userSelected);
+        }
+      });
+    }
+  }
+
+
+  /**
+   * OBTENER NOMBRE DEL SEDE SELECCIONADO
+   */
+  get nameSede(){
+    const campus = this.listCampus.find((item) => item.id === parseInt(this.f.sedes_id.value));
+    return campus.nombre;
+  }
 
 
   /**
@@ -525,6 +804,11 @@ export class GroupComponent {
     this.isNewData = true;
     this.dataModal.title = 'Crear grupo';
     this.submitted = false;
+    this.listMembers = [];
+    this.listMemberIdDeleted = [];
+    this.listUserSelectedId = [];
+    this.listUserSelected = [];
+    
     this.modalRef = this.modalService.show(content, { class: 'modal-xl', backdrop: 'static' });
     this.modalRef.onHide.subscribe(() => {});
   }
@@ -539,8 +823,13 @@ export class GroupComponent {
     } else {
       const values: Group = this.groupForm.value;
       values.integrantes = this.listUserSelectedId;
-
+      
+      
       if(this.isNewData){
+        if(values?.integrantes.length <= 0){
+          this._sweetAlertService.showTopEnd({title: 'Validación de integrantes', message: 'No se encontró integrantes para crear el grupo', type: 'warning', timer: 1500});
+          return;
+        }
         // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el grupo?').then((confirm) => {
           if(confirm.isConfirmed){
@@ -548,6 +837,7 @@ export class GroupComponent {
           }
         });
       } else {
+        values['integrantesEliminados'] = this.listMemberIdDeleted;
         // Actualizar datos
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el grupo?').then((confirm) => {
           if(confirm.isConfirmed){
@@ -565,18 +855,21 @@ export class GroupComponent {
  * @param content modal content
  */
   editDataGet(id: any, content: any) {
-    this.modalRef = this.modalService.show(content, { class: 'modal-xl' });
+    this.openModal(content);
     this.dataModal.title = 'Editar grupo';
     this.isNewData = false;
-    this.submitted = false;
+
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
-    console.log(data);
     const group = Group.cast(data);
+
     this.groupForm = this.formBuilder.group({
       ...this._formService.modelToFormGroupData(group), 
       id: [data.id]
     });
+
+    // Obtener los integrantes del grupo
+    this.apiMemberListByGroup(group.id);
   }
 
 
@@ -590,5 +883,19 @@ export class GroupComponent {
         this.deleteDataApi(id);
       }
     });
+  }
+
+
+  /**
+   * *******************************************************************
+   * DETALLE DE GRUPO - MODAL FORÁNEO
+   * *******************************************************************
+   */
+  openModalDetailGroup(group: GroupList){
+    const initialState = {
+      group
+    }
+
+    this.modalRef = this.modalService.show(ModalDetailComponent, {initialState, class: 'modal-xl'});
   }
 }

@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Product, ProductList, ResponseApi, TypeServiceList } from 'src/app/core/models';
+import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
@@ -26,10 +26,20 @@ export class ProductComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
   productForm: FormGroup;
 
+  // TABLE SERVER SIDE
+  page: number = 1;
+  perPage: number = 5;
+  search: string = '';
+  column: string = '';
+  order: 'asc' | 'desc' = 'desc';
+  countElements: number[] = [5, 10, 25, 50, 100];
+  total: number = 0;
+  pagination: Pagination = new Pagination();
+
 
   // Table data
   // content?: any;
-  lists?: ProductList[];
+  lists?: ProductList[] = [];
 
   // Tipo de servicios;
   listServices?: TypeServiceList[];
@@ -37,6 +47,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private modalService: BsModalService, 
     private _typeServiceService: TypeServiceService,
     private _productService: ProductService,
@@ -51,23 +62,24 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'},{ label: 'Productos', active: true }]);
 
     this.initForm();
-    this.listDataApi();
+    // this.listDataApi();
     this.apiTypeServiceList();
+    this.apiProductListPagination();
 
-    // Promociones
-    this.subscription.add(
-      this._productService.listObserver$
-      // .pipe(distinctUntilChanged())
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
-        )
-      )
-      .subscribe((list: ProductList[]) => {
-        this.lists = list;
-      })
-    );
+    // Productos
+    // this.subscription.add(
+    //   this._productService.listObserver$
+    //   // .pipe(distinctUntilChanged())
+    //   .pipe(
+    //     distinctUntilChanged(
+    //       (prevList, currentList) =>
+    //         prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+    //     )
+    //   )
+    //   .subscribe((list: ProductList[]) => {
+    //     this.lists = list;
+    //   })
+    // );
 
     // Tipo de servicios
     this.subscription.add(
@@ -122,14 +134,12 @@ export class ProductComponent implements OnInit, OnDestroy {
 
           }
 
+          this.apiProductListPagination();
           this.modalRef?.hide();
         }
 
         if(response.code == 422){
           if(response.errors){
-            // const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-            // this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
-
             const {product_errors, price_errors} = response.errors;
             let textErrors = '';
 
@@ -175,12 +185,23 @@ export class ProductComponent implements OnInit, OnDestroy {
           }
         }
 
+        this.apiProductListPagination();
         this.modalRef?.hide();
       }
 
       if(response.code == 422){
-        if(response.errors){
-          const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+        const {product_errors, price_errors} = response.errors;
+        let textErrors = '';
+
+        if(product_errors){
+          textErrors += this._apiErrorFormattingService.formatAsHtml(product_errors);
+        }
+
+        if(price_errors){
+          textErrors += this._apiErrorFormattingService.formatAsHtml(price_errors);
+        }
+
+        if(textErrors != ''){
           this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
         }
       }
@@ -223,9 +244,68 @@ export class ProductComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+ * ***************************************************************
+ * SERVER SIDE - USERS
+ * ***************************************************************
+ */
+  apiProductListPagination(): void {
+    this.subscription.add(
+      this._productService.getPagination({
+        page: this.page.toString(),
+        perPage: this.perPage.toString(),
+        search: this.search,
+        column: this.column,
+        order: this.order
+      })
+      .pipe(debounceTime(250))
+      .subscribe((response: ResponsePagination) => {
+        if(response.code == 200){
+          this.pagination = Pagination.cast(response.data);
+          this.lists = response.data.data;
+          this.page = response.data.current_page;
+          this.total = response.data.total;
+        }
+        
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error: any) => {
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar productos', message: error.message, timer: 2500});
+        }
+      })
+    ); 
+  }
+
+  getPage(event: any){
+    const {page, itemsPerPage} = event;
+    this.page = page;
+    this.perPage = itemsPerPage;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiProductListPagination();
+    }, 0);
+  }
+
+  getPageRefresh(){
+    this.page = 1;
+    this.perPage = 10;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiProductListPagination();
+    }, 0);
+  }
+
   
   /**
+   * *************************************************************
    * OPERACIONES DE TABLAS FORÁNEAS
+   * *************************************************************
    */
   // Tipo documento
   public apiTypeServiceList(forceRefresh: boolean = false){
