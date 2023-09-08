@@ -1,0 +1,133 @@
+<div class="container-fluid">
+  <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body border-bottom">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
+            <div class="flex-shrink-0 d-flex gap-1">
+              <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
+              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body border-bottom">
+
+        </div>
+        <div class="card-body">
+        <!-- Search -->
+        <div class="col-sm-12 col-md-6">
+          <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
+              class="d-inline-flex align-items-center">Buscar:
+              <input type="text" name="searchTerm" class="form-control form-control-sm ms-2"
+                aria-controls="tickets-table" ></label>
+          </div>
+        </div>
+        <!-- End search -->
+          <div class="table-responsive">
+            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+              <thead>
+                <tr>
+                  <th scope="col">N°</th>
+                  <th scope="col">DNI</th>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col">Instalaciones</th>
+                  <th scope="col">Total</th>
+                  <th scope="col">Usuario</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of lists; let i = index">
+                  <th scope="row">{{i + 1}}</th>
+                  <td>{{data.dni}}</td>
+                  <td>{{data.cliente}}</td>
+                  <td>{{data.tipo}}</td>
+                  <td>{{data.instalaciones}}</td>
+                  <td>{{data.total}}</td>
+                  <td>{{data.usuario}}</td>
+                  <td>{{data.fecha}}</td>
+                  <td>{{data.estado}}</td>
+                  <td>{{data.created_at}}</td>
+                  <td>{{data.updated_at}}</td>
+                  <td>
+                    <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
+                      </li>
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FORMULARIO -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+  </div>
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="saleForm" autocomplete="off">
+    <div class="modal-body">
+      <input type="hidden" name="id" value="" formControlName="id" />
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.dni.label' | translate as translatedLabel;">
+        <label for="dni" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="dni" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.dni.placeholder' | translate}}" formControlName="dni" [ngClass]="{ 'is-invalid': form['dni'].errors && (form.dni.dirty || form.dni.touched || submitted) }" />
+        <div *ngIf="form['dni'].errors && (form.dni.dirty || form.dni.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['dni'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.client.label' | translate as translatedLabel;">
+        <label for="cliente" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="cliente" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.client.placeholder' | translate}}" formControlName="cliente" [ngClass]="{ 'is-invalid': form['cliente'].errors && (form.cliente.dirty || form.cliente.touched || submitted) }" />
+        <div *ngIf="form['cliente'].errors && (form.cliente.dirty || form.cliente.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['cliente'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+        <label class="col-md-2 col-form-label" for="tipo">{{translatedLabel}}</label>
+        <select class="form-select custom-select" id="tipo" formControlName="tipo" [ngClass]="{ 'is-invalid': form.tipo.errors && (form.tipo.dirty || form.tipo.touched || submitted) }">
+            <option value="">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</option>
+            <option value="I">Empresa</option>
+            <option value="E">Persona Natural</option>
+        </select>
+        <div *ngIf="form.tipo.errors && (form.tipo.dirty || form.tipo.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['tipo'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!--End Modal -->

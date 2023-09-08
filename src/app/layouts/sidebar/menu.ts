@@ -16,13 +16,13 @@ export const MENU: MenuItem[] = [
         id: 3,
         label: 'MENUITEMS.SALE.TEXT',
         icon: 'bx bx-cart-alt ',
-        link: '/'
+        link: '/sale'
     },
     {
         id: 4,
         label: 'MENUITEMS.CALL.TEXT',
         icon: 'bx bxs-phone-call ',
-        link: '/'
+        link: '/call'
     },
     {
         id: 5,
@@ -110,31 +110,31 @@ export const MENU: MenuItem[] = [
         subItems: [
             {
                 id: 17,
-                parentId: 16, 
+                parentId: 16,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_BANK_ACCOUNT',
                 link: '/maintenances/typeBankAccount'
             },
             {
                 id: 18,
-                parentId: 16, 
+                parentId: 16,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_DOCUMENT',
                 link: '/maintenances/typeDocument'
             },
             {
                 id: 19,
-                parentId: 16, 
+                parentId: 16,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_USER',
                 link: '/maintenances/typeUser'
             },
             {
                 id: 20,
-                parentId: 16, 
+                parentId: 16,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_STATUS',
                 link: '/maintenances/typeStatus'
             },
             {
                 id: 21,
-                parentId: 16, 
+                parentId: 16,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_SERVICE',
                 link: '/maintenances/typeService'
             },
