@@ -30,6 +30,7 @@ export class Product extends Model{
 }
 
 export class ProductList extends Model{
+  public index: number;
   public id: number;
   public tipo_servicios_id: number;
   public tipo_servicios_nombre: string;
@@ -43,6 +44,7 @@ export class ProductList extends Model{
 
   constructor(data?: object){
     super(data);
+    this.index = this.index || 0;
     this.id = this.id || 0;
     this.tipo_servicios_id = this.tipo_servicios_id || 0;
     this.tipo_servicios_nombre = this.tipo_servicios_nombre || '';
@@ -57,8 +59,8 @@ export class ProductList extends Model{
 
   public static cast(data: object): ProductList{
     const productList = new ProductList(data);
-    const {id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at} = productList;
-    return {id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at};
+    const {index, id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at} = productList;
+    return {index, id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at};
   }
 
   public static casts(dataArray: object[]): ProductList[]{

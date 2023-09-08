@@ -49,16 +49,15 @@
               <button type="button" class="btn btn-info" ngx-export-as exportAs="xlsx">Export as Excel</button>
               <button type="button" class="btn btn-info" ngx-export-as exportAs="pdf">Export as PDF</button> -->
 
-              <!-- <button type="button" class="btn btn-primary" (click)="exportAsString('pdf', 'portrait')">String</button> -->
-              <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'portrait')">pdf</button>
-              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'landscape')">pdf landscape</button> -->
-              <button type="button" class="btn btn-primary" (click)="exportAs('png')">png</button>
-              <button type="button" class="btn btn-primary" (click)="exportAs('csv')">csv</button>
-              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('txt')">txt</button> -->
+              <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'portrait')">PDF VERTICAL</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'landscape')">PDF HORIZONTAL</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('png')">PNG</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('csv')">CSV</button>
               <button type="button" class="btn btn-primary" (click)="exportAs('xlsx')">Ms-Excel</button>
-              <button type="button" class="btn btn-primary" (click)="exportAs('docx')">MS-Word</button>
+              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('txt')">txt</button> -->
+              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('docx')">MS-Word</button> -->
               <!-- <button type="button" class="btn btn-primary" (click)="exportAs('json')">json</button> -->
-              <button type="button" class="btn btn-primary" (click)="exportAs('xml')">xml</button>
+              <!-- <button type="button" class="btn btn-primary" (click)="exportAs('xml')">xml</button> -->
             </div>
             <table class="table align-middle dt-responsive nowrap w-100 table-check" id="tableGroup">
               <thead>
@@ -485,29 +484,8 @@
                 </table>
               </div> 
 
-              <!-- NGX TABLE -->
-              <!-- <ngx-datatable
-                class="table align-middle dt-responsive nowrap w-100 table-check"
-                [rows]="userRows"
-                [columns]="userColumns"
-                [columnMode]="'force'"
-                [headerHeight]="50"
-                [footerHeight]="50"
-                [rowHeight]="'auto'"
-                [limit]="userLimit"
-                [externalPaging]="true"
-                [count]="userCount"
-                [offset]="userOffset"
-                (page)="onPageUser($event)"
-                (activate)="onActivateUser($event)"
-                (select)="onSelectUser($event)">
-              </ngx-datatable> -->
-              <!-- <button ngx-export-as [type]="ExportType.CSV" [data]="userRows">Export to CSV</button>
-              <button ngx-export-as [type]="ExportType.Excel" [data]="userRows">Export to Excel</button>
-              <button ngx-export-as [type]="ExportType.PDF" [data]="userRows">Export to PDF</button> -->
-
               <!-- ANGULAR - DATATABLE -->
-              <table datatable [dtOptions]="dtOptions" class="table align-middle dt-responsive nowrap w-100 table-check hover">
+              <!-- <table datatable [dtOptions]="dtOptions" class="table align-middle dt-responsive nowrap w-100 table-check hover">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -577,7 +555,7 @@
                     <td>Link</td>
                   </tr>
                 </tbody>
-              </table>              
+              </table>               -->
             
             </div>
           </div>

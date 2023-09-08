@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { ExportAsConfig, ExportAsService, SupportedExtensions } from 'ngx-export-as';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, CountryList, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPerson, UserPersonList } from 'src/app/core/models';
 import { ApiErrorFormattingService, CountryService, FormService, SweetAlertService, TypeDocumentService, TypeUserService, UserService } from 'src/app/core/services';
@@ -41,6 +42,16 @@ export class UserComponent {
   // content?: any;
   lists?: UserPersonList[] = [];
 
+  config: ExportAsConfig = {
+    type: 'pdf',
+    elementIdOrContent: 'tableUser',
+    options: {
+      jsPDF: {
+        orientation: 'landscape'
+      },
+      pdfCallbackFn: this.pdfCallbackFn // to add header and footer
+    }
+  };
   // Tipo documentos
   listDocuments?: TypeDocumentList[];
 
@@ -53,6 +64,7 @@ export class UserComponent {
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private exportAsService: ExportAsService,
     private cdr: ChangeDetectorRef,
     private modalService: BsModalService, 
     private _typeDocumentService: TypeDocumentService,
@@ -136,6 +148,44 @@ export class UserComponent {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+
+
+    /**
+   * ****************************************************************
+   * GENERAR EXPORTACIONES DE DATOS - TABLE
+   * ****************************************************************
+   */
+  exportAs(type: SupportedExtensions, opt?: string) {
+    this.config.type = type;
+    if (opt) {
+      this.config.options.jsPDF.orientation = opt;
+      // this.config.options.jsPDF.orientation = 'portrait';
+      this.config.options.jsPDF.unit = 'mm';
+      this.config.options.jsPDF.format = 'a4';
+      this.config.options.jsPDF.compress = false;
+      this.config.options.jsPDF.scale = 3;
+      this.config.options.jsPDF.fonts = [
+        {
+          family: 'Arial',
+          style: 'normal',
+          // src: 'path/to/arial.ttf' // Ruta a la fuente TrueType (ttf) incrustada
+        }
+      ];
+    }
+    this.exportAsService.save(this.config, 'usuarios').subscribe((value) => {
+      // save started
+    });
+  }
+  
+  pdfCallbackFn (pdf: any) {
+    // example to add page number as footer to every page of pdf
+    const noOfPages = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= noOfPages; i++) {
+      pdf.setPage(i);
+      pdf.text('Pagina ' + i + ' de ' + noOfPages, pdf.internal.pageSize.getWidth() - 50, pdf.internal.pageSize.getHeight() - 10);
+    }
+  }
+
 
   /**
    * ****************************************************************

@@ -6,7 +6,7 @@
         <div class="card-body">
           <div class="app-calendar">
             <!-- calendar -->
-            <full-calendar [options]="calendarOptions"></full-calendar>
+            <full-calendar [options]="calendarOptions" [events]="eventsPromise | async"></full-calendar>
           </div>
         </div>
       </div>
@@ -101,6 +101,7 @@
 
     </div>
     <div class="modal-footer">
+      <div class=""></div>
       <div class="hstack gap-2 justify-content-end">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
         <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>

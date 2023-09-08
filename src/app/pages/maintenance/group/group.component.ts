@@ -46,7 +46,7 @@ export class GroupComponent {
 
   // EXPORTS DATA TABLE
   exportAsConfig: ExportAsConfig = {
-    type: 'png', // the type you want to download
+    type: 'pdf', // the type you want to download
     elementIdOrContent: 'tableGroup', // the id of html/table element
   }
 
@@ -236,7 +236,7 @@ export class GroupComponent {
 
   /**
    * ****************************************************************
-   * GENERAR EXPORTACIONES DE DATOS - 
+   * GENERAR EXPORTACIONES DE DATOS - TABLE
    * ****************************************************************
    */
   exportAsString(type: SupportedExtensions, opt?: string) {
@@ -251,10 +251,23 @@ export class GroupComponent {
     this.config.type = type;
     if (opt) {
       this.config.options.jsPDF.orientation = opt;
+      // this.config.options.jsPDF.orientation = 'portrait';
+      this.config.options.jsPDF.unit = 'mm';
+      this.config.options.jsPDF.format = 'a4';
+      this.config.options.jsPDF.compress = true;
+      this.config.options.jsPDF.scale = 3;
+      this.config.options.jsPDF.fonts = [
+        {
+          family: 'Arial',
+          style: 'normal',
+          src: 'path/to/arial.ttf' // Ruta a la fuente TrueType (ttf) incrustada
+        }
+      ];
     }
-    this.exportAsService.save(this.config, 'myFile').subscribe(() => {
+    this.exportAsService.save(this.config, 'grupos').subscribe(() => {
       // save started
     });
+    
     // this.exportAsService.get(this.config).subscribe(content => {
     //   const link = document.createElement('a');
     //   const fileName = 'export.pdf';
@@ -271,7 +284,7 @@ export class GroupComponent {
     const noOfPages = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= noOfPages; i++) {
       pdf.setPage(i);
-      pdf.text('Page ' + i + ' of ' + noOfPages, pdf.internal.pageSize.getWidth() - 100, pdf.internal.pageSize.getHeight() - 30);
+      pdf.text('Pagina ' + i + ' de ' + noOfPages, pdf.internal.pageSize.getWidth() - 50, pdf.internal.pageSize.getHeight() - 10);
     }
   }
 

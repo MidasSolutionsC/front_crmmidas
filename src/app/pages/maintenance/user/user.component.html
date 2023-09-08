@@ -25,7 +25,7 @@
                 <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
                   [(ngModel)]="perPage" class="form-control form-control-sm mx-2" (change)="apiUserListPagination()">
                   <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
-                </select> elementos</label>
+                </select> registros</label>
               </div>
             </div>
             <!-- Search -->
@@ -41,7 +41,14 @@
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+            <div class="d-flex flex-row flex-wrap gap-1">
+              <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'portrait')">PDF VERTICAL</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('pdf', 'landscape')">PDF HORIZONTAL</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('png')">PNG</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('csv')">CSV</button>
+              <button type="button" class="btn btn-primary" (click)="exportAs('xlsx')">Ms-Excel</button>
+            </div>
+            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="tableUser">
               <thead>
                 <tr>
                   <th scope="col">N°</th>
@@ -95,7 +102,7 @@
                 Mostrando de 
                 <b>{{pagination.from}}</b> al
                 <b>{{pagination.to}}</b> de <b>{{pagination.total}}</b>
-                elementos
+                registros
               </div>
             </div>
             <!-- Pagination -->
