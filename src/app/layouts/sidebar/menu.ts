@@ -62,6 +62,12 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 9,
+        label: 'MENUITEMS.MAINTENANCE.LIST.CURRENCY',
+        icon: 'mdi mdi-currency-btc',
+        link: '/maintenances/currency'
+    },
+    {
+        id: 9,
         label: 'MENUITEMS.MAINTENANCE.LIST.CAMPUS',
         icon: 'bx bx-buildings',
         link: '/maintenances/campus'
@@ -80,65 +86,103 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 12,
-        label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT',
-        icon: 'bx bxl-dropbox ',
-        link: '/maintenances/product'
+        label: 'MENUITEMS.MAINTENANCE.LIST.CATEGORY',
+        icon: 'mdi mdi-shape ',
+        link: '/maintenances/category'
     },
     {
         id: 13,
+        label: 'MENUITEMS.MAINTENANCE.LIST.BRAND',
+        icon: 'mdi mdi-watermark',
+        link: '/maintenances/brand'
+    },
+    {
+        id: 14,
+        label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT',
+        icon: 'mdi mdi-shopping',
+        link: '/maintenances/product'
+    },
+    {
+        id: 14,
+        label: 'MENUITEMS.MAINTENANCE.LIST.SERVICE',
+        icon: 'bx bxl-dropbox ',
+        link: '/maintenances/service'
+    },
+    {
+        id: 15,
         label: 'MENUITEMS.MAINTENANCE.LIST.PROMOTION',
         icon: 'bx bx-purchase-tag-alt ',
         link: '/maintenances/promotion'
     },
     {
-        id: 14,
+        id: 16,
         label: 'MENUITEMS.MAINTENANCE.LIST.ADVERTISEMENT',
         icon: 'bx bxs-megaphone ',
         link: '/maintenances/advertisement'
     },
     {
-        id: 15,
+        id: 17,
         label: 'MENUITEMS.MAINTENANCE.LIST.MANUAL',
         icon: 'bx bxs-book ',
         link: '/maintenances/manual'
     },
     {
-        id: 16,
-        label: 'MENUITEMS.MAINTENANCE.LIST.SUBTITLE',
+        id: 18,
+        label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LABEL',
         icon: 'bx bxs-cog ',
         link: '/',
         subItems: [
             {
                 id: 17,
                 parentId: 16,
-                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_BANK_ACCOUNT',
-                link: '/maintenances/typeBankAccount'
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_BANK_ACCOUNT',
+                link: '/maintenances/types/typeBankAccount'
             },
             {
                 id: 18,
                 parentId: 16,
-                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_DOCUMENT',
-                link: '/maintenances/typeDocument'
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_DOCUMENT',
+                link: '/maintenances/types/typeDocument'
             },
             {
                 id: 19,
                 parentId: 16,
-                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_USER',
-                link: '/maintenances/typeUser'
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_USER',
+                link: '/maintenances/types/typeUser'
             },
             {
                 id: 20,
                 parentId: 16,
-                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_STATUS',
-                link: '/maintenances/typeStatus'
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_STATUS',
+                link: '/maintenances/types/typeStatus'
             },
             {
                 id: 21,
                 parentId: 16,
-                label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_SERVICE',
-                link: '/maintenances/typeService'
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_SERVICE',
+                link: '/maintenances/types/typeService'
             },
 
+        ]
+    },
+    {
+        id: 22,
+        label: 'MENUITEMS.MAINTENANCE.LIST.CALL.LABEL',
+        icon: 'mdi mdi-cellphone-cog',
+        link: '/',
+        subItems: [
+            {
+                id: 23,
+                parentId: 22,
+                label: 'MENUITEMS.MAINTENANCE.LIST.CALL.LIST.OPERATOR',
+                link: '/call-settings/operator'
+            },
+            {
+                id: 24,
+                parentId: 22,
+                label: 'MENUITEMS.MAINTENANCE.LIST.CALL.LIST.TYPIFICATION',
+                link: '/call-settings/typification'
+            }
         ]
     },
 

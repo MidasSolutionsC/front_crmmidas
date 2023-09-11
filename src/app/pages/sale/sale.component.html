@@ -17,14 +17,6 @@
 
         </div>
         <div class="card-body">
-        <!-- Search -->
-        <div class="col-sm-12 col-md-6">
-          <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
-              class="d-inline-flex align-items-center">Buscar:
-              <input type="text" name="searchTerm" class="form-control form-control-sm ms-2"
-                aria-controls="tickets-table" ></label>
-          </div>
-        </div>
         <!-- End search -->
           <div class="table-responsive">
             <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
@@ -82,52 +74,135 @@
     <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
   </div>
-  <form (keydown.enter)="$event.preventDefault()" [formGroup]="saleForm" autocomplete="off">
-    <div class="modal-body">
-      <input type="hidden" name="id" value="" formControlName="id" />
-      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.dni.label' | translate as translatedLabel;">
-        <label for="dni" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="dni" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.dni.placeholder' | translate}}" formControlName="dni" [ngClass]="{ 'is-invalid': form['dni'].errors && (form.dni.dirty || form.dni.touched || submitted) }" />
-        <div *ngIf="form['dni'].errors && (form.dni.dirty || form.dni.touched || submitted)" class="invalid-feedback" align="left">
-          <div *ngIf="form['dni'].errors['required']">
-            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-          </div>
-        </div>
-      </div>
-
-      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.client.label' | translate as translatedLabel;">
-        <label for="cliente" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="cliente" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.client.placeholder' | translate}}" formControlName="cliente" [ngClass]="{ 'is-invalid': form['cliente'].errors && (form.cliente.dirty || form.cliente.touched || submitted) }" />
-        <div *ngIf="form['cliente'].errors && (form.cliente.dirty || form.cliente.touched || submitted)" class="invalid-feedback" align="left">
-          <div *ngIf="form['cliente'].errors['required']">
-            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-          </div>
-        </div>
-      </div>
-
-      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
-        <label class="col-md-2 col-form-label" for="tipo">{{translatedLabel}}</label>
-        <select class="form-select custom-select" id="tipo" formControlName="tipo" [ngClass]="{ 'is-invalid': form.tipo.errors && (form.tipo.dirty || form.tipo.touched || submitted) }">
-            <option value="">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</option>
-            <option value="I">Empresa</option>
-            <option value="E">Persona Natural</option>
-        </select>
-        <div *ngIf="form.tipo.errors && (form.tipo.dirty || form.tipo.touched || submitted)" class="invalid-feedback" align="left">
-          <div *ngIf="form['tipo'].errors['required']">
-            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-          </div>
-        </div>
-      </div>
-
-
+  <div class="modal-body">
+    <ng-stepper #cdkStepper [linear]="true" class="wizard" >  
+      <cdk-step [optional]="false">
+        <ng-template cdkStepLabel>
+          <span class="number">1.</span>
+          <span>Cliente</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 0">
+          <form (keydown.enter)="$event.preventDefault()" [formGroup]="userSearchForm" autocomplete="off">
+            <div class="row g-2">
+              <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
+                <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
+                <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted) }">
+                  <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
+                  <option *ngFor="let typeDocument of listDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
+                </select>
+      
+                <!-- <input type="text" id="apellido_materno" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.type_document.placeholder' | translate}}" formControlName="apellido_materno" [ngClass]="{ 'is-invalid': f.apellido_materno.errors && (f.apellido_materno.dirty || f.apellido_materno.touched || submitted) }" /> -->
+                <div *ngIf="fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
+                  <div *ngIf="fs.tipo_documentos_id.errors.required">
+                    {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
+                <label for="documento" class="form-label">{{translatedLabel}} *</label>
+                <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted) }" />
+                <div *ngIf="fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted)" class="invalid-feedback" align="left">
+                  <div *ngIf="fs.documento.errors.required">
+                    {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                  </div>
+                  <div *ngIf="fs.documento.errors.maxlength">
+                    {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.documento.errors.maxlength.requiredLength}}
+                  </div>
+                  <div *ngIf="fs.documento.errors.minlength">
+                    {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.documento.errors.minlength.requiredLength}}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.search.label' | translate as translatedLabel;">
+                <label for="search" class="form-label">{{translatedLabel}} *</label>
+                <div class="input-group">
+                  <input type="text" maxlength="11" id="search" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.search.placeholder' | translate}}" formControlName="search" [ngClass]="{ 'is-invalid': fs.search.errors && (fs.search.dirty || fs.search.touched || submitted) }" />
+                  <button class="btn btn-primary"  [disabled]="userSearchForm.invalid">{{'FORMS.BUTTONS.SEARCH' | translate}}</button>
+                </div>
+                <div *ngIf="fs.search.errors && (fs.search.dirty || fs.search.touched || submitted)" class="invalid-feedback" align="left">
+                  <div *ngIf="fs.documento.errors.required">
+                    {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                  </div>
+                  <div *ngIf="fs.search.errors.maxlength">
+                    {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.search.errors.maxlength.requiredLength}}
+                  </div>
+                  <div *ngIf="fs.search.errors.minlength">
+                    {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.search.errors.minlength.requiredLength}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+  
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">2.</span>
+          <span>Servicios</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 1">
+          <div>Texto</div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+  
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">3.</span>
+          <span>Venta</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 2">
+          <div>Texto</div>  
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+  
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">4.</span>
+          <span>Detalle</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 3">
+          <div>Texto</div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+  
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">5.</span>
+          <span>Confirmar proceso</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 4">
+          <div>Texto</div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext (click)="saveData()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>  
+    </ng-stepper> 
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
     </div>
-    <div class="modal-footer">
-      <div class="hstack gap-2 justify-content-end">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
-        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
-        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
-      </div>
-    </div>
-  </form>
+  </div>
 </ng-template>
 <!--End Modal -->

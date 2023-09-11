@@ -22,9 +22,9 @@
               <thead>
                 <tr>
                   <th scope="col">N°</th>
-                  <th scope="col">Código ISO</th>
                   <th scope="col">Nombre</th>
-                  <!-- <th scope="col">Estado</th> -->
+                  <th scope="col">descripción</th>
+                  <th scope="col">Estado</th>
                   <th scope="col">Fecha creado</th>
                   <th scope="col">Fecha modificado</th>
                   <th scope="col">Opciones</th>
@@ -33,25 +33,23 @@
               <tbody>
                 <tr *ngFor="let data of lists; let i = index">
                   <th scope="row">{{i + 1}}</th>
-                  <td>{{data.iso_code}}</td>
                   <td>{{data.nombre}}</td>
-                  <!-- <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td> -->
+                  <td>{{data.descripcion}}</td>
+                  <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
                   <td>{{data.created_at}}</td>
                   <td>{{data.updated_at}}</td>
                   <td>
-                    <div *ngIf="data.iso_code != 'PE'">
-                      <ul class="list-unstyled hstack gap-1 mb-0">
-                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                          <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
-                        </li>
-                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-                          <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
-                        </li>
-                      </ul>
-                    </div>
+                    <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
+                      </li>
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                      </li>
+                    </ul>
                   </td>
                 </tr>
-                <tr *ngIf="!lists.length"><td colspan="6" class="text-center">Sin registros.</td></tr>
+                <tr *ngIf="!lists.length"><td colspan="7" class="text-center">Sin registros.</td></tr>
               </tbody>
             </table>
           </div>
@@ -68,7 +66,7 @@
     <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
   </div>
-  <form (keydown.enter)="$event.preventDefault()" [formGroup]="countryForm" autocomplete="off">
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="typificationForm" autocomplete="off">
     <div class="modal-body">
       <input type="hidden" name="id" value="" formControlName="id" />
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
@@ -81,11 +79,11 @@
         </div>
       </div>
 
-      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.iso_code.label' | translate as translatedLabel;">
-        <label for="iso_code" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="iso_code" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.iso_code.placeholder' | translate}}" formControlName="iso_code" [ngClass]="{ 'is-invalid': form['iso_code'].errors && (form.iso_code.dirty || form.iso_code.touched || submitted) }" />
-        <div *ngIf="form.iso_code.errors && (form.iso_code.dirty || form.iso_code.touched || submitted)" class="invalid-feedback" align="left">
-          <div *ngIf="form['iso_code'].errors['required']">
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">
+        <label for="descripcion" class="form-label">{{translatedLabel}}</label>
+        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion" [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
+        <div *ngIf="form.descripcion.errors && (form.descripcion.dirty || form.descripcion.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['descripcion'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
           </div>
         </div>

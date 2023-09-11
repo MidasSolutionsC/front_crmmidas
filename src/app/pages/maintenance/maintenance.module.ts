@@ -9,8 +9,6 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 import { MaintenanceRoutingModule } from './maintenance-routing.module';
-import { TypeDocumentComponent } from './type-document/type-document.component';
-import { TypeStatusComponent } from './type-status/type-status.component';
 import { WidgetModule } from 'src/app/shared/widget/widget.module';
 import { UIModule } from 'src/app/shared/ui/ui.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,9 +17,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ReplaceAttributePipe } from 'src/app/core/pipes';
 import { CoreModule } from 'src/app/core/core.module';
 import { ComponentsModule } from 'src/app/shared/components/components.module';
-import { TypeBankAccountComponent } from './type-bank-account/type-bank-account.component';
-import { TypeUserComponent } from './type-user/type-user.component';
-import { TypeServiceComponent } from './type-service/type-service.component';
 import { ManualComponent } from './manual/manual.component';
 import { AdvertisementComponent } from './advertisement/advertisement.component';
 import { CountryComponent } from './country/country.component';
@@ -35,15 +30,14 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalDetailComponent } from './group/modals/modal-detail/modal-detail.component';
 import { ExportAsModule } from 'ngx-export-as';
-import { DataTablesModule} from 'angular-datatables'
+import { DataTablesModule} from 'angular-datatables';
+import { BrandComponent } from './brand/brand.component';
+import { ServiceComponent } from './service/service.component';
+import { CategoryComponent } from './category/category.component';
+import { CurrencyComponent } from './currency/currency.component'
 
 @NgModule({
   declarations: [
-    TypeDocumentComponent,
-    TypeStatusComponent,
-    TypeBankAccountComponent,
-    TypeUserComponent,
-    TypeServiceComponent,
     ManualComponent,
     AdvertisementComponent,
     CountryComponent,
@@ -53,6 +47,10 @@ import { DataTablesModule} from 'angular-datatables'
     GroupComponent,
     CampusComponent,
     ModalDetailComponent,
+    BrandComponent,
+    ServiceComponent,
+    CategoryComponent,
+    CurrencyComponent,
   ],
   imports: [
     CommonModule,
@@ -60,7 +58,7 @@ import { DataTablesModule} from 'angular-datatables'
     ReactiveFormsModule,
     FormsModule,
     UIModule,
-    ComponentsModule,
+    // ComponentsModule,
     TranslateModule,
     CKEditorModule,
     NgStepperModule,

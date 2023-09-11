@@ -42,7 +42,7 @@ export class CallComponent {
 
   // Table data
   // content?: any;
-  lists?: CallList[];
+  lists?: CallList[] = [];
 
   // Tipo de servicios;
   listTypeStatus?: TypeStatusList[];

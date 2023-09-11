@@ -233,11 +233,25 @@
       "TEXT": "Mantenimiento",
       "LIST": {
         "COUNTRY": "País",
-        "TYPE_BANK_ACCOUNT": "Tipo de cuenta bancaria",
-        "TYPE_USER": "Tipo de usuario",
-        "TYPE_STATUS": "Tipo de estado",
-        "TYPE_DOCUMENT": "Tipo de documento",
-        "TYPE_SERVICE": "Tipo de servicio",
+        "CURRENCY": "Divisas",
+        "TYPES": {
+          "LABEL": "Mant. de tipos",
+          "LIST": {
+            "TYPE_BANK_ACCOUNT": "Tipo de cuenta bancaria",
+            "TYPE_USER": "Tipo de usuario",
+            "TYPE_STATUS": "Tipo de estado",
+            "TYPE_DOCUMENT": "Tipo de documento",
+            "TYPE_SERVICE": "Tipo de servicio",
+            "TYPE_CURRENCY": "Tipo de divisa"
+          }
+        },
+        "CALL": {
+          "LABEL": "Mant. de llamadas",
+          "LIST": {
+            "OPERATOR": "Operadores",
+            "TYPIFICATION": "Tipificaciones"
+          }
+        },
         "PROMOTION": "Promociones",
         "ADVERTISEMENT": "Anuncios",
         "MANUAL": "Manuales",
@@ -246,8 +260,10 @@
         "COORDINATION": "Coordinaciones",
         "GROUP": "Grupos",
         "CAMPUS": "Sedes",
+        "CATEGORY": "Categorías",
+        "BRAND": "Marcas",
         "PRODUCT": "Productos",
-        "SUBTITLE": "Mant. de tipos"
+        "SERVICE": "Servicios"
       }
     },
     "SETTINGS": {
@@ -312,6 +328,16 @@
         "label": "Dirección",
         "placeholder": "Ingrese la dirección..."
       },
+      "category": {
+        "label": "Categoría",
+        "placeholder": "Ingrese la categoría...",
+        "default_option": "Seleccione una categoría..."
+      },
+      "brand": {
+        "label": "Marca",
+        "placeholder": "Ingrese la marca...",
+        "default_option": "Seleccione una marca..."
+      },
       "campus": {
         "label": "Sede",
         "placeholder": "Ingrese la sede...",
@@ -326,6 +352,21 @@
         "label": "Código ISO",
         "placeholder": "Ingrese el código iso...",
         "default_option": "Seleccione un país..."
+      },
+      "symbol": {
+        "label": "Símbolo",
+        "placeholder": "Ingrese el símbolo...",
+        "default_option": "Seleccione un símbolo..."
+      },
+      "exchange_rate": {
+        "label": "Tipo de cambio",
+        "placeholder": "Ingrese el tipo de cambio...",
+        "default_option": "Seleccione un tipo de cambio..."
+      },
+      "currency": {
+        "label": "Divisa",
+        "placeholder": "Ingrese la divisa...",
+        "default_option": "Seleccione una divisa..."
       },
       "department": {
         "label": "Departamento",
@@ -444,6 +485,12 @@
       },
       "last_date": {
         "label": "Fecha final",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+
+      },
+      "date_updated": {
+        "label": "Fecha actualizado",
         "placeholder": "Ingrese la fecha...",
         "default_option": "Seleccione una fecha..."
 
