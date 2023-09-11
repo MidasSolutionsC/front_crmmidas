@@ -1,10 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TypeDocumentComponent } from './type-document/type-document.component';
-import { TypeStatusComponent } from './type-status/type-status.component';
-import { TypeBankAccountComponent } from './type-bank-account/type-bank-account.component';
-import { TypeUserComponent } from './type-user/type-user.component';
-import { TypeServiceComponent } from './type-service/type-service.component';
 import { ManualComponent } from './manual/manual.component';
 import { AdvertisementComponent } from './advertisement/advertisement.component';
 import { CountryComponent } from './country/country.component';
@@ -13,32 +8,18 @@ import { ProductComponent } from './product/product.component';
 import { UserComponent } from './user/user.component';
 import { GroupComponent } from './group/group.component';
 import { CampusComponent } from './campus/campus.component';
+import { BrandComponent } from './brand/brand.component';
+import { ServiceComponent } from './service/service.component';
+import { CategoryComponent } from './category/category.component';
+import { CurrencyComponent } from './currency/currency.component';
+
 
 const routes: Routes = [
   {
     path: 'country',
     component: CountryComponent
   },
-  {
-    path: 'typeDocument',
-    component: TypeDocumentComponent
-  },
-  {
-    path: 'typeStatus',
-    component: TypeStatusComponent
-  },
-  {
-    path: 'typeBankAccount',
-    component: TypeBankAccountComponent
-  },
-  {
-    path: 'typeUser',
-    component: TypeUserComponent
-  },
-  {
-    path: 'typeService',
-    component: TypeServiceComponent
-  },
+ 
   {
     path: 'manual',
     component: ManualComponent
@@ -52,8 +33,20 @@ const routes: Routes = [
     component: PromotionComponent
   },
   {
+    path: 'category',
+    component: CategoryComponent
+  },
+  {
+    path: 'brand',
+    component: BrandComponent
+  },
+  {
     path: 'product',
     component: ProductComponent
+  },
+  {
+    path: 'service',
+    component: ServiceComponent
   },
   {
     path: 'user',
@@ -67,6 +60,12 @@ const routes: Routes = [
     path: 'campus',
     component: CampusComponent
   },
+  {
+    path: 'currency',
+    component: CurrencyComponent
+  },
+  { path: 'types', loadChildren: () => import('./type/type.module').then(m => m.TypeModule) },
+  { path: 'call-settings', loadChildren: () => import('./call/call.module').then(m => m.CallModule) },
 
 ];
 

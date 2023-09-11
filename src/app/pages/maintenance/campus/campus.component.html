@@ -22,8 +22,8 @@
               <thead>
                 <tr>
                   <th scope="col">N°</th>
-                  <th scope="col">Nombre</th>
                   <th scope="col">País</th>
+                  <th scope="col">Nombre</th>
                   <th scope="col">Ciudad</th>
                   <th scope="col">logo</th>
                   <th scope="col">Estado</th>
@@ -35,8 +35,8 @@
               <tbody>
                 <tr *ngFor="let data of lists; let i = index">
                   <th scope="row">{{i + 1}}</th>
-                  <td>{{data.nombre}}</td>
                   <td>{{data.paises_nombre}}</td>
+                  <td>{{data.nombre}}</td>
                   <td>{{data.ciudad}}</td>
                   <td><img *ngIf="data.logo" [src]="'http://localhost:8000/files/campus/' + data.logo" alt="render" style="max-height: 80px;"></td>
                   <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>

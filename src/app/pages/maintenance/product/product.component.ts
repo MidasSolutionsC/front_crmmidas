@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
+import { BrandList, Breadcrumb, CategoryList, CurrencyList, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
+import { ApiErrorFormattingService, BrandService, CategoryService, CurrencyService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-product',
@@ -43,12 +43,24 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   // Tipo de servicios;
   listServices?: TypeServiceList[];
+
+  // Categorías
+  listCategories: CategoryList[] = [];
+
+  // Marcas
+  listBrands: BrandList[] = [];
+
+  // Divisas
+  listCurrencies: CurrencyList[] = [];
   
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private modalService: BsModalService, 
+    private _categoryService: CategoryService,
+    private _brandService: BrandService,
+    private _currencyService: CurrencyService,
     private _typeServiceService: TypeServiceService,
     private _productService: ProductService,
     private _formService: FormService,
@@ -64,6 +76,10 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.initForm();
     // this.listDataApi();
     this.apiTypeServiceList();
+    this.apiCategoryList();
+    this.apiBrandList();
+    this.apiCurrencyList();
+
     this.apiProductListPagination();
 
     // Productos
@@ -87,6 +103,33 @@ export class ProductComponent implements OnInit, OnDestroy {
       .pipe(distinctUntilChanged())
       .subscribe((list: TypeServiceList[]) => {
         this.listServices = list;
+      })
+    );
+
+    // Categorías
+    this.subscription.add(
+      this._categoryService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: CategoryList[]) => {
+        this.listCategories = list;
+      })
+    );
+
+    // Marcas
+    this.subscription.add(
+      this._brandService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: BrandList[]) => {
+        this.listBrands = list;
+      })
+    );
+
+    // Divisas
+    this.subscription.add(
+      this._currencyService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: CurrencyList[]) => {
+        this.listCurrencies = list;
       })
     );
   }
@@ -327,6 +370,66 @@ export class ProductComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Categorías
+  public apiCategoryList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._categoryService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listCategories = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
+  // Marcas
+  public apiBrandList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._brandService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listBrands = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
+  // Divisas
+  public apiCurrencyList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._currencyService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listCurrencies = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
 
   /**
    * Form data get
@@ -356,6 +459,9 @@ export class ProductComponent implements OnInit, OnDestroy {
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
       descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
       tipo_servicios_id: ['', [Validators.required, Validators.min(1)]],
+      categorias_id: ['', [Validators.nullValidator, Validators.min(1)]],
+      marcas_id: ['', [Validators.nullValidator, Validators.min(1)]],
+      divisas_id: ['', [Validators.required, Validators.min(1)]],
       precio: [0, [Validators.nullValidator, Validators.min(0)]],
       is_active: [true, [Validators.nullValidator]],
     }

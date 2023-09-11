@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { BsDropdownConfig, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
@@ -32,14 +32,34 @@ import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 
+// SMART WIZARD
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import {CdkStepperModule} from '@angular/cdk/stepper';
+import { NgStepperModule } from 'angular-ng-stepper';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { UiSwitchModule } from 'ngx-ui-switch';
+import { ColorPickerModule } from 'ngx-color-picker';
+
+// dropzone
+import { NgxDropzoneModule } from 'ngx-dropzone';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
+// FlatPicker
+import { FlatpickrModule } from 'angularx-flatpickr';
+import { ModalRegisterComponent } from './sale/modals/modal-register/modal-register.component';
+import { FormClientComponent } from './sale/forms/form-client/form-client.component';
+
 @NgModule({
   declarations: [
-  
     CalendarComponent,
-        CallComponent,
-        SaleComponent
+    CallComponent,
+    SaleComponent,
+    ModalRegisterComponent,
+    FormClientComponent
   ],
   imports: [
+    CoreModule,
     CommonModule,
     FormsModule,
     MaintenanceModule,
@@ -53,7 +73,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     HttpClientModule,
     UIModule,
     WidgetModule,
-    FullCalendarModule,
+    FullCalendarModule, // CALENDAR
     TabsModule.forRoot(),
     TooltipModule.forRoot(),
     CollapseModule.forRoot(),
@@ -62,7 +82,27 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     LightboxModule,
     PickerModule,
     NgxPaginationModule,
-    CoreModule
+
+    // SMART WIZARD
+    CKEditorModule,
+    NgStepperModule,
+    CdkStepperModule,
+    NgxMaskDirective,
+    NgxMaskPipe,
+    NgSelectModule,
+    UiSwitchModule,
+    ColorPickerModule,
+
+    // dropzone
+    NgxDropzoneModule,
+    BsDatepickerModule,
+
+    // Flakpicjer
+    FlatpickrModule,
+    // NgxDatatableModule,
+    // ExportAsModule,
+    // DataTablesModule
   ],
+  providers: [BsDropdownConfig, provideNgxMask()]
 })
 export class PagesModule { }
