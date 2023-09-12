@@ -51,6 +51,7 @@ import { CurrencyComponent } from './currency/currency.component'
     ServiceComponent,
     CategoryComponent,
     CurrencyComponent,
+    
   ],
   imports: [
     CommonModule,
@@ -74,7 +75,9 @@ import { CurrencyComponent } from './currency/currency.component'
     ModalModule.forRoot(),
     BsDropdownModule.forRoot(),
     CoreModule,
-    DataTablesModule
+    DataTablesModule,
+    // Acordeón
+    
   ],
   providers: [BsDropdownConfig, provideNgxMask()]
 })

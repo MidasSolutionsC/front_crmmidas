@@ -53,7 +53,12 @@ export class PromotionService {
       );
     }
   }
-
+  
+  public getSearch(data: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/search`;
+    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+  }
+  
   public getPagination(data: any): Observable<ResponseApi> {
     const queryParams = new URLSearchParams();
     queryParams.set('data', JSON.stringify(data));

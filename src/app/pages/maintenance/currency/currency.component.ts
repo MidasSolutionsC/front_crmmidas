@@ -26,7 +26,6 @@ export class CurrencyComponent {
   submitted: boolean = false;
   currencyForm: FormGroup;
 
-
   // Table data
   // content?: any;
   lists?: CurrencyList[];
@@ -44,7 +43,6 @@ export class CurrencyComponent {
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private formBuilder: FormBuilder) {
-
   }
 
   ngOnInit(): void {
@@ -252,8 +250,8 @@ export class CurrencyComponent {
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
       descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
       paises_id: ['', [Validators.nullValidator, Validators.maxLength(150)]],
-      iso_code: ['', [Validators.nullValidator, Validators.maxLength(3)]],
-      simbolo: ['', [Validators.nullValidator, Validators.maxLength(10)]],
+      iso_code: ['', [Validators.required, Validators.maxLength(3)]],
+      simbolo: ['', [Validators.required, Validators.maxLength(10)]],
       tasa_cambio: [undefined, [Validators.nullValidator]],
       fecha_actualizado: [undefined, [Validators.nullValidator]],
       is_active: [true, [Validators.nullValidator]],
@@ -284,7 +282,6 @@ export class CurrencyComponent {
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: Currency = this.currencyForm.value;
-      console.log(values);
 
       if(this.isNewData){
         // Crear nuevo registro
@@ -320,6 +317,13 @@ export class CurrencyComponent {
     this.currencyForm = this.formBuilder.group({
       ...this._formService.modelToFormGroupData(currency), 
       id: [data.id],
+      nombre: [data.nombre, [Validators.required, Validators.maxLength(50)]],
+      descripcion: [data.descripcion, [Validators.nullValidator, Validators.maxLength(150)]],
+      paises_id: [data.paises_id, [Validators.nullValidator, Validators.maxLength(150)]],
+      iso_code: [data.iso_code, [Validators.required, Validators.maxLength(3)]],
+      simbolo: [data.simbolo, [Validators.required, Validators.maxLength(10)]],
+      tasa_cambio: [data.tasa_cambio, [Validators.nullValidator]],
+      fecha_actualizado: [data.fecha_actualizado, [Validators.nullValidator]],
     });
   }
 

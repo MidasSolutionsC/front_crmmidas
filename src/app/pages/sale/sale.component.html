@@ -88,7 +88,7 @@
                 <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
                 <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted) }">
                   <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
-                  <option *ngFor="let typeDocument of listDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
+                  <option *ngFor="let typeDocument of listTypeDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
                 </select>
       
                 <!-- <input type="text" id="apellido_materno" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.type_document.placeholder' | translate}}" formControlName="apellido_materno" [ngClass]="{ 'is-invalid': f.apellido_materno.errors && (f.apellido_materno.dirty || f.apellido_materno.touched || submitted) }" /> -->

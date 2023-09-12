@@ -64,8 +64,8 @@
                   <th scope="row">{{data.index}}</th>
                   <td>{{data.numero}}</td>
                   <td>{{data.operador}}</td>
-                  <!-- <td>{{data.operador_llamo}}</td> -->
-                  <td>{{data.tipificacion}}</td>
+                  <!-- <td>{{data.operadores_llamo_id}}</td> -->
+                  <td>{{data.tipificaciones_llamadas_nombre}}</td>
                   <td>{{data.nombres}}</td>
                   <td>{{data.apellido_paterno}}</td>
                   <td>{{data.apellido_materno}}</td>
@@ -140,33 +140,25 @@
           </div>
         </div>
         <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.operator.label' | translate as translatedLabel;">
-          <label for="operador" class="form-label">{{translatedLabel}} *</label>
-          <select class="form-select custom-select" id="operador" formControlName="operador" [ngClass]="{ 'is-invalid': form.operador.errors && (form.operador.dirty || form.operador.touched || submitted) }">
-            <option value="">{{'FORMS.FIELD_NAMES.operator.default_option' | translate}}</option>
-            <option value="Bitel">Bitel</option>
-            <option value="Entel">Entel</option>
-            <option value="Claro">Claro</option>
-            <option value="Movistar">Movistar</option>
-          </select>
-          <!-- <input type="text" id="operador" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.operator.placeholder' | translate}}" formControlName="operador" [ngClass]="{ 'is-invalid': form.operador.errors && (form.operador.dirty || form.operador.touched || submitted) }" /> -->
-          <div *ngIf="form.operador.errors && (form.operador.dirty || form.operador.touched || submitted)" class="invalid-feedback" align="left">
-            <div *ngIf="form.operador.errors['required']">
+          <label for="operadores_id" class="form-label">{{translatedLabel}} *</label>
+          <ng-select id="operadores_id" formControlName="operadores_id" [ngClass]="{ 'is-invalid': form.operadores_id.errors && (form.operadores_id.dirty || form.operadores_id.touched || submitted) }">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.operator.default_option' | translate}}</ng-option>
+            <ng-option *ngFor="let operator of listOperators" [value]="operator.id">{{operator.nombre}}</ng-option>
+          </ng-select>
+          <div *ngIf="form.operadores_id.errors && (form.operadores_id.dirty || form.operadores_id.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.operadores_id.errors['required']">
               {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
             </div>
           </div>
         </div>
         <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.operator_call.label' | translate as translatedLabel;">
-          <label for="operador_llamo" class="form-label">{{translatedLabel}}</label>
-          <select class="form-select custom-select" id="operador_llamo" formControlName="operador_llamo" [ngClass]="{ 'is-invalid': form.operador_llamo.errors && (form.operador_llamo.dirty || form.operador_llamo.touched || submitted) }">
-            <option value="">{{'FORMS.FIELD_NAMES.operator_call.default_option' | translate}}</option>
-            <option value="Bitel">Bitel</option>
-            <option value="Entel">Entel</option>
-            <option value="Claro">Claro</option>
-            <option value="Movistar">Movistar</option>
-          </select>
-          <!-- <input type="text" id="operador" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.operator.placeholder' | translate}}" formControlName="operador" [ngClass]="{ 'is-invalid': form.operador.errors && (form.operador.dirty || form.operador.touched || submitted) }" /> -->
-          <div *ngIf="form.operador_llamo.errors && (form.operador_llamo.dirty || form.operador_llamo.touched || submitted)" class="invalid-feedback" align="left">
-            <div *ngIf="form.operador_llamo.errors['required']">
+          <label for="operadores_llamo_id" class="form-label">{{translatedLabel}}</label>
+          <ng-select id="operadores_llamo_id" formControlName="operadores_llamo_id" [ngClass]="{ 'is-invalid': form.operadores_llamo_id.errors && (form.operadores_llamo_id.dirty || form.operadores_llamo_id.touched || submitted) }">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.operator.default_option' | translate}}</ng-option>
+            <ng-option *ngFor="let operator of listOperators" [value]="operator.id">{{operator.nombre}}</ng-option>
+          </ng-select>          
+          <div *ngIf="form.operadores_llamo_id.errors && (form.operadores_llamo_id.dirty || form.operadores_llamo_id.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.operadores_llamo_id.errors['required']">
               {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
             </div>
           </div>
@@ -232,23 +224,7 @@
         </div>
       </div>
       
-      <div class="row g-3">
-        <div class="col-md-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.typification.label' | translate as translatedLabel;">
-          <label for="tipificacion" class="form-label">{{translatedLabel}}</label>
-          <select class="form-select custom-select" id="tipificacion" formControlName="tipificacion" [ngClass]="{ 'is-invalid': form.tipificacion.errors && (form.tipificacion.dirty || form.tipificacion.touched || submitted) }">
-            <option value="">{{'FORMS.FIELD_NAMES.typification.default_option' | translate}}</option>
-            <option value="No se encontró">No se conecto la llamada</option>
-            <option value="No contesta">No contesta</option>
-          </select>
-          <div *ngIf="form.tipificacion.errors && (form.tipificacion.dirty || form.tipificacion.touched || submitted)" class="invalid-feedback" align="left">
-            <div *ngIf="form.tipificacion.errors['required']">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-            </div>
-            <div *ngIf="form.tipificacion.errors.min">
-              {{ 'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.tipificacion.errors.min.requiredLength}}
-            </div>
-          </div>
-        </div>
+      <div class="row g-3">      
         <div class="col-md-3 mb-3 d-flex align-items-center" *ngIf="'FORMS.FIELD_NAMES.permanence.label' | translate as translatedLabel;">
           <!-- <label for="apellido_materno" class="form-label">{{translatedLabel}}</label> -->
           <div class="form-check">
@@ -303,7 +279,21 @@
             </div>
           </div>
         </div>
-        
+        <div class="col-md-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.typification.label' | translate as translatedLabel;">
+          <label for="tipificacion" class="form-label">{{translatedLabel}}</label>
+          <ng-select id="tipificaciones_llamadas_id" formControlName="tipificaciones_llamadas_id" [ngClass]="{ 'is-invalid': form.tipificaciones_llamadas_id.errors && (form.tipificaciones_llamadas_id.dirty || form.tipificaciones_llamadas_id.touched || submitted) }">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.typification.default_option' | translate}}</ng-option>
+            <ng-option *ngFor="let typification of listTypificationCall" [value]="typification.id">{{typification.nombre}}</ng-option>
+          </ng-select>   
+          <div *ngIf="form.tipificaciones_llamadas_id.errors && (form.tipificaciones_llamadas_id.dirty || form.tipificaciones_llamadas_id.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.tipificaciones_llamadas_id.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+            <div *ngIf="form.tipificaciones_llamadas_id.errors.min">
+              {{ 'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.tipificaciones_llamadas_id.errors.min.requiredLength}}
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>

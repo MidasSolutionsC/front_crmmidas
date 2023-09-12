@@ -9,7 +9,7 @@
             <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
             <div class="flex-shrink-0 d-flex gap-1">
               <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
-              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+              <a href="javascript:void(0);" (click)="apiProductListPagination();" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
             </div>
           </div>
         </div>
@@ -118,10 +118,10 @@
       <input type="hidden" name="id" value="" formControlName="id" />
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
         <label for="tipo_servicios_id" class="form-label">{{translatedLabel}} *</label>
-        <select class="form-select custom-select" id="tipo_servicios_id" formControlName="tipo_servicios_id" [ngClass]="{ 'is-invalid': form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted) }">
-          <option value="">{{'FORMS.FIELD_NAMES.type_service.default_option' | translate}}</option>
-          <option *ngFor="let service of listServices" [value]="service.id">{{service.nombre}}</option>
-        </select>
+        <ng-select id="tipo_servicios_id" formControlName="tipo_servicios_id" [ngClass]="{ 'is-invalid': form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted) }">
+          <ng-option [value]="''">{{'FORMS.FIELD_NAMES.category.default_option' | translate}}</ng-option>
+          <ng-option *ngFor="let service of listServices" [value]="service.id">{{service.nombre}}</ng-option>
+        </ng-select>
         <div *ngIf="form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted)" class="invalid-feedback" align="left">
           <div *ngIf="form.tipo_servicios_id.errors.required">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}

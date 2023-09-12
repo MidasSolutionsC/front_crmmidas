@@ -64,6 +64,7 @@ export class PromotionComponent implements OnInit, OnDestroy{
     this.initForm();
     this.listDataApi();
     // this.apiTypeServiceList();
+    this.apiTypeServiceList();
     this.apiPromotionListPagination();
 
     // Promociones
@@ -190,6 +191,7 @@ export class PromotionComponent implements OnInit, OnDestroy{
       if(response.code == 200){
         const data: PromotionList = PromotionList.cast(response.data[0]);
         this._promotionService.removeObjectObserver(data.id);
+        this.apiPromotionListPagination();
       }
 
       if(response.code == 422){
@@ -274,7 +276,7 @@ export class PromotionComponent implements OnInit, OnDestroy{
    * OPERACIONES DE TABLAS FORÁNEAS
    * *******************************************************
    */
-  // Tipo documento
+  // Tipo servicios
   public apiTypeServiceList(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._typeServiceService.getAll(forceRefresh).subscribe((response: ResponseApi) => {

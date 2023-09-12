@@ -3,9 +3,9 @@ import { Model } from "./model";
 export class Call extends Model{
   public id: number;
   public numero: number;
-  public operador: string;
-  public operador_llamo: string;
-  public tipificacion: string;
+  public operadores_id: number;
+  public operadores_llamo_id: number;
+  public tipificaciones_llamadas_id: number;
   public nombres: string;
   public apellido_paterno: string;
   public apellido_materno: string;
@@ -19,9 +19,9 @@ export class Call extends Model{
     super(data);
     this.id = this.id || 0;
     this.numero = this.numero || 0;
-    this.operador = this.operador || '';
-    this.operador_llamo = this.operador_llamo || '';
-    this.tipificacion = this.tipificacion || '';
+    this.operadores_id = this.operadores_id || undefined;
+    this.operadores_llamo_id = this.operadores_llamo_id || undefined;
+    this.tipificaciones_llamadas_id = this.tipificaciones_llamadas_id || undefined;
     this.nombres = this.nombres || '';
     this.apellido_paterno = this.apellido_paterno || '';
     this.apellido_materno = this.apellido_materno || '';
@@ -37,9 +37,9 @@ export class Call extends Model{
     const {
       id,
       numero,
-      operador,
-      operador_llamo,
-      tipificacion,
+      operadores_id,
+      operadores_llamo_id,
+      tipificaciones_llamadas_id,
       nombres,
       apellido_paterno,
       apellido_materno,
@@ -53,9 +53,9 @@ export class Call extends Model{
     return {
       id,
       numero,
-      operador,
-      operador_llamo,
-      tipificacion,
+      operadores_id,
+      operadores_llamo_id,
+      tipificaciones_llamadas_id,
       nombres,
       apellido_paterno,
       apellido_materno,
@@ -76,9 +76,12 @@ export class CallList extends Model{
   public index: number;
   public id: number;
   public numero: number;
-  public operador: string;
-  public operador_llamo: string;
-  public tipificacion: string;
+  public operadores_id: number;
+  public operadores_nombre: string;
+  public operadores_llamo_id: number;
+  public operadores_llamo_nombre: string;
+  public tipificaciones_llamadas_id: number;
+  public tipificaciones_llamadas_nombre: string;
   public nombres: string;
   public apellido_paterno: string;
   public apellido_materno: string;
@@ -99,9 +102,12 @@ export class CallList extends Model{
     this.index = this.index || 0;
     this.id = this.id || 0;
     this.numero = this.numero || 0;
-    this.operador = this.operador || '';
-    this.operador_llamo = this.operador_llamo || '';
-    this.tipificacion = this.tipificacion || '';
+    this.operadores_id = this.operadores_id || undefined;
+    this.operadores_nombre = this.operadores_nombre || '';
+    this.operadores_llamo_id = this.operadores_llamo_id || undefined;
+    this.operadores_llamo_nombre = this.operadores_llamo_nombre || '';
+    this.tipificaciones_llamadas_id = this.tipificaciones_llamadas_id || undefined;
+    this.tipificaciones_llamadas_nombre = this.tipificaciones_llamadas_nombre || '';
     this.nombres = this.nombres || '';
     this.apellido_paterno = this.apellido_paterno || '';
     this.apellido_materno = this.apellido_materno || '';
@@ -126,9 +132,12 @@ export class CallList extends Model{
       index,
       id,
       numero,
-      operador,
-      operador_llamo,
-      tipificacion,
+      operadores_id,
+      operadores_nombre,
+      operadores_llamo_id,
+      operadores_llamo_nombre,
+      tipificaciones_llamadas_id,
+      tipificaciones_llamadas_nombre,
       nombres,
       apellido_paterno,
       apellido_materno,
@@ -150,9 +159,12 @@ export class CallList extends Model{
       index,
       id,
       numero,
-      operador,
-      operador_llamo,
-      tipificacion,
+      operadores_id,
+      operadores_nombre,
+      operadores_llamo_id,
+      operadores_llamo_nombre,
+      tipificaciones_llamadas_id,
+      tipificaciones_llamadas_nombre,
       nombres,
       apellido_paterno,
       apellido_materno,

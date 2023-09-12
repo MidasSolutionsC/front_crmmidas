@@ -49,6 +49,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { ModalRegisterComponent } from './sale/modals/modal-register/modal-register.component';
 import { FormClientComponent } from './sale/forms/form-client/form-client.component';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import { FormClientComponent } from './sale/forms/form-client/form-client.compon
     // NgxDatatableModule,
     // ExportAsModule,
     // DataTablesModule
+    AccordionModule
   ],
   providers: [BsDropdownConfig, provideNgxMask()]
 })

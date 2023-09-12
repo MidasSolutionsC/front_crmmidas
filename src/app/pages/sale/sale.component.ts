@@ -3,10 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import { Breadcrumb, ResponseApi } from 'src/app/core/models';
+import { Breadcrumb, ResponseApi, TypeDocumentList } from 'src/app/core/models';
 import { Sale, SaleList} from 'src/app/core/models/api/sale.model';
-import {ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
+import {ApiErrorFormattingService, FormService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 import {SaleService } from 'src/app/core/services/api/sale.service';
+import { ModalRegisterComponent } from './modals/modal-register/modal-register.component';
 @Component({
   selector: 'app-sale',
   templateUrl: './sale.component.html',
@@ -43,10 +44,14 @@ export class SaleComponent {
   // content?: any;
   lists?: SaleList[];
 
+  // Lista de tipos de documentos
+  listTypeDocuments?: TypeDocumentList[] = [];
+
   private subscription: Subscription = new Subscription();
 
   constructor(
     private modalService: BsModalService,
+    private _typeDocumentService: TypeDocumentService,
     private _saleService: SaleService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -59,6 +64,7 @@ export class SaleComponent {
 
     this.initForm();
     this.initFormUserSearch();
+    this.apiTypeDocumentList();
     
     this.listDataApi();
     this.subscription.add(
@@ -72,6 +78,20 @@ export class SaleComponent {
       )
       .subscribe((list: SaleList[]) => {
         this.lists = list;
+      })
+    );
+
+    // Tipo de documentos
+    this.subscription.add(
+      this._typeDocumentService.typeDocuments$
+      .pipe(
+        distinctUntilChanged(
+          (prevList, currentList) =>
+            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+        )
+      )
+      .subscribe((list: TypeDocumentList[]) => {
+        this.listTypeDocuments = list;
       })
     );
   }
@@ -196,6 +216,31 @@ export class SaleComponent {
     });
   }
 
+  /**
+   * *************************************************************
+   * OPERACIONES DE TABLAS FORÁNEAS
+   * *************************************************************
+   */
+  // Tipo documento
+  public apiTypeDocumentList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listTypeDocuments = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
 
 
   /**
@@ -249,14 +294,15 @@ export class SaleComponent {
    * @param content modal content
    */
   openModal(content: any) {
-    this.initForm();
-    this.isNewData = true;
-    this.dataModal.title = 'Crear Venta';
-    this.submitted = false;
-    this.previewImage = null;
-    this.uploadFiles = [];
-    this.modalRef = this.modalService.show(content, { class: 'modal-fullscreen modal-dialog-centered' });
-    this.modalRef.onHide.subscribe(() => {});
+    this.openModalForm();
+    // this.initForm();
+    // this.isNewData = true;
+    // this.dataModal.title = 'Crear Venta';
+    // this.submitted = false;
+    // this.previewImage = null;
+    // this.uploadFiles = [];
+    // this.modalRef = this.modalService.show(content, { class: 'modal-fullscreen modal-dialog-centered' });
+    // this.modalRef.onHide.subscribe(() => {});
   }
 
 
@@ -353,4 +399,17 @@ export class SaleComponent {
     });
   }
 
+
+  /**
+   * *************************************************************
+   * MODAL COMPONENTE EXTERNO - FORMULARIO DE REGISTRO
+   * *************************************************************
+   */
+  openModalForm(){
+    const initialState = {};
+    this.modalRef = this.modalService.show(ModalRegisterComponent, {initialState, class: 'modal-fullscreen modal-dialog-centered modal-dialog-scrollable'});
+    this.modalRef.onHide.subscribe((next) => {
+      // console.log(next);
+    });
+  }
 }

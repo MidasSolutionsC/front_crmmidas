@@ -185,6 +185,7 @@ export class AdvertisementComponent {
       if(response.code == 200){
         const data: AdvertisementList = AdvertisementList.cast(response.data[0]);
         this._advertisementService.removeObjectObserver(data.id);
+        this.apiAdvertisementListPagination();
       }
 
       if(response.code == 422){

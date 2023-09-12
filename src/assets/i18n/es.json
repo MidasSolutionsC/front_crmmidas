@@ -440,6 +440,18 @@
         "default_option": "Seleccione un tipo..."
 
       },
+      "product": {
+        "label": "Producto",
+        "placeholder": "Ingrese el producto...",
+        "default_option": "Seleccione un producto..."
+
+      },
+      "promotion": {
+        "label": "Promoción",
+        "placeholder": "Ingrese la promoción...",
+        "default_option": "Seleccione una promoción..."
+
+      },
       "document": {
         "label": "Documento",
         "placeholder": "Ingrese el documento..."

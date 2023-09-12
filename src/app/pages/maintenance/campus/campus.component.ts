@@ -67,6 +67,7 @@ export class CampusComponent {
 
     this.listDataApi();
     this.apiCountryList();
+    this.searchOptionUbigeo('');
 
     this.subscription.add(
       this._campusService.listObserver$
@@ -237,8 +238,8 @@ export class CampusComponent {
   }
   
   // Buscar ubigeos
-  public searchOptionUbigeo(term: string) {
-    this._ubigeoService.getSearch({search: term}).subscribe((response: ResponseApi) => {
+  public searchOptionUbigeo(search: string) {
+    this._ubigeoService.getSearch({search}).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this.listUbigeos = response.data;

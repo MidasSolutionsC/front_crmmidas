@@ -77,7 +77,25 @@ export class ProductList extends Model{
 
   public static cast(data: object): ProductList{
     const productList = new ProductList(data);
-    const {index, id, categorias_id, categorias_nombre, marcas_id, marcas_nombre, divisas_id, divisas_nombre, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at} = productList;
+    const {
+      index, 
+      id, 
+      categorias_id, 
+      categorias_nombre,
+       marcas_id, 
+       marcas_nombre, 
+       divisas_id, 
+       divisas_nombre, 
+       tipo_servicios_id, 
+       tipo_servicios_nombre, 
+       nombre, 
+       descripcion, 
+       precio, 
+       is_active, 
+       created_at, 
+       updated_at, 
+       deleted_at
+      } = productList;
     return {index, id, categorias_id, categorias_nombre, marcas_id, marcas_nombre, divisas_id, divisas_nombre, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at};
   }
 
