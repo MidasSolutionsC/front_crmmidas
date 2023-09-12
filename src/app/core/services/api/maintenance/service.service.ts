@@ -1,17 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
-import { ResponseApi } from 'src/app/core/models';
-import { ProductList } from 'src/app/core/models';
+import { ResponseApi, ServiceList } from 'src/app/core/models';
 import { ConfigService } from '../../config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class ServiceService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<ProductList[]> = new BehaviorSubject<ProductList[]>([]);
-  public listObserver$: Observable<ProductList[]> = this.listSubject.asObservable();
+  private listSubject: BehaviorSubject<ServiceList[]> = new BehaviorSubject<ServiceList[]>([]);
+  public listObserver$: Observable<ServiceList[]> = this.listSubject.asObservable();
   
   constructor(
     private http: HttpClient,
@@ -19,15 +18,16 @@ export class ProductService {
   ) { 
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: ProductList[]) => {
+      .subscribe((list: ServiceList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
     })
   }
 
+
   private get baseUrl(){
-    return this.configService.apiUrl + 'product';
+    return this.configService.apiUrl + 'service';
   }
 
   private get requestOptions(){
@@ -53,11 +53,6 @@ export class ProductService {
     }
   }
 
-  public getSearch(data: any): Observable<ResponseApi> {
-    const endpoint = `${this.baseUrl}/search`;
-    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
-  }
-  
   public getPagination(data: any): Observable<ResponseApi> {
     const queryParams = new URLSearchParams();
     queryParams.set('data', JSON.stringify(data));
@@ -71,13 +66,13 @@ export class ProductService {
   }
 
   public register(data: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/register`;
+    const endpoint = `${this.baseUrl}`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/update/${id}`;
-    return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
+    const endpoint = `${this.baseUrl}/${id}`;
+    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
   public delete(id: any): Observable<ResponseApi>{
@@ -95,23 +90,23 @@ export class ProductService {
    * FUNCIONES PARA LOS OBSERVABLES
    */
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(productList: ProductList) {
+  addObjectObserver(serviceList: ServiceList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(productList);
+    currentData.push(serviceList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(productList: ProductList[]) {
-    this.listSubject.next(productList);
+  addArrayObserver(serviceList: ServiceList[]) {
+    this.listSubject.next(serviceList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(productList: ProductList) {
+  updateObjectObserver(serviceList: ServiceList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === productList.id);
+    const index = currentData.findIndex(item => item.id === serviceList.id);
     if (index !== -1) {
-      currentData[index] = productList;
+      currentData[index] = serviceList;
       this.listSubject.next(currentData);
     }
   }

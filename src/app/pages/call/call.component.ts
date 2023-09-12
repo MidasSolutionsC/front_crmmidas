@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import {  Breadcrumb, Pagination, ResponseApi, ResponsePagination, TypeStatusList } from 'src/app/core/models';
+import {  Breadcrumb, OperatorList, Pagination, ResponseApi, ResponsePagination, TypeStatusList, TypificationCallList } from 'src/app/core/models';
 import { Call, CallList } from 'src/app/core/models/api/call.model';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TypeStatusService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, OperatorService, SweetAlertService, TypeStatusService, TypificationCallService } from 'src/app/core/services';
 import { CallService} from 'src/app/core/services/api/call.service';
 
 @Component({
@@ -47,12 +47,20 @@ export class CallComponent {
   // Tipo de servicios;
   listTypeStatus?: TypeStatusList[];
 
+  // Operadores;
+  listOperators?: OperatorList[] = [];
+
+  // Operadores;
+  listTypificationCall?: TypificationCallList[] = [];
+
 
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private modalService: BsModalService,
+    private _operatorService: OperatorService,
+    private _typificationCallService: TypificationCallService,
     private _typeStatusService: TypeStatusService,
     private _callService: CallService,
     private _formService: FormService,
@@ -68,6 +76,9 @@ export class CallComponent {
     this.listDataApi();
     // this.apiTypeStatusList();
     this.apiTypeStatusList();
+    this.apiOperatorList();
+    this.apiTypificationCallList(),
+
     this.apiCallListPagination();
 
     // this.subscription.add(
@@ -89,6 +100,24 @@ export class CallComponent {
       .pipe(distinctUntilChanged())
       .subscribe((list: TypeStatusList[]) => {
         this.listTypeStatus = list;
+      })
+    );
+
+    // Operadores
+    this.subscription.add(
+      this._operatorService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: OperatorList[]) => {
+        this.listOperators = list;
+      })
+    );
+
+    // Tipificaqciones
+    this.subscription.add(
+      this._typificationCallService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: TypificationCallList[]) => {
+        this.listTypificationCall = list;
       })
     );
   }
@@ -297,6 +326,46 @@ export class CallComponent {
     });
   }
 
+  // Operadores
+  public apiOperatorList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._operatorService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listOperators = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
+  // Tipificaciones
+  public apiTypificationCallList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._typificationCallService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listTypificationCall = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
 
   /**
    * Form data get
@@ -324,9 +393,9 @@ export class CallComponent {
     return {
       ...this._formService.modelToFormGroupData(model),
       numero: ['', [Validators.required, Validators.maxLength(11)]],
-      operador: ['', [Validators.required, Validators.maxLength(30)]],
-      operador_llamo: ['', [Validators.nullValidator, Validators.maxLength(30)]],
-      tipificacion: ['', [Validators.nullValidator, Validators.maxLength(30)]],
+      operadores_id: ['', [Validators.required, Validators.min(1)]],
+      operadores_llamo_id: ['', [Validators.nullValidator, Validators.min(1)]],
+      tipificaciones_llamadas_id: ['', [Validators.nullValidator, Validators.min(1)]],
       nombres: ['', [Validators.nullValidator, Validators.maxLength(60)]],
       apellido_paterno: ['', [Validators.nullValidator, Validators.maxLength(60)]],
       apellido_materno: ['', [Validators.nullValidator, Validators.maxLength(60)]],

@@ -60,6 +60,10 @@ export class CampusList extends Model{
   public fecha_apertura: string;
   public logo: string;
   public is_active: boolean;
+  public created_at: string;
+  public updated_at: string;
+  public deleted_at: string;
+
 
   constructor(data?: object){
     super(data);
@@ -78,12 +82,15 @@ export class CampusList extends Model{
     this.fecha_apertura = this.fecha_apertura || '';
     this.logo = this.logo || '';
     this.is_active = this.is_active || true;
+    this.created_at = this.created_at || '';
+    this.updated_at = this.updated_at || '';
+    this.deleted_at = this.deleted_at || '';
   }
 
   public static cast(data: object): CampusList{
     const campusList = new CampusList(data);
-    const {id, paises_id, nombre, paises_nombre, ubigeos_ciudad, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active} = campusList;
-    return {id, paises_id, nombre, paises_nombre, ubigeos_ciudad, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active};
+    const {id, paises_id, nombre, paises_nombre, ubigeos_ciudad, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active, created_at, updated_at, deleted_at} = campusList;
+    return {id, paises_id, nombre, paises_nombre, ubigeos_ciudad, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active, created_at, updated_at, deleted_at};
   }
 
   public static casts(dataArray: object[]): CampusList[]{

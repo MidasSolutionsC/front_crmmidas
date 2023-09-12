@@ -267,6 +267,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       if(response.code == 200){
         const data: ProductList = ProductList.cast(response.data[0]);
         this._productService.removeObjectObserver(data.id);
+        this.apiProductListPagination();
       }
 
       if(response.code == 422){
@@ -333,17 +334,6 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.apiProductListPagination();
     }, 0);
   }
-
-  getPageRefresh(){
-    this.page = 1;
-    this.perPage = 10;
-    this.cdr.detectChanges();
-
-    setTimeout(() => {
-      this.apiProductListPagination();
-    }, 0);
-  }
-
   
   /**
    * *************************************************************
