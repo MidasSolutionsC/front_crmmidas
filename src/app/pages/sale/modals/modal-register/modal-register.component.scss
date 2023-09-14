@@ -1,0 +1,22 @@
+
+
+@media (max-width: 767px){
+  .modal-body{
+    padding: 0 !important;
+  }
+  
+  // section{
+    //   padding: 0 !important;
+    // }
+}
+
+.wizard{
+  section{
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .stepper-body{
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}

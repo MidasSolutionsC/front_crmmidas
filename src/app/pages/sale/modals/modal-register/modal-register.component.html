@@ -1,34 +1,299 @@
 <div class="modal-content">
   <div class="modal-header">
     <h5 class="modal-title font-bold" id="exampleModalLabel">{{dataModal.title}}</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
   </div>
   <div class="modal-body">
-    <div class="card">
-      <div class="card-body">
-        <ng-stepper #cdkStepper [linear]="true" class="wizard" >  
-          <cdk-step [optional]="false">
-            <ng-template cdkStepLabel>
-              <span class="number">1.</span>
-              <span>Servicios</span>
-            </ng-template>
-            <section *ngIf="cdkStepper.selectedIndex === 0">
+    <ng-stepper #cdkStepper [linear]="true" class="wizard">
+      <cdk-step [optional]="false">
+        <ng-template cdkStepLabel>
+          <span class="number">1</span>
+          <span>Servicios y direcciones</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 0">
+          <accordion [isAnimated]="true" [closeOthers]="true">
+            <accordion-group heading="Seleccionar servicio y registrar las instalaciones" [isOpen]="true">
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <div class="card shadow-sm border border-primary">
+                  <div class="card shadow-lg border border-primary">
                     <div class="card-body border-bottom">
-                      <h4 class="card-title">Lista de servicios</h4>
-                      <p class="card-sub-title">
-                        Servicios registrados hasta el momento
-                      </p>
+                      <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+                        <div class="">
+                          <h4 class="card-title text-primary">1. Ubicaciones del cliente</h4>
+                          <p class="card-sub-title">
+                            Direcciones donde se aran las instalaciones 
+                          </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <button type="button" class="btn btn-primary" (click)="toggleFormInstallation()">
+                            <i class="mdi mdi-plus"></i>
+                            Formulario
+                          </button>
+                          <button type="button" class="btn btn-secondary " (click)="toggleListInstallation()">
+                            <i class="mdi" [ngClass]="{'mdi-arrow-collapse-down': isCollapsedInstallation, 'mdi-arrow-collapse-up': !isCollapsedInstallation}"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="card-body border-bottom border-primary" [collapse]="isCollapsedFormInstallation" [isAnimated]="true">
+                      <form (keydown.enter)="$event.preventDefault()" [formGroup]="installationForm" autocomplete="off">
+                        <div class="row g-2">
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+                            <label for="tipo" class="form-label">{{translatedLabel}}</label>
+                            <ng-select id="tipo" formControlName="tipo" 
+                              [notFoundText]="'No se encontraron elementos'"
+                              [ngClass]="{ 'is-invalid': fi.tipo.errors && (fi.tipo.dirty || fi.tipo.touched || submittedInstallation) }">
+                              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</ng-option>
+                              <ng-option value="Avenida">Avenida</ng-option>
+                              <ng-option value="Calle">Calle</ng-option>
+                              <ng-option value="Pasaje">Pasaje</ng-option>
+                              <ng-option value="Urbanización">Urbanización</ng-option>
+                            </ng-select>
+                            <div *ngIf="fi['tipo'].errors && (fi.tipo.dirty || fi.tipo.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi['tipo'].errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-8 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.direction.label' | translate as translatedLabel;">
+                            <label for="direccion" class="form-label">{{translatedLabel}}</label>
+                            <textarea 
+                              name="direccion" id="direccion" cols="30" rows="1" class="form-control"    formControlName="direccion"  placeholder="{{'FORMS.FIELD_NAMES.direction.placeholder' | translate}}"
+                              [ngClass]="{ 'is-invalid': fi['direccion'].errors && (fi.direccion.dirty || fi.direccion.touched || submittedInstallation) }" 
+                            ></textarea>
+                            <div *ngIf="fi['direccion'].errors && (fi.direccion.dirty || fi.direccion.touched || submittedInstallation)" class="invalid-feedback" align="left">
+                              <div *ngIf="fi['direccion'].errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.direccion.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.direccion.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.direccion.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.direccion.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-2">
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.number.label' | translate as translatedLabel;">
+                            <label for="numero" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="numero" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.number.placeholder' | translate}}"
+                              formControlName="numero"
+                              [ngClass]="{ 'is-invalid': fi.numero.errors && (fi.numero.dirty || fi.numero.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.numero.errors && (fi.numero.dirty || fi.numero.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.numero.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.numero.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.numero.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.numero.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.numero.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.ladder.label' | translate as translatedLabel;">
+                            <label for="escalera" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="escalera" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.ladder.placeholder' | translate}}"
+                              formControlName="escalera"
+                              [ngClass]="{ 'is-invalid': fi.escalera.errors && (fi.escalera.dirty || fi.escalera.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.escalera.errors && (fi.escalera.dirty || fi.escalera.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.escalera.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.escalera.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.escalera.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.escalera.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.escalera.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.portal.label' | translate as translatedLabel;">
+                            <label for="portal" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="portal" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.portal.placeholder' | translate}}"
+                              formControlName="portal"
+                              [ngClass]="{ 'is-invalid': fi.portal.errors && (fi.portal.dirty || fi.portal.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.portal.errors && (fi.portal.dirty || fi.portal.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.portal.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.portal.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.portal.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.portal.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.portal.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-2">
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.plant.label' | translate as translatedLabel;">
+                            <label for="planta" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="planta" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.plant.placeholder' | translate}}"
+                              formControlName="planta"
+                              [ngClass]="{ 'is-invalid': fi.planta.errors && (fi.planta.dirty || fi.planta.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.planta.errors && (fi.planta.dirty || fi.planta.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.planta.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.door.label' | translate as translatedLabel;">
+                            <label for="puerta" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="puerta" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.door.placeholder' | translate}}"
+                              formControlName="puerta"
+                              [ngClass]="{ 'is-invalid': fi.puerta.errors && (fi.puerta.dirty || fi.puerta.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.puerta.errors && (fi.puerta.dirty || fi.puerta.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.puerta.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.code_postal.label' | translate as translatedLabel;">
+                            <label for="codigo_postal" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="codigo_postal" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.code_postal.placeholder' | translate}}"
+                              formControlName="codigo_postal"
+                              [ngClass]="{ 'is-invalid': fi.codigo_postal.errors && (fi.codigo_postal.dirty || fi.codigo_postal.touched || submittedInstallation) }" />
+                            <div
+                              *ngIf="fi.codigo_postal.errors && (fi.codigo_postal.dirty || fi.codigo_postal.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.codigo_postal.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-2">
+                          <div class="col-md-6 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.location.label' | translate as translatedLabel;">
+                            <label for="localidad" class="form-label">{{translatedLabel}}</label>
+                            <textarea 
+                              name="localidad" id="localidad" cols="30" rows="1" class="form-control"    formControlName="localidad"  placeholder="{{'FORMS.FIELD_NAMES.location.placeholder' | translate}}"
+                              [ngClass]="{ 'is-invalid': fi['localidad'].errors && (fi.localidad.dirty || fi.localidad.touched || submittedInstallation) }" 
+                            ></textarea>
+                            <div
+                              *ngIf="fi.localidad.errors && (fi.localidad.dirty || fi.localidad.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.localidad.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.province.label' | translate as translatedLabel;">
+                            <label for="provincia" class="form-label">{{translatedLabel}}</label>
+                            <textarea 
+                              name="provincia" id="provincia" cols="30" rows="1" class="form-control"    formControlName="provincia"  placeholder="{{'FORMS.FIELD_NAMES.province.placeholder' | translate}}"
+                              [ngClass]="{ 'is-invalid': fi['provincia'].errors && (fi.provincia.dirty || fi.provincia.touched || submittedInstallation) }" 
+                            ></textarea>
+                            <div
+                              *ngIf="fi.provincia.errors && (fi.provincia.dirty || fi.provincia.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.provincia.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" (click)="isCollapsedFormInstallation = true">{{'FORMS.BUTTONS.CANCEL' | translate}}</button>
+                        <button type="button" class="btn btn-success" (click)="saveDataInstallation()">{{'FORMS.BUTTONS.ADD' | translate}}</button>
+                      </div>
+                    </div>
+                    <div class="card-body"  [collapse]="isCollapsedInstallation" [isAnimated]="true">
+                      <div class="table-responsive">
+                        <table class="table align-middle dt-responsive nowrap w-100 table-check">
+                          <thead>
+                            <tr>
+                              <th scope="col">N°</th>
+                              <th scope="col">Tipo</th>
+                              <th scope="col">Dirección</th>
+                              <th scope="col">Numero</th>
+                              <th scope="col">Escalera</th>
+                              <th scope="col">Portal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let data of listInstallations; let i = index">
+                              <th scope="row">{{i + 1}}</th>
+                              <td>{{data.tipo}}</td>
+                              <td>{{data.direccion}}</td>
+                              <td>{{data.numero}}</td>
+                              <td>{{data.portal}}</td>
+                            </tr>
+                            <tr *ngIf="!listInstallations.length">
+                              <td colspan="7" class="text-center">Sin registros.</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="card shadow-sm border border-info">
+                    <div class="card-body border-bottom">
+                      <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+                        <div class="">
+                          <h4 class="card-title text-primary">2. Lista de servicios</h4>
+                          <p class="card-sub-title">
+                            Seleccione los servicios que desea añadir a la venta
+                          </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <!-- <button type="button" class="btn btn-primary" (click)="toggleFormInstallation()">
+                            <i class="mdi mdi-plus"></i>
+                            Formulario
+                          </button> -->
+                          <button type="button" class="btn btn-secondary " (click)="isCollapsedService = !isCollapsedService">
+                            <i class="mdi" [ngClass]="{'mdi-arrow-collapse-down': isCollapsedService, 'mdi-arrow-collapse-up': !isCollapsedService}"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body border-bottom"  [collapse]="isCollapsedService" [isAnimated]="true">
                       <div class="row mb-md-2">
                         <div class="col-sm-12 col-md-6">
                           <div class="dataTables_length" id="tickets-table_length"><label
-                            class="d-inline-flex align-items-center">Mostrar
-                            <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
-                              [(ngModel)]="servicePerPage" class="form-control form-control-sm mx-2" (change)="apiServiceListPagination()">
-                              <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
-                            </select> registros</label>
+                              class="d-inline-flex align-items-center">Mostrar
+                              <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+                                [(ngModel)]="servicePerPage" class="form-control form-control-sm mx-2"
+                                (change)="apiServiceListPagination()">
+                                <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
+                              </select> registros</label>
                           </div>
                         </div>
                         <!-- Search -->
@@ -36,20 +301,22 @@
                           <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
                               class="d-inline-flex align-items-center">Buscar:
                               <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
-                                aria-controls="tickets-table" [(ngModel)]="serviceSearch" (input)="apiServiceListPagination()"></label>
+                                aria-controls="tickets-table" [(ngModel)]="serviceSearch"
+                                (input)="apiServiceListPagination()"></label>
                           </div>
                         </div>
                         <!-- End search -->
                       </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body"  [collapse]="isCollapsedService" [isAnimated]="true">
                       <div class="table-responsive">
                         <table class="table align-middle dt-responsive nowrap w-100 table-check">
                           <thead>
                             <tr>
                               <th style="width: 20px;">
                                 <div class="form-check font-size-16 align-middle">
-                                  <input class="form-check-input" type="checkbox" id="checkServiceAll"  [(ngModel)]="selectAllService" (change)="toggleAllSelectionService()">
+                                  <input class="form-check-input" type="checkbox" id="checkServiceAll"
+                                    [(ngModel)]="selectAllService" (change)="toggleAllSelectionService()">
                                   <label class="form-check-label" for="checkServiceAll"></label>
                                 </div>
                               </th>
@@ -63,27 +330,31 @@
                             <tr *ngFor="let data of listServices; let i = index">
                               <td>
                                 <div class="form-check font-size-16">
-                                  <input class="form-check-input" type="checkbox" id="checkService{{data.id}}" value="{{data.id}}" 
-                                  [checked]="getCheckedRowService(data.id)"
-                                  (change)="toggleSelectionService(data)">
+                                  <input class="form-check-input" type="checkbox" id="checkService{{data.id}}"
+                                    value="{{data.id}}" [checked]="getCheckedRowService(data.id)"
+                                    (change)="toggleSelectionService(data)">
                                   <label class="form-check-label" for="checkService{{data.id}}"></label>
                                 </div>
                               </td>
                               <th scope="row">{{i + 1}}</th>
                               <td>{{data.nombre}}</td>
                               <td>{{data.descripcion}}</td>
-                              <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
+                              <td><span class="badge text-md"
+                                  [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active?
+                                  'Activo': 'Inactivo'}}</span></td>
                             </tr>
-                            <tr *ngIf="!listServices.length"><td colspan="7" class="text-center">Sin registros.</td></tr>
+                            <tr *ngIf="!listServices.length">
+                              <td colspan="7" class="text-center">Sin registros.</td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
-            
+
                       <!-- End table -->
                       <div class="row justify-content-md-between align-items-md-center mt-2">
                         <div class="col-sm-12 col-md-6">
                           <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
-                            Mostrando de 
+                            Mostrando de
                             <b>{{servicePagination.from}}</b> al
                             <b>{{servicePagination.to}}</b> de <b>{{servicePagination.total}}</b>
                             registros
@@ -92,7 +363,9 @@
                         <!-- Pagination -->
                         <div class="col-sm-12 col-md-6">
                           <div class="text-md-right float-md-end pagination-rounded">
-                            <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="serviceTotal" [(ngModel)]="servicePage" [itemsPerPage]="servicePerPage" (pageChanged)="getPageService($event)"></pagination>
+                            <pagination previousText="Anterior" nextText="Siguiente" [totalItems]="serviceTotal"
+                              [(ngModel)]="servicePage" [itemsPerPage]="servicePerPage"
+                              (pageChanged)="getPageService($event)"></pagination>
                           </div>
                         </div>
                         <!-- End Pagination -->
@@ -100,12 +373,56 @@
                     </div>
                   </div>
                 </div>
+ 
+              </div>
+            </accordion-group>
+
+            <accordion-group heading="Servicios y direcciones añadidos">
+              <div class="row g-2">
                 <div class="col-md-6 mb-3">
-                  <div class="card shadow-lg border border-success">
+                  <div class="card shadow-sm">
                     <div class="card-body border-bottom">
-                      <h4 class="card-title text-success">Servicios añadidos a la lista</h4>
+                      <h4 class="card-title text-primary">Ubicaciones del cliente</h4>
                       <p class="card-sub-title">
-                        Servicios del cliente
+                        Direcciones donde se aran las instalaciones
+                      </p>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table align-middle dt-responsive nowrap w-100 table-check">
+                          <thead>
+                            <tr>
+                              <th scope="col">N°</th>
+                              <th scope="col">Tipo</th>
+                              <th scope="col">Dirección</th>
+                              <th scope="col">Numero</th>
+                              <th scope="col">Escalera</th>
+                              <th scope="col">Portal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let data of listInstallations; let i = index">
+                              <th scope="row">{{i + 1}}</th>
+                              <td>{{data.tipo}}</td>
+                              <td>{{data.direccion}}</td>
+                              <td>{{data.numero}}</td>
+                              <td>{{data.portal}}</td>
+                            </tr>
+                            <tr *ngIf="!listInstallations.length">
+                              <td colspan="7" class="text-center">Sin registros.</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="card shadow-sm">
+                    <div class="card-body border-bottom">
+                      <h4 class="card-title text-primary">Servicios añadidos a la lista</h4>
+                      <p class="card-sub-title">
+                        Servicios y direcciones del cliente
                       </p>
                     </div>
                     <div class="card-body">
@@ -115,7 +432,8 @@
                             <tr>
                               <th scope="col">N°</th>
                               <th scope="col">Nombre</th>
-                              <th scope="col">descripción</th>
+                              <th scope="col">Descripción</th>
+                              <th scope="col">Dirección</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -123,8 +441,11 @@
                               <th scope="row">{{i + 1}}</th>
                               <td>{{data.nombre}}</td>
                               <td>{{data.descripcion}}</td>
+                              <td>{{data.direccion}}</td>
                             </tr>
-                            <tr *ngIf="!listServiceSelected.length"><td colspan="7" class="text-center">Sin registros.</td></tr>
+                            <tr *ngIf="!listServiceSelected.length">
+                              <td colspan="7" class="text-center">Sin registros.</td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -132,140 +453,442 @@
                   </div>
                 </div>
               </div>
-              <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-                <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
-              </ul>
-            </section>
-          </cdk-step>
-      
-          <cdk-step [optional]="true">
-            <ng-template cdkStepLabel>
-              <span class="number">2.</span>
-              <span>Cliente</span>
-            </ng-template>
-            <section *ngIf="cdkStepper.selectedIndex === 1">
-              <div>              
-                <accordion [isAnimated]="true" [closeOthers]="true">
-                  <accordion-group heading="Buscar cliente (empresa/persona)">
-                    <!-- <form (keydown.enter)="$event.preventDefault()" [formGroup]="userSearchForm" autocomplete="off">
-                      <div class="row g-2 d-none">
-                        <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
-                          <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
-                          <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted) }">
-                            <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
-                            <option *ngFor="let typeDocument of listDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
-                          </select>
-                          <div *ngIf="fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
-                            <div *ngIf="fs.tipo_documentos_id.errors.required">
-                              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
-                          <label for="documento" class="form-label">{{translatedLabel}} *</label>
-                          <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted) }" />
-                          <div *ngIf="fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted)" class="invalid-feedback" align="left">
-                            <div *ngIf="fs.documento.errors.required">
-                              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-                            </div>
-                            <div *ngIf="fs.documento.errors.maxlength">
-                              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.documento.errors.maxlength.requiredLength}}
-                            </div>
-                            <div *ngIf="fs.documento.errors.minlength">
-                              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.documento.errors.minlength.requiredLength}}
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.search.label' | translate as translatedLabel;">
-                          <label for="search" class="form-label">{{translatedLabel}} *</label>
-                          <div class="input-group">
-                            <input type="text" maxlength="11" id="search" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.search.placeholder' | translate}}" formControlName="search" [ngClass]="{ 'is-invalid': fs.search.errors && (fs.search.dirty || fs.search.touched || submitted) }" />
-                            <button class="btn btn-primary"  [disabled]="userSearchForm.invalid">{{'FORMS.BUTTONS.SEARCH' | translate}}</button>
-                          </div>
-                          <div *ngIf="fs.search.errors && (fs.search.dirty || fs.search.touched || submitted)" class="invalid-feedback" align="left">
-                            <div *ngIf="fs.documento.errors.required">
-                              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-                            </div>
-                            <div *ngIf="fs.search.errors.maxlength">
-                              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.search.errors.maxlength.requiredLength}}
-                            </div>
-                            <div *ngIf="fs.search.errors.minlength">
-                              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.search.errors.minlength.requiredLength}}
-                            </div>
-                          </div>
+            </accordion-group>
+          </accordion>
+
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">2</span>
+          <span>Cliente</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 1">
+          <div>
+            <accordion [isAnimated]="true" [closeOthers]="true">
+              <accordion-group heading="Buscar cliente (empresa/persona)">
+                <!-- <form (keydown.enter)="$event.preventDefault()" [formGroup]="userSearchForm" autocomplete="off">
+                  <div class="row g-2 d-none">
+                    <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
+                      <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
+                      <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted) }">
+                        <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
+                        <option *ngFor="let typeDocument of listDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
+                      </select>
+                      <div *ngIf="fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
+                        <div *ngIf="fs.tipo_documentos_id.errors.required">
+                          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
                         </div>
                       </div>
-                    </form>  -->
-                  </accordion-group>
-                  <accordion-group heading="Formulario para registrar al cliente">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi odit doloribus ipsum itaque, laborum dignissimos.
-                  </accordion-group>
-                </accordion>
-                
-              </div>
-              <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-                <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
-              </ul>
-            </section>
-          </cdk-step>
-      
-          <cdk-step [optional]="true">
-            <ng-template cdkStepLabel>
-              <span class="number">3.</span>
-              <span>Venta</span>
-            </ng-template>
-            <section *ngIf="cdkStepper.selectedIndex === 2">
-              <div>Texto</div>  
-              <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-                <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
-              </ul>
-            </section>
-          </cdk-step>
-      
-          <cdk-step [optional]="true">
-            <ng-template cdkStepLabel>
-              <span class="number">4.</span>
-              <span>Detalle</span>
-            </ng-template>
-            <section *ngIf="cdkStepper.selectedIndex === 3">
-              <div>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam reprehenderit vitae nostrum molestias quidem in. Quas beatae ad laudantium aut tempora delectus, facere odio assumenda quidem provident dolores iusto optio totam temporibus. Perferendis voluptas sint molestiae quo mollitia, aliquid temporibus, odit impedit incidunt aut quidem cum corrupti veritatis voluptate. Veniam nesciunt hic vel fugit aliquam esse reprehenderit ex quo ab eos, saepe quia adipisci repudiandae culpa eligendi amet nemo suscipit soluta doloremque atque, blanditiis facere! Eligendi voluptates mollitia magnam architecto necessitatibus debitis, quod, autem doloribus expedita voluptatibus id natus animi vitae ratione assumenda fugit, at eos aperiam deserunt placeat tempore tempora et distinctio perferendis. Eius ut, illo minima nobis qui eligendi dignissimos, amet distinctio veniam, nesciunt nulla quisquam. Dolor libero earum autem enim, commodi voluptas facere aliquid sequi architecto eius quam fuga necessitatibus maxime consequatur, illum, natus numquam. Illum inventore perferendis consectetur repellat fuga optio doloremque, sapiente magnam perspiciatis est, necessitatibus minus maxime excepturi, nam alias. Tempore ducimus sequi ratione repellendus rerum consectetur culpa inventore consequatur corrupti vel debitis sapiente, corporis dicta non possimus aspernatur dolor quisquam blanditiis tenetur maiores delectus dignissimos amet similique dolore. Impedit eaque quos quibusdam! Sunt enim porro, laudantium, nostrum repellendus odio quod recusandae hic eveniet, numquam laboriosam? Ut nulla culpa mollitia qui eius ratione nam velit explicabo. Voluptate, reiciendis ipsum. Voluptate veritatis explicabo consectetur, itaque inventore corporis aliquam atque dolorum iusto soluta pariatur quibusdam aspernatur, repellendus reiciendis? Perferendis assumenda eum quasi vel mollitia ipsa officiis nesciunt ducimus! Adipisci assumenda nostrum nihil quia accusamus iste nulla, perspiciatis dolorem quis minus dolore eum veniam sunt id consequuntur nemo, molestias possimus! Aliquam necessitatibus mollitia molestiae natus nam, architecto quia consectetur eos, incidunt voluptatum cum accusantium libero ipsa. Corrupti, est commodi assumenda unde minima nihil vero doloremque nobis rem suscipit. Earum eius impedit nemo, quo ut iure adipisci provident similique. Repudiandae, perspiciatis. Incidunt laboriosam ut cum, maiores deserunt maxime, sit harum, dolores voluptates nostrum reprehenderit doloremque temporibus velit error obcaecati aperiam quis sunt dolore quaerat labore voluptatem. Mollitia ullam saepe soluta quidem, doloremque deserunt voluptates ab impedit! Labore aperiam ipsa eos, culpa ipsum ex laboriosam possimus voluptates suscipit consequatur! Officiis, sapiente nemo? Aperiam quidem eos molestias fuga, accusantium minus consequatur harum obcaecati adipisci ratione, iste esse exercitationem cumque sed qui ea consectetur corrupti nam repellendus omnis dolorum! Tempore repellat quo eaque ipsam temporibus alias omnis rem explicabo illo ut laborum possimus quos, doloremque minima iusto neque ullam incidunt quaerat voluptates. Delectus corrupti accusantium ullam laudantium nesciunt recusandae, praesentium dicta libero aperiam dolor, iste vitae voluptate architecto laborum molestiae voluptatum corporis incidunt error eveniet quam. Labore illo voluptatibus, quam magnam suscipit laboriosam? Corporis quisquam provident eaque commodi aliquam? Dolor, cupiditate vitae nobis eaque dolorum eos nesciunt. Quidem praesentium sunt voluptatem optio ut laborum voluptatum libero et laboriosam labore eius incidunt fugiat architecto esse, tempore dicta tempora iste tenetur nobis aut sequi sint ab. Reprehenderit nobis cumque iusto veritatis aliquid dolorem quod illo, aperiam corporis minima aut ut alias, laborum architecto enim ea adipisci modi illum dicta tempora doloremque ab saepe eum? Rerum corporis possimus ipsa ut? Corrupti libero dignissimos, quaerat iusto nulla voluptates eum commodi eius temporibus ipsa est aperiam beatae nemo voluptatum quia distinctio quasi fugiat minima, fugit vitae repellat. Iure incidunt temporibus quisquam repellendus nemo error qui nostrum vitae eveniet fuga. Blanditiis, voluptates adipisci dolorem recusandae ad sed. Totam ut aliquid esse illo, fugiat dignissimos soluta adipisci, iste est eius modi voluptate velit vitae sequi vero expedita quasi deserunt? Fuga vitae cupiditate incidunt illum laboriosam explicabo quibusdam ullam quidem quod, officia, nulla iste magni soluta nesciunt similique. Consequatur voluptates eos, numquam recusandae tempore asperiores placeat ex dolorem. Accusantium tenetur sunt debitis nostrum consequatur veniam consequuntur doloribus possimus itaque distinctio quis animi fugit illum laboriosam maxime, aut iure nemo. Ducimus natus sint quos eius nostrum dolore fugit debitis consequuntur! Adipisci dicta porro voluptatum maxime illum ratione natus. Voluptates adipisci repellat quod quaerat voluptate possimus esse id facere a. Optio temporibus ab architecto, nesciunt dolore distinctio eos! Fugiat odit et debitis obcaecati, doloribus provident doloremque, ut ab quae quia architecto officia deleniti possimus hic reiciendis quo perspiciatis. Nam ducimus neque enim adipisci a quas obcaecati, consectetur aliquam molestias ex eum porro corrupti vel, saepe rerum dicta nihil alias doloribus molestiae, soluta nisi ipsam animi iste. Natus officia libero animi aliquid nobis quasi facere sunt, ab assumenda saepe sequi quos eius ut reprehenderit quo voluptas voluptates magni quae non atque quam doloribus quod. Soluta maiores veritatis sapiente exercitationem doloribus minus? Fuga quis in nihil totam! Iste atque sequi molestiae cupiditate error voluptatem, quas quasi, excepturi ipsum facilis doloremque odio consequatur ad? Quisquam a aperiam non deleniti qui, quos magni voluptatem excepturi esse fuga dolor voluptatibus cumque consequatur error veritatis? Veniam provident aliquid deserunt sit autem quas similique quasi voluptas labore vitae corporis veritatis fuga minima reprehenderit cupiditate, culpa quisquam praesentium adipisci eos doloremque illo doloribus corrupti fugit voluptatem! Aut, ipsum repudiandae, accusantium nulla numquam unde, deserunt tempore alias sapiente mollitia ex quae? Debitis ut et illum, porro repudiandae error praesentium, placeat at voluptatibus, nobis quis. Nam quia consequatur aliquam numquam est ut obcaecati maiores praesentium mollitia rerum eos error sit sapiente corrupti odio, in quisquam dolorem cum voluptatem saepe culpa ullam facere impedit quae? Repudiandae dolorum nemo aspernatur exercitationem sint facere tempore! Ab suscipit temporibus tenetur minima magnam veniam est ipsum voluptates tempora officia magni laudantium maxime delectus expedita nostrum ea soluta explicabo vitae recusandae sapiente praesentium placeat omnis, facilis ratione. Illo similique repellat iure tenetur excepturi natus est animi fuga! Omnis impedit consequuntur voluptatibus voluptatum dicta consequatur minima sit ab autem deserunt. Quod optio ullam provident, ratione ad, quidem reprehenderit modi totam aliquid amet, a porro eum sed vero dolorem exercitationem dolore consequatur! Expedita porro quo facere! Nostrum quos vero, nulla possimus excepturi necessitatibus dolorem architecto iure aspernatur suscipit earum, ad dolores obcaecati perferendis quod odio. Delectus, illo? Alias accusantium quas veritatis unde quidem esse itaque natus dolore cumque consequuntur, libero atque, qui nostrum nisi recusandae mollitia reiciendis cum architecto perferendis rerum dolorem sunt. Commodi porro cum totam beatae facere.
-                </p>
-              </div>
-              <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-                <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
-              </ul>
-            </section>
-          </cdk-step>
-      
-          <cdk-step [optional]="true">
-            <ng-template cdkStepLabel>
-              <span class="number">5.</span>
-              <span>Confirmar proceso</span>
-            </ng-template>
-            <section *ngIf="cdkStepper.selectedIndex === 4">
-              <div>Texto</div>
-              <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-                <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext (click)="saveData()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
-              </ul>
-            </section>
-          </cdk-step>  
-        </ng-stepper> 
+                    </div>
+                    <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
+                      <label for="documento" class="form-label">{{translatedLabel}} *</label>
+                      <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted) }" />
+                      <div *ngIf="fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted)" class="invalid-feedback" align="left">
+                        <div *ngIf="fs.documento.errors.required">
+                          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                        </div>
+                        <div *ngIf="fs.documento.errors.maxlength">
+                          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.documento.errors.maxlength.requiredLength}}
+                        </div>
+                        <div *ngIf="fs.documento.errors.minlength">
+                          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.documento.errors.minlength.requiredLength}}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.search.label' | translate as translatedLabel;">
+                      <label for="search" class="form-label">{{translatedLabel}} *</label>
+                      <div class="input-group">
+                        <input type="text" maxlength="11" id="search" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.search.placeholder' | translate}}" formControlName="search" [ngClass]="{ 'is-invalid': fs.search.errors && (fs.search.dirty || fs.search.touched || submitted) }" />
+                        <button class="btn btn-primary"  [disabled]="userSearchForm.invalid">{{'FORMS.BUTTONS.SEARCH' | translate}}</button>
+                      </div>
+                      <div *ngIf="fs.search.errors && (fs.search.dirty || fs.search.touched || submitted)" class="invalid-feedback" align="left">
+                        <div *ngIf="fs.documento.errors.required">
+                          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                        </div>
+                        <div *ngIf="fs.search.errors.maxlength">
+                          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.search.errors.maxlength.requiredLength}}
+                        </div>
+                        <div *ngIf="fs.search.errors.minlength">
+                          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.search.errors.minlength.requiredLength}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>  -->
+              </accordion-group>
+              <accordion-group heading="Formulario para registrar al cliente">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi odit doloribus ipsum itaque, laborum
+                dignissimos.
+              </accordion-group>
+            </accordion>
+
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">3</span>
+          <span>Venta</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 2">
+          <div>Texto</div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">4</span>
+          <span>Detalle</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 3">
+          <div>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam reprehenderit vitae nostrum molestias
+              quidem in. Quas beatae ad laudantium aut tempora delectus, facere odio assumenda quidem provident dolores
+              iusto optio totam temporibus. Perferendis voluptas sint molestiae quo mollitia, aliquid temporibus, odit
+              impedit incidunt aut quidem cum corrupti veritatis voluptate. Veniam nesciunt hic vel fugit aliquam esse
+              reprehenderit ex quo ab eos, saepe quia adipisci repudiandae culpa eligendi amet nemo suscipit soluta
+              doloremque atque, blanditiis facere! Eligendi voluptates mollitia magnam architecto necessitatibus
+              debitis, quod, autem doloribus expedita voluptatibus id natus animi vitae ratione assumenda fugit, at eos
+              aperiam deserunt placeat tempore tempora et distinctio perferendis. Eius ut, illo minima nobis qui
+              eligendi dignissimos, amet distinctio veniam, nesciunt nulla quisquam. Dolor libero earum autem enim,
+              commodi voluptas facere aliquid sequi architecto eius quam fuga necessitatibus maxime consequatur, illum,
+              natus numquam. Illum inventore perferendis consectetur repellat fuga optio doloremque, sapiente magnam
+              perspiciatis est, necessitatibus minus maxime excepturi, nam alias. Tempore ducimus sequi ratione
+              repellendus rerum consectetur culpa inventore consequatur corrupti vel debitis sapiente, corporis dicta
+              non possimus aspernatur dolor quisquam blanditiis tenetur maiores delectus dignissimos amet similique
+              dolore. Impedit eaque quos quibusdam! Sunt enim porro, laudantium, nostrum repellendus odio quod
+              recusandae hic eveniet, numquam laboriosam? Ut nulla culpa mollitia qui eius ratione nam velit explicabo.
+              Voluptate, reiciendis ipsum. Voluptate veritatis explicabo consectetur, itaque inventore corporis aliquam
+              atque dolorum iusto soluta pariatur quibusdam aspernatur, repellendus reiciendis? Perferendis assumenda
+              eum quasi vel mollitia ipsa officiis nesciunt ducimus! Adipisci assumenda nostrum nihil quia accusamus
+              iste nulla, perspiciatis dolorem quis minus dolore eum veniam sunt id consequuntur nemo, molestias
+              possimus! Aliquam necessitatibus mollitia molestiae natus nam, architecto quia consectetur eos, incidunt
+              voluptatum cum accusantium libero ipsa. Corrupti, est commodi assumenda unde minima nihil vero doloremque
+              nobis rem suscipit. Earum eius impedit nemo, quo ut iure adipisci provident similique. Repudiandae,
+              perspiciatis. Incidunt laboriosam ut cum, maiores deserunt maxime, sit harum, dolores voluptates nostrum
+              reprehenderit doloremque temporibus velit error obcaecati aperiam quis sunt dolore quaerat labore
+              voluptatem. Mollitia ullam saepe soluta quidem, doloremque deserunt voluptates ab impedit! Labore aperiam
+              ipsa eos, culpa ipsum ex laboriosam possimus voluptates suscipit consequatur! Officiis, sapiente nemo?
+              Aperiam quidem eos molestias fuga, accusantium minus consequatur harum obcaecati adipisci ratione, iste
+              esse exercitationem cumque sed qui ea consectetur corrupti nam repellendus omnis dolorum! Tempore repellat
+              quo eaque ipsam temporibus alias omnis rem explicabo illo ut laborum possimus quos, doloremque minima
+              iusto neque ullam incidunt quaerat voluptates. Delectus corrupti accusantium ullam laudantium nesciunt
+              recusandae, praesentium dicta libero aperiam dolor, iste vitae voluptate architecto laborum molestiae
+              voluptatum corporis incidunt error eveniet quam. Labore illo voluptatibus, quam magnam suscipit
+              laboriosam? Corporis quisquam provident eaque commodi aliquam? Dolor, cupiditate vitae nobis eaque dolorum
+              eos nesciunt. Quidem praesentium sunt voluptatem optio ut laborum voluptatum libero et laboriosam labore
+              eius incidunt fugiat architecto esse, tempore dicta tempora iste tenetur nobis aut sequi sint ab.
+              Reprehenderit nobis cumque iusto veritatis aliquid dolorem quod illo, aperiam corporis minima aut ut
+              alias, laborum architecto enim ea adipisci modi illum dicta tempora doloremque ab saepe eum? Rerum
+              corporis possimus ipsa ut? Corrupti libero dignissimos, quaerat iusto nulla voluptates eum commodi eius
+              temporibus ipsa est aperiam beatae nemo voluptatum quia distinctio quasi fugiat minima, fugit vitae
+              repellat. Iure incidunt temporibus quisquam repellendus nemo error qui nostrum vitae eveniet fuga.
+              Blanditiis, voluptates adipisci dolorem recusandae ad sed. Totam ut aliquid esse illo, fugiat dignissimos
+              soluta adipisci, iste est eius modi voluptate velit vitae sequi vero expedita quasi deserunt? Fuga vitae
+              cupiditate incidunt illum laboriosam explicabo quibusdam ullam quidem quod, officia, nulla iste magni
+              soluta nesciunt similique. Consequatur voluptates eos, numquam recusandae tempore asperiores placeat ex
+              dolorem. Accusantium tenetur sunt debitis nostrum consequatur veniam consequuntur doloribus possimus
+              itaque distinctio quis animi fugit illum laboriosam maxime, aut iure nemo. Ducimus natus sint quos eius
+              nostrum dolore fugit debitis consequuntur! Adipisci dicta porro voluptatum maxime illum ratione natus.
+              Voluptates adipisci repellat quod quaerat voluptate possimus esse id facere a. Optio temporibus ab
+              architecto, nesciunt dolore distinctio eos! Fugiat odit et debitis obcaecati, doloribus provident
+              doloremque, ut ab quae quia architecto officia deleniti possimus hic reiciendis quo perspiciatis. Nam
+              ducimus neque enim adipisci a quas obcaecati, consectetur aliquam molestias ex eum porro corrupti vel,
+              saepe rerum dicta nihil alias doloribus molestiae, soluta nisi ipsam animi iste. Natus officia libero
+              animi aliquid nobis quasi facere sunt, ab assumenda saepe sequi quos eius ut reprehenderit quo voluptas
+              voluptates magni quae non atque quam doloribus quod. Soluta maiores veritatis sapiente exercitationem
+              doloribus minus? Fuga quis in nihil totam! Iste atque sequi molestiae cupiditate error voluptatem, quas
+              quasi, excepturi ipsum facilis doloremque odio consequatur ad? Quisquam a aperiam non deleniti qui, quos
+              magni voluptatem excepturi esse fuga dolor voluptatibus cumque consequatur error veritatis? Veniam
+              provident aliquid deserunt sit autem quas similique quasi voluptas labore vitae corporis veritatis fuga
+              minima reprehenderit cupiditate, culpa quisquam praesentium adipisci eos doloremque illo doloribus
+              corrupti fugit voluptatem! Aut, ipsum repudiandae, accusantium nulla numquam unde, deserunt tempore alias
+              sapiente mollitia ex quae? Debitis ut et illum, porro repudiandae error praesentium, placeat at
+              voluptatibus, nobis quis. Nam quia consequatur aliquam numquam est ut obcaecati maiores praesentium
+              mollitia rerum eos error sit sapiente corrupti odio, in quisquam dolorem cum voluptatem saepe culpa ullam
+              facere impedit quae? Repudiandae dolorum nemo aspernatur exercitationem sint facere tempore! Ab suscipit
+              temporibus tenetur minima magnam veniam est ipsum voluptates tempora officia magni laudantium maxime
+              delectus expedita nostrum ea soluta explicabo vitae recusandae sapiente praesentium placeat omnis, facilis
+              ratione. Illo similique repellat iure tenetur excepturi natus est animi fuga! Omnis impedit consequuntur
+              voluptatibus voluptatum dicta consequatur minima sit ab autem deserunt. Quod optio ullam provident,
+              ratione ad, quidem reprehenderit modi totam aliquid amet, a porro eum sed vero dolorem exercitationem
+              dolore consequatur! Expedita porro quo facere! Nostrum quos vero, nulla possimus excepturi necessitatibus
+              dolorem architecto iure aspernatur suscipit earum, ad dolores obcaecati perferendis quod odio. Delectus,
+              illo? Alias accusantium quas veritatis unde quidem esse itaque natus dolore cumque consequuntur, libero
+              atque, qui nostrum nisi recusandae mollitia reiciendis cum architecto perferendis rerum dolorem sunt.
+              Commodi porro cum totam beatae facere.
+            </p>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">5</span>
+          <span>Confirmar proceso</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 4">
+          <div>Texto</div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext
+                (click)="saveData()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+    </ng-stepper>
+    <div class="card">
+      <div class="card-body">
       </div>
     </div>
   </div>
   <div class="modal-footer">
     <div class="hstack gap-2 justify-content-end">
-      <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
       <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
       <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
     </div>
   </div>
 
 </div>
+
+
+<!-- MODAL FORMULARIO - INTSLACIONES -->
+<ng-template #contentInstallation role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModalInstallation.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRefCurrent?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <form (keydown.enter)="$event.preventDefault()" [formGroup]="installationForm" autocomplete="off">
+      <div class="row g-2">
+        <div class="col-md-4 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+          <label for="tipo" class="form-label">{{translatedLabel}}</label>
+          <ng-select id="tipo" formControlName="tipo" 
+            [notFoundText]="'No se encontraron elementos'"
+            [ngClass]="{ 'is-invalid': fi.tipo.errors && (fi.tipo.dirty || fi.tipo.touched || submittedInstallation) }">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</ng-option>
+            <ng-option value="Avenida">Avenida</ng-option>
+            <ng-option value="Calle">Calle</ng-option>
+            <ng-option value="Pasaje">Pasaje</ng-option>
+            <ng-option value="Urbanización">Urbanización</ng-option>
+          </ng-select>
+          <div *ngIf="fi['tipo'].errors && (fi.tipo.dirty || fi.tipo.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi['tipo'].errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.direction.label' | translate as translatedLabel;">
+          <label for="direccion" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="direccion" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.direction.placeholder' | translate}}"
+            formControlName="direccion"
+            [ngClass]="{ 'is-invalid': fi['direccion'].errors && (fi.direccion.dirty || fi.direccion.touched || submittedInstallation) }" />
+          <div *ngIf="fi['direccion'].errors && (fi.direccion.dirty || fi.direccion.touched || submittedInstallation)" class="invalid-feedback" align="left">
+            <div *ngIf="fi['direccion'].errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+            <div *ngIf="fi.direccion.errors.minlength">
+              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.direccion.errors.minlength.requiredLength}}
+            </div>
+            <div *ngIf="fi.direccion.errors.maxlength">
+              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.direccion.errors.maxlength.requiredLength}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-4 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.number.label' | translate as translatedLabel;">
+          <label for="numero" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="numero" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.number.placeholder' | translate}}"
+            formControlName="numero"
+            [ngClass]="{ 'is-invalid': fi.numero.errors && (fi.numero.dirty || fi.numero.touched || submittedInstallation) }" />
+          <div *ngIf="fi.numero.errors && (fi.numero.dirty || fi.numero.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.numero.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+            <div *ngIf="fi.numero.errors.minlength">
+              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.numero.errors.minlength.requiredLength}}
+            </div>
+            <div *ngIf="fi.numero.errors.maxlength">
+              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.numero.errors.maxlength.requiredLength}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.ladder.label' | translate as translatedLabel;">
+          <label for="escalera" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="escalera" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.ladder.placeholder' | translate}}"
+            formControlName="escalera"
+            [ngClass]="{ 'is-invalid': fi.escalera.errors && (fi.escalera.dirty || fi.escalera.touched || submittedInstallation) }" />
+          <div *ngIf="fi.escalera.errors && (fi.escalera.dirty || fi.escalera.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.escalera.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+            <div *ngIf="fi.escalera.errors.minlength">
+              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.escalera.errors.minlength.requiredLength}}
+            </div>
+            <div *ngIf="fi.escalera.errors.maxlength">
+              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.escalera.errors.maxlength.requiredLength}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-4 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.portal.label' | translate as translatedLabel;">
+          <label for="portal" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="portal" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.portal.placeholder' | translate}}"
+            formControlName="portal"
+            [ngClass]="{ 'is-invalid': fi.portal.errors && (fi.portal.dirty || fi.portal.touched || submittedInstallation) }" />
+          <div *ngIf="fi.portal.errors && (fi.portal.dirty || fi.portal.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.portal.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+            <div *ngIf="fi.portal.errors.minlength">
+              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.portal.errors.minlength.requiredLength}}
+            </div>
+            <div *ngIf="fi.portal.errors.maxlength">
+              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.portal.errors.maxlength.requiredLength}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.plant.label' | translate as translatedLabel;">
+          <label for="planta" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="planta" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.plant.placeholder' | translate}}"
+            formControlName="planta"
+            [ngClass]="{ 'is-invalid': fi.planta.errors && (fi.planta.dirty || fi.planta.touched || submittedInstallation) }" />
+          <div *ngIf="fi.planta.errors && (fi.planta.dirty || fi.planta.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.planta.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-4 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.door.label' | translate as translatedLabel;">
+          <label for="puerta" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="puerta" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.door.placeholder' | translate}}"
+            formControlName="puerta"
+            [ngClass]="{ 'is-invalid': fi.puerta.errors && (fi.puerta.dirty || fi.puerta.touched || submittedInstallation) }" />
+          <div *ngIf="fi.puerta.errors && (fi.puerta.dirty || fi.puerta.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.puerta.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.code_postal.label' | translate as translatedLabel;">
+          <label for="codigo_postal" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="codigo_postal" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.code_postal.placeholder' | translate}}"
+            formControlName="codigo_postal"
+            [ngClass]="{ 'is-invalid': fi.codigo_postal.errors && (fi.codigo_postal.dirty || fi.codigo_postal.touched || submittedInstallation) }" />
+          <div
+            *ngIf="fi.codigo_postal.errors && (fi.codigo_postal.dirty || fi.codigo_postal.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.codigo_postal.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-12 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.location.label' | translate as translatedLabel;">
+          <label for="localidad" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="localidad" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.location.placeholder' | translate}}"
+            formControlName="localidad"
+            [ngClass]="{ 'is-invalid': fi.localidad.errors && (fi.localidad.dirty || fi.localidad.touched || submittedInstallation) }" />
+          <div
+            *ngIf="fi.localidad.errors && (fi.localidad.dirty || fi.localidad.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.localidad.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 mb-3"
+          *ngIf="'FORMS.FIELD_NAMES.province.label' | translate as translatedLabel;">
+          <label for="provincia" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="provincia" class="form-control" focus="true"
+            placeholder="{{'FORMS.FIELD_NAMES.province.placeholder' | translate}}"
+            formControlName="provincia"
+            [ngClass]="{ 'is-invalid': fi.provincia.errors && (fi.provincia.dirty || fi.provincia.touched || submittedInstallation) }" />
+          <div
+            *ngIf="fi.provincia.errors && (fi.provincia.dirty || fi.provincia.touched || submittedInstallation)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fi.provincia.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRefCurrent?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
+    </div>
+  </div>
+</ng-template>
+<!--End Modal -->

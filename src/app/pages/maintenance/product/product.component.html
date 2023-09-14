@@ -116,34 +116,36 @@
   <form (keydown.enter)="$event.preventDefault()" [formGroup]="productForm" autocomplete="off">
     <div class="modal-body">
       <input type="hidden" name="id" value="" formControlName="id" />
-      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
-        <label for="tipo_servicios_id" class="form-label">{{translatedLabel}} *</label>
-        <ng-select id="tipo_servicios_id" formControlName="tipo_servicios_id" [ngClass]="{ 'is-invalid': form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted) }">
+     
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.category.label' | translate as translatedLabel;">
+        <label for="categorias_id" class="form-label">{{translatedLabel}} *</label>
+        <ng-select id="categorias_id" formControlName="categorias_id" [ngClass]="{ 'is-invalid': form.categorias_id.errors && (form.categorias_id.dirty || form.categorias_id.touched || submitted) }">
           <ng-option [value]="''">{{'FORMS.FIELD_NAMES.category.default_option' | translate}}</ng-option>
-          <ng-option *ngFor="let service of listServices" [value]="service.id">{{service.nombre}}</ng-option>
+          <ng-option *ngFor="let category of listCategories" [value]="category.id">{{category.nombre}}</ng-option>
         </ng-select>
-        <div *ngIf="form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted)" class="invalid-feedback" align="left">
-          <div *ngIf="form.tipo_servicios_id.errors.required">
+        <div *ngIf="form.categorias_id.errors && (form.categorias_id.dirty || form.categorias_id.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form.categorias_id.errors.required">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
           </div>
-          <div *ngIf="form.tipo_servicios_id.errors.min">
-            {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.tipo_servicios_id.errors.min.requiredLength}}
+          <div *ngIf="form.categorias_id.errors.min">
+            {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.categorias_id.errors.min.requiredLength}}
           </div>
         </div>
       </div>
+
       <div class="row g-2">
-        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.category.label' | translate as translatedLabel;">
-          <label for="categorias_id" class="form-label">{{translatedLabel}} *</label>
-          <ng-select id="categorias_id" formControlName="categorias_id" [ngClass]="{ 'is-invalid': form.categorias_id.errors && (form.categorias_id.dirty || form.categorias_id.touched || submitted) }">
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
+          <label for="tipo_servicios_id" class="form-label">{{translatedLabel}} *</label>
+          <ng-select id="tipo_servicios_id" formControlName="tipo_servicios_id" [ngClass]="{ 'is-invalid': form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted) }">
             <ng-option [value]="''">{{'FORMS.FIELD_NAMES.category.default_option' | translate}}</ng-option>
-            <ng-option *ngFor="let category of listCategories" [value]="category.id">{{category.nombre}}</ng-option>
+            <ng-option *ngFor="let service of listServices" [value]="service.id">{{service.nombre}}</ng-option>
           </ng-select>
-          <div *ngIf="form.categorias_id.errors && (form.categorias_id.dirty || form.categorias_id.touched || submitted)" class="invalid-feedback" align="left">
-            <div *ngIf="form.categorias_id.errors.required">
+          <div *ngIf="form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="form.tipo_servicios_id.errors.required">
               {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
             </div>
-            <div *ngIf="form.categorias_id.errors.min">
-              {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.categorias_id.errors.min.requiredLength}}
+            <div *ngIf="form.tipo_servicios_id.errors.min">
+              {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': form.tipo_servicios_id.errors.min.requiredLength}}
             </div>
           </div>
         </div>

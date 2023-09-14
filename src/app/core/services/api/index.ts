@@ -1,4 +1,5 @@
 export * from './maintenance'
+export * from './temp'
 export * from './user.service'
 export * from './country.service'
 export * from './calendar.service'
