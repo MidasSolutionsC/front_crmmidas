@@ -105,8 +105,6 @@ export class GroupComponent {
   dtOptions: any = {};
   dtColumns: DataTables.ColumnSettings[] = [];
 
-
-
   // TABLE USUARIOS - SERVER SIDE
   page: number = 1;
   perPage: number = 5;

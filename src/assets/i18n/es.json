@@ -557,6 +557,10 @@
         "label": "Descripción",
         "placeholder": "Ingrese la descripción..."
       },
+      "direction": {
+        "label": "Dirección",
+        "placeholder": "Ingrese la dirección..."
+      },
       "color": {
         "label": "Color",
         "placeholder": "Ingrese el color...",
@@ -568,9 +572,29 @@
         "default_option": "Seleccione una opción...",
         "default_check": "Marque esta casilla si es necesario"
       },
-       "number": {
+      "number": {
         "label": "Numero",
-        "placeholder": "Ingrese el número.."
+        "placeholder": "Ingrese el número..."
+      },
+      "ladder": {
+        "label": "Escalera",
+        "placeholder": "Ingrese la escalera..."
+      },
+      "portal": {
+        "label": "Portal",
+        "placeholder": "Ingrese el portal..."
+      },
+      "plant": {
+        "label": "Planta",
+        "placeholder": "Ingrese el planta..."
+      },
+      "door": {
+        "label": "Puerta",
+        "placeholder": "Ingrese la puerta..."
+      },
+      "location": {
+        "label": "Localidad",
+        "placeholder": "Ingrese la localidad..."
       },
       "operator": {
         "label": "Operador",
@@ -630,6 +654,9 @@
       "PREVIEW": {
         "label": "Previsualización"
       }
+    },
+    "NOT_FOUND": {
+      "ITEMS": "Elemento no encontrado"
     }
   },
   "MODALS": {

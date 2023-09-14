@@ -24,6 +24,7 @@ import { CoreModule } from './core/core.module';
 import { JwtAuthInterceptor } from './core/helpers';
 
 import { DataTablesModule} from 'angular-datatables'
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 // if (environment.defaultauth === 'firebase') {
 //   initFirebaseBackend(environment.firebaseConfig);
@@ -56,6 +57,7 @@ export function createTranslateLoader(http: HttpClient): any {
     AppRoutingModule,
     CarouselModule,
     AccordionModule.forRoot(),
+    CollapseModule.forRoot(),
     TabsModule.forRoot(),
     TooltipModule.forRoot(),
     ScrollToModule.forRoot(),
