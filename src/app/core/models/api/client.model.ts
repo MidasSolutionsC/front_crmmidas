@@ -3,15 +3,61 @@ import { Model } from "./model";
 export class Client extends Model{
   public id: number;
   public personas_id: number;
-  public tipo_usuarios_id: number;
-  public nombre_usuario: string;
-  public clave: string;
-  public foto_perfil: string;
-  public session_activa: boolean;
+  public empresas_id: number;
+  public tipo_cliente: string;
+  public cif: string;
+  public codigo_carga: string;
+  public segmento_vodafond: string;
+  // public cta_bco: string;
+  public persona_juridica: boolean;
   public is_active: boolean;
-  public ultima_conexion: string;
-  public api_token: string;
-  public expires_at: string;
+  constructor(data?: object){
+    super(data);
+    this.id = this.id || null;
+    this.personas_id = this.personas_id || null;
+    this.empresas_id = this.empresas_id || null;
+    this.tipo_cliente = this.tipo_cliente || null;
+    this.cif = this.cif || '';
+    this.codigo_carga = this.codigo_carga || '';
+    this.segmento_vodafond = this.segmento_vodafond || '';
+    // this.cta_bco = this.cta_bco || '';
+    this.persona_juridica = this.persona_juridica || false;
+    this.is_active = this.is_active || true;
+  }
+
+  public static cast(data: object): Client{
+    const obj = new Client(data);
+
+    return {
+      id: obj.id,
+      personas_id: obj.personas_id,
+      empresas_id: obj.empresas_id,
+      tipo_cliente: obj.tipo_cliente,
+      cif: obj.cif,
+      codigo_carga: obj.codigo_carga,
+      segmento_vodafond: obj.segmento_vodafond,
+      // cta_bco: obj.cta_bco,
+      persona_juridica: obj.persona_juridica,
+      is_active: obj.is_active
+    };
+  }
+
+  public static casts(dataArray: object[]): Client[]{
+    return dataArray.map((data) => Client.cast(data));
+  }
+}
+
+export class ClientList extends Model{
+  public id: number;
+  public personas_id: number;
+  public empresas_id: number;
+  public tipo_cliente: string;
+  public cif: string;
+  public codigo_carga: string;
+  public segmento_vodafond: string;
+  public cta_bco: string;
+  public persona_juridica: boolean;
+  public is_active: boolean;
   public created_at: string;
   public updated_at: string;
   public deleted_at: string;
@@ -20,26 +66,41 @@ export class Client extends Model{
     super(data);
     this.id = this.id || 0;
     this.personas_id = this.personas_id || 0;
-    this.tipo_usuarios_id = this.tipo_usuarios_id || 0;
-    this.nombre_usuario = this.nombre_usuario || '';
-    this.clave = this.clave || '';
-    this.foto_perfil = this.foto_perfil || '';
-    this.session_activa = this.session_activa || false;
+    this.empresas_id = this.empresas_id || 0;
+    this.tipo_cliente = this.tipo_cliente || null;
+    this.cif = this.cif || '';
+    this.codigo_carga = this.codigo_carga || '';
+    this.segmento_vodafond = this.segmento_vodafond || '';
+    this.cta_bco = this.cta_bco || '';
+    this.persona_juridica = this.persona_juridica || false;
     this.is_active = this.is_active || false;
-    this.ultima_conexion = this.ultima_conexion || '';
-    this.api_token = this.api_token || '';
-    this.expires_at = this.expires_at || '';
     this.created_at = this.created_at || '';
     this.updated_at = this.updated_at || '';
     this.deleted_at = this.deleted_at || '';
   }
 
-  public static cast(data: object): Client{
-    return new Client(data);
+  public static cast(data: object): ClientList{
+    const obj = new ClientList(data);
+
+    return {
+      id: obj.id,
+      personas_id: obj.personas_id,
+      empresas_id: obj.empresas_id,
+      tipo_cliente: obj.tipo_cliente,
+      cif: obj.cif,
+      codigo_carga: obj.codigo_carga,
+      segmento_vodafond: obj.segmento_vodafond,
+      cta_bco: obj.cta_bco,
+      persona_juridica: obj.persona_juridica,
+      is_active: obj.is_active,
+      created_at: obj.created_at,
+      updated_at: obj.updated_at,
+      deleted_at: obj.deleted_at
+    };
   }
 
-  public static casts(dataArray: object[]): Client[]{
-    return dataArray.map((data) => Client.cast(data));
+  public static casts(dataArray: object[]): ClientList[]{
+    return dataArray.map((data) => ClientList.cast(data));
   }
 }
 

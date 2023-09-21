@@ -446,12 +446,12 @@ export class ProductComponent implements OnInit, OnDestroy {
   private getFormGroupData(model: Product): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
-      tipo_servicios_id: ['', [Validators.required, Validators.min(1)]],
-      categorias_id: ['', [Validators.nullValidator, Validators.min(1)]],
-      marcas_id: ['', [Validators.nullValidator, Validators.min(1)]],
-      divisas_id: ['', [Validators.required, Validators.min(1)]],
+      nombre: [model?.nombre || '', [Validators.required, Validators.maxLength(50)]],
+      descripcion: [model?.descripcion || '', [Validators.nullValidator, Validators.maxLength(150)]],
+      tipo_servicios_id: [model?.tipo_servicios_id || null, [Validators.required, Validators.min(1)]],
+      categorias_id: [model?.categorias_id || null, [Validators.nullValidator, Validators.min(1)]],
+      marcas_id: [model?.marcas_id || null, [Validators.nullValidator, Validators.min(1)]],
+      divisas_id: [model?.divisas_id || null, [Validators.required, Validators.min(1)]],
       precio: [0, [Validators.nullValidator, Validators.min(0)]],
       is_active: [true, [Validators.nullValidator]],
     }

@@ -100,20 +100,7 @@ export class SignupComponent implements OnInit, OnDestroy {
       this._userService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
-          if(response.data){
-            const {person, user} = response.data;
-            if(user){
-              const token_auth = user.token_auth;
-
-              const dataUser = {user: user.data, person: person};
-              localStorage.setItem('dataUser', JSON.stringify(dataUser));
-    
-              if(token_auth){  
-                this.cookieService.set('token_auth', token_auth);
-                this.router.navigate(['/main']);
-              }
-            }
-          }
+          this.router.navigate(['/main']);
         }
 
         if(response.code == 422){

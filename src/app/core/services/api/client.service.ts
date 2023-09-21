@@ -1,26 +1,25 @@
 import { Injectable } from '@angular/core';
-import { ResponseApi, User, UserPersonList } from '../../models';
+import { ResponseApi } from '../../models';
 import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
+import { ClientList } from '../../models/api/client.model';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '../config';
-import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class ClientService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<UserPersonList[]> = new BehaviorSubject<UserPersonList[]>([]);
-  public listObserver$: Observable<UserPersonList[]> = this.listSubject.asObservable();
-  
+  private listSubject: BehaviorSubject<ClientList[]> = new BehaviorSubject<ClientList[]>([]);
+  public listObserver$: Observable<ClientList[]> = this.listSubject.asObservable();
+
   constructor(
     private http: HttpClient,
-    private configService: ConfigService,
-    private cookieService: CookieService
-  ) { 
+    private configService: ConfigService
+  ) {
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: UserPersonList[]) => {
+      .subscribe((list: ClientList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
@@ -29,7 +28,7 @@ export class UserService {
 
 
   private get baseUrl(){
-    return this.configService.apiUrl + 'user';
+    return this.configService.apiUrl + 'client';
   }
 
   private get requestOptions(){
@@ -55,17 +54,18 @@ export class UserService {
     }
   }
 
-  public getPagination(data: any): Observable<ResponseApi> {
-    const queryParams = new URLSearchParams();
-    queryParams.set('data', JSON.stringify(data));
-    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
+  public getSearch(data: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/search`;
+    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+  }
+
+  public getByPersonId(personId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/getByPerson/${personId}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
-  public getServerSide(data: any): Observable<ResponseApi> {
-    const queryParams = new URLSearchParams();
-    queryParams.set('data', JSON.stringify(data));
-    const endpoint = `${this.baseUrl}/serverSide?${queryParams.toString()}`;
+  public getByCompanyId(companyId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/getByCompany/${companyId}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
@@ -76,29 +76,12 @@ export class UserService {
 
   public register(data: any): Observable<ResponseApi>{
     const endpoint = `${this.baseUrl}/register`;
-    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => {
-      if(res.code == 201){
-        if(res.data){
-          const {person, user} = res.data;
-          if(user){
-            const token_auth = user.token_auth;
-
-            const dataUser = {user: user.data, person: person};
-            localStorage.setItem('dataUser', JSON.stringify(dataUser));
-  
-            if(token_auth){  
-              this.cookieService.set('token_auth', token_auth);
-            }
-          }
-        }
-      }
-      return res;
-    }))
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
     const endpoint = `${this.baseUrl}/update/${id}`;
-    return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
+    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
   public delete(id: any): Observable<ResponseApi>{
@@ -116,23 +99,23 @@ export class UserService {
    * FUNCIONES PARA LOS OBSERVABLES
    */
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(userPersonList: UserPersonList) {
+  addObjectObserver(clientList: ClientList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(userPersonList);
+    currentData.push(clientList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(userPersonList: UserPersonList[]) {
-    this.listSubject.next(userPersonList);
+  addArrayObserver(clientList: ClientList[]) {
+    this.listSubject.next(clientList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(userPersonList: UserPersonList) {
+  updateObjectObserver(clientList: ClientList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === userPersonList.id);
+    const index = currentData.findIndex(item => item.id === clientList.id);
     if (index !== -1) {
-      currentData[index] = userPersonList;
+      currentData[index] = clientList;
       this.listSubject.next(currentData);
     }
   }

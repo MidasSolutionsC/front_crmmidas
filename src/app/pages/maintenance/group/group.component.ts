@@ -644,7 +644,15 @@ export class GroupComponent {
     if (!this.selectAll) {
       this.listUserSelected = [];
     } else {
-      this.listUserSelected = this.pagination.data.map((obj: any) => obj);
+      // this.listUserSelected = this.pagination.data.map((obj: any) => obj);
+
+      this.listUserSelected = this.pagination.data.map((obj: any) => {
+        if (!this.listMembers.some((member) => member.usuarios_id == obj.id)) {
+          return obj;
+        }
+        return null; // Retorna null para los elementos que ya existen 
+      }).filter((obj: any | null) => obj !== null); // Solo devolver los diferentes de null
+      
     }
 
     setTimeout(() => {

@@ -80,10 +80,6 @@
             <ng-option [value]="''">{{'FORMS.FIELD_NAMES.country.default_option' | translate}}</ng-option>
             <ng-option *ngFor="let country of listCountries" [value]="country.id">{{country.nombre}}</ng-option>
           </ng-select>
-          <!-- <select class="form-select custom-select" id="paises_id" formControlName="paises_id" [ngClass]="{ 'is-invalid': f.paises_id.errors && (f.paises_id.dirty || f.paises_id.touched || submitted) }">
-            <option value="">{{'FORMS.FIELD_NAMES.country.default_option' | translate}}</option>
-            <option *ngFor="let country of listCountries" [value]="country.id">{{country.nombre}}</option>
-          </select> -->
           <div *ngIf="f.paises_id.errors && (f.paises_id.dirty || f.paises_id.touched || submitted)" class="invalid-feedback" align="left">
             <div *ngIf="f.paises_id.errors.required">
               {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}

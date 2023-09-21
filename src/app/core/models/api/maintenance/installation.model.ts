@@ -17,8 +17,8 @@ export class Installation extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || undefined;
-    this.ventas_id = this.ventas_id || undefined;
+    this.id = this.id || null;
+    this.ventas_id = this.ventas_id || null;
     this.tipo = this.tipo || '';
     this.direccion = this.direccion || '';
     this.numero = this.numero || '';
@@ -82,6 +82,7 @@ export class InstallationList extends Model{
   public portal: string;
   public planta: string;
   public puerta: string;
+  public direccion_completo: string;
   public codigo_postal: string;
   public localidad: string;
   public provincia: string;
@@ -101,6 +102,7 @@ export class InstallationList extends Model{
     this.portal = this.portal || '';
     this.planta = this.planta || '';
     this.puerta = this.puerta || '';
+    this.direccion_completo = this.direccion_completo || '';
     this.codigo_postal = this.codigo_postal || '';
     this.localidad = this.localidad || '';
     this.provincia = this.provincia || '';
@@ -122,6 +124,7 @@ export class InstallationList extends Model{
       portal,
       planta,
       puerta,
+      direccion_completo,
       codigo_postal,
       localidad,
       provincia,
@@ -141,6 +144,7 @@ export class InstallationList extends Model{
       portal,
       planta,
       puerta,
+      direccion_completo,
       codigo_postal,
       localidad,
       provincia,

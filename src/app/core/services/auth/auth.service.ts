@@ -52,6 +52,7 @@ export class AuthService {
         const login: boolean = Boolean(res?.data?.login);
         if(!login){
           this.cookieService.delete('token_auth');
+          localStorage.removeItem('dataUser');
         }
       }
       return res;

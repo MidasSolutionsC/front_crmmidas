@@ -42,6 +42,7 @@ export class ServiceComponent {
 
   // Tipo de servicios
   listTypeServices: TypeServiceList[] = [];
+  selectedTypeServiceId: number = null;
 
   // Productos
   listProducts: ProductList[] = [];
@@ -346,6 +347,13 @@ export class ServiceComponent {
     });
   }
 
+  onSelectServiceSearched(selectedItem: any) {
+    if(selectedItem){
+      this.selectedTypeServiceId = selectedItem.id;
+      this.apiProductSearch('');
+    } 
+  }
+
   // Productos
   public apiProductList(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
@@ -367,7 +375,7 @@ export class ServiceComponent {
   }
 
   public apiProductSearch(search: string = ''){
-    this._productService.getSearch({search}).subscribe((response: ResponseApi) => {
+    this._productService.getSearch({search, tipo_servicios_id: this.selectedTypeServiceId}).subscribe((response: ResponseApi) => {
       if(response.code == 200){
         this.listProducts = response.data;
       }
