@@ -50,6 +50,8 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { ModalRegisterComponent } from './sale/modals/modal-register/modal-register.component';
 import { FormClientComponent } from './sale/forms/form-client/form-client.component';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { FormSaleDetailComponent } from './sale/forms/form-sale-detail/form-sale-detail.component';
+import { TableSaleDetailComponent } from './sale/tables/table-sale-detail/table-sale-detail.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +59,9 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
     CallComponent,
     SaleComponent,
     ModalRegisterComponent,
-    FormClientComponent
+    FormClientComponent,
+    FormSaleDetailComponent,
+    TableSaleDetailComponent,
   ],
   imports: [
     CoreModule,

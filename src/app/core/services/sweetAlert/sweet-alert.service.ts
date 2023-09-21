@@ -65,7 +65,10 @@ export class SweetAlertService {
         stopButton.addEventListener('click', () => {
           isStopped = true;
           clearInterval(timerInterval);
-          this.stop(); // Llama al método stop() cuando se hace clic en el botón
+          // this.stop(); // Llama al método stop() cuando se hace clic en el botón
+          if (this.swalInstance) {
+            this.swalInstance.close();
+          }
         });
 
         const updateProgress = () => {
@@ -136,6 +139,19 @@ export class SweetAlertService {
       timerProgressBar: data.timer !== undefined? true: false
     });
   }
+
+  showCenter(data: ISweetAlert) {
+    Swal.fire({
+      position: 'center',
+      icon: data.type || 'success',
+      title: data.title || 'Alerta',
+      html: data.message || '',
+      showConfirmButton: false,
+      toast: true,
+      timer: data.timer || undefined,
+      timerProgressBar: data.timer !== undefined? true: false
+    });
+  }
   
   showSuccessAlert(message: string): void {
     Swal.fire('Éxito', message, 'success');
@@ -156,6 +172,7 @@ export class SweetAlertService {
       icon: 'question',
       reverseButtons: true,
       showCancelButton: true,
+      allowOutsideClick: false,
       showLoaderOnConfirm: true,
       confirmButtonText: 'Sí',
       cancelButtonText: 'No'

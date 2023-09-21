@@ -4,19 +4,22 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ReplaceAttributePipe } from './pipes/replace-attribute.pipe';
 import { SortDirective } from './directives/table/sort.directive';
 import { TrimInputDirective } from './directives/form/trim-input.directive';
+import { FocusDirective } from './directives/form/focus.directive';
 
 @NgModule({
   declarations: [
     ReplaceAttributePipe,
     SortDirective,
-    TrimInputDirective
+    TrimInputDirective,
+    FocusDirective
   ],
   imports: [
     CommonModule,
   ],
   exports: [
     ReplaceAttributePipe,
-    TrimInputDirective
+    TrimInputDirective,
+    FocusDirective
   ]
 })
 export class CoreModule { }

@@ -13,11 +13,11 @@ export class Product extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || undefined;
-    this.tipo_servicios_id = this.tipo_servicios_id || undefined;
-    this.categorias_id = this.categorias_id || undefined; 
-    this.marcas_id = this.marcas_id || undefined;
-    this.divisas_id = this.divisas_id || undefined;
+    this.id = this.id || null;
+    this.tipo_servicios_id = this.tipo_servicios_id || null;
+    this.categorias_id = this.categorias_id || null; 
+    this.marcas_id = this.marcas_id || null;
+    this.divisas_id = this.divisas_id || null;
     this.nombre = this.nombre || '';
     this.descripcion = this.descripcion || '';
     this.precio = this.precio || 0;
@@ -58,9 +58,9 @@ export class ProductList extends Model{
     super(data);
     this.index = this.index || 0;
     this.id = this.id || 0;
-    this.categorias_id = this.categorias_id || undefined;
+    this.categorias_id = this.categorias_id || null;
     this.categorias_nombre = this.categorias_nombre || '';
-    this.marcas_id = this.marcas_id || undefined;
+    this.marcas_id = this.marcas_id || null;
     this.marcas_nombre = this.marcas_nombre || '';
     this.divisas_id = this.divisas_id || undefined;
     this.divisas_nombre = this.divisas_nombre || '';

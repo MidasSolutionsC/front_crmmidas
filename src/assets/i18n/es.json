@@ -276,6 +276,10 @@
   },
   "FORMS": {
     "FIELD_NAMES": {
+      "holder_name": {
+        "label": "Nombre del titular",
+        "placeholder": "Ingrese el nombre..."
+      },
       "name": {
         "label": "Nombre",
         "placeholder": "Ingrese el nombre..."
@@ -383,6 +387,10 @@
         "placeholder": "Ingrese el distrito...",
         "default_option": "Seleccione un distrito..."
       },
+      "cif": {
+        "label": "Cif",
+        "placeholder": "Ingrese el cif..."
+      },
       "city": {
         "label": "Ciudad",
         "placeholder": "Ingrese la ciudad..."
@@ -416,6 +424,11 @@
         "placeholder": "Ingrese el tipo...",
         "default_option": "Seleccione un tipo..."
       },
+      "type_client": {
+        "label": "Tipo de cliente",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
       "type_discount": {
         "label": "Tipo de descuento",
         "placeholder": "Ingrese el tipo de descuento...",
@@ -431,7 +444,8 @@
       "type_service": {
         "label": "Tipo de servicio",
         "placeholder": "Ingrese el tipo de servicio...",
-        "default_option": "Seleccione un tipo..."
+        "default_option": "Seleccione un tipo...",
+        "default_option_all": "Todos..."
 
       },
       "type_status": {
@@ -455,6 +469,10 @@
       "document": {
         "label": "Documento",
         "placeholder": "Ingrese el documento..."
+      },
+      "document_reverse": {
+        "label": "Reverso documento",
+        "placeholder": "Ingrese el reverso del documento..."
       },
       "discount": {
         "label": "Descuento",
@@ -490,6 +508,11 @@
         "placeholder": "Ingrese la hora...",
         "default_option": "Seleccione una hora..."
       },
+      "birth_date": {
+        "label": "Fecha de nacimiento",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
       "first_date": {
         "label": "Fecha inicio",
         "placeholder": "Ingrese la fecha...",
@@ -499,7 +522,11 @@
         "label": "Fecha final",
         "placeholder": "Ingrese la fecha...",
         "default_option": "Seleccione una fecha..."
-
+      },
+      "close_date": {
+        "label": "Fecha de cierre",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
       },
       "date_updated": {
         "label": "Fecha actualizado",
@@ -533,9 +560,30 @@
         "label": "Código Postal",
         "placeholder": "Ingrese el código postal..."
       },
+      "code_loaded": {
+        "label": "Código carga",
+        "placeholder": "Ingrese el código carga..."
+      },
+      "vodafond_segment": {
+        "label": "Segmento vodafond",
+        "placeholder": "Ingrese el segmento vodafond..."
+      },
+      "type_company": {
+        "label": "Tipo empresa",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
       "company": {
         "label": "Compañía",
         "placeholder": "Ingrese el nombre de la compañía..."
+      },
+      "business_name": {
+        "label": "Razón social",
+        "placeholder": "Ingrese la razón social..."
+      },
+      "tradename": {
+        "label": "Nombre comercial",
+        "placeholder": "Ingrese el nombre comercial..."
       },
       "job_title": {
         "label": "Puesto",
@@ -573,7 +621,11 @@
         "default_check": "Marque esta casilla si es necesario"
       },
       "number": {
-        "label": "Numero",
+        "label": "Número",
+        "placeholder": "Ingrese el número..."
+      },
+      "number_port": {
+        "label": "Número portar",
         "placeholder": "Ingrese el número..."
       },
       "ladder": {
@@ -606,6 +658,16 @@
         "placeholder": "Ingrese el operador...",
         "default_option": "Seleccione un operador..."
       },
+      "operator_donor": {
+        "label": "Operador donante",
+        "placeholder": "Ingrese el operador...",
+        "default_option": "Seleccione un operador..."
+      },
+      "observation": {
+        "label": "Observación",
+        "placeholder": "Ingrese la observación...",
+        "default_option": "Seleccione una observación..."
+      },
       "typification": {
         "label": "Tipificación",
         "placeholder": "Ingrese la tipificación...",
@@ -628,6 +690,26 @@
       "client": {
         "label": "Cliente",
         "placeholder": "Ingrese el cliente.."
+      },
+      "aop": {
+        "label": "Aop",
+        "placeholder": "Ingrese el aop...",
+        "default_option": "Seleccione el aop..."
+      },
+      "icc": {
+        "label": "ICC",
+        "placeholder": "Ingrese el ICC...",
+        "default_option": "Seleccione el ICC..."
+      },
+      "terminal": {
+        "label": "Terminal",
+        "placeholder": "Ingrese la terminal...",
+        "default_option": "Seleccione la terminal..."
+      },
+      "model_terminal": {
+        "label": "Modelo del terminal",
+        "placeholder": "Ingrese el modelo terminal...",
+        "default_option": "Seleccione el modelo..."
       }
     },
     "VALIDATION": {
@@ -640,10 +722,15 @@
       "max": "El campo :attribute debe ser menor o igual a :max."
     },
     "BUTTONS": {
+      "FORM": "Formulario",
       "SEARCH": "Buscar",
-      "ADD": "Registrar",
+      "SEND": "Enviar",
+      "ADD": "Agregar",
+      "REGISTER": "Registrar",
       "UPDATE": "Actualizar",
+      "SAVE": "Guardar",
       "DELETE": "Eliminar",
+      "RESET": "Resetear",
       "PREV": "Anterior",
       "NEXT": "Siguiente",
       "END": "Finalizar",

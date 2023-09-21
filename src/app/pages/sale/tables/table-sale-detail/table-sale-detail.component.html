@@ -1,0 +1,169 @@
+<div class="card border border-info shadow-lg">
+  <div class="card-body">
+    <span class="badge bagde-info bg-info text-uppercase fs-6 mb-3">{{data?.tipo_servicios_nombre}}</span>
+
+    <div class="row g-2 mb-3">
+      <strong class="text-primary">Servicio</strong>
+      <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+        <strong>Servicio:</strong><span>{{saleDetail?.servicios_nombre}}</span>
+      </div>
+      <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+        <strong>Fecha cierre:</strong><span>{{saleDetail?.fecha_cierre}}</span>
+      </div>
+      <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+        <strong>Observación:</strong><span>{{saleDetail?.observacion}}</span>
+      </div>
+    </div>
+
+    <div *ngIf="typeService.includes('mobile')">
+      <div class="row g-2 mb-3">
+        <strong class="text-primary">Detalle del servicio</strong>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Tipo documento:</strong><span>{{detailMobile?.tipo_documento_abreviacion}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>N° Documento:</strong><span>{{detailMobile?.documento_titular}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Titular:</strong><span>{{detailMobile?.titular}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Operador donante:</strong><span>{{detailMobile?.operador_donante_nombre}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>N° Portar:</strong><span>{{detailMobile?.num_portar}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>CCI:</strong><span>{{detailMobile?.icc}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Terminal:</strong><span>{{detailMobile?.terminal? 'SI': 'NO'}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Modelo terminal:</strong><span>{{detailMobile?.modelo_terminal}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>AOP:</strong><span>{{detailMobile?.aop}}</span>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <!-- <table class="table align-middle dt-responsive nowrap w-100 table-check">
+          <thead>
+            <tr>
+              <th scope="col">N°</th>
+              <th scope="col">Tipo documento</th>
+              <th scope="col">N° Documento</th>
+              <th scope="col">Titular</th>
+              <th scope="col">Operador</th>
+              <th scope="col">N° Portar</th>
+              <th scope="col">ICC</th>
+              <th scope="col">Terminal</th>
+              <th scope="col">M. Terminal</th>
+              <th scope="col">AOP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of listDetailMobile; let i = index" >
+              <th scope="row">{{i + 1}}</th>
+              <td>{{data.tipo_documento_id}}</td>
+              <td>{{data.documento_titular}}</td>
+              <td>{{data.titular}}</td>
+              <td>{{data.operador_donante_id}}</td>
+              <td>{{data.num_portar}}</td>
+              <td>{{data.icc}}</td>
+              <td>{{data.terminal}}</td>
+              <td>{{data.modelo_terminal}}</td>
+              <td>{{data.aop}}</td>
+            </tr>
+            <tr *ngIf="!listDetailMobile.length">
+              <td colspan="10" class="text-center">Sin registros.</td>
+            </tr>
+          </tbody>
+        </table> -->
+      </div>
+    </div>
+
+    <div *ngIf="typeService.includes('fixed')">
+      <div class="row g-2 mb-3">
+        <strong class="text-primary">Detalle del servicio</strong>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Tipo documento:</strong><span>{{detailFixed?.tipo_documento_abreviacion}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>N° Documento:</strong><span>{{detailFixed?.documento_titular}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Titular:</strong><span>{{detailFixed?.titular}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>Operador donante:</strong><span>{{detailFixed?.operador_donante_nombre}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>N° Portar:</strong><span>{{detailFixed?.num_portar}}</span>
+        </div>
+        <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+          <strong>AOP:</strong><span>{{detailFixed?.aop}}</span>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <!-- <table class="table align-middle dt-responsive nowrap w-100 table-check">
+          <thead>
+            <tr>
+              <th scope="col">N°</th>
+              <th scope="col">Tipo documento</th>
+              <th scope="col">N° Documento</th>
+              <th scope="col">Titular</th>
+              <th scope="col">Operador</th>
+              <th scope="col">N° Portar</th>
+              <th scope="col">ICC</th>
+              <th scope="col">Terminal</th>
+              <th scope="col">M. Terminal</th>
+              <th scope="col">AOP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of listDetailMobile; let i = index" >
+              <th scope="row">{{i + 1}}</th>
+              <td>{{data.tipo_documento_id}}</td>
+              <td>{{data.documento_titular}}</td>
+              <td>{{data.titular}}</td>
+              <td>{{data.operador_donante_id}}</td>
+              <td>{{data.num_portar}}</td>
+              <td>{{data.icc}}</td>
+              <td>{{data.terminal}}</td>
+              <td>{{data.modelo_terminal}}</td>
+              <td>{{data.aop}}</td>
+            </tr>
+            <tr *ngIf="!listDetailMobile.length">
+              <td colspan="10" class="text-center">Sin registros.</td>
+            </tr>
+          </tbody>
+        </table> -->
+      </div>
+    </div>
+    
+    <div class="row g-2">
+      <strong class="text-primary">Instalación</strong>
+      <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+        <strong>Instalación:</strong><span>{{saleDetail?.instalaciones_direccion_completo}}</span>
+      </div>
+      <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+        <strong>Provincia:</strong><span>{{saleDetail?.instalaciones_provincia}}</span>
+      </div>
+      <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+        <strong>Localidad:</strong><span>{{saleDetail?.instalaciones_localidad}}</span>
+      </div>
+      <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+        <strong>Código postal:</strong><span>{{saleDetail?.instalaciones_codigo_postal}}</span>
+      </div>
+    </div>
+    <div *ngIf="typeService.includes('fixed')"></div>
+    <div *ngIf="typeService.includes('tv')"></div>
+
+  </div>
+  <div class="card-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="onCancel()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+    </div>
+  </div>
+</div>

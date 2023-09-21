@@ -58,13 +58,18 @@ export class TempInstallationService {
     return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
+  public getBySale(saleId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterSale/${saleId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
   public register(data: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}`;
+    const endpoint = `${this.baseUrl}/register`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
@@ -107,6 +112,7 @@ export class TempInstallationService {
       currentData[index] = installationList;
       this.listSubject.next(currentData);
     }
+
   }
 
   // Método para quitar un objeto del array

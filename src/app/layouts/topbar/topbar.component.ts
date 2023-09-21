@@ -101,11 +101,15 @@ export class TopbarComponent implements OnInit {
    * Logout the user
    */
   logout() {
-    this._authService.logout(this.dataUser.id).subscribe((response: ResponseApi) => {
-      if(response.code == 200){
-        this.router.navigate(['/account/login']);
-      }
-    });
+    if(this.dataUser){
+      this._authService.logout(this?.dataUser?.id).subscribe((response: ResponseApi) => {
+        if(response.code == 200){
+          this.router.navigate(['/account/login']);
+        }
+      });
+    } else {
+      this.router.navigate(['/account/login']);
+    }
   }
 
   /**

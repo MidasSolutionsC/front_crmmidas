@@ -53,9 +53,21 @@ export class TempSaleDetailService {
     }
   }
 
+  public getPagination(data: any): Observable<ResponseApi> {
+    const queryParams = new URLSearchParams();
+    queryParams.set('data', JSON.stringify(data));
+    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
   public getSearch(data: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/search`;
     return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+  }
+
+  public getBySale(saleId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterSale/${saleId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
   public getById(id: any): Observable<ResponseApi> {

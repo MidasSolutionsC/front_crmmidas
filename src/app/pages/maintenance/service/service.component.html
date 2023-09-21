@@ -122,6 +122,7 @@
                     [bindLabel]="'nombre'"
                     [multiple]="false"
                     formControlName="tipo_servicios_id"
+                    (change)="onSelectServiceSearched($event)"
                     (search)="apiTypeServiceSearch($event.term)">
           </ng-select>
           <div *ngIf="form.tipo_servicios_id.errors && (form.tipo_servicios_id.dirty || form.tipo_servicios_id.touched || submitted)" class="invalid-feedback" align="left">
