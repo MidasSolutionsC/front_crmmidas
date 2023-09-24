@@ -198,39 +198,45 @@ export const MENU: MenuItem[] = [
         link: '/'
     },
     {
-        id: 24,
+      id: 24,
+      label: 'MENUITEMS.SETTINGS.LIST.PERMISSION',
+      icon: 'bx bx-shield-quarter',
+      link: '/settings/permission'
+  },
+    {
+        id: 25,
         label: 'MENUITEMS.SETTINGS.LIST.PERMISSION_ACCOUNT',
         icon: 'bx bx-shield-quarter',
-        link: '/'
+        link: '/settings/type_user_permission'
     },
 
     {
-        id: 25,
+        id: 26,
         label: 'MENUITEMS.CHARTS.TEXT',
         isTitle: true
     },
     {
-        id: 26,
+        id: 27,
         icon: 'bxs-bar-chart-alt-2',
         label: 'MENUITEMS.CHARTS.TEXT',
         subItems: [
             {
-                id: 27,
+                id: 28,
                 label: 'MENUITEMS.CHARTS.LIST.ALL',
                 link: '/',
-                parentId: 26
-            },
-            {
-                id: 28,
-                label: 'MENUITEMS.CHARTS.LIST.COMERCIAL',
-                link: '/',
-                parentId: 26
+                parentId: 27
             },
             {
                 id: 29,
+                label: 'MENUITEMS.CHARTS.LIST.COMERCIAL',
+                link: '/',
+                parentId: 27
+            },
+            {
+                id: 30,
                 label: 'MENUITEMS.CHARTS.LIST.COORDINATION',
                 link: '/',
-                parentId: 26
+                parentId: 27
             }
         ]
     },

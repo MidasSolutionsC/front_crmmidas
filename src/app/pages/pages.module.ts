@@ -31,6 +31,7 @@ import { CoreModule } from '../core/core.module';
 import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { SettingsModule } from './settings/settings.module';
 
 // SMART WIZARD
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
@@ -87,6 +88,7 @@ import { TableSaleDetailComponent } from './sale/tables/table-sale-detail/table-
     LightboxModule,
     PickerModule,
     NgxPaginationModule,
+    SettingsModule,
 
     // SMART WIZARD
     CKEditorModule,

@@ -22,6 +22,7 @@ const routes: Routes = [
   { path: 'calendar', component: CalendarComponent },
   { path: 'call', component: CallComponent },
   { path: 'sale', component: SaleComponent },
+  { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
 ];
 
 @NgModule({
