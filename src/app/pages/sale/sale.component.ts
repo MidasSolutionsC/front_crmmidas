@@ -294,15 +294,14 @@ export class SaleComponent {
    * @param content modal content
    */
   openModal(content: any) {
-    this.openModalForm();
-    // this.initForm();
-    // this.isNewData = true;
-    // this.dataModal.title = 'Crear Venta';
-    // this.submitted = false;
-    // this.previewImage = null;
-    // this.uploadFiles = [];
-    // this.modalRef = this.modalService.show(content, { class: 'modal-fullscreen modal-dialog-centered' });
-    // this.modalRef.onHide.subscribe(() => {});
+    this.initForm();
+    this.isNewData = true;
+    this.dataModal.title = 'Crear Venta';
+    this.submitted = false;
+    this.previewImage = null;
+    this.uploadFiles = [];
+    this.modalRef = this.modalService.show(content, { class: 'modal-fullscreen modal-dialog-centered' });
+    this.modalRef.onHide.subscribe(() => {});
   }
 
 

@@ -17,7 +17,7 @@ export class Person extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || 0;
+    this.id = this.id || null;
     this.paises_id = this.paises_id || null;
     this.nombres = this.nombres || null;
     this.apellido_paterno = this.apellido_paterno || '';

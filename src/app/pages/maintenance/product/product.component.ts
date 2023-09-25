@@ -482,6 +482,10 @@ export class ProductComponent implements OnInit, OnDestroy {
     } else {
       const values: Product = this.productForm.value;
 
+      if(values.categorias_id == null){
+        delete values.categorias_id;
+      }
+
       if(this.isNewData){
         // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el producto?').then((confirm) => {

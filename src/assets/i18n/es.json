@@ -593,6 +593,10 @@
         "label": "Abreviación",
         "placeholder": "Ingrese la abreviación..."
       },
+      "comment": {
+        "label": "Comentario",
+        "placeholder": "Ingrese el comentario..."
+      },
       "search": {
         "label": "Buscar",
         "placeholder": "Escriba aquí..."
