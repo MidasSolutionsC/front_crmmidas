@@ -1,14 +1,21 @@
 
 
-@media (max-width: 767px){
-  .modal-body{
+.modal-body{
+  max-height: 100ch;
+  height: 100ch;
+
+  @media (max-width: 987px){
+    max-height: 100%;
+    height: auto;
+  }
+  @media (max-width: 767px){
+    max-height: 100%;
+    height: auto;
     padding: 0 !important;
   }
-  
-  // section{
-    //   padding: 0 !important;
-    // }
+
 }
+
 
 .wizard{
   section{

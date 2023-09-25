@@ -14,7 +14,7 @@ export class Company extends Model{
   public ciudad: string;
   public telefono: string;
   public correo: string;
-  public is_active: boolean;
+  public is_active: boolean | number;
 
   constructor(data?: object){
     super(data);
@@ -31,7 +31,7 @@ export class Company extends Model{
     this.ciudad = this.ciudad || '';
     this.telefono = this.telefono || '';
     this.correo = this.correo || '';
-    this.is_active = this.is_active || true;
+    this.is_active = this.is_active || 1;
   }
 
   public static cast(data: object): Company{
