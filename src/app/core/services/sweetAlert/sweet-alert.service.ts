@@ -62,14 +62,16 @@ export class SweetAlertService {
         const b: any = Swal.getHtmlContainer().querySelector('b');
         const stopButton: any = Swal.getHtmlContainer().querySelector('#stopButton');
 
-        stopButton.addEventListener('click', () => {
-          isStopped = true;
-          clearInterval(timerInterval);
-          // this.stop(); // Llama al método stop() cuando se hace clic en el botón
-          if (this.swalInstance) {
-            this.swalInstance.close();
-          }
-        });
+        if(stopButton){
+          stopButton.addEventListener('click', () => {
+            isStopped = true;
+            clearInterval(timerInterval);
+            // this.stop(); // Llama al método stop() cuando se hace clic en el botón
+            if (this.swalInstance) {
+              this.swalInstance.close();
+            }
+          });
+        }
 
         const updateProgress = () => {
           if (!isStopped) {

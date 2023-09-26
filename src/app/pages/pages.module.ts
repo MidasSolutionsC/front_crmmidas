@@ -31,6 +31,7 @@ import { CoreModule } from '../core/core.module';
 import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { SettingsModule } from './settings/settings.module';
 
 // SMART WIZARD
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
@@ -52,6 +53,12 @@ import { FormClientComponent } from './sale/forms/form-client/form-client.compon
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { FormSaleDetailComponent } from './sale/forms/form-sale-detail/form-sale-detail.component';
 import { TableSaleDetailComponent } from './sale/tables/table-sale-detail/table-sale-detail.component';
+import { FormSaleDocumentComponent } from './sale/forms/form-sale-document/form-sale-document.component';
+import { FormSaleHistoryComponent } from './sale/forms/form-sale-history/form-sale-history.component';
+import { FormSaleCommentComponent } from './sale/forms/form-sale-comment/form-sale-comment.component';
+import { TableSaleDocumentComponent } from './sale/tables/table-sale-document/table-sale-document.component';
+import { TableSaleHistoryComponent } from './sale/tables/table-sale-history/table-sale-history.component';
+import { TableSaleCommentComponent } from './sale/tables/table-sale-comment/table-sale-comment.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +69,12 @@ import { TableSaleDetailComponent } from './sale/tables/table-sale-detail/table-
     FormClientComponent,
     FormSaleDetailComponent,
     TableSaleDetailComponent,
+    FormSaleDocumentComponent,
+    FormSaleHistoryComponent,
+    FormSaleCommentComponent,
+    TableSaleDocumentComponent,
+    TableSaleHistoryComponent,
+    TableSaleCommentComponent,
   ],
   imports: [
     CoreModule,
@@ -87,6 +100,7 @@ import { TableSaleDetailComponent } from './sale/tables/table-sale-detail/table-
     LightboxModule,
     PickerModule,
     NgxPaginationModule,
+    SettingsModule,
 
     // SMART WIZARD
     CKEditorModule,

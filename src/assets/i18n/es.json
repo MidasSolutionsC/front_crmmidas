@@ -270,6 +270,7 @@
       "TEXT": "Configuraciones",
       "LIST": {
         "ALLOWED_IPS": "IP permitidas",
+        "PERMISSION": "Permisos",
         "PERMISSION_ACCOUNT": "Permisos de usuario"
       }
     }
@@ -593,6 +594,10 @@
         "label": "Abreviación",
         "placeholder": "Ingrese la abreviación..."
       },
+      "comment": {
+        "label": "Comentario",
+        "placeholder": "Ingrese el comentario..."
+      },
       "search": {
         "label": "Buscar",
         "placeholder": "Escriba aquí..."
@@ -710,7 +715,16 @@
         "label": "Modelo del terminal",
         "placeholder": "Ingrese el modelo terminal...",
         "default_option": "Seleccione el modelo..."
+      },
+      "permission_id": {
+        "label": "Permisos Id",
+        "placeholder": "Ingrese id del permiso"
+      },
+      "type_user_id": {
+        "label": "Tipo de Usuario Id",
+        "placeholder": "Ingrese el id del tipo de Usuario "
       }
+
     },
     "VALIDATION": {
       "required": "El campo :attribute es obligatorio.",

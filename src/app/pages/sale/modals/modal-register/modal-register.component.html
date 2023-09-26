@@ -1,4 +1,4 @@
-<div class="modal-content">
+<div class="modal-content" role="document">
   <div class="modal-header">
     <h5 class="modal-title font-bold" id="exampleModalLabel">{{dataModal.title}}</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
@@ -9,7 +9,7 @@
       <cdk-step [optional]="false">
         <ng-template cdkStepLabel>
           <span class="number">1</span>
-          <span>Servicios y direcciones</span>
+          <span>Servicios e instalaciones</span>
         </ng-template>
         <section *ngIf="cdkStepper.selectedIndex === 0">
           <accordion [isAnimated]="true" [closeOthers]="true">
@@ -531,7 +531,7 @@
             </accordion-group>
           </accordion>
 
-          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
             <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
                 cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
             <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
@@ -549,7 +549,7 @@
           <div>
             <app-form-client></app-form-client>
           </div>
-          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
             <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
                 cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
             <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
@@ -564,8 +564,23 @@
           <span>Venta</span>
         </ng-template>
         <section *ngIf="cdkStepper.selectedIndex === 2">
-          <div>Texto</div>
-          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+          <div>
+            <accordion [isAnimated]="true" [closeOthers]="true">
+              <accordion-group heading="Archivos" [isOpen]="true">
+                <!-- <app-form-sale-document></app-form-sale-document> -->
+                <app-table-sale-document></app-table-sale-document>
+              </accordion-group>
+              <accordion-group heading="Comentarios" [isOpen]="false">
+                <!-- <app-form-sale-comment></app-form-sale-comment> -->
+                <app-table-sale-comment></app-table-sale-comment>
+              </accordion-group>
+              <accordion-group heading="Historial" [isOpen]="false">
+                <!-- <app-form-sale-history></app-form-sale-history> -->
+                <app-table-sale-history></app-table-sale-history>
+              </accordion-group>
+            </accordion>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
             <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
                 cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
             <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
@@ -684,10 +699,6 @@
         </section>
       </cdk-step>
     </ng-stepper>
-    <div class="card">
-      <div class="card-body">
-      </div>
-    </div>
   </div>
   <div class="modal-footer">
     <div class="hstack gap-2 justify-content-end">

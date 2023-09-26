@@ -53,6 +53,7 @@ export class AuthService {
         if (!login) {
           this.cookieService.delete('token_auth');
           localStorage.removeItem('dataUser');
+          localStorage.removeItem('ventas_id');
         }
       }
       return res;

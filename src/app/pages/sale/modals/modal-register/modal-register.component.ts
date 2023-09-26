@@ -403,7 +403,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
             this._tempInstallationService.addObjectObserver(data);
 
             const localVentasId = localStorage.getItem('ventas_id');
-            if(localVentasId == null){
+            if(localVentasId == null || localVentasId !== undefined){
               if(data.ventas_id){
                 localStorage.setItem('ventas_id', data.ventas_id.toString());
               }
@@ -575,6 +575,8 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
           //   const data: SaleDetailList = SaleDetailList.cast(response.data[0]);
           //   this._tempSaleDetailService.addObjectObserver(data);
           // }
+          this.listServiceSelected = [];
+          this.onRemoveOptionInstallation();
 
           this.apiTempSaleDetailFilterSale(data.ventas_id);
           setTimeout(() => {
@@ -1150,8 +1152,8 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar los servicios seleccionado?').then((confirm) => {
           if(confirm.isConfirmed){
             this.apiTempSaleDetailRegister(request);
-            this.listServiceSelected = [];
-            this.onRemoveOptionInstallation();
+            // this.listServiceSelected = [];
+            // this.onRemoveOptionInstallation();
           }
         });
       } else {
