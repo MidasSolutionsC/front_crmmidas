@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription, distinctUntilChanged, of } from 'rxjs';
 import { Company, CompanyList, CountryList, Person, PersonList, ResponseApi, TypeDocumentList } from 'src/app/core/models';
@@ -12,6 +12,9 @@ import { ApiErrorFormattingService, ClientService, CompanyService, CountryServic
   styleUrls: ['./form-client.component.scss']
 })
 export class FormClientComponent implements OnInit, OnDestroy{
+
+  @ViewChild('paises_id', { static: false }) paises_id: ElementRef<HTMLInputElement>;
+
 
   // Formulario para buscar cliente
   isClientPerson: boolean = true;
@@ -176,18 +179,19 @@ export class FormClientComponent implements OnInit, OnDestroy{
       this._clientService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
-          console.log(response.data);
-          // const {ventas_id, instalaciones_id, venta_detalle} = response.data;
-          // if(ventas_id){
-          //   localStorage.setItem('ventas_id', ventas_id);
-          // }
+          const {person, company, client} = response.data;
 
-          // this.apiTempSaleDetailFilterSale(ventas_id);
-          // this.apiTempInstallationFilterSale(ventas_id);
-          // if(response.data[0]){
-          //   const data: SaleDetailList = SaleDetailList.cast(response.data[0]);
-          //   this._tempSaleDetailService.addObjectObserver(data);
-          // }
+          if(person){
+            this.personForm.setValue(Person.cast(person));
+          }
+          if(company){
+            this.companyForm.setValue(Company.cast(company));
+          }
+
+          if(client){
+            this.clientForm.setValue(Client.cast(client));
+            this.isNewDataClient = false;
+          }
         }
 
         if(response.code == 422){
@@ -236,18 +240,19 @@ export class FormClientComponent implements OnInit, OnDestroy{
       this._clientService.update(data, data.id).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 200){
-          console.log(response.data);
-          // const {ventas_id, instalaciones_id, venta_detalle} = response.data;
-          // if(ventas_id){
-          //   localStorage.setItem('ventas_id', ventas_id);
-          // }
+          const {person, company, client} = response.data;
 
-          // this.apiTempSaleDetailFilterSale(ventas_id);
-          // this.apiTempInstallationFilterSale(ventas_id);
-          // if(response.data[0]){
-          //   const data: SaleDetailList = SaleDetailList.cast(response.data[0]);
-          //   this._tempSaleDetailService.addObjectObserver(data);
-          // }
+          if(person){
+            this.personForm.setValue(Person.cast(person));
+          }
+          if(company){
+            this.companyForm.setValue(Company.cast(company));
+          }
+
+          if(client){
+            this.clientForm.setValue(Client.cast(client));
+            this.isNewDataClient = false;
+          }
         }
 
         if(response.code == 422){
@@ -564,13 +569,16 @@ export class FormClientComponent implements OnInit, OnDestroy{
   // Cambiar entre PERSONA O EMPRESA
   onSwitchChangeTypeClient(isPerson: any) { 
     if(isPerson){
-      this.fClient.persona_juridica.setValue(false);
       this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
+      this.fClient.persona_juridica.setValue(0);
     } else {
       this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion == 'RUC');
-      this.fClient.persona_juridica.setValue(true);
+      this.fClient.persona_juridica.setValue(1);
+      this.fc.is_active.setValue(1);
       // this.listTypeDocumentFilters = this.listTypeDocuments;
     }
+
+    this.fClient.is_active.setValue(1);
 
   }
 
@@ -599,6 +607,8 @@ export class FormClientComponent implements OnInit, OnDestroy{
 
   // Mostrar/ocultar formulario de registro
   toggleFormClient(){
+    this.isCollapseFormSearchClient = true;
+    this.isCollapseClientList = true;
     this.isCollapseFormClient = !this.isCollapseFormClient;
   }
 
@@ -631,6 +641,27 @@ export class FormClientComponent implements OnInit, OnDestroy{
     // this.isCollapseFormSearchClient = true;
     this.isCollapseClientList = true;
     this.listPersons = [];
+  }
+
+  // RESET FORMS - CLIENT
+  resetFormClient(){
+    this.clientForm.reset();
+    this.personForm.reset();
+    this.companyForm.reset();
+    this.isNewDataClient = true;
+    this.fClient.is_active.setValue(1);
+
+
+    if(this.isClientPerson){
+      this.fClient.persona_juridica.setValue(false);
+    } else {
+      this.fClient.persona_juridica.setValue(true);
+      this.fc.is_active.setValue(1);
+    }
+
+    if(this?.paises_id?.nativeElement){
+      this.paises_id?.nativeElement.focus();
+    }
   }
 
 
