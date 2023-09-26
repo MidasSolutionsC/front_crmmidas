@@ -40,7 +40,7 @@ export const jwtAuthGuard: CanActivateFn = (route, state) => {
           return true;
 
 
-        // router.navigate(['/main']);
+        router.navigate(['/main']);
         return false;
 
 
@@ -60,7 +60,7 @@ export const jwtAuthGuard: CanActivateFn = (route, state) => {
 
 
 
-        // router.navigate(['/main']);
+        router.navigate(['/main']);
         return false;
 
       case 'COORDINADOR':
@@ -85,11 +85,11 @@ export const jwtAuthGuard: CanActivateFn = (route, state) => {
           return true;
 
 
-        // router.navigate(['/main']);
+        router.navigate(['/main']);
         return false;
 
       default:
-        // router.navigate(['/main']);
+        router.navigate(['/main']);
         return false;
     }
 
