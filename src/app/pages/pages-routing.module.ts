@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { DefaultComponent } from './dashboards/default/default.component';
 import { MainComponent } from './main/main/main.component';
-import { jwtAuthGuard } from '../core/guards';
+import { jwtAuthGuard, hasRoleGuard } from '../core/guards';
 import { CalendarComponent } from './calendar/calendar.component';
 import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';

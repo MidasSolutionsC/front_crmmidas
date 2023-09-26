@@ -28,7 +28,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   dataModal = {
     title: 'Crear tipo de servicios',
   }
-  
+
   // bread crumb items
   titleBreadCrumb: string = 'Calendario';
   breadCrumbItems: Array<{}>;
@@ -37,7 +37,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   calendarEvents: EventInput[] = [];
   calendarEventSource: any[] = [];
   eventsPromise: Promise<EventInput>;
-  
+
   newEventDate: DateClickArg;
 
   // Datos iniciales del calendario
@@ -89,7 +89,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       hour12: true
     },
   };
-    
+
   // Form 
   isNewData: boolean = true;
   submitted: boolean = false;
@@ -103,7 +103,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private modalService: BsModalService, 
+    private modalService: BsModalService,
     private _calendarService: CalendarService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -113,31 +113,31 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Aplicación'}, { label: 'Calendario', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Aplicación' }, { label: 'Calendario', active: true }]);
     this.initForm();
     this.listDataApi();
     this._fetchData();
 
     this.subscription.add(
       this._calendarService.listObserver$
-      // .pipe(distinctUntilChanged())
-      .subscribe((list: CalendarList[]) => {
-        this.lists = list;
-        if(this.lists){
-          this.calendarEventSource = this.lists.map((item, index) => {
-            const data: any = {};
-            data.id = item.id.toString();
-            data.title = item.titulo;
-            data.start = `${item.fecha_inicio} ${item.hora_inicio}`;
-            data.end = `${item.fecha_final} ${item.hora_final}`;
-            data.className = item.color;
-            return data;
-          });
+        // .pipe(distinctUntilChanged())
+        .subscribe((list: CalendarList[]) => {
+          this.lists = list;
+          if (this.lists) {
+            this.calendarEventSource = this.lists.map((item, index) => {
+              const data: any = {};
+              data.id = item.id.toString();
+              data.title = item.titulo;
+              data.start = `${item.fecha_inicio} ${item.hora_inicio}`;
+              data.end = `${item.fecha_final} ${item.hora_final}`;
+              data.className = item.color;
+              return data;
+            });
 
-          this.eventsPromise = Promise.resolve(this.calendarEventSource);
-          // this.calendarOptions.events = this.calendarEventSource;
-        }
-      })
+            this.eventsPromise = Promise.resolve(this.calendarEventSource);
+            // this.calendarOptions.events = this.calendarEventSource;
+          }
+        })
     );
 
   }
@@ -157,22 +157,22 @@ export class CalendarComponent implements OnInit, OnDestroy {
     // Este método muestra los eventos de un mes dado
     const calendarApi = this.calendarComponent.getApi();
     const view = calendarApi.view; // Obtener la vista actual
-    console.log("VISTA ACTUAL:",view);
+    console.log("VISTA ACTUAL:", view);
     // const start = view.start; // Obtener el inicio del intervalo visible
     // const end = view.end; // Obtener el fin del intervalo visible
     // console.log(start.format('YYYY-MM-DD')); // Mostrar el inicio en formato año-mes-día
     // console.log(end.format('YYYY-MM-DD')); // Mostrar el fin en formato año-mes-día
     // Aquí puedes aplicar los filtros a la API usando start y end
   }
-  
-   
+
+
   /**
    * Event click modal show
    */
   handleDateClick(arg: DateClickArg) {
     this.newEventDate = arg;
   }
-   
+
   /**
    * Event click modal show
    */
@@ -184,13 +184,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
     var data = this.lists.find((data: { id: any; }) => data.id === parseInt(arg.event.id));
     const calendar = Calendar.cast(data);
     this.calendarForm = this.formBuilder.group({
-      ...this._formService.modelToFormGroupData(calendar), 
+      ...this._formService.modelToFormGroupData(calendar),
       id: [data.id],
     });
 
     this.modalRef = this.modalService.show(this.modalContent, { class: 'modal-md' });
   }
-   
+
   /**
    * Event select  modal show
    */
@@ -204,10 +204,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.f.fecha_final.setValue(endDate);
     this.f.hora_inicio.setValue('06:00:00');
     this.f.hora_final.setValue('08:00:00');
-    
+
     this.modalRef = this.modalService.show(this.modalContent, { class: 'modal-md' });
   }
-   
+
   /**
    * Event drop modal show
    */
@@ -233,14 +233,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
 
-  
+
   /**
    * Fetches the data
    */
   private _fetchData() {
     let eventGuid = 0;
     function createEventId() {
-        return String(eventGuid++);
+      return String(eventGuid++);
     }
 
     this.categories = [
@@ -271,7 +271,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     ];
 
     // Calender Event Data
-    this.calendarEvents = [];    
+    this.calendarEvents = [];
   }
 
 
@@ -281,13 +281,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  public listDataApi(forceRefresh: boolean = false){
+  public listDataApi(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._calendarService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this.lists = response.data;
-        if(this.lists){
+        if (this.lists) {
           this.calendarEventSource = this.lists.map((item, index) => {
             const data: any = {};
             data.id = item.id.toString();
@@ -300,12 +300,12 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
           this.calendarOptions.events = this.calendarEventSource;
         }
-        
+
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
@@ -314,13 +314,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
     });
   }
 
-  private saveDataApi(data: Calendar){
+  private saveDataApi(data: Calendar) {
     this._sweetAlertService.loadingUp()
     this.subscription.add(
       this._calendarService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 201){
-          if(response.data[0]){
+        if (response.code == 201) {
+          if (response.data[0]) {
             const data: CalendarList = CalendarList.cast(response.data[0]);
             this._calendarService.addObjectObserver(data);
           }
@@ -328,16 +328,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
           this.modalRef?.hide();
         }
 
-        if(response.code == 422){
-          if(response.errors){
+        if (response.code == 422) {
+          if (response.errors) {
             const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
           }
         }
 
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
         }
       }, (error) => {
@@ -347,26 +347,26 @@ export class CalendarComponent implements OnInit, OnDestroy {
     )
   }
 
-  private updateDataApi(data: Calendar, id: number){
+  private updateDataApi(data: Calendar, id: number) {
     this._sweetAlertService.loadingUp()
     this._calendarService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: CalendarList = CalendarList.cast(response.data[0]);
         this._calendarService.updateObjectObserver(data);
         this.modalRef?.hide();
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -375,25 +375,25 @@ export class CalendarComponent implements OnInit, OnDestroy {
     });
   }
 
-  private deleteDataApi(id: number){
+  private deleteDataApi(id: number) {
     this._sweetAlertService.loadingUp()
     this._calendarService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: CalendarList = CalendarList.cast(response.data[0]);
         this._calendarService.removeObjectObserver(data.id);
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -413,7 +413,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * INICIAR FORMULARTO CON LAS VALIDACIONES
    * @param model 
    */
-  private initForm(){
+  private initForm() {
     const calendar = new Calendar();
     const formGroupData = this.getFormGroupData(calendar);
     this.calendarForm = this.formBuilder.group(formGroupData);
@@ -447,7 +447,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.dataModal.title = 'Crear agenda';
     this.submitted = false;
     this.modalRef = this.modalService.show(this.modalContent, { class: 'modal-md' });
-    this.modalRef.onHide.subscribe(() => {});
+    this.modalRef.onHide.subscribe(() => { });
   }
 
 
@@ -455,22 +455,22 @@ export class CalendarComponent implements OnInit, OnDestroy {
     * Save
   */
   saveData() {
-    if(!this.calendarForm.valid){
-      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    if (!this.calendarForm.valid) {
+      this._sweetAlertService.showTopEnd({ title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500 });
     } else {
       const values: Calendar = this.calendarForm.value;
 
-      if(this.isNewData){
+      if (this.isNewData) {
         // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la agenda?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar la agenda?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.updateDataApi(values, values.id);
           }
         });
@@ -503,7 +503,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const calendar = Calendar.cast(data);
-    this.calendarForm = this.formBuilder.group({...this._formService.modelToFormGroupData(calendar), id: [data.id]});
+    this.calendarForm = this.formBuilder.group({ ...this._formService.modelToFormGroupData(calendar), id: [data.id] });
   }
 
 
@@ -511,9 +511,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
    * Eliminar un registro
    * @param id id del registro a eliminar
    */
-  deleteRow(id: any){
+  deleteRow(id: any) {
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de servicio?').then((confirm) => {
-      if(confirm.isConfirmed){
+      if (confirm.isConfirmed) {
         this.deleteDataApi(id);
       }
     });

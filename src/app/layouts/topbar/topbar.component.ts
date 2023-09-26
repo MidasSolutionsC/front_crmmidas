@@ -28,13 +28,13 @@ export class TopbarComponent implements OnInit {
   dataUser: User;
 
   constructor(
-    @Inject(DOCUMENT) private document: any, 
+    @Inject(DOCUMENT) private document: any,
     private router: Router,
     public languageService: LanguageService,
     public translate: TranslateService,
     public _cookiesService: CookieService,
     private _authService: AuthService
-  ) {}
+  ) { }
 
   listLang = [
     { text: 'Spanish', flag: 'assets/images/flags/spain.jpg', lang: 'es' },
@@ -73,9 +73,9 @@ export class TopbarComponent implements OnInit {
   }
 
 
-  getDataUserSession(){
+  getDataUserSession() {
     const dataSession = localStorage.getItem('dataUser');
-    if(dataSession){
+    if (dataSession) {
       const data = JSON.parse(dataSession);
       this.dataUser = data.user;
     }
@@ -101,9 +101,9 @@ export class TopbarComponent implements OnInit {
    * Logout the user
    */
   logout() {
-    if(this.dataUser){
+    if (this.dataUser) {
       this._authService.logout(this?.dataUser?.id).subscribe((response: ResponseApi) => {
-        if(response.code == 200){
+        if (response.code == 200) {
           this.router.navigate(['/account/login']);
         }
       });
