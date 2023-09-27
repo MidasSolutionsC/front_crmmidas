@@ -1,20 +1,19 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { ResponseApi, SaleHistory, SaleHistoryList, TypeStatusList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleHistoryService, TypeStatusService } from 'src/app/core/services';
+import { BankAccount, BankAccountList, ResponseApi, TypeBankAccount, TypeBankAccountList } from 'src/app/core/models';
+import { ApiErrorFormattingService, BankAccountService, FormService, SharedClientService, SweetAlertService, TypeBankAccountService } from 'src/app/core/services';
 
 @Component({
-  selector: 'app-form-sale-history',
-  templateUrl: './form-sale-history.component.html',
-  styleUrls: ['./form-sale-history.component.scss']
+  selector: 'app-form-client-bank-account',
+  templateUrl: './form-client-bank-account.component.html',
+  styleUrls: ['./form-client-bank-account.component.scss']
 })
-export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
-
-  @ViewChild('focusTipoEstado') focusTipoEstado: ElementRef;
+export class FormClientBankAccountComponent implements OnInit, OnDestroy, OnChanges {
+  @ViewChild('focusTipoCuenta') focusTipoCuenta: ElementRef<HTMLInputElement>;
 
   // Datos de entrada
-  @Input() data: SaleHistory = null;
+  @Input() data: BankAccount = null;
 
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
@@ -23,18 +22,22 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
   // FORMULARIO DOCUMENT
   isNewData: boolean = true;
   submitted: boolean = false;
-  historyForm: FormGroup;
+  bankAccountForm: FormGroup;
 
   
-  // Tipo de servicios;
-  listTypeStatus?: TypeStatusList[];
+  clientId: number;
+
+  // Tipo de cuentas
+  listTypeBankAccount: TypeBankAccount[] = [];
+
     
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private _tmpSaleHistoryService: TempSaleHistoryService,
-    private _typeStatusService: TypeStatusService,
+    private _sharedClientService: SharedClientService,
+    private _typeBankAccountService: TypeBankAccountService,
+    private _bankAccountService: BankAccountService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -46,18 +49,22 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
     // Instanciar form
     this.initForm();
 
-    // Listado
-    this.apiTypeStatusList();
-
-    // Tipo de estados
+    // ID CLIENTE
     this.subscription.add(
-      this._typeStatusService.listObserver$
+      this._sharedClientService.getClientId().subscribe((value: number) => this.clientId = value)
+    )
+
+
+    this.apiATypeBankAccountList();
+
+    // Subscriptionciones
+    this.subscription.add(
+      this._typeBankAccountService.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: TypeStatusList[]) => {
-        this.listTypeStatus = list;
+      .subscribe((list: TypeBankAccountList[]) => {
+        this.listTypeBankAccount = list;
       })
     );
-    
   }
 
   ngOnDestroy(): void {
@@ -73,12 +80,10 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
   
   onChangeData(){
     if(this.data){
-      this.historyForm.setValue({...this.data});
+      this.bankAccountForm.setValue({...this.data});
       this.isNewData = false;
       // setTimeout(() => {
-      //   if(this.focusTipoEstado){
-      //     this.focusTipoEstado.nativeElement.focus();
-      //   }
+      //   this.focusTipoCuenta.nativeElement.focus();
       // }, 50);
     } else {
       this.isNewData = true;
@@ -92,15 +97,17 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  private apiSaleHistorySave(data: SaleHistory){
+  private apiBankAccountSave(data: BankAccount | FormData){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
-      this._tmpSaleHistoryService.register(data).subscribe((response: ResponseApi) => {
+      this._bankAccountService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
           if(response.data[0]){
-            const data: SaleHistoryList = SaleHistoryList.cast(response.data[0]);
-            this._tmpSaleHistoryService.addObjectObserver(data);
+            const data: BankAccountList = BankAccountList.cast(response.data[0]);
+            const TypeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
+            data.tipo_cuentas_bancarias_nombre = TypeBankAccount.nombre;
+            this._bankAccountService.addObjectObserver(data);
             this.submit.emit({saved: true, data});
             this.onReset();
           }
@@ -121,23 +128,25 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
       }, (error) => {
         this._sweetAlertService.stop();
         if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al registrar el historial', message: error.message, timer: 2500});
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al registrar la cuenta bancaria', message: error.message, timer: 2500});
         }
       })
     )
   }
 
-  private apiSaleHistoryUpdate(data: SaleHistory | FormData, id: number){
+  private apiBankAccountUpdate(data: BankAccount | FormData, id: number){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
-      this._tmpSaleHistoryService.update(data, id).subscribe((response: ResponseApi) => {
+      this._bankAccountService.update(data, id).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 200){
           if(response.data[0]){
-            const data: SaleHistoryList = SaleHistoryList.cast(response.data[0]);
-            this._tmpSaleHistoryService.updateObjectObserver(data);
-            this.submit.emit({saved: true});
+            const data: BankAccountList = BankAccountList.cast(response.data[0]);
+            const TypeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
+            data.tipo_cuentas_bancarias_nombre = TypeBankAccount.nombre;
+            this._bankAccountService.updateObjectObserver(data);
             this.onReset();
+            this.submit.emit({saved: true});
           }
         }
 
@@ -156,7 +165,7 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
       }, (error) => {
         this._sweetAlertService.stop();
         if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al actualizar el comentario', message: error.message, timer: 2500});
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al actualizar la cuenta bancaria', message: error.message, timer: 2500});
         }
       })
     )
@@ -164,17 +173,16 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
 
 
   /**
-   * *******************************************************
-   * OPERACIONES DE TABLAS FORÁNEAS
-   * *******************************************************
+   * ****************************************************************
+   * OPERACIONES CON LA API - FORÁNEOS
+   * ****************************************************************
    */
-  // Tipo documento
-  public apiTypeStatusList(forceRefresh: boolean = false){
+  public apiATypeBankAccountList(force: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._typeStatusService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+    this._typeBankAccountService.getAll(force).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        // this.listTypeStatus = response.data;
+        // this._typeBankAccountService.addArrayObserver(response.data);
       }
 
       if(response.code == 500){
@@ -184,10 +192,11 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      // console.log(error);
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar los tipo de cuentas bancarias', message: error.message, timer: 2500});
+      }
     });
   }
-
 
     
   /**
@@ -196,16 +205,16 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
    * ***********************************************
    */
   get f() {
-    return this.historyForm.controls;
+    return this.bankAccountForm.controls;
   }
 
   /**
    * INICIAR FORMULARTO CON LAS VALIDACIONES
    * @param model 
    */
-  private initForm(model: SaleHistory = new SaleHistory()){
+  private initForm(model: BankAccount = new BankAccount()){
     const formGroupData = this.getFormGroupData(model);
-    this.historyForm = this.formBuilder.group(formGroupData);
+    this.bankAccountForm = this.formBuilder.group(formGroupData);
   }
 
   /**
@@ -213,15 +222,16 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
    * @param model 
    * @returns 
    */
-  private getFormGroupData(model: SaleHistory): object {
+  private getFormGroupData(model: BankAccount): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      tipo: [model.tipo, [Validators.required]],
-      tipo_estados_id: [model.tipo_estados_id, [Validators.required, Validators.min(1)]],
-      comentario: [model.comentario, [Validators.nullValidator, Validators.maxLength(250)]],
+      tipo_cuentas_bancarias_id: [model.tipo_cuentas_bancarias_id || '', [Validators.required, Validators.min(1)]],
+      cuenta: [model.cuenta || '', [Validators.required, Validators.maxLength(50)]],
+      is_primary: [model.is_primary || 0, [Validators.nullValidator]],
       is_active: [1, [Validators.nullValidator]],
     }
   }
+
 
 
 
@@ -233,42 +243,42 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
   onSubmit() {
     this.submitted = true;
 
-    if(this.historyForm.invalid){
+    if(this.bankAccountForm.invalid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
-      const values: SaleHistory = this.historyForm.value;
-      const idVenta = localStorage.getItem('ventas_id');
-      if(idVenta !== null && idVenta !== undefined){
-        values.ventas_id = parseInt(idVenta);
+      const values: BankAccount = this.bankAccountForm.value;
+      if(this.clientId){
+        values.clientes_id = this.clientId;
       }
 
+
       if(this.isNewData){
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el historial?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la cuenta bancaria?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiSaleHistorySave(values);
+            this.apiBankAccountSave(values);
           }
         });
       } else {
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar el historial?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar la cuenta bancaria?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiSaleHistoryUpdate(values, values.id);
+            this.apiBankAccountUpdate(values, values.id);
           }
         });
-      }
+      }     
     }
-
   }
 
   onCancel(){
     this.onReset();
-    // this.focusTipoEstado.nativeElement.focus();
+    // this.focusTipoCuenta.nativeElement.focus();
     this.cancel.emit({message: 'Cancelado'});
   }
 
   onReset(){
     this.submitted = false;
     this.isNewData = true;
-    this.historyForm.reset();
-    this.historyForm.controls.is_active.setValue(1);
+    this.bankAccountForm.reset(new BankAccount());
+    this.bankAccountForm.controls.is_primary.setValue(0);
+    this.bankAccountForm.controls.is_active.setValue(1);
   }
 }

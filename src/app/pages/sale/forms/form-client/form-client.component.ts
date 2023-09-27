@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription, distinctUntilChanged, of } from 'rxjs';
-import { Company, CompanyList, CountryList, Person, PersonList, ResponseApi, TypeDocumentList } from 'src/app/core/models';
+import { Company, CompanyList, CountryList, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { Client } from 'src/app/core/models/api/client.model';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
-import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SweetAlertService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
+import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SharedClientService, SweetAlertService, TempSaleService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-client',
@@ -14,6 +14,9 @@ import { ApiErrorFormattingService, ClientService, CompanyService, CountryServic
 export class FormClientComponent implements OnInit, OnDestroy{
 
   @ViewChild('paises_id', { static: false }) paises_id: ElementRef<HTMLInputElement>;
+
+  // DATOS EMITIR A LOS FORMULARIOS DETALLES
+  dataSendDetail: any = null;
 
 
   // Formulario para buscar cliente
@@ -59,6 +62,8 @@ export class FormClientComponent implements OnInit, OnDestroy{
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private _sharedClientService: SharedClientService,
+    private _tempSaleService: TempSaleService,
     private _countryService: CountryService,
     private _ubigeoService: UbigeoService,
     private _personService: PersonService,
@@ -83,6 +88,17 @@ export class FormClientComponent implements OnInit, OnDestroy{
     this.apiCountryList();
     this.apiTypeDocumentList();
     this.searchOptionUbigeo('');
+
+    // Ventas OBTENER CLIENTE
+    this.subscription.add(
+      this._tempSaleService.dataObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((data: SaleList) => {
+        if(data?.clientes_id){
+          this.apiClientGetById(data.clientes_id);
+        }
+      })
+    )
 
     // Tipos de documentos
     this.subscription.add(
@@ -172,6 +188,56 @@ export class FormClientComponent implements OnInit, OnDestroy{
     });
   }
 
+  // OPERACIONES CON LA API - OBTENER EL CLIENTE BUSCADO
+  public apiClientGetById(id: number): Promise<any>{
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    return new Promise((resolve, reject) => {
+      this._clientService.getById(id).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 200){
+          const data = response.data[0];
+          if(data){
+            if(data.person !== null){
+              const person = Person.cast(data.person);
+              this.personForm.setValue(person);
+              this._sharedClientService.setPersonId(person.id);
+              this._sharedClientService.setLegalPerson(false);
+            } 
+            
+            if(data.company !== null){
+              const company = Company.cast(data.company);
+              this.companyForm.setValue(company);
+              this._sharedClientService.setCompanyId(company.id);
+              this._sharedClientService.setLegalPerson(true);
+            } 
+  
+            const client = Client.cast(data);
+            this.clientForm.setValue(client);
+            this.isNewDataClient = false;
+            this.isClientPerson = client.persona_juridica? false: true;
+            this.toggleFormClient(false);
+            this._sharedClientService.setClientId(client.id);
+          }
+
+          resolve(response.data[0]);
+        }
+  
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+          reject(response.errors);
+        }
+      }, (error: any) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar datos del cliente', message: error.message, timer: 2500});
+        }
+        reject(error);
+      });
+    });
+  }
+
   // Registrar cliente
   private apiClientRegister(data: Client){
     this._sweetAlertService.loadingUp()
@@ -180,18 +246,31 @@ export class FormClientComponent implements OnInit, OnDestroy{
         this._sweetAlertService.stop();
         if(response.code == 201){
           const {person, company, client} = response.data;
+          const dataEmit: any = {};
 
           if(person){
             this.personForm.setValue(Person.cast(person));
+            this._sharedClientService.setPersonId(person.id);
+            this._sharedClientService.setLegalPerson(false);
+            dataEmit.personas_id = person.id;
+            dataEmit.persona_juridica = false;
           }
           if(company){
             this.companyForm.setValue(Company.cast(company));
+            this._sharedClientService.setCompanyId(company.id);
+            this._sharedClientService.setLegalPerson(true);
+            dataEmit.empresas_id = company.id;
+            dataEmit.persona_juridica = true;
           }
 
           if(client){
             this.clientForm.setValue(Client.cast(client));
             this.isNewDataClient = false;
+            this._sharedClientService.setClientId(client.id);
+            dataEmit.clientes_id = client.id;
           }
+
+          this.dataSendDetail = dataEmit;
         }
 
         if(response.code == 422){
@@ -244,14 +323,19 @@ export class FormClientComponent implements OnInit, OnDestroy{
 
           if(person){
             this.personForm.setValue(Person.cast(person));
+            this._sharedClientService.setPersonId(person.id);
+            this._sharedClientService.setLegalPerson(false);
           }
           if(company){
             this.companyForm.setValue(Company.cast(company));
+            this._sharedClientService.setCompanyId(company.id);
+            this._sharedClientService.setLegalPerson(true);
           }
 
           if(client){
             this.clientForm.setValue(Client.cast(client));
             this.isNewDataClient = false;
+            this._sharedClientService.setClientId(client.id);
           }
         }
 
@@ -474,6 +558,7 @@ export class FormClientComponent implements OnInit, OnDestroy{
       cif: [model?.cif, [Validators.nullValidator, Validators.minLength(9), Validators.maxLength(9)]],
       codigo_carga: [model?.codigo_carga, [Validators.nullValidator, Validators.maxLength(50)]],
       segmento_vodafond: [model?.segmento_vodafond, [Validators.nullValidator, Validators.maxLength(50)]],
+      persona_juridica: [model?.persona_juridica, [Validators.nullValidator]],
       // cta_bco: [model?.cta_bco, [Validators.nullValidator, Validators.maxLength(50)]],
     }
   }
@@ -506,13 +591,13 @@ export class FormClientComponent implements OnInit, OnDestroy{
   private getFormGroupDataPerson(model?: Person): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      paises_id: [model?.paises_id, [Validators.nullValidator, Validators.min(1)]],
+      paises_id: [model?.paises_id, [Validators.required, Validators.min(1)]],
       codigo_ubigeo: [model?.codigo_ubigeo, [Validators.nullValidator, Validators.maxLength(50)]],
       nombres: [model?.nombres, [Validators.required, Validators.maxLength(50)]],
       apellido_paterno: [model?.apellido_paterno, [Validators.required, Validators.maxLength(50)]],
       apellido_materno: [model?.apellido_materno, [Validators.required, Validators.maxLength(50)]],
       tipo_documentos_id: [model?.tipo_documentos_id, [Validators.required, Validators.maxLength(50)]],
-      documento: [model?.documento, [Validators.nullValidator, Validators.maxLength(11)]],
+      documento: [model?.documento, [Validators.required, Validators.maxLength(11)]],
       reverso_documento: [model?.reverso_documento, [Validators.nullValidator, Validators.maxLength(50)]],
       fecha_nacimiento: [model?.fecha_nacimiento, [Validators.nullValidator, Validators.maxLength(20)]],
       telefono: [model?.telefono, [Validators.nullValidator, Validators.maxLength(11)]],
@@ -549,14 +634,14 @@ export class FormClientComponent implements OnInit, OnDestroy{
   private getFormGroupDataCompany(model?: Company): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      paises_id: [model?.paises_id, [Validators.nullValidator, Validators.min(1)]],
+      paises_id: [model?.paises_id, [Validators.required, Validators.min(1)]],
       codigo_ubigeo: [model?.codigo_ubigeo, [Validators.nullValidator, Validators.maxLength(50)]],
       tipo_empresa: [model?.tipo_empresa, [Validators.required, Validators.maxLength(30)]],
       razon_social: [model?.razon_social, [Validators.required, Validators.maxLength(50)]],
       nombre_comercial: [model?.nombre_comercial, [Validators.required, Validators.maxLength(50)]],
       descripcion: [model?.descripcion, [Validators.nullValidator, Validators.maxLength(50)]],
       tipo_documentos_id: [model?.tipo_documentos_id, [Validators.required, Validators.maxLength(50)]],
-      documento: [model?.documento, [Validators.nullValidator, Validators.maxLength(11)]],
+      documento: [model?.documento, [Validators.required, Validators.maxLength(11)]],
       telefono: [model?.telefono, [Validators.nullValidator, Validators.maxLength(11)]],
       correo: [model?.correo, [Validators.nullValidator, Validators.maxLength(150)]],
       direccion: [model?.direccion, [Validators.nullValidator, Validators.maxLength(150)]],
@@ -606,10 +691,10 @@ export class FormClientComponent implements OnInit, OnDestroy{
   }
 
   // Mostrar/ocultar formulario de registro
-  toggleFormClient(){
+  toggleFormClient(collapse: boolean = null){
     this.isCollapseFormSearchClient = true;
     this.isCollapseClientList = true;
-    this.isCollapseFormClient = !this.isCollapseFormClient;
+    this.isCollapseFormClient = collapse || !this.isCollapseFormClient;
   }
 
 
@@ -662,6 +747,12 @@ export class FormClientComponent implements OnInit, OnDestroy{
     if(this?.paises_id?.nativeElement){
       this.paises_id?.nativeElement.focus();
     }
+
+    // Eliminar las variables locales
+    this._sharedClientService.setPersonId(null);
+    this._sharedClientService.setCompanyId(null);
+    this._sharedClientService.setClientId(null);
+    this._sharedClientService.setLegalPerson(null);
   }
 
 
@@ -683,6 +774,7 @@ export class FormClientComponent implements OnInit, OnDestroy{
         const client = Client.cast(resPerson[0]);
         this.clientForm.setValue(client);        
         this.isNewDataClient = false;
+        this._sharedClientService.setClientId(client.id);
       } else {
         this.clientForm.reset();
         this.fClient.is_active.setValue(1);
@@ -691,6 +783,9 @@ export class FormClientComponent implements OnInit, OnDestroy{
       if(person){
         this.personForm.setValue(Person.cast(person));   
         this.fClient.personas_id.setValue(person.id);  
+
+        this._sharedClientService.setPersonId(person.id);
+        this._sharedClientService.setLegalPerson(false);
       }
       
     } else {
@@ -702,6 +797,7 @@ export class FormClientComponent implements OnInit, OnDestroy{
         const client = Client.cast(resCompany[0]);
         this.clientForm.setValue(client);
         this.isNewDataClient = false;
+        this._sharedClientService.setClientId(client.id);
       } else {
         this.clientForm.reset();
         this.fClient.is_active.setValue(1);
@@ -710,8 +806,13 @@ export class FormClientComponent implements OnInit, OnDestroy{
       if(company){
         this.companyForm.setValue(Company.cast(company));      
         this.fClient.empresas_id.setValue(company.id);
+
+        this._sharedClientService.setCompanyId(company.id);
+        this._sharedClientService.setLegalPerson(true);
       }
     }
+
+    this.fClient.persona_juridica.setValue(!this.isClientPerson);
     
     // Mostrar formulario
     this.isCollapseFormClient = false;
@@ -754,11 +855,22 @@ export class FormClientComponent implements OnInit, OnDestroy{
       const valuesPerson = this.personForm.value;
       const valuesClient = this.clientForm.value;
 
+      const ventaId = localStorage.getItem('ventas_id');
+      if(ventaId != null && ventaId !== undefined){
+        valuesClient['ventas_id'] = ventaId;
+      }
+
       if(this.isClientPerson){
         valuesClient['datos_persona'] = valuesPerson;
       } else{
         valuesClient['datos_empresa'] = valuesCompany;
       }
+
+      // this.dataSendDetail = {
+      //   persona_juridica: false,
+      //   personas_id: 0,
+      //   empresas_id: 0
+      // }
 
       if(this.isNewDataClient){
         // Crear nuevo registro

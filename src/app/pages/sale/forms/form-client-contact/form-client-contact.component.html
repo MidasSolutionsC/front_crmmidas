@@ -1,0 +1,52 @@
+<form (keydown.enter)="$event.preventDefault()" [formGroup]="contactForm" autocomplete="off" >
+  <div class="row g-2">
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+      <label for="tipo" class="form-label">{{translatedLabel}}</label>
+      <ng-select id="tipo" formControlName="tipo"
+        (focus)="true"
+        [notFoundText]="'No se encontraron elementos'"
+        [ngClass]="{ 'is-invalid': f.tipo.errors && (f.tipo.dirty || f.tipo.touched || submitted) }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</ng-option>
+        <ng-option value="TEL">Teléfono</ng-option>
+        <ng-option value="FIJ">Teléfono fijo</ng-option>
+        <ng-option value="EML">Correo electrónico</ng-option>
+      </ng-select>
+      <div *ngIf="f.tipo.errors && (f.tipo.dirty || f.tipo.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.tipo.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8 mb-3" *ngIf="'FORMS.FIELD_NAMES.contact.label' | translate as translatedLabel;">
+      <label for="contacto" class="form-label">{{translatedLabel}} *</label>
+      <textarea id="contacto" cols="30" rows="1" class="form-control" formControlName="contacto"  placeholder="{{'FORMS.FIELD_NAMES.contact.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.contacto.errors && (f.contacto.dirty || f.contacto.touched || submitted) }"></textarea>
+      <div *ngIf="f.contacto.errors && (f.contacto.dirty || f.contacto.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.contacto.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.contacto.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.contacto.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.contacto.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.contacto.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3 d-flex align-items-center" *ngIf="'FORMS.FIELD_NAMES.is_primary.label' | translate as translatedLabel;">
+      <!-- <label for="is_primary" class="form-label">{{translatedLabel}}</label> -->
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="is_primary" formControlName="is_primary" [ngClass]="{ 'is-invalid': f.is_primary.errors && (f.is_primary.dirty || f.is_primary.touched || submitted) }">
+        <label class="form-check-label" for="is_primary">
+          {{translatedLabel}}
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
+    <button type="button" class="btn btn-light" (click)="onCancel()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+    <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.REGISTER' | translate}}</button>
+    <button type="button" class="btn btn-info"  *ngIf="!isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+  </div>
+</form>

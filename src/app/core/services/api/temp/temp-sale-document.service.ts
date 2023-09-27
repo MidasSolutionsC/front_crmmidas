@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { ResponseApi, SaleHistoryList } from '../../models';
+import { ResponseApi, SaleDocumentList } from 'src/app/core/models';
 import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ConfigService } from '../config';
+import { ConfigService } from '../../config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TmpSaleHistoryService {
+export class TempSaleDocumentService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<SaleHistoryList[]> = new BehaviorSubject<SaleHistoryList[]>([]);
-  public listObserver$: Observable<SaleHistoryList[]> = this.listSubject.asObservable();
+  private listSubject: BehaviorSubject<SaleDocumentList[]> = new BehaviorSubject<SaleDocumentList[]>([]);
+  public listObserver$: Observable<SaleDocumentList[]> = this.listSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -18,7 +18,7 @@ export class TmpSaleHistoryService {
   ) {
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: SaleHistoryList[]) => {
+      .subscribe((list: SaleDocumentList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
@@ -27,7 +27,7 @@ export class TmpSaleHistoryService {
 
 
   private get baseUrl(){
-    return this.configService.apiUrl + 'tmpSaleHistory';
+    return this.configService.apiUrl + 'tmpSaleDocument';
   }
 
   private get requestOptions(){
@@ -69,8 +69,8 @@ export class TmpSaleHistoryService {
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/${id}`;
-    return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
+    const endpoint = `${this.baseUrl}/update/${id}`;
+    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
   public delete(id: any): Observable<ResponseApi>{
@@ -88,23 +88,23 @@ export class TmpSaleHistoryService {
    * FUNCIONES PARA LOS OBSERVABLES
    */
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(saleHistoryList: SaleHistoryList) {
+  addObjectObserver(saleDocumentList: SaleDocumentList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(saleHistoryList);
+    currentData.push(saleDocumentList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(saleHistoryList: SaleHistoryList[]) {
-    this.listSubject.next(saleHistoryList);
+  addArrayObserver(saleDocumentList: SaleDocumentList[]) {
+    this.listSubject.next(saleDocumentList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(saleHistoryList: SaleHistoryList) {
+  updateObjectObserver(saleDocumentList: SaleDocumentList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === saleHistoryList.id);
+    const index = currentData.findIndex(item => item.id === saleDocumentList.id);
     if (index !== -1) {
-      currentData[index] = saleHistoryList;
+      currentData[index] = saleDocumentList;
       this.listSubject.next(currentData);
     }
   }

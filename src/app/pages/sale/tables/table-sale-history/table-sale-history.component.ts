@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { ResponseApi, SaleHistory, SaleHistoryList } from 'src/app/core/models';
-import { SweetAlertService, TmpSaleHistoryService } from 'src/app/core/services';
+import { SweetAlertService, TempSaleHistoryService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-history',
@@ -23,7 +23,7 @@ export class TableSaleHistoryComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private _tmpSaleHistoryService: TmpSaleHistoryService,
+    private _tmpSaleHistoryService: TempSaleHistoryService,
     private _sweetAlertService: SweetAlertService,
   ){}
 
@@ -162,7 +162,7 @@ export class TableSaleHistoryComponent implements OnInit, OnDestroy {
   deleteRow(id: any){
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el historial?').then((confirm) => {
       if(confirm.isConfirmed){
-        this.apiSaleHistoryFilterBySale(id);
+        this.apiSaleHistoryDelete(id);
       }
     });
   }

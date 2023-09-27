@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Installation, InstallationList, OperatorList, Pagination, ResponseApi, ResponsePagination, SaleDetail, SaleDetailList, ServiceList, TypeDocumentList, TypeServiceList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, OperatorService, ServiceService, SweetAlertService, TempInstallationService, TempSaleDetailService, TypeDocumentService, TypeServiceService } from 'src/app/core/services';
+import { Installation, InstallationList, OperatorList, Pagination, ResponseApi, ResponsePagination, SaleDetail, SaleDetailList, SaleList, ServiceList, TypeDocumentList, TypeServiceList } from 'src/app/core/models';
+import { ApiErrorFormattingService, FormService, OperatorService, ServiceService, SharedClientService, SweetAlertService, TempInstallationService, TempSaleDetailService, TempSaleService, TypeDocumentService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-modal-register',
@@ -25,6 +25,9 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
   dataModalInstallation: any = {
     title: 'Formulario de instalación'
   }
+
+  // VENTA ID
+  saleId: number = null;
 
   // Form instalación
   isNewDataInstallation: boolean = true;
@@ -117,6 +120,8 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
     public modalRef: BsModalRef,
     private cdr: ChangeDetectorRef,
     private modalService: BsModalService,
+    private _sharedClientService: SharedClientService,
+    private _tempSaleService: TempSaleService,
     private _typeDocumentService: TypeDocumentService,
     private _operatorService: OperatorService,
     private _typeServiceService: TypeServiceService,
@@ -142,6 +147,16 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
     this.apiTypeServiceList();
     this.apiTypeDocumentList();
     this.apiOperatorList();
+
+    // VENTA ID
+    this.subscription.add(
+      this._sharedClientService.getSaleId().subscribe((value: number) => {
+        this.saleId = value;
+        if(value){
+          this.apiTempInstallationFilterSale(value);
+        }
+      })
+    );
 
     // Tipos de documentos
     this.subscription.add(
@@ -234,9 +249,11 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
 
     // Comprobar ventas_id del local storage
     const localVentasId = localStorage.getItem('ventas_id');
-    if(localVentasId !== null){
+    if(localVentasId !== null && localVentasId !== undefined){
+      this._sharedClientService.setSaleId(parseInt(localVentasId));
       this.apiTempInstallationFilterSale(parseInt(localVentasId));
       this.apiTempSaleDetailFilterSale(parseInt(localVentasId));
+      this.apiTempSaleGetById(parseInt(localVentasId));
     }
 
   }
@@ -313,6 +330,36 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
   }
 
 
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - INSTALACIONES
+   * ****************************************************************
+   */
+  public apiTempSaleGetById(id: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._tempSaleService.getById(id).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        const data = SaleList.cast(response.data[0]);
+        this._tempSaleService.changeDataObserver(data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las instalación', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+
   /**
    * ****************************************************************
    * OPERACIONES CON LA API - INSTALACIONES
@@ -341,7 +388,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
 
   // Buscar instalaciones
   public apiTempInstallationSearch(search: string) {
-    this._tempInstallationService.getSearch({search}).subscribe((response: ResponseApi) => {
+    this._tempInstallationService.getSearch({search, ventas_id: this.saleId}).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this.tmpListInstallationOptions = response.data;
@@ -401,14 +448,14 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
             `;
             data.direccion_completo = direccion_completo;
             this._tempInstallationService.addObjectObserver(data);
-
+            
+            // GUARDAR EN EL LOCAL STORAGE SOLO SI NO SE ENCUENTRA 
             const localVentasId = localStorage.getItem('ventas_id');
-            if(localVentasId == null || localVentasId !== undefined){
+            if(localVentasId == null || localVentasId == undefined){
               if(data.ventas_id){
+                this._sharedClientService.setSaleId(data.ventas_id);
                 localStorage.setItem('ventas_id', data.ventas_id.toString());
               }
-    
-              this.apiTempInstallationFilterSale(data.ventas_id);
             }
           }
 
@@ -455,6 +502,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
             `;
             data.direccion_completo = direccion_completo;
             this._tempInstallationService.updateObjectObserver(data);
+            this._sharedClientService.setSaleId(data.ventas_id);
           }
         }
 
@@ -985,16 +1033,8 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: Installation = this.installationForm.value;
-      // const selectedServiceId = this.listServiceSelected.map((service) => service.id);
-      // const request: any = {};
-      // request['servicios_ids'] = selectedServiceId;
-      // request['instalacion'] = values;
-      // request['detalle_venta'] = new SaleDetail();
-
-      const localVentasId = localStorage.getItem('ventas_id');
-      if(localVentasId !== null){
-        // request['ventas_id'] = localVentasId;
-        values.ventas_id = parseInt(localVentasId);
+      if(this.saleId !== null){
+        values.ventas_id = this.saleId;
       }
 
 

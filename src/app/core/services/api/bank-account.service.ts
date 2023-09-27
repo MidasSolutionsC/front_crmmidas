@@ -1,27 +1,24 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BankAccountList, ResponseApi } from '../../models';
 import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
-import { ResponseApi, SaleList } from 'src/app/core/models';
-import { ConfigService } from '../../config';
+import { HttpClient } from '@angular/common/http';
+import { ConfigService } from '../config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TempSaleService {
+export class BankAccountService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<SaleList[]> = new BehaviorSubject<SaleList[]>([]);
-  public listObserver$: Observable<SaleList[]> = this.listSubject.asObservable();
+  private listSubject: BehaviorSubject<BankAccountList[]> = new BehaviorSubject<BankAccountList[]>([]);
+  public listObserver$: Observable<BankAccountList[]> = this.listSubject.asObservable();
 
-  private dataSubject: BehaviorSubject<SaleList> = new BehaviorSubject<SaleList>(null);
-  public dataObserver$: Observable<SaleList> = this.dataSubject.asObservable();
-  
   constructor(
     private http: HttpClient,
     private configService: ConfigService
-  ) { 
+  ) {
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: SaleList[]) => {
+      .subscribe((list: BankAccountList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
@@ -30,7 +27,7 @@ export class TempSaleService {
 
 
   private get baseUrl(){
-    return this.configService.apiUrl + 'tmpSale';
+    return this.configService.apiUrl + 'bankAccount';
   }
 
   private get requestOptions(){
@@ -56,9 +53,9 @@ export class TempSaleService {
     }
   }
 
-  public getSearch(data: any): Observable<ResponseApi> {
-    const endpoint = `${this.baseUrl}/search`;
-    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+  public getFilterClientId(clientId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterClient/${clientId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
   public getById(id: any): Observable<ResponseApi> {
@@ -90,29 +87,24 @@ export class TempSaleService {
   /**
    * FUNCIONES PARA LOS OBSERVABLES
    */
-  // Método para agregar un nuevo valor al data observer
-  changeDataObserver(saleList: SaleList) {
-    this.dataSubject.next(saleList);
-  }
-
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(saleList: SaleList) {
+  addObjectObserver(bankAccountList: BankAccountList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(saleList);
+    currentData.push(bankAccountList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(saleList: SaleList[]) {
-    this.listSubject.next(saleList);
+  addArrayObserver(bankAccountList: BankAccountList[]) {
+    this.listSubject.next(bankAccountList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(saleList: SaleList) {
+  updateObjectObserver(bankAccountList: BankAccountList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === saleList.id);
+    const index = currentData.findIndex(item => item.id === bankAccountList.id);
     if (index !== -1) {
-      currentData[index] = saleList;
+      currentData[index] = bankAccountList;
       this.listSubject.next(currentData);
     }
   }

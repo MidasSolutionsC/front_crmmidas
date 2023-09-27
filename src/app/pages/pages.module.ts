@@ -58,6 +58,12 @@ import { FormSaleCommentComponent } from './sale/forms/form-sale-comment/form-sa
 import { TableSaleDocumentComponent } from './sale/tables/table-sale-document/table-sale-document.component';
 import { TableSaleHistoryComponent } from './sale/tables/table-sale-history/table-sale-history.component';
 import { TableSaleCommentComponent } from './sale/tables/table-sale-comment/table-sale-comment.component';
+import { FormClientContactComponent } from './sale/forms/form-client-contact/form-client-contact.component';
+import { FormClientAddressComponent } from './sale/forms/form-client-address/form-client-address.component';
+import { FormClientBankAccountComponent } from './sale/forms/form-client-bank-account/form-client-bank-account.component';
+import { TableClientAddressComponent } from './sale/tables/table-client-address/table-client-address.component';
+import { TableClientBankAccountComponent } from './sale/tables/table-client-bank-account/table-client-bank-account.component';
+import { TableClientContactComponent } from './sale/tables/table-client-contact/table-client-contact.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +80,12 @@ import { TableSaleCommentComponent } from './sale/tables/table-sale-comment/tabl
     TableSaleDocumentComponent,
     TableSaleHistoryComponent,
     TableSaleCommentComponent,
+    FormClientContactComponent,
+    FormClientAddressComponent,
+    FormClientBankAccountComponent,
+    TableClientAddressComponent,
+    TableClientBankAccountComponent,
+    TableClientContactComponent,
   ],
   imports: [
     CoreModule,

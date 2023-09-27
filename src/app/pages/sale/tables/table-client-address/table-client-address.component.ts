@@ -1,58 +1,68 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { ResponseApi, SaleDocument, SaleDocumentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleDocumentService } from 'src/app/core/services';
+import { Address, AddressList, ResponseApi } from 'src/app/core/models';
+import { AddressService, SharedClientService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
-  selector: 'app-table-sale-document',
-  templateUrl: './table-sale-document.component.html',
-  styleUrls: ['./table-sale-document.component.scss']
+  selector: 'app-table-client-address',
+  templateUrl: './table-client-address.component.html',
+  styleUrls: ['./table-client-address.component.scss']
 })
-export class TableSaleDocumentComponent implements OnInit, OnDestroy {
-
+export class TableClientAddressComponent implements OnInit, OnDestroy {
   // Collapse
   isCollapseForm: boolean = true;
   isCollapseList: boolean = false;
 
   // Datos emitidos al formulario
-  dataFormDocument: SaleDocument;
+  dataForm: Address;
 
   // Lista de documentos
-  listSaleDocuments: SaleDocumentList[] = [];
+  listAddress: AddressList[] = [];
   
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private cdr: ChangeDetectorRef,
-    private _tmpSaleDocumentService: TempSaleDocumentService,
-    private _formService: FormService,
-    private _apiErrorFormattingService: ApiErrorFormattingService,
+    private _sharedClientService: SharedClientService,
+    private _addressService: AddressService,
     private _sweetAlertService: SweetAlertService,
-    private formBuilder: FormBuilder
   ){}
 
   ngOnInit(): void {
+    
+    // ID PERSONA
+    this.subscription.add(
+      this._sharedClientService.getPersonId().subscribe((value: number) =>  {
+        if(value){
+          this.apiAddressFilterPerson(value);
+        } else {
+          this.listAddress = [];
+        }
+      })
+    )
 
-    // Ejecutar funciones
-    // this.apiSaleDocumentList();    
-    const ventaId = localStorage.getItem('ventas_id');
-    if(ventaId !== null && ventaId !== undefined){
-      this.apiSaleDocumentFilterBySale(parseInt(ventaId));
-    }
+    // ID EMPRESA
+    this.subscription.add(
+      this._sharedClientService.getCompanyId().subscribe((value: number) => {
+        if(value){
+          this.apiAddressFilterCompany(value);
+        } else {
+          this.listAddress = [];
+        }
+      })
+    )
 
     // Subscriptionciones
     this.subscription.add(
-      this._tmpSaleDocumentService.listObserver$
+      this._addressService.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: SaleDocumentList[]) => {
-        this.listSaleDocuments = list;
+      .subscribe((list: AddressList[]) => {
+        this.listAddress = list;
       })
-    );    
+    ); 
   }
 
   ngOnDestroy(): void {
-    
+    this.subscription.unsubscribe();
   }
 
 
@@ -84,17 +94,17 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
 
 
   
-  /**
+   /**
    * ****************************************************************
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  public apiSaleDocumentList(forceRefresh: boolean = false){
+  public apiAddressFilterCompany(companyId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._tmpSaleDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+    this._addressService.getFilterCompanyId(companyId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        // this.lists = response.data;
+        this._addressService.addArrayObserver(response.data);
       }
 
       if(response.code == 500){
@@ -105,18 +115,17 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
     }, (error: any) => {
       this._sweetAlertService.stop();
       if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar archivos', message: error.message, timer: 2500});
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar las direcciones', message: error.message, timer: 2500});
       }
     });
   }
 
-  public apiSaleDocumentFilterBySale(saleId: number){
+  public apiAddressFilterPerson(personId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._tmpSaleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+    this._addressService.getFilterPersonId(personId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        // this.lists = response.data;
-        this._tmpSaleDocumentService.addArrayObserver(response.data);
+        this._addressService.addArrayObserver(response.data);
       }
 
       if(response.code == 500){
@@ -127,18 +136,18 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
     }, (error: any) => {
       this._sweetAlertService.stop();
       if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar archivos', message: error.message, timer: 2500});
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar las direcciones', message: error.message, timer: 2500});
       }
     });
   }
 
-  public apiSaleDocumentDelete(id: number){
+  public apiAddressDelete(id: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._tmpSaleDocumentService.delete(id).subscribe((response: ResponseApi) => {
+    this._addressService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        const data: SaleDocumentList = SaleDocumentList.cast(response.data[0]);
-        this._tmpSaleDocumentService.removeObjectObserver(data.id);
+        const data: AddressList = AddressList.cast(response.data[0]);
+        this._addressService.removeObjectObserver(data.id);
       }
 
       if(response.code == 500){
@@ -149,7 +158,7 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
     }, (error: any) => {
       this._sweetAlertService.stop();
       if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al eliminar el archivo', message: error.message, timer: 2500});
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al eliminar el historial', message: error.message, timer: 2500});
       }
     });
   }
@@ -164,13 +173,7 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
   onSubmit(event: any){
     if(event?.saved){
       this.toggleList(false);
-
-      const ventaId = localStorage.getItem('ventas_id');
-      if(ventaId !== null && ventaId !== undefined){
-        this.apiSaleDocumentFilterBySale(parseInt(ventaId));
-      } else {
-        this.apiSaleDocumentFilterBySale(event?.data?.ventas_id);
-      }
+  
     }
   }
 
@@ -185,16 +188,15 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
    * ****************************************************************
    */
   getDataRow(data: any){
-    this.dataFormDocument = SaleDocument.cast(data);
+    this.dataForm = Address.cast(data);
     this.toggleForm(false);
   }
 
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el archivo?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la dirección?').then((confirm) => {
       if(confirm.isConfirmed){
-        this.apiSaleDocumentDelete(id);
+        this.apiAddressDelete(id);
       }
     });
   }
-
 }

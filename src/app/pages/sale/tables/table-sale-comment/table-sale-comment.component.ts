@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { ResponseApi, SaleComment, SaleCommentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TmpSaleCommentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-comment',
@@ -25,7 +25,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private _tmpSaleCommentService: TmpSaleCommentService,
+    private _tmpSaleCommentService: TempSaleCommentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,

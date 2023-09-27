@@ -1,27 +1,24 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ContactList, ResponseApi } from '../../models';
 import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
-import { ResponseApi, SaleList } from 'src/app/core/models';
-import { ConfigService } from '../../config';
+import { HttpClient } from '@angular/common/http';
+import { ConfigService } from '../config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TempSaleService {
+export class ContactService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<SaleList[]> = new BehaviorSubject<SaleList[]>([]);
-  public listObserver$: Observable<SaleList[]> = this.listSubject.asObservable();
+  private listSubject: BehaviorSubject<ContactList[]> = new BehaviorSubject<ContactList[]>([]);
+  public listObserver$: Observable<ContactList[]> = this.listSubject.asObservable();
 
-  private dataSubject: BehaviorSubject<SaleList> = new BehaviorSubject<SaleList>(null);
-  public dataObserver$: Observable<SaleList> = this.dataSubject.asObservable();
-  
   constructor(
     private http: HttpClient,
     private configService: ConfigService
-  ) { 
+  ) {
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: SaleList[]) => {
+      .subscribe((list: ContactList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
@@ -30,7 +27,7 @@ export class TempSaleService {
 
 
   private get baseUrl(){
-    return this.configService.apiUrl + 'tmpSale';
+    return this.configService.apiUrl + 'contact';
   }
 
   private get requestOptions(){
@@ -56,11 +53,16 @@ export class TempSaleService {
     }
   }
 
-  public getSearch(data: any): Observable<ResponseApi> {
-    const endpoint = `${this.baseUrl}/search`;
-    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+  public getFilterPersonId(personId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterPerson/${personId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
+  public getFilterCompanyId(companyId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterCompany/${companyId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+  
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
@@ -68,6 +70,11 @@ export class TempSaleService {
 
   public register(data: any): Observable<ResponseApi>{
     const endpoint = `${this.baseUrl}`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
+  }
+
+  public registerComplete(data: any): Observable<ResponseApi>{
+    const endpoint = `${this.baseUrl}/register`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
@@ -90,29 +97,24 @@ export class TempSaleService {
   /**
    * FUNCIONES PARA LOS OBSERVABLES
    */
-  // Método para agregar un nuevo valor al data observer
-  changeDataObserver(saleList: SaleList) {
-    this.dataSubject.next(saleList);
-  }
-
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(saleList: SaleList) {
+  addObjectObserver(contactList: ContactList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(saleList);
+    currentData.push(contactList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(saleList: SaleList[]) {
-    this.listSubject.next(saleList);
+  addArrayObserver(contactList: ContactList[]) {
+    this.listSubject.next(contactList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(saleList: SaleList) {
+  updateObjectObserver(contactList: ContactList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === saleList.id);
+    const index = currentData.findIndex(item => item.id === contactList.id);
     if (index !== -1) {
-      currentData[index] = saleList;
+      currentData[index] = contactList;
       this.listSubject.next(currentData);
     }
   }

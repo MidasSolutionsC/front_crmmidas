@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ResponseApi, SaleDocument, SaleDocumentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TmpSaleDocumentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleDocumentService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
 
 @Component({
@@ -38,7 +38,7 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private _tmpSaleDocumentService: TmpSaleDocumentService,
+    private _tmpSaleDocumentService: TempSaleDocumentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,

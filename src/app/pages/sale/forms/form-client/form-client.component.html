@@ -660,16 +660,16 @@
       </form>
     </div>
 
-    <accordion [isAnimated]="true" [closeOthers]="true">
+    <accordion [isAnimated]="true" [closeOthers]="false">
       <div class="row g-2">
         <div class="col-md-6 mb-3">
           <accordion-group heading="Contactos">
-            <p>Contactos...</p>
+            <app-table-client-contact [dataSendApi]="dataSendDetail"></app-table-client-contact>
           </accordion-group>
         </div>
         <div class="col-md-6 mb-3">
           <accordion-group heading="Direcciones">
-            <p>Direcciones...</p>
+            <app-table-client-address></app-table-client-address>
           </accordion-group>
         </div>
       </div>
@@ -759,7 +759,7 @@
       <div class="row g-2">
         <div class="col-md-12 mb-3">
           <accordion-group heading="Cuentas bancarias del cliente">
-            <p>Cuentas...</p>
+            <app-table-client-bank-account></app-table-client-bank-account>
           </accordion-group>
         </div>
       </div>

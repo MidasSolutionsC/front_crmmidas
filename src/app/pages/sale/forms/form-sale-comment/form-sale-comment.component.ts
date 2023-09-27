@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { ResponseApi, SaleComment, SaleCommentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TmpSaleCommentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-sale-comment',
@@ -31,7 +31,7 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private _tmpSaleCommentService: TmpSaleCommentService,
+    private _tmpSaleCommentService: TempSaleCommentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,

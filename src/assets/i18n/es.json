@@ -324,6 +324,10 @@
         "label": "Teléfono",
         "placeholder": "Ingrese el número de teléfono..."
       },
+      "contact": {
+        "label": "Contacto",
+        "placeholder": "Ingrese el contacto..."
+      },
       "responsible": {
         "label": "Responsable",
         "placeholder": "Ingrese al responsable..."
@@ -331,6 +335,10 @@
       "address": {
         "label": "Dirección",
         "placeholder": "Ingrese la dirección..."
+      },
+      "residence": {
+        "label": "Domicilio",
+        "placeholder": "Ingrese el domicilio..."
       },
       "category": {
         "label": "Categoría",
@@ -356,6 +364,9 @@
         "label": "Código ISO",
         "placeholder": "Ingrese el código iso...",
         "default_option": "Seleccione un país..."
+      },
+      "is_primary": {
+        "label": "Es Primario"
       },
       "symbol": {
         "label": "Símbolo",
@@ -395,6 +406,10 @@
         "label": "Ciudad",
         "placeholder": "Ingrese la ciudad..."
       },
+      "territorial": {
+        "label": "Territorial",
+        "placeholder": "Ingrese el territorial..."
+      },
       "file": {
         "label": "Archivo",
         "placeholder": "Subir el archivo...",
@@ -418,6 +433,11 @@
         "placeholder": "Ingrese el tipo...",
         "default_option": "Seleccione un tipo..."
 
+      },
+      "type_bank_account": {
+        "label": "Tipo de cuenta bancaria",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
       },
       "type_user": {
         "label": "Tipo de usuario",
@@ -572,6 +592,11 @@
         "label": "Tipo empresa",
         "placeholder": "Ingrese el tipo...",
         "default_option": "Seleccione un tipo..."
+      },
+      "account": {
+        "label": "Cuenta",
+        "placeholder": "Ingrese la cuenta...",
+        "default_option": "Seleccione una cuenta..."
       },
       "company": {
         "label": "Compañía",

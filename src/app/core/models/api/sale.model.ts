@@ -8,8 +8,8 @@ export class Sale extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || 0;
-    this.clientes_id = this.clientes_id || 0;
+    this.id = this.id || null;
+    this.clientes_id = this.clientes_id || null;
     this.comentario = this.comentario || '';
     this.is_active = this.is_active || true;
   }
@@ -37,8 +37,8 @@ export class SaleList extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || 0;
-    this.clientes_id = this.clientes_id || 0;
+    this.id = this.id || null;
+    this.clientes_id = this.clientes_id || null;
     this.comentario = this.comentario || '';
     this.is_active = this.is_active || true;
     this.created_at = this.created_at || '';

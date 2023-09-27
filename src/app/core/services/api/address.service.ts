@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { ResponseApi, SaleDocumentList } from '../../models';
 import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
+import { AddressList, ResponseApi } from '../../models';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '../config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TmpSaleDocumentService {
+export class AddressService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<SaleDocumentList[]> = new BehaviorSubject<SaleDocumentList[]>([]);
-  public listObserver$: Observable<SaleDocumentList[]> = this.listSubject.asObservable();
+  private listSubject: BehaviorSubject<AddressList[]> = new BehaviorSubject<AddressList[]>([]);
+  public listObserver$: Observable<AddressList[]> = this.listSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -18,7 +18,7 @@ export class TmpSaleDocumentService {
   ) {
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: SaleDocumentList[]) => {
+      .subscribe((list: AddressList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
@@ -27,7 +27,7 @@ export class TmpSaleDocumentService {
 
 
   private get baseUrl(){
-    return this.configService.apiUrl + 'tmpSaleDocument';
+    return this.configService.apiUrl + 'address';
   }
 
   private get requestOptions(){
@@ -53,8 +53,14 @@ export class TmpSaleDocumentService {
     }
   }
 
-  public getFilterBySale(id: any): Observable<ResponseApi> {
-    const endpoint = `${this.baseUrl}/filterSale/${id}`;
+  
+  public getFilterPersonId(personId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterPerson/${personId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
+  public getFilterCompanyId(companyId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterCompany/${companyId}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
@@ -69,8 +75,8 @@ export class TmpSaleDocumentService {
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/update/${id}`;
-    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+    const endpoint = `${this.baseUrl}/${id}`;
+    return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
   public delete(id: any): Observable<ResponseApi>{
@@ -88,23 +94,23 @@ export class TmpSaleDocumentService {
    * FUNCIONES PARA LOS OBSERVABLES
    */
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(saleDocumentList: SaleDocumentList) {
+  addObjectObserver(addressList: AddressList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(saleDocumentList);
+    currentData.push(addressList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(saleDocumentList: SaleDocumentList[]) {
-    this.listSubject.next(saleDocumentList);
+  addArrayObserver(addressList: AddressList[]) {
+    this.listSubject.next(addressList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(saleDocumentList: SaleDocumentList) {
+  updateObjectObserver(addressList: AddressList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === saleDocumentList.id);
+    const index = currentData.findIndex(item => item.id === addressList.id);
     if (index !== -1) {
-      currentData[index] = saleDocumentList;
+      currentData[index] = addressList;
       this.listSubject.next(currentData);
     }
   }

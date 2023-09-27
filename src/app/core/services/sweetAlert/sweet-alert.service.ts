@@ -80,7 +80,10 @@ export class SweetAlertService {
             } else {
               timerValue = 0;
             }
-            b.textContent = `${timerValue}%`;
+
+            if(b){
+              b.textContent = `${timerValue}%`;
+            }
           }
         };
 
