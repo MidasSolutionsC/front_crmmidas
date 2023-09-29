@@ -364,7 +364,7 @@ if (data) {
                 id: 23,
                 label: 'MENUITEMS.SETTINGS.LIST.ALLOWED_IPS',
                 icon: 'bx bx-link-external  ',
-                link: '/'
+                link: '/allowed-ip'
             },
             {
                 id: 24,

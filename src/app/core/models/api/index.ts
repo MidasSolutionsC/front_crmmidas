@@ -11,4 +11,6 @@ export * from './sale-detail.model'
 export * from './sale-document.model'
 export * from './sale-history.model'
 export * from './sale-comment.model'
+export * from './ipAllowed.model'
+
 

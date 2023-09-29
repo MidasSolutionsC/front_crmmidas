@@ -7,6 +7,8 @@ import { jwtAuthGuard, hasRoleGuard } from '../core/guards';
 import { CalendarComponent } from './calendar/calendar.component';
 import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
+import { AllowedIpComponent } from './allowed-ip/allowed-ip.component';
+
 
 const routes: Routes = [
   // { path: '', redirectTo: 'dashboard' },
@@ -22,6 +24,7 @@ const routes: Routes = [
   { path: 'calendar', component: CalendarComponent },
   { path: 'call', component: CallComponent },
   { path: 'sale', component: SaleComponent },
+  { path: 'allowed-ip', component: AllowedIpComponent },
   { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
 ];
 

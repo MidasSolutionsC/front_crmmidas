@@ -87,6 +87,12 @@ export class LoginComponent implements OnInit, OnDestroy {
           this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
+
+      if (response.code == 403) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+        }
+      }
     }, (error: any) => {
       this._sweetAlertService.stop();
       console.log(error);
