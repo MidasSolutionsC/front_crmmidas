@@ -198,7 +198,20 @@ export class TableClientContactComponent implements OnInit, OnDestroy, OnChanges
         if(response.code == 201){
           this.listContact = [];
           this.isDataLocal = false;
-          console.log(response.data);
+
+          if(response.data.length > 0){
+            const arrayData = response.data.map((row: any) => {
+              const tipo_text = `
+                ${row.tipo == 'TEL'? 'teléfono': ''} 
+                ${row.tipo == 'FIJ'? 'teléfono fijo': ''} 
+                ${row.tipo == 'EML'? 'correo electrónico': ''} 
+              `;
+              row.tipo_text = tipo_text;
+              return row;
+            });
+
+            this.listContact = ContactList.casts(arrayData);
+          }
 
           this.listContact = ContactList.casts(response.data);
         }
@@ -258,6 +271,7 @@ export class TableClientContactComponent implements OnInit, OnDestroy, OnChanges
       this.toggleList(false);
     }
 
+    // GUARDAR EN LOCAL
     if(event?.savedLocal){
       this.toggleList(false);
       this.isDataLocal = true;
@@ -268,6 +282,7 @@ export class TableClientContactComponent implements OnInit, OnDestroy, OnChanges
       this.listContact.push(data);
     }
 
+    // ACTUALIZAR EN LOCAL
     if(event?.updatedLocal){
       this.toggleList(false);
       const data = ContactList.cast(event.data);

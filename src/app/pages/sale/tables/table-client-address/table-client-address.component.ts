@@ -1,14 +1,20 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Address, AddressList, ResponseApi } from 'src/app/core/models';
-import { AddressService, SharedClientService, SweetAlertService } from 'src/app/core/services';
+import { AddressService, ApiErrorFormattingService, SharedClientService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-client-address',
   templateUrl: './table-client-address.component.html',
   styleUrls: ['./table-client-address.component.scss']
 })
-export class TableClientAddressComponent implements OnInit, OnDestroy {
+export class TableClientAddressComponent implements OnInit, OnDestroy, OnChanges{
+
+  @Input() dataSendApi: any = null;
+
+  // SON DATOS LOCAL
+  isDataLocal: boolean = false;
+  
   // Collapse
   isCollapseForm: boolean = true;
   isCollapseList: boolean = false;
@@ -24,6 +30,7 @@ export class TableClientAddressComponent implements OnInit, OnDestroy {
   constructor(
     private _sharedClientService: SharedClientService,
     private _addressService: AddressService,
+    private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
   ){}
 
@@ -65,7 +72,29 @@ export class TableClientAddressComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.dataSendApi && !changes.dataSendApi.firstChange){
+      this.onChangeData();
+    }
+  }
 
+  onChangeData(){
+    if(this.dataSendApi){
+      const data: any = {};
+      if(this.dataSendApi.persona_juridica){
+        data.empresas_id = this.dataSendApi.empresas_id;
+      } else {
+        data.personas_id = this.dataSendApi.personas_id;
+      }
+
+      if(this.isDataLocal && this.listAddress.length > 0){
+        data.data_array = Address.casts(this.listAddress);
+        this.apiAddressSaveComplete(data);
+      }
+      
+      // console.log(this.dataSendApi, data);
+    } 
+  }
   
   /**
    * ****************************************************************
@@ -141,6 +170,55 @@ export class TableClientAddressComponent implements OnInit, OnDestroy {
     });
   }
 
+  private apiAddressSaveComplete(data: Address){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._addressService.registerComplete(data).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 201){
+          this.listAddress = [];
+          this.isDataLocal = false;
+
+          if(response.data.length > 0){
+            const arrayData = response.data.map((row: any) => {
+              const direccion_completo = `
+                ${row.tipo} 
+                ${row.direccion} 
+                ${row.numero != ''? ', '+ row.numero: ''} 
+                ${row.escalera != ''? ', '+ row.escalera: ''} 
+                ${row.portal != ''? ', '+ row.portal: ''} 
+                ${row.planta != ''? ', '+ row.planta: ''} 
+                ${row.puerta != ''? ', '+ row.puerta: ''}
+              `;
+              row.direccion_completo = direccion_completo;  
+              return row;
+            });
+
+            this.listAddress = AddressList.casts(arrayData);
+          }
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al registrar la dirección', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+
   public apiAddressDelete(id: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._addressService.delete(id).subscribe((response: ResponseApi) => {
@@ -173,7 +251,29 @@ export class TableClientAddressComponent implements OnInit, OnDestroy {
   onSubmit(event: any){
     if(event?.saved){
       this.toggleList(false);
+    }
   
+    // GUARDAR EN LOCAL
+    if(event?.savedLocal){
+      this.toggleList(false);
+      this.isDataLocal = true;
+
+      const index = this.listAddress.length;
+      const data = AddressList.cast(event.data);
+      data.id = index + 1;
+      this.listAddress.push(data);
+    }
+
+    // ACTUALIZAR EN LOCAL
+    if(event?.updatedLocal){
+      this.toggleList(false);
+      const data = AddressList.cast(event.data);
+      this.listAddress = this.listAddress.map((address) => {
+        if(address.id == data.id){
+          return data;
+        }
+        return address;
+      });
     }
   }
 
@@ -195,7 +295,11 @@ export class TableClientAddressComponent implements OnInit, OnDestroy {
   deleteRow(id: any){
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la dirección?').then((confirm) => {
       if(confirm.isConfirmed){
-        this.apiAddressDelete(id);
+        if(this.isDataLocal){
+          this.listAddress = this.listAddress.filter((address) => address.id !== id);
+        } else {
+          this.apiAddressDelete(id);
+        }
       }
     });
   }

@@ -27,7 +27,7 @@
                         </div>
                         <div class="d-flex gap-2">
                           <button type="button" class="btn btn-primary" (click)="toggleFormInstallation()">
-                            <i class="mdi mdi-plus"></i>
+                            <i class="mdi" [ngClass]="{'mdi-plus': isCollapsedFormInstallation, 'mdi-minus': !isCollapsedFormInstallation}"></i>
                             Formulario
                           </button>
                           <button type="button" class="btn btn-secondary " (click)="toggleListInstallation()">
@@ -460,7 +460,7 @@
                         </div>
                         <div class="d-flex gap-2">
                           <button type="button" class="btn btn-primary" (click)="toggleFormSaleDetail()" [disabled]="!saleDetailActive">
-                            <i class="mdi mdi-plus"></i>
+                            <i class="mdi" [ngClass]="{'mdi-plus': isCollapseFormSaleDetail, 'mdi-minus': !isCollapseFormSaleDetail}"></i>
                             Formulario
                           </button>
                           <button type="button" class="btn btn-secondary " (click)="toggleListSaleDetail()">
@@ -471,7 +471,7 @@
                     </div>
                     <div class="card-body border-bottom border-primary" [collapse]="isCollapseFormSaleDetail" [isAnimated]="true">
                       <h5 class="text-md">Campos del detalle de la venta</h5>
-                      <span class="badge bagde-info bg-info text-uppercase text-lg mb-3">{{titleFormSaleDetail}}</span>
+                      <span class="badge bagde-info bg-info text-uppercase text-lg mb-3 font-size-14">{{titleFormSaleDetail}}</span>
                       <app-form-sale-detail [typeService]="typeServiceFormSaleDetail" [data]="saleDetailActive" (cancel)="closeFormSaleDetail()" (formSubmit)="handleFormSaleDetail($event)"></app-form-sale-detail>
                     </div>
                     <div class="card-body" [collapse]="isCollapseSaleDetail" [isAnimated]="true">
@@ -487,7 +487,7 @@
                             </tr>
                           </thead>
                           <tbody *ngFor="let data of tmpListSaleDetails; let i = index">
-                            <tr>
+                            <tr [ngClass]="{'table-warning': getRowDetailIsNullJson(data)}">
                               <th scope="row">{{i + 1}}</th>
                               <td>{{data.servicios_nombre}}</td>
                               <td>{{data.instalaciones_direccion_completo}}</td>
@@ -510,8 +510,11 @@
                             <!-- Detalle del servicio -->
                             <tr *ngIf="subTableDetails[i].visible" class="sub-table no-bg">
                               <td colspan="5" class="p-1">
-                                <app-table-sale-detail [typeService]="subTableDetails[i].typeService" [index]="i" [data]="subTableDetails[i].data" 
-                                  (cancel)="changeValueHideSubTable($event)"
+                                <app-table-sale-detail 
+                                  [typeService]="subTableDetails[i].typeService" 
+                                  [index]="i" 
+                                  [data]="subTableDetails[i].data" 
+                                  (cancel)="changeValueHideSubTable(i)"
                                 ></app-table-sale-detail>
                               </td>
                             </tr>
@@ -595,12 +598,31 @@
           <span>Confirmar proceso</span>
         </ng-template>
         <section *ngIf="cdkStepper.selectedIndex === 3">
-          <div>Texto</div>
+          <div>
+            <accordion [isAnimated]="true" [closeOthers]="true">
+              <accordion-panel heading="Vista previa" [isOpen]="true" >
+                <app-info-general></app-info-general>
+              </accordion-panel>
+            </accordion>
+            <div class="row justify-content-center">
+              <div class="col-lg-6">
+                <div class="text-center">
+                  <div class="mb-4">
+                    <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                  </div>
+                  <div>
+                    <h5>Confirmar registro de la venta</h5>
+                    <p class="text-muted">Para confirmar el registro de la venta, hacer clic en Finalizar</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
             <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
                 cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
             <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext
-                (click)="saveData()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
+                (click)="saveSaleFinal()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
           </ul>
         </section>
       </cdk-step>

@@ -105,8 +105,8 @@ export class FormClientBankAccountComponent implements OnInit, OnDestroy, OnChan
         if(response.code == 201){
           if(response.data[0]){
             const data: BankAccountList = BankAccountList.cast(response.data[0]);
-            const TypeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
-            data.tipo_cuentas_bancarias_nombre = TypeBankAccount.nombre;
+            const typeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
+            data.tipo_cuentas_bancarias_nombre = typeBankAccount.nombre;
             this._bankAccountService.addObjectObserver(data);
             this.submit.emit({saved: true, data});
             this.onReset();
@@ -142,8 +142,8 @@ export class FormClientBankAccountComponent implements OnInit, OnDestroy, OnChan
         if(response.code == 200){
           if(response.data[0]){
             const data: BankAccountList = BankAccountList.cast(response.data[0]);
-            const TypeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
-            data.tipo_cuentas_bancarias_nombre = TypeBankAccount.nombre;
+            const typeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
+            data.tipo_cuentas_bancarias_nombre = typeBankAccount.nombre;
             this._bankAccountService.updateObjectObserver(data);
             this.onReset();
             this.submit.emit({saved: true});
@@ -255,13 +255,33 @@ export class FormClientBankAccountComponent implements OnInit, OnDestroy, OnChan
       if(this.isNewData){
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la cuenta bancaria?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiBankAccountSave(values);
+            if(!this.clientId){
+              // GUARDAR EN MEMORIA LOCAL
+              const data = BankAccountList.cast(values);
+              const TypeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
+              data.tipo_cuentas_bancarias_nombre = TypeBankAccount.nombre; 
+              this.submit.emit({savedLocal: true, data});
+              this.onReset();
+            } else {
+              // GUARDAR EN LA BASE DE DATOS
+              this.apiBankAccountSave(values);
+            }
           }
         });
       } else {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar la cuenta bancaria?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiBankAccountUpdate(values, values.id);
+            if(!this.clientId){
+              // ACTUALIZAR EN MEMORIA LOCAL
+              const data = BankAccountList.cast(values);
+              const TypeBankAccount = this.listTypeBankAccount.find((obj) => obj.id == data.tipo_cuentas_bancarias_id);
+              data.tipo_cuentas_bancarias_nombre = TypeBankAccount.nombre; 
+              this.submit.emit({updatedLocal: true, data});
+              this.onReset();
+            } else {
+              // ACTUALIZAR EN LA BASE DE DATOS
+              this.apiBankAccountUpdate(values, values.id);
+            }
           }
         });
       }     

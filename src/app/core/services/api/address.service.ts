@@ -74,6 +74,11 @@ export class AddressService {
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
+  public registerComplete(data: any): Observable<ResponseApi>{
+    const endpoint = `${this.baseUrl}/register`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
+  }
+
   public update(data: any, id: any): Observable<ResponseApi>{
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))

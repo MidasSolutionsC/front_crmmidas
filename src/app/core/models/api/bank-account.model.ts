@@ -56,7 +56,7 @@ export class BankAccountList extends Model{
     this.tipo_cuentas_bancarias_nombre = this.tipo_cuentas_bancarias_nombre || null;
     this.cuenta = this.cuenta || null;
     this.fecha_apertura = this.fecha_apertura || null;
-    this.is_primary = this.is_primary || 1;
+    this.is_primary = this.is_primary || 0;
     this.is_active = this.is_active || 1;
   }
 

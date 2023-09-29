@@ -758,6 +758,7 @@
       "REGISTER": "Registrar",
       "UPDATE": "Actualizar",
       "SAVE": "Guardar",
+      "SAVE_CHANGE": "Guardar cambios",
       "DELETE": "Eliminar",
       "RESET": "Resetear",
       "PREV": "Anterior",

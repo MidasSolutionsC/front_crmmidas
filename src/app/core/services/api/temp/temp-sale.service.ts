@@ -71,6 +71,11 @@ export class TempSaleService {
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
+  public finalProcess(data: any): Observable<ResponseApi>{
+    const endpoint = `${this.baseUrl}/finalProcess`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
+  }
+
   public update(data: any, id: any): Observable<ResponseApi>{
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))

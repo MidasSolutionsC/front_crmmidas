@@ -669,7 +669,7 @@
         </div>
         <div class="col-md-6 mb-3">
           <accordion-group heading="Direcciones">
-            <app-table-client-address></app-table-client-address>
+            <app-table-client-address [dataSendApi]="dataSendDetail"></app-table-client-address>
           </accordion-group>
         </div>
       </div>
@@ -759,7 +759,7 @@
       <div class="row g-2">
         <div class="col-md-12 mb-3">
           <accordion-group heading="Cuentas bancarias del cliente">
-            <app-table-client-bank-account></app-table-client-bank-account>
+            <app-table-client-bank-account [dataSendApi]="dataSendDetail"></app-table-client-bank-account>
           </accordion-group>
         </div>
       </div>
@@ -769,8 +769,9 @@
     <div class="hstack gap-2 justify-content-end">
       <button type="button" class="btn btn-light" (click)="toggleFormClient()">{{'FORMS.BUTTONS.CLOSE' | translate}}</button>
       <button type="button" class="btn btn-secondary" (click)="resetFormClient()">{{'FORMS.BUTTONS.RESET' | translate}}</button>
-      <button type="button" class="btn btn-info" *ngIf="!isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
-      <button type="button" class="btn btn-success"  *ngIf="isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.SAVE' | translate}}</button>
+      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.SAVE' | translate}}</button> -->
+      <button type="button" class="btn btn-success"  (click)="saveClient()">{{'FORMS.BUTTONS.SAVE_CHANGE' | translate}}</button>
     </div>
   </div>
 </div>

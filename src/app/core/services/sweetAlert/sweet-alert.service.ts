@@ -87,7 +87,7 @@ export class SweetAlertService {
           }
         };
 
-        timerInterval = setInterval(updateProgress, 100);
+        timerInterval = setInterval(updateProgress, 250);
         updateProgress(); // Inicia la actualización inmediatamente
       },
       willClose: () => {

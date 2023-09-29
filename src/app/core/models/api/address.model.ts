@@ -106,7 +106,7 @@ export class AddressList extends Model{
     this.localidad = this.localidad || '';
     this.provincia = this.provincia || '';
     this.territorial = this.territorial || '';
-    this.is_primary = this.is_primary || 1;
+    this.is_primary = this.is_primary || 0;
     this.is_active = this.is_active || 1;
   }
 

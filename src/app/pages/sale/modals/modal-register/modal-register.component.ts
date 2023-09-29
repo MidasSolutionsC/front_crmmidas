@@ -28,6 +28,10 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
 
   // VENTA ID
   saleId: number = null;
+  clientId: number;
+  personId: number;
+  companyId: number;
+  legalPerson: boolean = false;
 
   // Form instalación
   isNewDataInstallation: boolean = true;
@@ -112,7 +116,6 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
 
   // Operadores
   listOperators: OperatorList[] = [];
-
 
   private subscription: Subscription = new Subscription();
 
@@ -205,7 +208,6 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
       this._tempSaleDetailService.listObserver$
         .subscribe((list: SaleDetailList[]) => {
           this.tmpListSaleDetails = list;
-
 
           // Obtener los servicio añadidos
           this.tmpListServiceRegistered = list.map((item) => item.servicios_id);
@@ -359,6 +361,30 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
     });
   }
 
+  public apiTempSaleFinalProcess(data: any){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._tempSaleService.finalProcess(data).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // const data = SaleList.cast(response.data[0]);
+        // this._tempSaleService.changeDataObserver(data);
+
+        console.log(response.data)
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al finalizar la venta', message: error.message, timer: 2500});
+      }
+    });
+  }
+
 
   /**
    * ****************************************************************
@@ -388,6 +414,9 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
 
   // Buscar instalaciones
   public apiTempInstallationSearch(search: string) {
+    if(!this.saleId){
+      return null;
+    }
     this._tempInstallationService.getSearch({search, ventas_id: this.saleId}).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
@@ -677,8 +706,23 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
       this._tempSaleDetailService.update(data, id).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 200){
+          this.closeFormSaleDetail();
+
           if(response.data[0]){
             const data: SaleDetailList = SaleDetailList.cast(response.data[0]);
+            // const operator = this.listOperators.find((row) => row.id == data.ope)
+            const typeDocument = this.listTypeDocuments.find((obj) => obj.id === data?.datos_json?.tipo_documento_id);
+            const operator = this.listOperators.find((obj) => obj.id === data?.datos_json?.operador_donante_id);
+            
+            if (typeDocument !== undefined) {
+              data.datos_json.tipo_documento_nombre = typeDocument.nombre;
+              data.datos_json.tipo_documento_abreviacion = typeDocument.abreviacion;
+            }
+            if (operator !== undefined) {
+              data.datos_json.operador_donante_nombre = operator.nombre;
+            }
+
+  
             this._tempSaleDetailService.updateObjectObserver(data);
 
             setTimeout(() => {
@@ -968,6 +1012,16 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
     return this.tmpListServiceRegistered.some((serviceId) => serviceId === id);
   }
 
+  /**
+   * VALIDAR SI EL SERVICIO AÑADIDO AL DETALLE - LE FALTA DATOS DEL JSON
+   * @param data objeto de cada fila
+   * @returns 
+   */
+  getRowDetailIsNullJson(data: any){
+    return data.datos_json !== null? false: true
+
+  }
+
 
   /**
    * Mostrar alerta de confirmación para poder mostrar el formulario de SELECT instalaciones
@@ -1144,7 +1198,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
 
   /**
    * ***************************************************************
-   * Capturar los valores del formulario -  FORMULARIO EXTERNO
+   * Capturar los valores del formulario -  FORMULARIO EXTERNO (SALE DETAIL)
    * ***************************************************************
    * @param data 
    */
@@ -1153,9 +1207,6 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
       this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el detalle?').then((confirm) => {
         if(confirm.isConfirmed){
           this.apiTempSaleDetailUpdate(data, data.id);
-          setTimeout(() => {
-            this.closeFormSaleDetail();
-          }, 0);
         }
       });
     }
@@ -1250,7 +1301,22 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
   /**
    * MOSTRAR DETALLE EN LA SUB TABLA
    */
-  changeValueHideSubTable(index: any) {
+  changeValueHideSubTable(index: number) {
     this.subTableDetails[index].visible = !this.subTableDetails[index].visible;
+  }
+
+
+  /**
+   * *************************************************************
+   * TERMINAR VENTA
+   * *************************************************************
+   */
+  saveSaleFinal(){
+    console.log("VENTAS FINAL:")
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de completar la venta?').then((confirm) => {
+      if(confirm.isConfirmed){
+        this.apiTempSaleFinalProcess({ventas_id: this.saleId});
+      }
+    })
   }
 }

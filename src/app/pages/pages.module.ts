@@ -64,6 +64,7 @@ import { FormClientBankAccountComponent } from './sale/forms/form-client-bank-ac
 import { TableClientAddressComponent } from './sale/tables/table-client-address/table-client-address.component';
 import { TableClientBankAccountComponent } from './sale/tables/table-client-bank-account/table-client-bank-account.component';
 import { TableClientContactComponent } from './sale/tables/table-client-contact/table-client-contact.component';
+import { InfoGeneralComponent } from './sale/info/info-general/info-general.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { TableClientContactComponent } from './sale/tables/table-client-contact/
     TableClientAddressComponent,
     TableClientBankAccountComponent,
     TableClientContactComponent,
+    InfoGeneralComponent,
   ],
   imports: [
     CoreModule,

@@ -636,7 +636,7 @@ export class FormClientComponent implements OnInit, OnDestroy{
       ...this._formService.modelToFormGroupData(model),
       paises_id: [model?.paises_id, [Validators.required, Validators.min(1)]],
       codigo_ubigeo: [model?.codigo_ubigeo, [Validators.nullValidator, Validators.maxLength(50)]],
-      tipo_empresa: [model?.tipo_empresa, [Validators.required, Validators.maxLength(30)]],
+      tipo_empresa: [model?.tipo_empresa, [Validators.required, Validators.maxLength(50)]],
       razon_social: [model?.razon_social, [Validators.required, Validators.maxLength(50)]],
       nombre_comercial: [model?.nombre_comercial, [Validators.required, Validators.maxLength(50)]],
       descripcion: [model?.descripcion, [Validators.nullValidator, Validators.maxLength(50)]],

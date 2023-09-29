@@ -255,13 +255,49 @@ export class FormClientAddressComponent implements OnInit, OnDestroy, OnChanges 
       if(this.isNewData){
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la dirección?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiAddressSave(values);
+            if(!this.personId && !this.companyId){
+              // GUARDAR EN MEMORIA LOCAL
+              const data = AddressList.cast(values);
+              const direccion_completo = `
+                ${data.tipo} 
+                ${data.direccion} 
+                ${data.numero != ''? ', '+ data.numero: ''} 
+                ${data.escalera != ''? ', '+ data.escalera: ''} 
+                ${data.portal != ''? ', '+ data.portal: ''} 
+                ${data.planta != ''? ', '+ data.planta: ''} 
+                ${data.puerta != ''? ', '+ data.puerta: ''}
+              `;
+              data.direccion_completo = direccion_completo;  
+              this.submit.emit({savedLocal: true, data});
+              this.onReset();
+            } else {
+              // GUARDAR EN LA BASE DE DATOS
+              this.apiAddressSave(values);
+            }
           }
         });
       } else {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar la dirección?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiAddressUpdate(values, values.id);
+            if(!this.personId && !this.companyId){
+              // ACTUALIZAR EN MEMORIA LOCAL
+              const data = AddressList.cast(values);
+              const direccion_completo = `
+                ${data.tipo} 
+                ${data.direccion} 
+                ${data.numero != ''? ', '+ data.numero: ''} 
+                ${data.escalera != ''? ', '+ data.escalera: ''} 
+                ${data.portal != ''? ', '+ data.portal: ''} 
+                ${data.planta != ''? ', '+ data.planta: ''} 
+                ${data.puerta != ''? ', '+ data.puerta: ''}
+              `;
+              data.direccion_completo = direccion_completo;  
+              this.submit.emit({updatedLocal: true, data});
+              this.onReset();
+            } else {
+              // ACTUALIZAR EN LA BASE DE DATOS
+              this.apiAddressUpdate(values, values.id);
+            }
           }
         });
       }     

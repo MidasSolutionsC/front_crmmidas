@@ -31,6 +31,7 @@
             <th scope="col">Tipo</th>
             <th scope="col">Cuenta</th>
             <th scope="col">Fecha apertura</th>
+            <th scope="col">Es primario</th>
             <th scope="col" style="width: 5%;">Operaciones</th>
           </tr>
         </thead>
@@ -40,6 +41,7 @@
             <td>{{data.tipo_cuentas_bancarias_nombre}}</td>
             <td>{{data.cuenta}}</td>
             <td>{{data.fecha_apertura}}</td>
+            <td>{{data.is_primary? 'SI': 'NO'}}</td>
             <td >
               <ul class="list-unstyled hstack gap-1 mb-0">
                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
