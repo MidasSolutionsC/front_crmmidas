@@ -18,14 +18,14 @@ const routes: Routes = [
   },
   { path: 'dashboard', component: DefaultComponent },
   { path: 'main', component: MainComponent },
-  { path: 'mains', loadChildren: () => import('./main/main.module').then(m => m.MainModule) },
-  { path: 'dashboards', loadChildren: () => import('./dashboards/dashboards.module').then(m => m.DashboardsModule) },
-  { path: 'maintenances', loadChildren: () => import('./maintenance/maintenance.module').then(m => m.MaintenanceModule) },
-  { path: 'calendar', component: CalendarComponent },
-  { path: 'call', component: CallComponent },
-  { path: 'sale', component: SaleComponent },
-  { path: 'allowed-ip', component: AllowedIpComponent },
-  { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
+  { path: 'mains', loadChildren: () => import('./main/main.module').then(m => m.MainModule), canActivate: [hasRoleGuard] },
+  { path: 'dashboards', loadChildren: () => import('./dashboards/dashboards.module').then(m => m.DashboardsModule), canActivate: [hasRoleGuard] },
+  { path: 'maintenances', loadChildren: () => import('./maintenance/maintenance.module').then(m => m.MaintenanceModule), canActivate: [hasRoleGuard] },
+  { path: 'calendar', component: CalendarComponent, canActivate: [hasRoleGuard] },
+  { path: 'call', component: CallComponent, canActivate: [hasRoleGuard] },
+  { path: 'sale', component: SaleComponent, canActivate: [hasRoleGuard] },
+  { path: 'allowed-ip', component: AllowedIpComponent, canActivate: [hasRoleGuard] },
+  { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule), canActivate: [hasRoleGuard] },
 ];
 
 @NgModule({

@@ -68,8 +68,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       if (response.code == 200) {
         const result = response.data;
         if (result?.login) {
-          //this.router.navigate(['/main']);
-          window.location.href = '/main'
+          this.router.navigate(['/main']);
         } else {
           this._sweetAlertService.showTopEnd({ type: 'error', title: 'Validación de credencial', message: result?.message });
         }

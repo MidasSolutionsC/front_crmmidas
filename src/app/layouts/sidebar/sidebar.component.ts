@@ -8,6 +8,8 @@ import { HttpClient } from '@angular/common/http';
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { TranslateService } from '@ngx-translate/core';
+import { AccessControlService } from '../../core/services/auth/accessControl.service';
+import { isArray } from 'ngx-bootstrap/chronos';
 
 @Component({
   selector: 'app-sidebar',
@@ -23,6 +25,8 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() isCondensed = false;
   menu: any;
   data: any;
+  authAccess: any;
+
 
   menuItems = [];
 
@@ -65,9 +69,9 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       if (document.getElementsByClassName("mm-active").length > 0) {
         const currentPosition = document.getElementsByClassName("mm-active")[0]['offsetTop'];
         if (currentPosition > 500)
-        if(this.scrollRef.SimpleBar !== null)
-          this.scrollRef.SimpleBar.getScrollElement().scrollTop =
-            currentPosition + 300;
+          if (this.scrollRef.SimpleBar !== null)
+            this.scrollRef.SimpleBar.getScrollElement().scrollTop =
+              currentPosition + 300;
       }
     }, 300);
   }
@@ -140,13 +144,52 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
    */
   initialize(): void {
     this.menuItems = MENU;
+
+
   }
 
   /**
    * Returns true or false if given menu item has child or not
    * @param item menuItem
    */
-  hasItems(item: MenuItem) {
+  hasItems(item: MenuItem): boolean {
+    console.log(item.subItems)
+
     return item.subItems !== undefined ? item.subItems.length > 0 : false;
+  }
+
+  hasAccess(item: MenuItem): boolean {
+
+
+    const dataSession = localStorage.getItem('dataUser');
+    const data = JSON.parse(dataSession);
+
+    if (item.roles) {
+      return item.roles.some(r => r === data.user.tipo_usuario)
+    }
+
+    return false
+
+    // // if(item.link)
+    // const authAccess = new AccessControlService();
+    // // return authAccess.userHasAccess(item.link)
+    // //   if (item.isTitle) return true
+
+    // let subItems = item.subItems !== undefined ? item.subItems.length > 0 : false
+
+
+    // if (subItems) {
+    //   console.log('subitems', item)
+
+    //   let filterAccess = item.subItems.filter((s: any[]) =>  s.some(i => authAccess.userHasAccess(i.link)))
+    //   return filterAccess.length > 0
+    // } else {
+
+    //   // console.log(item)
+
+    //   return authAccess.userHasAccess(item.link)
+    // }
+
+
   }
 }
