@@ -37,7 +37,7 @@ export class AuthService {
 
           const token_auth = res?.data?.token_auth;
           if (token_auth) {
-            this.cookieService.set('token_auth', token_auth, 7, '/', 'localhost', false, 'Strict'); // Puedes probar diferentes valores para 'SameSite'
+            this.cookieService.set('token_auth', token_auth, 7, '/', 'localhost', true, 'Strict');
           }
         }
       }
