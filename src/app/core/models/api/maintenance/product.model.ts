@@ -4,7 +4,7 @@ export class Product extends Model{
   public id: number;
   public tipo_servicios_id: number;
   public categorias_id: number;
-  public divisas_id: number;
+  public tipo_monedas_id: number;
   public marcas_id: number;
   public nombre: string;
   public descripcion: string;
@@ -17,7 +17,7 @@ export class Product extends Model{
     this.tipo_servicios_id = this.tipo_servicios_id || null;
     this.categorias_id = this.categorias_id || null; 
     this.marcas_id = this.marcas_id || null;
-    this.divisas_id = this.divisas_id || null;
+    this.tipo_monedas_id = this.tipo_monedas_id || null;
     this.nombre = this.nombre || '';
     this.descripcion = this.descripcion || '';
     this.precio = this.precio || 0;
@@ -26,8 +26,8 @@ export class Product extends Model{
 
   public static cast(data: object): Product{
     const product = new Product(data);
-    const {id, categorias_id, marcas_id, divisas_id, tipo_servicios_id, nombre, descripcion, precio, is_active} = product;
-    return {id, categorias_id, marcas_id, divisas_id, tipo_servicios_id, nombre, descripcion, precio, is_active};
+    const {id, categorias_id, marcas_id, tipo_monedas_id, tipo_servicios_id, nombre, descripcion, precio, is_active} = product;
+    return {id, categorias_id, marcas_id, tipo_monedas_id, tipo_servicios_id, nombre, descripcion, precio, is_active};
   }
 
   public static casts(dataArray: object[]): Product[]{
@@ -42,8 +42,8 @@ export class ProductList extends Model{
   public categorias_nombre: string;
   public marcas_id: number;
   public marcas_nombre: string;
-  public divisas_id: number;
-  public divisas_nombre: string;
+  public tipo_monedas_id: number;
+  public tipo_monedas_nombre: string;
   public tipo_servicios_id: number;
   public tipo_servicios_nombre: string;
   public nombre: string;
@@ -62,8 +62,8 @@ export class ProductList extends Model{
     this.categorias_nombre = this.categorias_nombre || '';
     this.marcas_id = this.marcas_id || null;
     this.marcas_nombre = this.marcas_nombre || '';
-    this.divisas_id = this.divisas_id || undefined;
-    this.divisas_nombre = this.divisas_nombre || '';
+    this.tipo_monedas_id = this.tipo_monedas_id || undefined;
+    this.tipo_monedas_nombre = this.tipo_monedas_nombre || '';
     this.tipo_servicios_id = this.tipo_servicios_id || 0;
     this.tipo_servicios_nombre = this.tipo_servicios_nombre || '';
     this.nombre = this.nombre || '';
@@ -76,27 +76,26 @@ export class ProductList extends Model{
   }
 
   public static cast(data: object): ProductList{
-    const productList = new ProductList(data);
-    const {
-      index, 
-      id, 
-      categorias_id, 
-      categorias_nombre,
-       marcas_id, 
-       marcas_nombre, 
-       divisas_id, 
-       divisas_nombre, 
-       tipo_servicios_id, 
-       tipo_servicios_nombre, 
-       nombre, 
-       descripcion, 
-       precio, 
-       is_active, 
-       created_at, 
-       updated_at, 
-       deleted_at
-      } = productList;
-    return {index, id, categorias_id, categorias_nombre, marcas_id, marcas_nombre, divisas_id, divisas_nombre, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, precio, is_active, created_at, updated_at, deleted_at};
+    const obj = new ProductList(data);
+    return {
+      index: obj.index, 
+      id: obj.id, 
+      categorias_id: obj.categorias_id, 
+      categorias_nombre: obj.categorias_nombre,
+      marcas_id: obj.marcas_id, 
+      marcas_nombre: obj.marcas_nombre, 
+      tipo_monedas_id: obj.tipo_monedas_id, 
+      tipo_monedas_nombre: obj.tipo_monedas_nombre, 
+      tipo_servicios_id: obj.tipo_servicios_id, 
+      tipo_servicios_nombre: obj.tipo_servicios_nombre, 
+      nombre: obj.nombre, 
+      descripcion: obj.descripcion, 
+      precio: obj.precio, 
+      is_active: obj.is_active, 
+      created_at: obj.created_at, 
+      updated_at: obj.updated_at, 
+      deleted_at: obj.deleted_at
+    };
   }
 
   public static casts(dataArray: object[]): ProductList[]{

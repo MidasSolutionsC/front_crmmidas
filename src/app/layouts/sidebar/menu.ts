@@ -62,9 +62,9 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 9,
-        label: 'MENUITEMS.MAINTENANCE.LIST.CURRENCY',
+        label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_CURRENCY',
         icon: 'mdi mdi-currency-btc',
-        link: '/maintenances/currency'
+        link: '/maintenances/typeCurrency'
     },
     {
         id: 9,

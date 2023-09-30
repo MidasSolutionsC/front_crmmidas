@@ -2,33 +2,33 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, CountryList, Currency, CurrencyList, ResponseApi } from 'src/app/core/models';
-import { ApiErrorFormattingService, CountryService, CurrencyService, FormService, SweetAlertService } from 'src/app/core/services';
+import { Breadcrumb, CountryList, TypeCurrency, TypeCurrencyList, ResponseApi } from 'src/app/core/models';
+import { ApiErrorFormattingService, CountryService, TypeCurrencyService, FormService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
-  selector: 'app-currency',
-  templateUrl: './currency.component.html',
-  styleUrls: ['./currency.component.scss']
+  selector: 'app-type-currency',
+  templateUrl: './type-currency.component.html',
+  styleUrls: ['./type-currency.component.scss']
 })
-export class CurrencyComponent {
+export class TypeCurrencyComponent {
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Crear divisas',
+    title: 'Crear tipo de moneda',
   }
 
   // bread crumb items
-  titleBreadCrumb: string = 'Divisas';
+  titleBreadCrumb: string = 'Tipo de monedas';
   breadCrumbItems: Array<{}>;
   
   // Form 
   isNewData: boolean = true;
   submitted: boolean = false;
-  currencyForm: FormGroup;
+  typeCurrencyForm: FormGroup;
 
   // Table data
   // content?: any;
-  lists?: CurrencyList[];
+  lists?: TypeCurrencyList[];
 
   // Paises
   listCountries?: CountryList[];
@@ -38,7 +38,7 @@ export class CurrencyComponent {
   constructor(
     private modalService: BsModalService, 
     private _countryService: CountryService,
-    private _currencyService: CurrencyService,
+    private _TypeCurrencyService: TypeCurrencyService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -46,21 +46,21 @@ export class CurrencyComponent {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Divisas', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Tipo de monedas', active: true }]);
 
     this.initForm();
     this.listDataApi();
     this.apiCountryList();
 
     this.subscription.add(
-      this._currencyService.listObserver$
+      this._TypeCurrencyService.listObserver$
       .pipe(
         distinctUntilChanged(
           (prevList, currentList) =>
             prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
         )
       )
-      .subscribe((list: CurrencyList[]) => {
+      .subscribe((list: TypeCurrencyList[]) => {
         this.lists = list;
       })
     );
@@ -91,7 +91,7 @@ export class CurrencyComponent {
    */
   public listDataApi(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._currencyService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+    this._TypeCurrencyService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this.lists = response.data;
@@ -108,15 +108,15 @@ export class CurrencyComponent {
     });
   }
 
-  private saveDataApi(data: Currency){
+  private saveDataApi(data: TypeCurrency){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
-      this._currencyService.register(data).subscribe((response: ResponseApi) => {
+      this._TypeCurrencyService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
           if(response.data[0]){
-            const data: CurrencyList = CurrencyList.cast(response.data[0]);
-            this._currencyService.addObjectObserver(data);
+            const data: TypeCurrencyList = TypeCurrencyList.cast(response.data[0]);
+            this._TypeCurrencyService.addObjectObserver(data);
           }
 
           this.modalRef?.hide();
@@ -141,13 +141,13 @@ export class CurrencyComponent {
     )
   }
 
-  private updateDataApi(data: Currency, id: number){
+  private updateDataApi(data: TypeCurrency, id: number){
     this._sweetAlertService.loadingUp()
-    this._currencyService.update(data, id).subscribe((response: ResponseApi) => {
+    this._TypeCurrencyService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        const data: CurrencyList = CurrencyList.cast(response.data[0]);
-        this._currencyService.updateObjectObserver(data);
+        const data: TypeCurrencyList = TypeCurrencyList.cast(response.data[0]);
+        this._TypeCurrencyService.updateObjectObserver(data);
         this.modalRef?.hide();
       }
 
@@ -171,11 +171,11 @@ export class CurrencyComponent {
 
   private deleteDataApi(id: number){
     this._sweetAlertService.loadingUp()
-    this._currencyService.delete(id).subscribe((response: ResponseApi) => {
+    this._TypeCurrencyService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        const data: CurrencyList = CurrencyList.cast(response.data[0]);
-        this._currencyService.removeObjectObserver(data.id);
+        const data: TypeCurrencyList = TypeCurrencyList.cast(response.data[0]);
+        this._TypeCurrencyService.removeObjectObserver(data.id);
       }
 
       if(response.code == 422){
@@ -226,7 +226,7 @@ export class CurrencyComponent {
    * Form data get
    */
   get form() {
-    return this.currencyForm.controls;
+    return this.typeCurrencyForm.controls;
   }
 
   /**
@@ -234,9 +234,9 @@ export class CurrencyComponent {
    * @param model 
    */
   private initForm(){
-    const currency = new Currency();
-    const formGroupData = this.getFormGroupData(currency);
-    this.currencyForm = this.formBuilder.group(formGroupData);
+    const ypeCurrency = new TypeCurrency();
+    const formGroupData = this.getFormGroupData(ypeCurrency);
+    this.typeCurrencyForm = this.formBuilder.group(formGroupData);
   }
 
   /**
@@ -244,7 +244,7 @@ export class CurrencyComponent {
    * @param model 
    * @returns 
    */
-  private getFormGroupData(model: Currency): object {
+  private getFormGroupData(model: TypeCurrency): object {
     return {
       ...this._formService.modelToFormGroupData(model),
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
@@ -278,21 +278,21 @@ export class CurrencyComponent {
     * Save
   */
   saveData() {
-    if(!this.currencyForm.valid){
+    if(!this.typeCurrencyForm.valid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
-      const values: Currency = this.currencyForm.value;
+      const values: TypeCurrency = this.typeCurrencyForm.value;
 
       if(this.isNewData){
         // Crear nuevo registro
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la divisa?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el tipo de moneda?').then((confirm) => {
           if(confirm.isConfirmed){
             this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar la divisa?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de moneda?').then((confirm) => {
           if(confirm.isConfirmed){
             this.updateDataApi(values, values.id);
           }
@@ -309,13 +309,13 @@ export class CurrencyComponent {
  */
   editDataGet(id: any, content: any) {
     this.openModal(content);
-    this.dataModal.title = 'Editar divisa';
+    this.dataModal.title = 'Editar tipo de moneda';
     this.isNewData = false;
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
-    const currency = Currency.cast(data);
-    this.currencyForm = this.formBuilder.group({
-      ...this._formService.modelToFormGroupData(currency), 
+    const ypeCurrency = TypeCurrency.cast(data);
+    this.typeCurrencyForm = this.formBuilder.group({
+      ...this._formService.modelToFormGroupData(ypeCurrency), 
       id: [data.id],
       nombre: [data.nombre, [Validators.required, Validators.maxLength(50)]],
       descripcion: [data.descripcion, [Validators.nullValidator, Validators.maxLength(150)]],
@@ -333,7 +333,7 @@ export class CurrencyComponent {
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la divisa?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de moneda?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

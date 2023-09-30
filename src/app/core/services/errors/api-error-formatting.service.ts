@@ -26,7 +26,7 @@ export class ApiErrorFormattingService {
         errorString.push(`<b>${key}:</b> ${apiErrors[key].join(' ')}`);
       }
     }
-    return errorString.join('\n');
+    return errorString.join('<br>');
   }
 
 }

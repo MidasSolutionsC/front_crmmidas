@@ -69,6 +69,7 @@ export class SaleDetailList extends Model{
   public instalaciones_localidad: string;
   public instalaciones_codigo_postal: string;
   public tipo_estados_id: number;
+  public tipo_estados_nombre: string;
   public observacion: string;
   public fecha_cierre: string;
   public datos_json: any;
@@ -89,6 +90,7 @@ export class SaleDetailList extends Model{
     this.instalaciones_localidad = this.instalaciones_localidad || '';
     this.instalaciones_codigo_postal = this.instalaciones_codigo_postal || '';
     this.tipo_estados_id = this.tipo_estados_id || null;
+    this.tipo_estados_nombre = this.tipo_estados_nombre || '';
     this.observacion = this.observacion || '';
     this.fecha_cierre = this.fecha_cierre || '';
     this.datos_json = this.datos_json || {};
@@ -110,6 +112,7 @@ export class SaleDetailList extends Model{
       instalaciones_localidad,
       instalaciones_codigo_postal,
       tipo_estados_id,
+      tipo_estados_nombre,
       observacion,
       fecha_cierre,
       datos_json,
@@ -129,6 +132,7 @@ export class SaleDetailList extends Model{
       instalaciones_localidad,
       instalaciones_codigo_postal,
       tipo_estados_id,
+      tipo_estados_nombre,
       observacion,
       fecha_cierre,
       datos_json,

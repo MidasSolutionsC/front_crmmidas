@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { DetailFixedLine, DetailFixedLineList, DetailMobileLine, DetailMobileLineList, SaleDetail, SaleDetailList } from 'src/app/core/models';
+import { SharedSaleService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-detail',
@@ -29,7 +30,7 @@ export class TableSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   constructor(){}
 
   ngOnInit(): void {
-    this.initializeForms();
+    this.initializeData();
   }
 
   ngOnDestroy(): void {
@@ -40,14 +41,14 @@ export class TableSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if((changes.data && !changes.data.firstChange) || (changes.typeService && !changes.typeService.firstChange)){
       setTimeout(() => {
-        this.initializeForms();
+        this.initializeData();
       }, 0);
     }  
   }
 
 
   // IMICIALIZACIÓN DE DATOS
-  initializeForms(){
+  initializeData(){
     if(this.data){
       this.saleDetail = this.data;
     } else {

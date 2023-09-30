@@ -1,6 +1,6 @@
 import { Model } from "../model";
 
-export class Currency extends Model{
+export class TypeCurrency extends Model{
   public id: number;
   public paises_id: number;
   public nombre: string;
@@ -24,8 +24,8 @@ export class Currency extends Model{
     this.is_active = this.is_active || true;
   }
 
-  public static cast(data: object): Currency{
-    const currency = new Currency(data);
+  public static cast(data: object): TypeCurrency{
+    const currency = new TypeCurrency(data);
     const {
       id,
       paises_id,
@@ -51,12 +51,12 @@ export class Currency extends Model{
     };
   }
 
-  public static casts(dataArray: object[]): Currency[]{
-    return dataArray.map((data) => Currency.cast(data));
+  public static casts(dataArray: object[]): TypeCurrency[]{
+    return dataArray.map((data) => TypeCurrency.cast(data));
   }
 }
 
-export class CurrencyList extends Model{
+export class TypeCurrencyList extends Model{
   public id: number;
   public paises_id: number;
   public nombre: string;
@@ -87,8 +87,8 @@ export class CurrencyList extends Model{
     this.deleted_at = this.deleted_at || '';
   }
 
-  public static cast(data: object): CurrencyList{
-    const currencyList = new CurrencyList(data);
+  public static cast(data: object): TypeCurrencyList{
+    const currencyList = new TypeCurrencyList(data);
     const {
       id,
       paises_id,
@@ -120,7 +120,7 @@ export class CurrencyList extends Model{
     };
   }
 
-  public static casts(dataArray: object[]): CurrencyList[]{
-    return dataArray.map((data) => CurrencyList.cast(data));
+  public static casts(dataArray: object[]): TypeCurrencyList[]{
+    return dataArray.map((data) => TypeCurrencyList.cast(data));
   }
 }

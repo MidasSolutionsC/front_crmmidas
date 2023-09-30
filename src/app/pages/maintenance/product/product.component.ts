@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { BrandList, Breadcrumb, CategoryList, CurrencyList, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
-import { ApiErrorFormattingService, BrandService, CategoryService, CurrencyService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
+import { BrandList, Breadcrumb, CategoryList, TypeCurrencyList, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
+import { ApiErrorFormattingService, BrandService, CategoryService, TypeCurrencyService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-product',
@@ -51,7 +51,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   listBrands: BrandList[] = [];
 
   // Divisas
-  listCurrencies: CurrencyList[] = [];
+  listCurrencies: TypeCurrencyList[] = [];
   
   private subscription: Subscription = new Subscription();
 
@@ -60,7 +60,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     private modalService: BsModalService, 
     private _categoryService: CategoryService,
     private _brandService: BrandService,
-    private _currencyService: CurrencyService,
+    private _typeCurrencyService: TypeCurrencyService,
     private _typeServiceService: TypeServiceService,
     private _productService: ProductService,
     private _formService: FormService,
@@ -78,7 +78,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.apiTypeServiceList();
     this.apiCategoryList();
     this.apiBrandList();
-    this.apiCurrencyList();
+    this.apiTypeCurrencyList();
 
     this.apiProductListPagination();
 
@@ -126,9 +126,9 @@ export class ProductComponent implements OnInit, OnDestroy {
 
     // Divisas
     this.subscription.add(
-      this._currencyService.listObserver$
+      this._typeCurrencyService.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: CurrencyList[]) => {
+      .subscribe((list: TypeCurrencyList[]) => {
         this.listCurrencies = list;
       })
     );
@@ -401,9 +401,9 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   // Divisas
-  public apiCurrencyList(forceRefresh: boolean = false){
+  public apiTypeCurrencyList(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._currencyService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+    this._typeCurrencyService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this.listCurrencies = response.data;
@@ -451,7 +451,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       tipo_servicios_id: [model?.tipo_servicios_id || null, [Validators.required, Validators.min(1)]],
       categorias_id: [model?.categorias_id || null, [Validators.nullValidator, Validators.min(1)]],
       marcas_id: [model?.marcas_id || null, [Validators.nullValidator, Validators.min(1)]],
-      divisas_id: [model?.divisas_id || null, [Validators.required, Validators.min(1)]],
+      tipo_monedas_id: [model?.tipo_monedas_id || null, [Validators.required, Validators.min(1)]],
       precio: [0, [Validators.nullValidator, Validators.min(0)]],
       is_active: [true, [Validators.nullValidator]],
     }

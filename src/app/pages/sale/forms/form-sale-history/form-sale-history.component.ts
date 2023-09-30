@@ -218,7 +218,7 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
       ...this._formService.modelToFormGroupData(model),
       tipo: [model.tipo, [Validators.required]],
       tipo_estados_id: [model.tipo_estados_id, [Validators.required, Validators.min(1)]],
-      comentario: [model.comentario, [Validators.nullValidator, Validators.maxLength(250)]],
+      comentario: [model.comentario || '', [Validators.nullValidator, Validators.maxLength(250)]],
       is_active: [1, [Validators.nullValidator]],
     }
   }
@@ -268,7 +268,7 @@ export class FormSaleHistoryComponent implements OnInit, OnDestroy, OnChanges{
   onReset(){
     this.submitted = false;
     this.isNewData = true;
-    this.historyForm.reset();
+    this.historyForm.reset(new SaleHistory());
     this.historyForm.controls.is_active.setValue(1);
   }
 }

@@ -374,7 +374,7 @@ export class SaleComponent {
  * @param content modal content
  */
   editDataGet(id: any, content: any) {
-    this.modalRef = this.modalService.show(content, { class: 'modal-md' });
+    this.modalRef = this.modalService.show(content, { class: 'modal-fullscreen' });
     this.dataModal.title = 'Editar Venta';
     this.isNewData = false;
     this.submitted = false;
@@ -383,6 +383,7 @@ export class SaleComponent {
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const sale = Sale.cast(data);
     this.saleForm = this.formBuilder.group({...this._formService.modelToFormGroupData(sale), id: [data.id], file: [null, []]});
+    
   }
 
 

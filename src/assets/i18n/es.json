@@ -233,6 +233,7 @@
       "TEXT": "Mantenimiento",
       "LIST": {
         "COUNTRY": "País",
+        "TYPE_CURRENCY": "Tipo de monedas",
         "CURRENCY": "Divisas",
         "TYPES": {
           "LABEL": "Mant. de tipos",
@@ -382,6 +383,11 @@
         "label": "Divisa",
         "placeholder": "Ingrese la divisa...",
         "default_option": "Seleccione una divisa..."
+      },
+      "type_currency": {
+        "label": "Tipo de moneda",
+        "placeholder": "Ingrese el tipo de moneda...",
+        "default_option": "Seleccione un tipo..."
       },
       "department": {
         "label": "Departamento",

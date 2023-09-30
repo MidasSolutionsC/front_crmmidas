@@ -6,9 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 import { environment } from '../../../../environments/environment';
-import { ApiErrorFormattingService, FormService, LanguageService, SweetAlertService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, IpAllowedService, LanguageService, SweetAlertService } from 'src/app/core/services';
 import { Subscription } from 'rxjs';
-import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { AuthService } from 'src/app/core/services/api/auth/auth.service';
 import { ResponseApi } from 'src/app/core/models';
 
 @Component({
@@ -38,6 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     public languageService: LanguageService,
     private formBuilder: FormBuilder, 
     private _formService: FormService,
+    private _ipAllowedService: IpAllowedService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private _authService: AuthService,
@@ -49,6 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initForm();
+    // this.getIP();
     // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
@@ -75,6 +77,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       }
 
+      if(response.code == 403){
+        if(response.errors){
+          const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+        }
+      }
+
       if(response.code == 422){
         if(response.errors){
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
@@ -92,6 +101,37 @@ export class LoginComponent implements OnInit, OnDestroy {
       console.log(error);
     });
   }
+
+  // OBTENER MI DIRECCIÓN IP
+  public getIP(){
+    this._sweetAlertService.loadingUp('Obteniendo IP')
+    this._ipAllowedService.getIP().subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        const result = response.data;
+        console.log(result);
+      }
+
+      if(response.code == 422){
+        if(response.errors){
+          const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+        }
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
+
+
 
 
   // convenience getter for easy access to form fields

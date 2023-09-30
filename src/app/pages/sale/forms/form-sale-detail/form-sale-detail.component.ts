@@ -365,7 +365,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       operador_donante_id: [model?.operador_donante_id || '', [Validators.nullValidator, Validators.min(1)]],
       num_portar: [model?.num_portar || '', [Validators.nullValidator, Validators.maxLength(50)]],
       icc: [model?.icc || '', [Validators.nullValidator, Validators.maxLength(50)]],
-      terminal: [model?.terminal || false, [Validators.required]],
+      terminal: [model?.terminal || false, [Validators.nullValidator]],
       modelo_terminal: [model?.modelo_terminal || '', [Validators.nullValidator, Validators.maxLength(150)]],
       aop: [model?.aop || '', [Validators.nullValidator, Validators.maxLength(60)]],
     }

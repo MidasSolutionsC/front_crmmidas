@@ -128,7 +128,7 @@
                   </div>
                 </div>
                 <div class="row g-2">
-                  <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.user_name.label' | translate as translatedLabel;">
+                  <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.user_name.label' | translate as translatedLabel;">
                     <label for="nombre_usuario" class="form-label">{{translatedLabel}} *</label>
                     <input type="text" maxlength="15" id="nombre_usuario" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.user_name.placeholder' | translate}}" formControlName="nombre_usuario" [ngClass]="{ 'is-invalid': f.nombre_usuario.errors && (f.nombre_usuario.dirty || f.nombre_usuario.touched || submitted) }" />
                     <div *ngIf="f.nombre_usuario.errors && (f.nombre_usuario.dirty || f.nombre_usuario.touched || submitted)" class="invalid-feedback" align="left">
@@ -146,7 +146,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.password.label' | translate as translatedLabel;">
+                  <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.password.label' | translate as translatedLabel;">
                     <label for="clave" class="form-label">{{translatedLabel}} *</label>
                     <input type="password" id="clave" maxlength="16" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.password.placeholder' | translate}}" formControlName="clave" [ngClass]="{ 'is-invalid': f.clave.errors && (f.clave.dirty || f.clave.touched || submitted) }" />
                     <div *ngIf="f.clave.errors && (f.clave.dirty || f.clave.touched || submitted)" class="invalid-feedback" align="left">
@@ -164,7 +164,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.password_confirmation.label' | translate as translatedLabel;">
+                  <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.password_confirmation.label' | translate as translatedLabel;">
                     <label for="clave_confirmation" class="form-label">{{translatedLabel}} *</label>
                     <input type="password" id="clave_confirmation" maxlength="16" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.password_confirmation.placeholder' | translate}}" formControlName="clave_confirmation" [ngClass]="{ 'is-invalid': f.clave_confirmation.errors && (f.clave_confirmation.dirty || f.clave_confirmation.touched || submitted) }" />
                     <div *ngIf="f.clave_confirmation.errors && (f.clave_confirmation.dirty || f.clave_confirmation.touched || submitted)" class="invalid-feedback" align="left">

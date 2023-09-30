@@ -1,4 +1,4 @@
-export * from './auth'
+export * from './api/auth'
 export * from './config'
 export * from './config/event.service'
 export * from './errors/error-handle.service'

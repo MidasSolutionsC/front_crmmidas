@@ -368,7 +368,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
       if(response.code == 200){
         // const data = SaleList.cast(response.data[0]);
         // this._tempSaleService.changeDataObserver(data);
-
+        localStorage.removeItem('ventas_id');
         console.log(response.data)
       }
 
@@ -1312,7 +1312,6 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
    * *************************************************************
    */
   saveSaleFinal(){
-    console.log("VENTAS FINAL:")
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de completar la venta?').then((confirm) => {
       if(confirm.isConfirmed){
         this.apiTempSaleFinalProcess({ventas_id: this.saleId});

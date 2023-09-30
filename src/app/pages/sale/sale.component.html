@@ -23,28 +23,22 @@
               <thead>
                 <tr>
                   <th scope="col">N°</th>
-                  <th scope="col">DNI</th>
+                  <th scope="col">Tipo Doc.</th>
+                  <th scope="col">N° Doc.</th>
                   <th scope="col">Cliente</th>
-                  <th scope="col">Tipo</th>
-                  <th scope="col">Instalaciones</th>
-                  <th scope="col">Total</th>
-                  <th scope="col">Usuario</th>
-                  <th scope="col">Fecha</th>
                   <th scope="col">Estado</th>
+                  <th scope="col">Fecha creado</th>
+                  <th scope="col">Fecha modificado</th>
                   <th scope="col">Opciones</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let data of lists; let i = index">
                   <th scope="row">{{i + 1}}</th>
-                  <td>{{data.dni}}</td>
-                  <td>{{data.cliente}}</td>
-                  <td>{{data.tipo}}</td>
-                  <td>{{data.instalaciones}}</td>
-                  <td>{{data.total}}</td>
-                  <td>{{data.usuario}}</td>
-                  <td>{{data.fecha}}</td>
-                  <td>{{data.estado}}</td>
+                  <td>{{data.clientes_tipo_documento}}</td>
+                  <td>{{data.clientes_documento}}</td>
+                  <td>{{data.clientes_nombre}}</td>
+                  <td>{{data.is_active ? 'Activo': 'Inactivo'}}</td>
                   <td>{{data.created_at}}</td>
                   <td>{{data.updated_at}}</td>
                   <td>

@@ -34,7 +34,7 @@ import { DataTablesModule} from 'angular-datatables';
 import { BrandComponent } from './brand/brand.component';
 import { ServiceComponent } from './service/service.component';
 import { CategoryComponent } from './category/category.component';
-import { CurrencyComponent } from './currency/currency.component'
+import { TypeCurrencyComponent } from './type-currency/type-currency.component'
 
 @NgModule({
   declarations: [
@@ -50,7 +50,7 @@ import { CurrencyComponent } from './currency/currency.component'
     BrandComponent,
     ServiceComponent,
     CategoryComponent,
-    CurrencyComponent,
+    TypeCurrencyComponent,
     
   ],
   imports: [

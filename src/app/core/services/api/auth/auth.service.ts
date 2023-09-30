@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConfigService } from '../config';
+import { ConfigService } from '../../config';
 import { Observable, map } from 'rxjs';
-import { ResponseApi } from '../../models';
+import { ResponseApi } from '../../../models';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
