@@ -8,6 +8,8 @@ import { Sale, SaleList} from 'src/app/core/models/api/sale.model';
 import {ApiErrorFormattingService, FormService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 import {SaleService } from 'src/app/core/services/api/sale.service';
 import { ModalRegisterComponent } from './modals/modal-register/modal-register.component';
+import { ModalUpdateComponent } from './modals/modal-update/modal-update.component';
+import { ModalDetailComponent } from './modals/modal-detail/modal-detail.component';
 @Component({
   selector: 'app-sale',
   templateUrl: './sale.component.html',
@@ -399,6 +401,13 @@ export class SaleComponent {
     });
   }
 
+  // Mostrar formulario de edición 
+  getEditRow(data: any){
+    this.openModalFormEdit(data);
+  }
+
+
+
 
   /**
    * *************************************************************
@@ -408,6 +417,28 @@ export class SaleComponent {
   openModalForm(){
     const initialState = {};
     this.modalRef = this.modalService.show(ModalRegisterComponent, {initialState, class: 'modal-fullscreen modal-dialog-centered modal-dialog-scrollable'});
+    this.modalRef.onHide.subscribe((next) => {
+      // console.log(next);
+    });
+  }
+
+  // FORMULARIO DE EDICIÓN
+  openModalFormEdit(data: any){
+    const initialState = {
+      dataInput: data
+    };
+    this.modalRef = this.modalService.show(ModalUpdateComponent, {initialState, class: 'modal-fullscreen modal-dialog-centered modal-dialog-scrollable'});
+    this.modalRef.onHide.subscribe((next) => {
+      // console.log(next);
+    });
+  }
+
+  // DETALLE DE LA VENTA
+  openModalDetail(data: any){
+    const initialState = {
+      dataInput: data
+    };
+    this.modalRef = this.modalService.show(ModalDetailComponent, {initialState, class: 'modal-xl modal-dialog-centered modal-dialog-scrollable'});
     this.modalRef.onHide.subscribe((next) => {
       // console.log(next);
     });

@@ -61,7 +61,7 @@
                   <td>{{data.titulo}}</td>
                   <td>{{data.descripcion}}</td>
                   <td><span class="badge text-md" [ngClass]="{ 'bg-info': data.tipo == 'I', 'bg-primary': data.tipo == 'E'}">{{data.tipo_text}}</span></td>
-                  <td><img *ngIf="data.imagen" [src]="'http://localhost:8000/files/advertisement/' + data.imagen" alt="render" style="max-height: 140px;"></td>
+                  <td><img *ngIf="data.imagen" [src]="URL_FILES + data.imagen" alt="render" style="max-height: 140px;"></td>
                   <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
                   <td>{{data.created_at}}</td>
                   <td>{{data.updated_at}}</td>

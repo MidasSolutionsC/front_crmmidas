@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResponseApi, SaleDocumentList } from '../../models';
+import { InstallationList, ResponseApi } from '../../models';
 import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '../config';
@@ -7,18 +7,18 @@ import { ConfigService } from '../config';
 @Injectable({
   providedIn: 'root'
 })
-export class SaleDocumentService {
+export class InstallationService {
   private cachedData: ResponseApi; // Almacena los datos en caché
-  private listSubject: BehaviorSubject<SaleDocumentList[]> = new BehaviorSubject<SaleDocumentList[]>([]);
-  public listObserver$: Observable<SaleDocumentList[]> = this.listSubject.asObservable();
-
+  private listSubject: BehaviorSubject<InstallationList[]> = new BehaviorSubject<InstallationList[]>([]);
+  public listObserver$: Observable<InstallationList[]> = this.listSubject.asObservable();
+  
   constructor(
     private http: HttpClient,
     private configService: ConfigService
-  ) {
+  ) { 
     this.listObserver$
       .pipe(distinctUntilChanged())
-      .subscribe((list: SaleDocumentList[]) => {
+      .subscribe((list: InstallationList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;
         }
@@ -27,7 +27,7 @@ export class SaleDocumentService {
 
 
   private get baseUrl(){
-    return this.configService.apiUrl + 'saleDocument';
+    return this.configService.apiUrl + 'installation';
   }
 
   private get requestOptions(){
@@ -53,6 +53,11 @@ export class SaleDocumentService {
     }
   }
 
+  public getSearch(data: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/search`;
+    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+  }
+
   public getBySale(saleId: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/filterSale/${saleId}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
@@ -64,13 +69,13 @@ export class SaleDocumentService {
   }
 
   public register(data: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}`;
+    const endpoint = `${this.baseUrl}/register`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/update/${id}`;
-    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+    const endpoint = `${this.baseUrl}/${id}`;
+    return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
   public delete(id: any): Observable<ResponseApi>{
@@ -88,25 +93,26 @@ export class SaleDocumentService {
    * FUNCIONES PARA LOS OBSERVABLES
    */
   // Método para agregar un nuevo objeto al array
-  addObjectObserver(saleDocumentList: SaleDocumentList) {
+  addObjectObserver(installationList: InstallationList) {
     const currentData = this.listSubject.getValue();
-    currentData.push(saleDocumentList);
+    currentData.push(installationList);
     this.listSubject.next(currentData);
   }
 
   // Método para actualizar todo el array
-  addArrayObserver(saleDocumentList: SaleDocumentList[]) {
-    this.listSubject.next(saleDocumentList);
+  addArrayObserver(installationList: InstallationList[]) {
+    this.listSubject.next(installationList);
   }
 
   // Método para modificar un objeto en el array
-  updateObjectObserver(saleDocumentList: SaleDocumentList) {
+  updateObjectObserver(installationList: InstallationList) {
     const currentData = this.listSubject.getValue();
-    const index = currentData.findIndex(item => item.id === saleDocumentList.id);
+    const index = currentData.findIndex(item => item.id === installationList.id);
     if (index !== -1) {
-      currentData[index] = saleDocumentList;
+      currentData[index] = installationList;
       this.listSubject.next(currentData);
     }
+
   }
 
   // Método para quitar un objeto del array

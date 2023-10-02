@@ -24,7 +24,6 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
   // DATOS DETALLE
   dataSaleDetail: SaleDetailList;
   
-  // DATOS IMITACIONES
 
   // DATOS TIPO DE DOCUMENTOS
   dataTypeDocument: TypeDocumentList;

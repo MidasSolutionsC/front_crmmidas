@@ -18,6 +18,7 @@ export const environment = {
   appConfig: {
     // apiUrl: 'http://localhost:80/apicrmmidas/public/v1/', // Ruta de la API
     apiUrl: 'http://localhost:8000/api/v1/', // Ruta de la API
+    urlFiles: 'http://localhost:8000/files/', // Ruta archivos
     apiKey: 'CRM_MIDAS_2023', // Clave permitida 
     apiUrlSocket: '',
     configFile: {

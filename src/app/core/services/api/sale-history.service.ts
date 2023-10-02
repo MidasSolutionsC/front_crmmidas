@@ -53,6 +53,11 @@ export class SaleHistoryService {
     }
   }
 
+  public getBySale(saleId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterSale/${saleId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))

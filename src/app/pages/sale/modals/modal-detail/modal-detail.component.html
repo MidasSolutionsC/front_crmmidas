@@ -1,0 +1,328 @@
+<div class="modal-content" role="document">
+  <div class="modal-header">
+    <h5 class="modal-title font-bold" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <div>  
+      <!-- DATOS DEL CLIENTE -->
+      <strong class="text-primary mb-3">DATOS DEL CLIENTE</strong>
+      <div class="card border">
+        <div class="card-body">
+          <button type="button" class="btn btn-sm btn-soft-info float-end"><i class="mdi mdi-pencil-outline"></i></button>
+    
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Persona jurídica:</strong><span>{{dataClient?.persona_juridica? 'SI': 'NO'}}</span>
+              </div>
+            </div>
+          </div>
+        
+          <!-- EMPRESA -->
+          <div class="row g-3" *ngIf="dataClient?.persona_juridica">
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Razón social:</strong><span>{{dataCompany?.razon_social}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Razón social:</strong><span>{{dataCompany?.nombre_comercial}}</span>
+              </div>
+            </div>
+          </div>
+              
+          <!-- PERSONA -->
+          <div class="row g-3" *ngIf="!dataClient?.persona_juridica">
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Nombres:</strong><span>{{dataPerson?.nombres}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Apellidos:</strong><span>{{dataPerson?.apellido_paterno}} {{dataPerson?.apellido_materno}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataPerson?.documento}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- DETALLE ´PRODUCTO -->
+      <div class="row g-2 mt-3">
+        <strong class="text-primary text-uppercase">Servicios de la compra</strong>
+        <div class="col-md-4">
+          <div class="card card-header rounded mb-2 py-2 bg-primary ">
+            <h5 class="text-white font-size-14 m-0">Linea fija</h5>
+          </div>
+    
+          <div *ngFor="let item of groupSaleDetail?.fixed">
+      
+            <div class="card jobs-categories mb-2">
+              <div class="card-body p-0">
+                <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
+                [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
+                (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
+                <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
+              </div>
+              <div class="card-body border border-info rounded mb-2" *ngIf="item.visible">
+                <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+                <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
+                <ng-container *ngTemplateOutlet="templateFixed; context: { $implicit: item }"></ng-container>
+                <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>  
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!groupSaleDetail?.fixed?.length">
+            <p class="text-center">Sin registros</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-header rounded mb-2 py-2 bg-success ">
+            <h5 class="text-white font-size-14 m-0">Linea Mobile</h5>
+          </div>
+    
+          <div *ngFor="let item of groupSaleDetail?.mobile">
+            <div class="card jobs-categories mb-2">
+              <div class="card-body p-0">
+                <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
+                  [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
+                  (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
+                  <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
+              </div>
+              <div class="card-body border border-info rounded" *ngIf="item.visible">
+                <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+                <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
+                <ng-container *ngTemplateOutlet="templateMobile; context: { $implicit: item }"></ng-container>
+                <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>  
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!groupSaleDetail?.mobile?.length">
+            <p class="text-center">Sin registros</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-header rounded mb-2 py-2 bg-warning ">
+            <h5 class="text-white font-size-14 m-0">Linea TV</h5>
+          </div>
+    
+          <div *ngFor="let item of groupSaleDetail?.tv">
+            <div class="card jobs-categories mb-2">
+              <div class="card-body p-0">
+                <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
+                  [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
+                  (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
+                  <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
+              </div>
+              <div class="card-body border border-info rounded" *ngIf="item.visible">
+                <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+                <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
+                <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>  
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!groupSaleDetail?.tv?.length">
+            <p class="text-center">Sin registros</p>
+          </div>
+        </div>
+      </div>
+    
+      <ng-template #templateMobile let-item>
+        <div class="row g-2 mb-3" *ngIf="item.visible">
+          <strong class="text-primary">Detalle del servicio</strong>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Tipo documento:</strong><span>{{item?.datos_json?.tipo_documento_abreviacion}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>N° Documento:</strong><span>{{item?.datos_json?.documento_titular}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Titular:</strong><span>{{item?.datos_json?.titular}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Operador donante:</strong><span>{{item?.datos_json?.operador_donante_nombre}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>N° Portar:</strong><span>{{item?.datos_json?.num_portar}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>CCI:</strong><span>{{item?.datos_json?.icc}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Terminal:</strong><span>{{item?.datos_json?.terminal? 'SI': 'NO'}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Modelo terminal:</strong><span>{{item?.datos_json?.modelo_terminal}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>AOP:</strong><span>{{item?.datos_json?.aop}}</span>
+          </div>
+        </div>
+      </ng-template>
+    
+      <ng-template #templateFixed let-item>
+        <div class="row g-2 mb-3" *ngIf="item.visible">
+          <strong class="text-primary">Detalle del servicio</strong>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Tipo documento:</strong><span>{{item?.datos_json?.tipo_documento_abreviacion}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>N° Documento:</strong><span>{{item?.datos_json?.documento_titular}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Titular:</strong><span>{{item?.datos_json?.titular}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Operador donante:</strong><span>{{item?.datos_json?.operador_donante_nombre}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>N° Portar:</strong><span>{{item?.datos_json?.num_portar}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>AOP:</strong><span>{{item?.datos_json?.aop}}</span>
+          </div>
+        </div>
+      </ng-template>
+    
+      <ng-template #templateData let-item>
+        <div class="row g-2 mb-3" *ngIf="item.visible">
+          <strong class="text-primary">Servicio</strong>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Servicio:</strong><span>{{item?.servicios_nombre}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Tipo estado:</strong><span>{{item?.tipo_estados_nombre}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Fecha cierre:</strong><span>{{item?.fecha_cierre}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Observación:</strong><span>{{item?.observacion}}</span>
+          </div>
+        </div>
+      </ng-template>
+    
+      <ng-template #templateInstallation let-item>
+        <div class="row g-2" *ngIf="item.visible">
+          <strong class="text-primary">Instalación</strong>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Instalación:</strong><span>{{item?.instalaciones_direccion_completo}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Provincia:</strong><span>{{item?.instalaciones_provincia}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Localidad:</strong><span>{{item?.instalaciones_localidad}}</span>
+          </div>
+          <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+            <strong>Código postal:</strong><span>{{item?.instalaciones_codigo_postal}}</span>
+          </div>
+        </div>
+      </ng-template>
+
+
+      <!-- DOCUMENTOS, COMENTARIO, HISTORIAL -->
+      <div class="row g-2 mt-3">
+        
+        <div class="col-md-4">
+          <strong class="text-primary text-uppercase">Archivos</strong>
+          <div *ngFor="let item of listSaleDocument">
+            <div class="card-body border border-info rounded p-1">
+              <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+              <ng-container *ngTemplateOutlet="templateDocument; context: { $implicit: item }"></ng-container>    
+            </div>
+          </div>
+          <div *ngIf="!listSaleDocument?.length">
+            <p class="text-start">Sin registros</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <strong class="text-primary text-uppercase">Comentarios</strong>
+          <div *ngFor="let item of listSaleComment">
+            <div class="card-body border border-info rounded p-1">
+              <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+              <ng-container *ngTemplateOutlet="templateComment; context: { $implicit: item }"></ng-container>    
+            </div>
+          </div>
+          <div *ngIf="!listSaleComment?.length">
+            <p class="text-start">Sin registros</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <strong class="text-primary text-uppercase">Historial</strong>
+          <div *ngFor="let item of listSaleHistory">
+            <div class="card-body border border-info rounded p-1">
+              <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+              <ng-container *ngTemplateOutlet="templateHistory; context: { $implicit: item }"></ng-container>    
+            </div>
+          </div>
+          <div *ngIf="!listSaleHistory?.length">
+            <p class="text-start">Sin registros</p>
+          </div>
+        </div>
+      </div>
+
+
+      <ng-template #templateDocument let-item>
+        <div class="row g-2">
+          <div class="col-sm-4">
+            <img [src]="URL_FILES + item.archivo" alt="" 
+              class="rounded"
+              style="width: 100%; max-height: 80px; object-fit: contain; object-position: center;" *ngIf="item.tipo == 'jpg' || item.tipo == 'jpeg' || item.tipo == 'png'">
+            <div *ngIf="item.tipo !== 'jpg' && item.tipo !== 'jpeg' && item.tipo !== 'png'"
+              class="w-100 bg-secondary rounded" style="height: 80px;">
+
+            </div>
+            </div>
+          <div class="col-sm-8">
+            <div class="h-100">
+              <span class="w-100 d-block fw-semibold">{{item.nombre}} ({{item.tipo}})</span>
+              <div class="text-start">
+                <span class="blockquote-footer">{{item.created_at}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #templateComment let-item>
+        <div *ngIf="item.comentario">
+          <p [ngClass]="{'text-truncate-3': !item.more}">{{item.comentario}}</p> 
+          <b type="button" (click)="toggleCommentMore(item)">{{item.more? 'Menos': 'Más'}}</b>     
+        </div>
+        <div class="text-end">
+          <span class="blockquote-footer">{{item.created_at}}</span>
+        </div>
+      </ng-template>
+
+      <ng-template #templateHistory let-item>
+        <span class="fw-semibold d-block w-100">{{item.tipo_estados_nombre}}</span>
+        <div class="w-100" *ngIf="item.comentario">
+          <p [ngClass]="{'text-truncate-3': !item.more}">{{item.comentario}}</p> 
+          <b type="button" (click)="toggleCommentMore(item)">{{item.more? 'Menos': 'Más'}}</b>           
+        </div>
+        <div class="text-start">
+          <span class="blockquote-footer">{{item.created_at}}</span>
+        </div>
+      </ng-template>
+      
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+    </div>
+  </div>
+</div>
+

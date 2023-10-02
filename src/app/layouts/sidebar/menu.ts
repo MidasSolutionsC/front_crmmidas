@@ -85,7 +85,7 @@ let aMenu: MenuItem[] = [
         id: 9,
         label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_CURRENCY',
         icon: 'mdi mdi-currency-btc',
-        link: '/maintenances/currency',
+        link: '/maintenances/typeCurrency',
         roles: ['ADMINISTRADOR']
 
     },

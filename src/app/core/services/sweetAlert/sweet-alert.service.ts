@@ -45,55 +45,55 @@ export class SweetAlertService {
     let timerValue = 0;
     let timerInterval;
     let isStopped = false;
-
-    this.swalInstance = Swal.fire({
-      title: title,
-      html: `
-      <div class="w-100">
-        <div>Cargando... <b>0%</b> por favor espere!</div>
-        <div><button id="stopButton" class="btn btn-dark rounded-full d-none">Stop</button></div>        
-      </div>`,
-      showCancelButton: false,
-      showConfirmButton: false,
-      allowEscapeKey: false,
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading()
-        const b: any = Swal.getHtmlContainer().querySelector('b');
-        const stopButton: any = Swal.getHtmlContainer().querySelector('#stopButton');
-
-        if(stopButton){
-          stopButton.addEventListener('click', () => {
-            isStopped = true;
-            clearInterval(timerInterval);
-            // this.stop(); // Llama al método stop() cuando se hace clic en el botón
-            if (this.swalInstance) {
-              this.swalInstance.close();
-            }
-          });
-        }
-
-        const updateProgress = () => {
-          if (!isStopped) {
-            if (timerValue < 100) {
-              timerValue++;
-            } else {
-              timerValue = 0;
-            }
-
-            if(b){
-              b.textContent = `${timerValue}%`;
-            }
+  
+    try {
+      this.swalInstance = Swal.fire({
+        title: title,
+        html: `
+        <div class="w-100">
+          <div class="loader-content">
+            <div>Cargando... <b>0%</b> por favor espere!</div>
+            <div><button id="stopButton" class="btn btn-dark rounded-full d-none">Stop</button></div>
+          </div>
+        </div>`,
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+          const b: any = Swal.getHtmlContainer().querySelector('b');
+          const stopButton: any = Swal.getHtmlContainer().querySelector('#stopButton');
+  
+          if (stopButton) {
+            stopButton.addEventListener('click', () => {
+              isStopped = true;
+              clearInterval(timerInterval);
+              this.stop();
+            });
+            // stopButton.classList.remove('d-none'); // Mostrar el botón "Stop"
           }
-        };
-
-        timerInterval = setInterval(updateProgress, 250);
-        updateProgress(); // Inicia la actualización inmediatamente
-      },
-      willClose: () => {
-        clearInterval(timerInterval);
-      },
-    });
+  
+          const updateProgress = () => {
+            if (!isStopped) {
+              timerValue = (timerValue + 1) % 101; // Garantizar que timerValue esté en el rango 0-100
+              if (b) {
+                b.textContent = `${timerValue}%`;
+              }
+            }
+          };
+  
+          timerInterval = setInterval(updateProgress, 250);
+          updateProgress(); // Inicia la actualización inmediatamente
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        },
+      });
+    } catch (error) {
+      // Maneja errores aquí, por ejemplo, registra el error en la consola
+      console.error('Error al abrir SweetAlert:', error);
+    }
   }
 
   stop() {

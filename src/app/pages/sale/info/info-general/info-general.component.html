@@ -56,13 +56,14 @@
         <h5 class="text-white font-size-14 m-0">Linea fija</h5>
       </div>
 
-      <div *ngFor="let item of groupSaleDetail.fixed">
+      <div *ngFor="let item of groupSaleDetail?.fixed">
   
         <div class="card jobs-categories">
           <div class="card-body p-0">
             <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
             [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
-            (click)="toggleVisibility(item)">{{item?.servicios_nombre}} <span class="badge text-bg-info float-end bg-opacity-100">1</span></a>
+            (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
+            <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
           </div>
           <div class="card-body border border-info rounded" *ngIf="item.visible">
             <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
@@ -77,12 +78,13 @@
         <h5 class="text-white font-size-14 m-0">Linea Mobile</h5>
       </div>
 
-      <div *ngFor="let item of groupSaleDetail.mobile">
+      <div *ngFor="let item of groupSaleDetail?.mobile">
         <div class="card jobs-categories">
           <div class="card-body p-0">
             <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
               [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
-              (click)="toggleVisibility(item)">{{item?.servicios_nombre}} <span class="badge text-bg-info float-end bg-opacity-100">1</span></a>
+              (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
+              <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
           </div>
           <div class="card-body border border-info rounded" *ngIf="item.visible">
             <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
@@ -97,12 +99,13 @@
         <h5 class="text-white font-size-14 m-0">Linea TV</h5>
       </div>
 
-      <div *ngFor="let item of groupSaleDetail.tv">
+      <div *ngFor="let item of groupSaleDetail?.tv">
         <div class="card jobs-categories">
           <div class="card-body p-0">
             <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
               [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
-              (click)="toggleVisibility(item)">{{item?.servicios_nombre}} <span class="badge text-bg-info float-end bg-opacity-100">1</span></a>
+              (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
+              <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
           </div>
           <div class="card-body border border-info rounded" *ngIf="item.visible">
             <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
@@ -205,7 +208,5 @@
       </div>
     </div>
   </ng-template>
-
-
   
 </div>

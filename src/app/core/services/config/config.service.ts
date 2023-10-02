@@ -32,6 +32,13 @@ export class ConfigService {
   }
 
   /**
+   * OBTENER LA URL BASE DE LOS ARCHIVOS
+   */
+  public get urlFiles(): any{
+    return environment.appConfig.urlFiles;
+  }
+
+  /**
    * OBTENER LA URL API
    */
   private get getHeaders(): any{

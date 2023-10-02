@@ -43,8 +43,11 @@
                   <td>{{data.updated_at}}</td>
                   <td>
                     <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Detalle">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary" (click)="openModalDetail(data)"><i class="bx bx-detail"></i></a>
+                      </li>
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getEditRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
                       </li>
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
                         <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>

@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { Advertisement, AdvertisementList, Breadcrumb, Pagination, ResponseApi, ResponsePagination } from 'src/app/core/models';
-import { AdvertisementService, ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
+import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-advertisement',
@@ -17,6 +17,7 @@ export class AdvertisementComponent {
   dataModal = {
     title: 'Crear anuncio',
   }
+
 
   // bread crumb items
   titleBreadCrumb: string = 'Anuncios';
@@ -43,6 +44,7 @@ export class AdvertisementComponent {
   // Previsualizar foto subido
   previewImage: any;
 
+  URL_FILES: string = '';
 
   // Table data
   // content?: any;
@@ -51,6 +53,7 @@ export class AdvertisementComponent {
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private _configService: ConfigService,
     private cdr: ChangeDetectorRef,
     private modalService: BsModalService, 
     private _advertisementService: AdvertisementService,
@@ -58,6 +61,8 @@ export class AdvertisementComponent {
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private formBuilder: FormBuilder) {
+
+      this.URL_FILES = this._configService.urlFiles + 'advertisement/';
 
   }
 

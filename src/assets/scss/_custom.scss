@@ -477,3 +477,23 @@ a.ck.ck-button.ck-on {
         }
     }
 }
+
+// TRUNCATE
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Número máximo de líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.text-truncate-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Número máximo de líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.text-truncate-5 {
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* Número máximo de líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
