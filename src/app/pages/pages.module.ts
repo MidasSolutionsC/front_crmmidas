@@ -31,10 +31,13 @@ import { CoreModule } from '../core/core.module';
 import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { SettingsModule } from './settings/settings.module';
+import { AllowedIpComponent } from './allowed-ip/allowed-ip.component';
+
 
 // SMART WIZARD
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import {CdkStepperModule} from '@angular/cdk/stepper';
+import { CdkStepperModule } from '@angular/cdk/stepper';
 import { NgStepperModule } from 'angular-ng-stepper';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -71,6 +74,7 @@ import { InfoGeneralComponent } from './sale/info/info-general/info-general.comp
     CalendarComponent,
     CallComponent,
     SaleComponent,
+    AllowedIpComponent,
     ModalRegisterComponent,
     FormClientComponent,
     FormSaleDetailComponent,
@@ -113,6 +117,7 @@ import { InfoGeneralComponent } from './sale/info/info-general/info-general.comp
     LightboxModule,
     PickerModule,
     NgxPaginationModule,
+    SettingsModule,
 
     // SMART WIZARD
     CKEditorModule,

@@ -271,12 +271,21 @@
       "TEXT": "Configuraciones",
       "LIST": {
         "ALLOWED_IPS": "IP permitidas",
+        "PERMISSION": "Permisos",
         "PERMISSION_ACCOUNT": "Permisos de usuario"
       }
     }
   },
   "FORMS": {
     "FIELD_NAMES": {
+      "ip": {
+        "label": "Dirección IP",
+        "placeholder": "Ingrese la dirección IP..."
+      },
+      "descripcion": {
+        "label": "Descripción",
+        "placeholder": "Ingrese descripción..."
+      },
       "holder_name": {
         "label": "Nombre del titular",
         "placeholder": "Ingrese el nombre..."
@@ -420,25 +429,21 @@
         "label": "Archivo",
         "placeholder": "Subir el archivo...",
         "default_option": "Seleccione un archivo..."
-
       },
       "image": {
         "label": "Imagen",
         "placeholder": "Subir la imagen...",
         "default_option": "Seleccione un imagen..."
-
       },
       "logo": {
         "label": "Logo",
         "placeholder": "Subir el logo...",
         "default_option": "Seleccione un imagen..."
-
       },
       "type": {
         "label": "Tipo",
         "placeholder": "Ingrese el tipo...",
         "default_option": "Seleccione un tipo..."
-
       },
       "type_bank_account": {
         "label": "Tipo de cuenta bancaria",
@@ -459,38 +464,32 @@
         "label": "Tipo de descuento",
         "placeholder": "Ingrese el tipo de descuento...",
         "default_option": "Seleccione un tipo..."
-
       },
       "type_document": {
         "label": "Tipo de documento",
         "placeholder": "Ingrese el tipo de documento...",
         "default_option": "Seleccione un tipo..."
-
       },
       "type_service": {
         "label": "Tipo de servicio",
         "placeholder": "Ingrese el tipo de servicio...",
         "default_option": "Seleccione un tipo...",
         "default_option_all": "Todos..."
-
       },
       "type_status": {
         "label": "Tipo de estado",
         "placeholder": "Ingrese el tipo de estado...",
         "default_option": "Seleccione un tipo..."
-
       },
       "product": {
         "label": "Producto",
         "placeholder": "Ingrese el producto...",
         "default_option": "Seleccione un producto..."
-
       },
       "promotion": {
         "label": "Promoción",
         "placeholder": "Ingrese la promoción...",
         "default_option": "Seleccione una promoción..."
-
       },
       "document": {
         "label": "Documento",
@@ -512,7 +511,6 @@
         "label": "Estado",
         "placeholder": "Ingrese el estado...",
         "default_option": "Seleccione un estado..."
-
       },
       "date": {
         "label": "Fecha",
@@ -558,13 +556,11 @@
         "label": "Fecha actualizado",
         "placeholder": "Ingrese la fecha...",
         "default_option": "Seleccione una fecha..."
-
       },
       "opening_date": {
         "label": "Fecha apertura",
         "placeholder": "Ingrese la fecha...",
         "default_option": "Seleccione una fecha..."
-
       },
       "count_min": {
         "label": "Cantidad minima",
@@ -745,6 +741,14 @@
         "label": "Modelo del terminal",
         "placeholder": "Ingrese el modelo terminal...",
         "default_option": "Seleccione el modelo..."
+      },
+      "permission_id": {
+        "label": "Permisos Id",
+        "placeholder": "Ingrese id del permiso"
+      },
+      "type_user_id": {
+        "label": "Tipo de Usuario Id",
+        "placeholder": "Ingrese el id del tipo de Usuario "
       }
     },
     "VALIDATION": {
@@ -803,24 +807,24 @@
             "label": "Nombre del tipo de documento",
             "placeholder": "Ingrese el nombre...",
             "validation": {
-                "required": "El nombre es obligatorio.",
-                "invalid": "El nombre es invalido. Proporcione un nombre válido."
+              "required": "El nombre es obligatorio.",
+              "invalid": "El nombre es invalido. Proporcione un nombre válido."
             }
           },
           "abreviacion": {
             "label": "Abreviación del tipo documento",
             "placeholder": "Ingrese el nombre...",
             "validation": {
-                "required": "El nombre es obligatorio.",
-                "invalid": "El nombre es invalido. Proporcione un nombre válido."
+              "required": "El nombre es obligatorio.",
+              "invalid": "El nombre es invalido. Proporcione un nombre válido."
             }
           },
           "is_active": {
             "label": "Nombre del tipo de documento",
             "placeholder": "Ingrese el nombre...",
             "validation": {
-                "required": "El nombre es obligatorio.",
-                "invalid": "El nombre es invalido. Proporcione un nombre válido."
+              "required": "El nombre es obligatorio.",
+              "invalid": "El nombre es invalido. Proporcione un nombre válido."
             }
           }
         }

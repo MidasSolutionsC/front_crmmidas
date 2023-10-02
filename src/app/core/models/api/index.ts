@@ -14,4 +14,6 @@ export * from './sale-comment.model'
 export * from './address.model'
 export * from './contact.model'
 export * from './bank-account.model'
-export * from './ip-allowed.model'
+export * from './ipAllowed.model'
+
+

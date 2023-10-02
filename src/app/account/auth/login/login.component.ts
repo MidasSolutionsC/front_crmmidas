@@ -8,7 +8,7 @@ import { first } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ApiErrorFormattingService, FormService, IpAllowedService, LanguageService, SweetAlertService } from 'src/app/core/services';
 import { Subscription } from 'rxjs';
-import { AuthService } from 'src/app/core/services/api/auth/auth.service';
+import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { ResponseApi } from 'src/app/core/models';
 
 @Component({
@@ -23,10 +23,10 @@ import { ResponseApi } from 'src/app/core/models';
 export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm: UntypedFormGroup;
-  submitted:boolean = false;
-  error:string = '';
+  submitted: boolean = false;
+  error: string = '';
   returnUrl: string;
-  showPassword : boolean = false;
+  showPassword: boolean = false;
 
   // set the currenr year
   year: number = new Date().getFullYear();
@@ -36,15 +36,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line: max-line-length
   constructor(
     public languageService: LanguageService,
-    private formBuilder: FormBuilder, 
+    private formBuilder: FormBuilder,
     private _formService: FormService,
     private _ipAllowedService: IpAllowedService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private _authService: AuthService,
-    private route: ActivatedRoute, 
-    private router: Router,) 
-  { 
+    private route: ActivatedRoute,
+    private router: Router,) {
     this.languageService.setLanguage('es');
   }
 
@@ -64,36 +63,35 @@ export class LoginComponent implements OnInit, OnDestroy {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  public login(data: any){
+  public login(data: any) {
     this._sweetAlertService.loadingUp('Validando credencial')
     this._authService.login(data).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const result = response.data;
-        if(result?.login){
+        if (result?.login) {
           this.router.navigate(['/main']);
         } else {
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Validación de credencial', message: result?.message});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Validación de credencial', message: result?.message });
         }
       }
 
-      if(response.code == 403){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 422){
-        if(response.errors){
-          const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 403) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
@@ -103,32 +101,32 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   // OBTENER MI DIRECCIÓN IP
-  public getIP(){
-    this._sweetAlertService.loadingUp('Obteniendo IP')
-    this._ipAllowedService.getIP().subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        const result = response.data;
-        console.log(result);
-      }
+  // public getIP() {
+  //   this._sweetAlertService.loadingUp('Obteniendo IP')
+  //   this._ipAllowedService.getIP().subscribe((response: ResponseApi) => {
+  //     this._sweetAlertService.stop();
+  //     if (response.code == 200) {
+  //       const result = response.data;
+  //       console.log(result);
+  //     }
 
-      if(response.code == 422){
-        if(response.errors){
-          const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
-        }
-      }
+  //     if (response.code == 422) {
+  //       if (response.errors) {
+  //         const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+  //         this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
+  //       }
+  //     }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      console.log(error);
-    });
-  }
+  //     if (response.code == 500) {
+  //       if (response.errors) {
+  //         this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+  //       }
+  //     }
+  //   }, (error: any) => {
+  //     this._sweetAlertService.stop();
+  //     console.log(error);
+  //   });
+  // }
 
 
 
@@ -142,11 +140,11 @@ export class LoginComponent implements OnInit, OnDestroy {
  * INICIAR FORMULARIO CON LAS VALIDACIONES
  * 
  */
-  private initForm(){
+  private initForm() {
     const formGroupData = this.getFormGroupData();
     this.loginForm = this.formBuilder.group(formGroupData);
   }
-  
+
   private getFormGroupData(): object {
     return {
       nombre_usuario: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20), Validators.pattern(/^[^\s]+$/)]],
@@ -161,8 +159,8 @@ export class LoginComponent implements OnInit, OnDestroy {
    */
   onSubmit() {
     this.submitted = true;
-    if(!this.loginForm.valid){
-      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    if (!this.loginForm.valid) {
+      this._sweetAlertService.showTopEnd({ title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500 });
     } else {
       const values: any = this.loginForm.value;
       this.login(values);

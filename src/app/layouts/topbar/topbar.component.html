@@ -60,14 +60,14 @@
 
       <div class="dropdown d-inline-block" dropdown>
         <button type="button" class="btn header-item" id="page-header-user-dropdown" dropdownToggle>
-          <img *ngIf="flagvalue !== undefined" src="{{flagvalue}}" alt="Header Language" height="16"> 
+          <img *ngIf="flagvalue !== undefined" src="{{flagvalue}}" alt="Header Language" height="16">
           <img *ngIf="flagvalue === undefined" src="{{valueset}}" alt="Header Language" height="16">
         </button>
         <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
           <!-- item-->
           <a href="javascript:void(0);" class="dropdown-item notify-item" *ngFor="let item of listLang"
             (click)="setLanguage(item.text, item.lang, item.flag)" [ngClass]="{'active': cookieValue === item.lang}">
-            <img src="{{item.flag}}" alt="user-image" class="me-1" height="12"> 
+            <img src="{{item.flag}}" alt="user-image" class="me-1" height="12">
             <span class="align-middle">{{item.text}}</span>
           </a>
           <!-- item-->
@@ -81,8 +81,8 @@
       </div>
 
       <div class="dropdown d-inline-block d-none" dropdown>
-        <button type="button" class="btn header-item noti-icon position-relative" id="page-header-notifications-dropdown"
-          dropdownToggle>
+        <button type="button" class="btn header-item noti-icon position-relative"
+          id="page-header-notifications-dropdown" dropdownToggle>
           <i class="bx bx-bell bx-tada"></i>
           <span class="badge bg-danger rounded-pill">3</span>
         </button>
@@ -172,7 +172,7 @@
       <div class="dropdown d-inline-block" dropdown>
         <button type="button" class="btn header-item" dropdownToggle id="page-header-user-dropdown">
           <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
-          <span class="d-none d-xl-inline-block ms-1">{{dataUser?.nombre_usuario}}</span>
+          <span class="d-none d-xl-inline-block ms-1">{{dataUser?.nombre_usuario}} - {{dataUser?.tipo_usuario}}</span>
           <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
