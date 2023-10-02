@@ -65,6 +65,7 @@ import { TableClientAddressComponent } from './sale/tables/table-client-address/
 import { TableClientBankAccountComponent } from './sale/tables/table-client-bank-account/table-client-bank-account.component';
 import { TableClientContactComponent } from './sale/tables/table-client-contact/table-client-contact.component';
 import { InfoGeneralComponent } from './sale/info/info-general/info-general.component';
+import { ModalUpdateComponent } from './sale/modals/modal-update/modal-update.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { InfoGeneralComponent } from './sale/info/info-general/info-general.comp
     TableClientBankAccountComponent,
     TableClientContactComponent,
     InfoGeneralComponent,
+    ModalUpdateComponent,
   ],
   imports: [
     CoreModule,

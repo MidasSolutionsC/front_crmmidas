@@ -1,31 +1,30 @@
 
 
-.modal-body{
-  max-height: 100ch;
-  height: 100ch;
+// .modal-body{
+//   max-height: 100ch;
+//   height: 100ch;
 
-  @media (max-width: 987px){
-    max-height: 100%;
-    height: 100%;
-    overflow-y: auto;
-  }
-  @media (max-width: 767px){
-    max-height: 100%;
-    height: 100%;
-    padding: 0 !important;
-    overflow-y: auto;
-  }
+//   @media (max-width: 987px){
+//     max-height: calc(100vh - 120px);
+//     height: 100%;
+//   }
+//   // @media (max-width: 767px){
+//   //   max-height: 100%;
+//   //   height: 100%;
+//   //   padding: 0 !important;
+//   //   overflow-y: auto;
+//   // }
 
-}
+// }
 
 
-.wizard{
-  section{
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  .stepper-body{
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
+// .wizard{
+//   section{
+//     margin: 0 !important;
+//     padding: 0 !important;
+//   }
+//   .stepper-body{
+//     margin: 0 !important;
+//     padding: 0 !important;
+//   }
+// }

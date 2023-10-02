@@ -100,7 +100,9 @@
       <div *ngFor="let item of groupSaleDetail.tv">
         <div class="card jobs-categories">
           <div class="card-body p-0">
-            <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" (click)="toggleVisibility(item)">{{item?.servicios_nombre}} <span class="badge text-bg-info float-end bg-opacity-100">1</span></a>
+            <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
+              [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
+              (click)="toggleVisibility(item)">{{item?.servicios_nombre}} <span class="badge text-bg-info float-end bg-opacity-100">1</span></a>
           </div>
           <div class="card-body border border-info rounded" *ngIf="item.visible">
             <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
