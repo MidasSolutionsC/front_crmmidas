@@ -360,7 +360,8 @@ a.ck.ck-button.ck-on {
 
 .tab-bg {
     .nav-tabs {
-        background-color: var(--#{$prefix}light);;
+        background-color: var(--#{$prefix}light);
+        ;
     }
 
 }
@@ -407,7 +408,8 @@ a.ck.ck-button.ck-on {
         flex-direction: column;
         gap: 16px;
 
-        .nav-tabs, .tab-content{
+        .nav-tabs,
+        .tab-content {
             width: 100%;
         }
     }
@@ -423,22 +425,22 @@ a.ck.ck-button.ck-on {
 }
 
 // MODAL SCROLLABLE
-.modal-dialog-scrollable{
-    .modal-body{
+.modal-dialog-scrollable {
+    .modal-body {
         max-height: calc(100vh - 180px);
     }
 }
 
 // PREVIAZULIZADOR DE IMÁGENES
-.content-preview-image{
+.content-preview-image {
     position: relative;
     max-height: 180px;
     max-width: fit-content;
     height: auto;
     width: fit-content;
     margin: auto;
-    
-    .image{
+
+    .image {
         background-size: contain;
         position: relative;
         object-fit: contain;
@@ -447,7 +449,7 @@ a.ck.ck-button.ck-on {
         width: 100%;
     }
 
-    .btn-delete{
+    .btn-delete {
         position: absolute;
         top: 0;
         right: 0;
@@ -455,3 +457,23 @@ a.ck.ck-button.ck-on {
     }
 }
 
+/* MODAL FULLSCREEN SCROLLABLE */
+.modal-body-fullscreen-responsive {
+    max-height: calc(100vh - 125px) !important;
+    height: calc(100vh - 125px);
+    // padding-top: 0.7rem !important;
+    // padding-bottom: 0.7rem !important;
+
+    .wizard {
+        section {
+            margin: 0 !important;
+            padding: 0 !important;
+            margin-top: 0.7rem !important;
+        }
+
+        .stepper-body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    }
+}

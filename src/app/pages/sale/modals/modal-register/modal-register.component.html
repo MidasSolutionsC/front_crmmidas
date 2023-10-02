@@ -4,7 +4,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
       (click)="modalRef?.hide()"></button>
   </div>
-  <div class="modal-body">
+  <div class="modal-body modal-body-fullscreen-responsive">
     <ng-stepper #cdkStepper [linear]="true" class="wizard">
       <cdk-step [optional]="false">
         <ng-template cdkStepLabel>
