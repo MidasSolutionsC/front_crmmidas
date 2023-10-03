@@ -219,7 +219,7 @@ export class TableClientBankAccountComponent implements OnInit, OnDestroy, OnCha
    * ****************************************************************
    */
   onSubmit(event: any) {
-    if (event?.saved) {
+    if (event?.saved || event?.updated) {
       this.toggleList(false);
     }
 

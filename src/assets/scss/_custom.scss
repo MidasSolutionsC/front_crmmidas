@@ -497,3 +497,11 @@ a.ck.ck-button.ck-on {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+/* ACCORDION */
+.accordion-customize{
+    .panel-body{
+        padding: 0 !important;
+    }
+}
+

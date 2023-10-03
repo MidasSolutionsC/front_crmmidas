@@ -5,13 +5,22 @@
       (click)="modalRef?.hide()"></button>
   </div>
   <div class="modal-body">
-    <div>  
+    <div *ngIf="modeView == 'view'">   
       <!-- DATOS DEL CLIENTE -->
       <strong class="text-primary mb-3">DATOS DEL CLIENTE</strong>
       <div class="card border">
         <div class="card-body">
-          <button type="button" class="btn btn-sm btn-soft-info float-end"><i class="mdi mdi-pencil-outline"></i></button>
-    
+          <!-- OPCIONES -->
+          <div class="dropdown float-end" dropdown>
+            <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+              <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+              <a class="dropdown-item text-info" href="javascript: void(0);" (click)="onEditItem('client')"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+              <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+            </div>
+          </div> <!-- end dropdown -->
+          
           <div class="row g-3">
             <div class="col-md-4">
               <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
@@ -29,7 +38,12 @@
             </div>
             <div class="col-md-4">
               <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>Razón social:</strong><span>{{dataCompany?.nombre_comercial}}</span>
+                <strong>Nombre comercial:</strong><span>{{dataCompany?.nombre_comercial}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataCompany?.documento}}</span>
               </div>
             </div>
           </div>
@@ -53,11 +67,149 @@
             </div>
           </div>
         </div>
+                    
+        <accordion [closeOthers]="true" class="accordion accordion-customize" [isAnimated]="true">
+          <accordion-group heading="Direcciones, contactos y cuentas bancarias" class="accordion-item p-0" #accordionContact>
+            <span accordion-heading class="float-end fs-5">
+              <i class="mdi"
+                [ngClass]="!accordionContact?.isOpen ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
+            </span>
+            <div class="row g-2">
+              <div class="col-md-12 mb-1">
+                <ng-template [ngTemplateOutlet]="templateContainerAddress"></ng-template>
+              </div>
+              <div class="col-md-5 mb-1">
+                <ng-template [ngTemplateOutlet]="templateContainerContact"></ng-template>
+              </div>
+              <div class="col-md-7 mb-1">
+                <ng-template [ngTemplateOutlet]="templateContainerBankAccount"></ng-template>
+              </div>
+            </div>
+          </accordion-group>
+        </accordion>
+        <!-- end accordion -->
       </div>
+
+      <!-- CONTACTOS -->
+      <ng-template #templateContainerContact>
+        <div class="card card-body  mb-0">
+          <h5 class="card-title font-size-13 mb-3">Contactos</h5>
+          <ul class="verti-timeline list-unstyled">
+            <ng-container *ngFor="let item of listContact; index as i">              
+              <ng-template [ngTemplateOutlet]="templateContact" [ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+            </ng-container>
+          </ul>
+        </div>
+      </ng-template>
+      <ng-template #templateContact let-item="item" let-i="index">
+        <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
+          <div class="dropdown float-end" dropdown>
+            <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+              <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+              <a class="dropdown-item text-info" href="javascript: void(0);"  (click)="onEditItem('contact', item)"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+              <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+            </div>
+          </div> <!-- end dropdown -->
+          <div class="event-timeline-dot">
+              <i class="bx bxs-right-arrow-circle font-size-18" [ngClass]="{'bx-fade-right': item.is_primary == 1}"></i>
+          </div>
+          <div class="d-flex flex-wrap">
+              <div class="flex-shrink-0 me-3">
+                  <h5 class="font-size-14 text-capitalize">{{item.tipo_text}} <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i>
+                  </h5>
+              </div>
+              <div class="flex-grow-1">
+                  <div>
+                      {{item.contacto}}
+                  </div>
+              </div>
+          </div>
+        </li>
+      </ng-template>
+    
+      <!-- DIRECCIONES -->  
+      <ng-template #templateContainerAddress>
+        <div class="card card-body mb-0">
+          <h5 class="card-title font-size-13 mb-3">Direcciones</h5>
+          <ul class="verti-timeline list-unstyled">
+            <ng-container *ngFor="let item of listAddress; index as i">
+              <ng-template [ngTemplateOutlet]="templateAddress"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+            </ng-container>
+          </ul>
+        </div>
+      </ng-template>
+      <ng-template #templateAddress let-item="item" let-i="index">
+        <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
+          <div class="dropdown float-end" dropdown>
+            <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+              <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+              <a class="dropdown-item text-info" href="javascript: void(0);" (click)="onEditItem('address', item)"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+              <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+            </div>
+          </div> <!-- end dropdown -->
+          <div class="event-timeline-dot">
+              <i class="bx bxs-right-arrow-circle font-size-18" [ngClass]="{'bx-fade-right': item.is_primary == 1}"></i>
+          </div>
+          <div class="d-flex flex-wrap">
+              <div class="flex-shrink-0 me-3">
+                  <h5 class="font-size-14 text-capitalize">{{item.codigo_postal}} <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i>
+                  </h5>
+              </div>
+              <div class="flex-grow-1">
+                  <div>
+                      {{item.direccion_completo}}
+                  </div>
+              </div>
+          </div>
+        </li>
+      </ng-template>
+    
+      <!-- CUENTAS -->  
+      <ng-template #templateContainerBankAccount>
+        <div class="card card-body mb-0">
+          <h5 class="card-title font-size-13 mb-3">Cuentas bancarias</h5>
+          <ul class="verti-timeline list-unstyled">
+            <ng-container *ngFor="let item of listBankAccount; index as i">
+              <ng-template [ngTemplateOutlet]="templateBankAccount"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+            </ng-container>
+          </ul>
+        </div>
+      </ng-template>
+      <ng-template #templateBankAccount let-item="item" let-i="index">
+        <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
+          <div class="dropdown float-end" dropdown>
+            <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+              <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+              <a class="dropdown-item text-info" href="javascript: void(0);" (click)="onEditItem('bankAccount', item)"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+              <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+            </div>
+          </div> <!-- end dropdown -->
+          <div class="event-timeline-dot">
+              <i class="bx bxs-right-arrow-circle font-size-18" [ngClass]="{'bx-fade-right': item.is_primary == 1}"></i>
+          </div>
+          <div class="d-flex flex-wrap">
+              <div class="flex-shrink-0 me-3">
+                  <h5 class="font-size-14 text-capitalize">{{item.tipo_cuentas_bancarias_nombre}} <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i>
+                  </h5>
+              </div>
+              <div class="flex-grow-1">
+                  <div>
+                      {{item.cuenta}}
+                  </div>
+              </div>
+          </div>
+        </li>
+      </ng-template>
     
       <!-- DETALLE ´PRODUCTO -->
       <div class="row g-2 mt-3">
-        <strong class="text-primary text-uppercase">Servicios de la compra</strong>
+        <strong class="text-primary text-uppercase">Servicios </strong>
         <div class="col-md-4">
           <div class="card card-header rounded mb-2 py-2 bg-primary ">
             <h5 class="text-white font-size-14 m-0">Linea fija</h5>
@@ -68,12 +220,24 @@
             <div class="card jobs-categories mb-2">
               <div class="card-body p-0">
                 <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
-                [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
-                (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
-                <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
+                  [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
+                  (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
+                  <span accordion-heading class="float-end fs-5">
+                    <i class="mdi"
+                      [ngClass]="!item.visible ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
+                  </span>
+                </a>
               </div>
               <div class="card-body border border-info rounded mb-2" *ngIf="item.visible">
-                <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+                <div class="dropdown float-end" dropdown>
+                  <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                    <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                    <a class="dropdown-item text-info" href="javascript: void(0);" (click)="onEditItem('saleDetail', item); shareDataTypeService = 'fixed'"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+                    <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+                  </div>
+                </div> <!-- end dropdown -->                
                 <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
                 <ng-container *ngTemplateOutlet="templateFixed; context: { $implicit: item }"></ng-container>
                 <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>  
@@ -95,10 +259,22 @@
                 <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
                   [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
                   (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
-                  <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
+                  <span accordion-heading class="float-end fs-5">
+                    <i class="mdi"
+                      [ngClass]="!item.visible ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
+                  </span>
+                </a>
               </div>
               <div class="card-body border border-info rounded" *ngIf="item.visible">
-                <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+                <div class="dropdown float-end" dropdown>
+                  <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                    <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                    <a class="dropdown-item text-info" href="javascript: void(0);" (click)="onEditItem('saleDetail', item); shareDataTypeService = 'mobile'"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+                    <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+                  </div>
+                </div> <!-- end dropdown -->  
                 <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
                 <ng-container *ngTemplateOutlet="templateMobile; context: { $implicit: item }"></ng-container>
                 <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>  
@@ -120,10 +296,22 @@
                 <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2" 
                   [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
                   (click)="toggleVisibility(item)">{{item?.servicios_nombre}} 
-                  <span class="badge text-bg-info float-end bg-opacity-100 d-none">1</span></a>
+                  <span accordion-heading class="float-end fs-5">
+                    <i class="mdi"
+                      [ngClass]="!item.visible ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
+                  </span>
+                </a>
               </div>
               <div class="card-body border border-info rounded" *ngIf="item.visible">
-                <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+                <div class="dropdown float-end" dropdown>
+                  <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                    <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                    <a class="dropdown-item text-info" href="javascript: void(0);" (click)="onEditItem('saleDetail', item); shareDataTypeService = 'tv'"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+                    <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+                  </div>
+                </div> <!-- end dropdown -->                
                 <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>  
                 <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>  
               </div>
@@ -230,49 +418,41 @@
 
 
       <!-- DOCUMENTOS, COMENTARIO, HISTORIAL -->
-      <div class="row g-2 mt-3">
-        
-        <div class="col-md-4">
-          <strong class="text-primary text-uppercase">Archivos</strong>
-          <div *ngFor="let item of listSaleDocument">
-            <div class="card-body border border-info rounded p-1">
-              <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
+      <strong class="text-primary mb-3 mt-3 text-uppercase">Más datos de la venta</strong>
+      <tabset [justified]="true" class="nav-tabs nav-tabs-custom nav-justified">
+        <tab heading="Documentos">
+          <ng-template [ngTemplateOutlet]="templateContainerDocument"></ng-template>
+        </tab>
+        <tab heading="Comentarios">
+          <ng-template [ngTemplateOutlet]="templateContainerComment"></ng-template>
+        </tab>
+        <tab heading="Historial">
+          <ng-template [ngTemplateOutlet]="templateContainerHistory"></ng-template>
+        </tab>
+      </tabset>
+
+      <!-- DOCUMENTOS -->
+      <ng-template #templateContainerDocument>
+        <div class="row g-2 mt-2">
+          <div class="col-md-6" *ngFor="let item of listSaleDocument">
+            <div class="card-body border border-info rounded p-2">
+              <div class="dropdown float-end" dropdown>
+                <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                  <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                  <a class="dropdown-item text-info" href="javascript: void(0);"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+                  <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+                </div>
+              </div> <!-- end dropdown -->  
               <ng-container *ngTemplateOutlet="templateDocument; context: { $implicit: item }"></ng-container>    
-            </div>
+            </div>  
           </div>
           <div *ngIf="!listSaleDocument?.length">
             <p class="text-start">Sin registros</p>
           </div>
         </div>
-
-        <div class="col-md-4">
-          <strong class="text-primary text-uppercase">Comentarios</strong>
-          <div *ngFor="let item of listSaleComment">
-            <div class="card-body border border-info rounded p-1">
-              <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
-              <ng-container *ngTemplateOutlet="templateComment; context: { $implicit: item }"></ng-container>    
-            </div>
-          </div>
-          <div *ngIf="!listSaleComment?.length">
-            <p class="text-start">Sin registros</p>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <strong class="text-primary text-uppercase">Historial</strong>
-          <div *ngFor="let item of listSaleHistory">
-            <div class="card-body border border-info rounded p-1">
-              <button type="button" class="btn btn-sm btn-soft-info float-end rounded-pill"><i class="mdi mdi-pencil-outline"></i></button>
-              <ng-container *ngTemplateOutlet="templateHistory; context: { $implicit: item }"></ng-container>    
-            </div>
-          </div>
-          <div *ngIf="!listSaleHistory?.length">
-            <p class="text-start">Sin registros</p>
-          </div>
-        </div>
-      </div>
-
-
+      </ng-template>
       <ng-template #templateDocument let-item>
         <div class="row g-2">
           <div class="col-sm-4">
@@ -285,7 +465,7 @@
             </div>
             </div>
           <div class="col-sm-8">
-            <div class="h-100">
+            <div class="h-100 d-flex flex-wrap justify-content-start align-items-center">
               <span class="w-100 d-block fw-semibold">{{item.nombre}} ({{item.tipo}})</span>
               <div class="text-start">
                 <span class="blockquote-footer">{{item.created_at}}</span>
@@ -295,6 +475,28 @@
         </div>
       </ng-template>
 
+      <!-- COMENTARIOS -->
+      <ng-template #templateContainerComment>
+        <div class="row g-2 mt-2">
+          <div class="col-md-12" *ngFor="let item of listSaleComment">
+            <div class="card-body border border-info rounded p-2">
+              <div class="dropdown float-end" dropdown>
+                <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                  <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                  <a class="dropdown-item text-info" href="javascript: void(0);"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+                  <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+                </div>
+              </div> <!-- end dropdown -->  
+              <ng-container *ngTemplateOutlet="templateComment; context: { $implicit: item }"></ng-container>    
+            </div>
+          </div>
+          <div *ngIf="!listSaleComment?.length">
+            <p class="text-start">Sin registros</p>
+          </div>
+        </div>
+      </ng-template>
       <ng-template #templateComment let-item>
         <div *ngIf="item.comentario">
           <p [ngClass]="{'text-truncate-3': !item.more}">{{item.comentario}}</p> 
@@ -305,24 +507,144 @@
         </div>
       </ng-template>
 
+      <!-- HISTORIAL -->
+      <ng-template #templateContainerHistory>
+        <div class="row g-2 mt-2">
+          <div class="col-md-12" *ngFor="let item of listSaleHistory">
+            <div class="card-body border border-info rounded p-2">
+              <div class="dropdown float-end" dropdown>
+                <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                  <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                  <a class="dropdown-item text-info" href="javascript: void(0);"><i class="mdi mdi-pencil-outline"></i> Editar</a>
+                  <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i> Eliminar</a>
+                </div>
+              </div> <!-- end dropdown -->  
+              <ng-container *ngTemplateOutlet="templateHistory; context: { $implicit: item }"></ng-container>    
+            </div>
+          </div>
+          <div *ngIf="!listSaleHistory?.length">
+            <p class="text-start">Sin registros</p>
+          </div>
+        </div>
+      </ng-template>
       <ng-template #templateHistory let-item>
         <span class="fw-semibold d-block w-100">{{item.tipo_estados_nombre}}</span>
         <div class="w-100" *ngIf="item.comentario">
           <p [ngClass]="{'text-truncate-3': !item.more}">{{item.comentario}}</p> 
           <b type="button" (click)="toggleCommentMore(item)">{{item.more? 'Menos': 'Más'}}</b>           
         </div>
-        <div class="text-start">
+        <div class="text-end">
           <span class="blockquote-footer">{{item.created_at}}</span>
         </div>
       </ng-template>
       
     </div>
+    <div *ngIf="modeView == 'edit'">
+      <!-- TIPO DE FORMULARIO A MOSTRAR -->
+      <div [ngSwitch]="formEditLabel">
+        <div *ngSwitchCase="'client'">
+          <ng-template [ngTemplateOutlet]="tmpFormClient"></ng-template>
+        </div>
+        <div *ngSwitchCase="'contact'">
+          <ng-template [ngTemplateOutlet]="tmpFormContact"></ng-template>
+        </div>
+        <div *ngSwitchCase="'address'">
+          <ng-template [ngTemplateOutlet]="tmpFormAddress"></ng-template>
+        </div>
+        <div *ngSwitchCase="'bankAccount'">
+          <ng-template [ngTemplateOutlet]="tmpFormBankAccount"></ng-template>
+        </div>
+        <div *ngSwitchCase="'saleDetail'">
+          <ng-template [ngTemplateOutlet]="tmpFormSaleDetail"></ng-template>
+        </div>
+        <div *ngSwitchDefault>
+          <p>Contenido por defecto (ninguna opción coincide)</p>
+        </div>
+      </div>
+    </div>
+
+    
   </div>
   <div class="modal-footer">
     <div class="hstack gap-2 justify-content-end">
-      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
-        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"(click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <button type="button" class="btn btn-secondary" (click)="changeModalView('view')" *ngIf="modeView == 'edit'">{{'MODALS.BUTTONS.BACK' | translate}}</button>
     </div>
   </div>
 </div>
 
+
+
+<!-- FORMULARIO CLIENTE -->
+<ng-template #tmpFormClient let-data>
+  <app-form-client></app-form-client>
+</ng-template>
+
+<!-- FORMULARIO CONTACTO -->
+<ng-template #tmpFormContact>
+  <app-form-client-contact [data]="shareDataForm" (submit)="getDataFormContact($event)"></app-form-client-contact>
+</ng-template>
+
+<!-- FORMULARIO DIRECCIÓN -->
+<ng-template #tmpFormAddress>
+  <app-form-client-address [data]="shareDataForm" (submit)="getDataFormAddress($event)"></app-form-client-address>
+</ng-template>
+
+<!-- FORMULARIO CUENTAS BANCARIA -->
+<ng-template #tmpFormBankAccount>
+  <app-form-client-bank-account [data]="shareDataForm" (submit)="getDataFormAddress($event)"></app-form-client-bank-account>
+</ng-template>
+
+<!-- FORMULARIO SERVICIOS -->
+<ng-template #tmpFormSaleDetail>
+  <app-form-sale-detail [data]="shareDataForm" [typeService]="shareDataTypeService" (submit)="getDataFormService($event)"></app-form-sale-detail>
+</ng-template>
+
+
+<!-- FORMULARIO INSTALACIÓN -->
+<!-- FORMULARIO DOCUMENTO -->
+<!-- FORMULARIO COMENTARIO -->
+<!-- FORMULARIO HISTORIAL -->
+
+
+
+<!-- MODAL FORMULARIO -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModalEdit.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRefCurrent?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    ... EDITAR
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRefCurrent?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+      <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+    </div>
+  </div>
+</ng-template>
+<!--End Modal -->
+
+<div bsModal #first="bs-modal" class="modal fade modal-opacity-in" id="firstModal">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Modal 1</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="first.hide()"></button>
+          </div>
+          <div class="modal-body">
+              <p>Show a second modal and hide this one with the button below.</p>
+          </div>
+          <div class="modal-footer">
+              <!-- Toogle to second dialog -->
+              <button class="btn btn-primary" data-bs-target="#content" data-bs-toggle="modal" data-bs-dismiss="modal" (click)="first.hide()">Open
+                  Second
+                  Modal</button>
+          </div>
+      </div>
+  </div>
+</div>

@@ -791,6 +791,7 @@
       "ADD": "Registrar",
       "UPDATE": "Actualizar",
       "DELETE": "Eliminar",
+      "BACK": "Volver",
       "PREV": "Anterior",
       "NEXT": "Siguiente",
       "CLOSE": "Cerrar",

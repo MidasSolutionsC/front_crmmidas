@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, Renderer2, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { CompanyList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { AddressList, BankAccountList, CompanyList, ContactList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { ClientList } from 'src/app/core/models/api/client.model';
-import { ApiErrorFormattingService, ClientService, ConfigService, OperatorService, SaleCommentService, SaleDetailService, SaleDocumentService, SaleHistoryService, SaleService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
+import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, OperatorService, SaleCommentService, SaleDetailService, SaleDocumentService, SaleHistoryService, SaleService, SharedClientService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-modal-detail',
@@ -11,8 +11,22 @@ import { ApiErrorFormattingService, ClientService, ConfigService, OperatorServic
   styleUrls: ['./modal-detail.component.scss']
 })
 export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
+
+  @ViewChild('content') contentModal: TemplateRef<any>;
+  @ViewChild('first') modalForm: any;
+  
   // DATOS DE ENTRADAS
   @Input() dataInput: SaleList = null; 
+
+  // MODO DE LA VISTA
+  modeView: 'view' | 'edit' = 'view';
+
+  // FORMULARIO A MOSTRAR
+  formEditLabel: any;
+
+  // dato compartido a los formularios
+  shareDataForm: any = null;
+  shareDataTypeService: any = null;
 
   // REFERENCIA AL MODAL ACTUAL
   modalRefCurrent?: BsModalRef;
@@ -21,6 +35,11 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   dataModal: any = {
     title: 'Detalle de la venta'
   };
+
+  // MODAL DE EDICIÓN DE DATOS
+  dataModalEdit: any = {
+    title: 'Formulario'
+  }
   
   URL_FILES: string = '';
 
@@ -53,6 +72,15 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   dataSaleHistory: SaleHistoryList;
   listSaleHistory: SaleHistoryList[] = [];
 
+  // CONTACTOS
+  listContact: ContactList[] = [];
+
+  // DIRECCIONES
+  listAddress: AddressList[] = [];
+
+  // CUENTAS BANCARIAS
+  listBankAccount: BankAccountList[] = [];
+
   // Lista de ventas detalles
   groupSaleDetail: any;
 
@@ -66,11 +94,16 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   
   constructor(
     public modalRef: BsModalRef,
+    private modalService: BsModalService,
     private cdr: ChangeDetectorRef,
     private _configService: ConfigService,
+    private _sharedClientService: SharedClientService,
     private _operatorService: OperatorService,
     private _typeDocumentService: TypeDocumentService,
     private _clientService: ClientService,
+    private _contactService: ContactService,
+    private _addressService: AddressService,
+    private _bankAccountService: BankAccountService,
     private _saleService: SaleService,
     private _saleDetailService: SaleDetailService,
     private _saleDocumentService: SaleDocumentService,
@@ -104,6 +137,32 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
         this.listOperators = list;
       })
     )
+
+                
+    // CONTACTOS
+    this.subscription.add(
+      this._contactService.listObserver$
+        .subscribe((list: ContactList[]) => {
+          this.listContact = list;
+        })
+    );
+            
+    // DIRECCIONES
+    this.subscription.add(
+      this._addressService.listObserver$
+        .subscribe((list: AddressList[]) => {
+          this.listAddress = list;
+        })
+    );
+
+    // CUENTAS BANCARIAS
+    this.subscription.add(
+      this._bankAccountService.listObserver$
+        .subscribe((list: BankAccountList[]) => {
+          this.listBankAccount = list;
+        })
+    );
+
             
     // Detalle de la venta
     this.subscription.add(
@@ -201,7 +260,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    */
   onChanges(){
     if(this.dataInput){
-      console.log("DATOS DE LA VENTA:",this.dataInput);
+      // console.log("DATOS DE LA VENTA:",this.dataInput);
       const {id, clientes_id, clientes_persona_juridica} = this.dataInput;
 
       if(id){
@@ -220,9 +279,10 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
 
   /**
    * ****************************************************************
-   * OPERACIONES CON LA API - TIPO DE DOCUMENTOS
+   * OPERACIONES CON LA API
    * ****************************************************************
    */
+  // Cargar TIPO DE DOCUMENTOS
   public apiTypeDocumentList(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
@@ -244,12 +304,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     });
   }
 
-
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API - OPERADORES
-   * ****************************************************************
-   */
+  // Cargar OPERADORES
   public apiOperatorList(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._operatorService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
@@ -271,13 +326,6 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     });
   }
 
-
-
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API - CLIENT
-   * ****************************************************************
-   */
   // OPERACIONES CON LA API - OBTENER DATOS DEL CLIENTE
   public apiClientGetById(id: number): Promise<any>{
     this._sweetAlertService.loadingUp('Obteniendo datos')
@@ -292,6 +340,9 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
                 this.dataTypeDocument = TypeDocumentList.cast(data.person.type_document);
               }
               this.dataPerson = PersonList.cast(data.person);  
+              
+              this.apiContactFilterByPerson(this.dataPerson.id);
+              this.apiAddressFilterByPerson(this.dataPerson.id);
             } 
             
             if(data.company !== null){
@@ -299,9 +350,12 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
                 this.dataTypeDocument = TypeDocumentList.cast(data.company.type_document);
               }
               this.dataCompany = CompanyList.cast(data.company);
+              this.apiContactFilterByCompany(this.dataCompany.id);
+              this.apiAddressFilterByCompany(this.dataCompany.id);
             } 
   
             this.dataClient = ClientList.cast(data);
+            this.apiBankAccountFilterByClient(this.dataClient.id);
           }
 
           resolve(response.data[0]);
@@ -323,11 +377,117 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     });
   }
 
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API - VENTA DETALLE
-   * ****************************************************************
-   */
+  // Cargar los contactos del cliente -  PERSONA
+  public apiContactFilterByPerson(personId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._contactService.getFilterPersonId(personId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._contactService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los contactos del cliente -   EMPRESA
+  public apiContactFilterByCompany(companyId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._contactService.getFilterCompanyId(companyId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._contactService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los direcciones del cliente -   PERSONA
+  public apiAddressFilterByPerson(personId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._addressService.getFilterPersonId(personId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._addressService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los direcciones del cliente -   EMPRESA
+  public apiAddressFilterByCompany(companyId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._addressService.getFilterCompanyId(companyId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._addressService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar las cuentas bancarias del cliente -  CLIENTE
+  public apiBankAccountFilterByClient(clientId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._bankAccountService.getFilterClientId(clientId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._bankAccountService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las cuentas bancarias ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar VENTA DETALLE
   public apiSaleDetailFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._saleDetailService.getBySale(saleId).subscribe((response: ResponseApi) => {
@@ -349,14 +509,10 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     });
   }
 
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API - DOCUMENTOS DE LA VENTA
-   * ****************************************************************
-   */
+  // Cargar DOCUMENTOS DE LA VENTA
   public apiSaleDocumentFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._saleDocumentService.getBySale(saleId).subscribe((response: ResponseApi) => {
+    this._saleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this._saleDocumentService.addArrayObserver(response.data);
@@ -375,14 +531,10 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     });
   }
 
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API - COMENTARIOS DE LA VENTA
-   * ****************************************************************
-   */
+  // Cargar COMENTARIOS DE LA VENTA
   public apiSaleCommentFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._saleCommentService.getBySale(saleId).subscribe((response: ResponseApi) => {
+    this._saleCommentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this._saleCommentService.addArrayObserver(response.data);
@@ -401,17 +553,12 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     });
   }
 
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API - COMENTARIOS DE LA VENTA
-   * ****************************************************************
-   */
+  // Cargar COMENTARIOS DE LA VENTA
   public apiSaleHistoryFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._saleHistoryService.getBySale(saleId).subscribe((response: ResponseApi) => {
+    this._saleHistoryService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
-        console.log("HISTORIAL:", response.data)
         this._saleHistoryService.addArrayObserver(response.data);
       }
 
@@ -445,6 +592,9 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    * ****************************************************************
    */
   getRowDetailIsNullJson(data: any){
+    if(data?.tipo_servicios_nombre?.toLowerCase().includes('tv')){
+      return false;
+    }
     return data.datos_json !== null? false: true
 
   }
@@ -456,5 +606,138 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    */
   toggleCommentMore(item: any){
     item.more = !item.more;
+  }
+
+
+
+  /**
+   * ****************************************************************
+   * EDITAR EL REGISTRO - ITEM SELECCIONADO
+   * ****************************************************************
+   */
+  onEditItem(process: any, data: any = null){
+    console.log("EDIT:", process, data);
+    
+    this.formEditLabel = process;
+    this.shareDataForm = data;
+    this.changeModalView('edit');
+
+
+    if(process == 'client' || process == 'contact' || process == 'address'){
+      this._sharedClientService.setClientId(this.dataClient.id);
+      this._sharedClientService.setClientId(this.dataClient.id);
+      this._sharedClientService.setLegalPerson(this.dataClient.persona_juridica);
+  
+      if(this.dataClient.persona_juridica){
+        // EMPRESA
+        this._sharedClientService.setCompanyId(this.dataCompany.id);
+      } else {
+        // PERSONA
+        this._sharedClientService.setPersonId(this.dataPerson.id);
+      }
+    }
+
+    switch(process){
+      case 'client':
+        this.dataModal.title = 'Edición de cliente';
+      break;
+      case 'contact':
+        this.dataModal.title = 'Edición de contacto';      
+      break;
+      case 'address':
+        this.dataModal.title = 'Edición de dirección';
+      break;
+      case 'bankAccount':
+        this.dataModal.title = 'Edición de cuenta bancaria';
+        this._sharedClientService.setClientId(this.dataClient.id);
+      break;
+      case 'saleDetail':
+        this.dataModal.title = 'Edición de servicio';
+        // this.shareDataTypeService = 'mobile';
+      break;
+      default:
+        this.dataModal.title = 'Detalle de la venta';
+      break;
+    }
+  }
+
+
+  // OBTENER LOS DATOS MODIFICADOS DE CONTACTOS
+  getDataFormContact(event: any){
+    const {updated, data} = event;
+    if(updated){
+      this.listContact = this.listContact.map((item) => {
+        if(item.id == data.id){
+          return ContactList.cast(data);
+        }
+
+        return item;
+      })
+    }
+
+    this.changeModalView('view');
+  }
+
+  // OBTENER LOS DATOS MODIFICADOS DE DIRECCIÓN
+  getDataFormAddress(event: any){
+    const {updated, data} = event;
+    if(updated){
+      this.listAddress = this.listAddress.map((item) => {
+        if(item.id == data.id){
+          return AddressList.cast(data);
+        }
+
+        return item;
+      })
+    }
+
+    this.changeModalView('view');
+  }
+
+  // OBTENER LOS DATOS MODIFICADOS DE SERVICIOS
+  getDataFormService(event: any){
+    const {updated, data} = event;
+    if(updated){
+      // this.listAddress = this.listAddress.map((item) => {
+      //   if(item.id == data.id){
+      //     return AddressList.cast(data);
+      //   }
+
+      //   return item;
+      // })
+    }
+
+    console.log(event);
+    this.changeModalView('view');
+  }
+
+
+  /**
+   * ****************************************************************
+   * CAMBIOS DE MODO VISUAL - (EDIT/VIEW)
+   * ****************************************************************
+   */
+  changeModalView(mode: 'view' | 'edit' = 'view'){
+    this.modeView = mode;
+
+    if(mode == 'view'){
+      this.dataModal.title = 'Detalle de la venta';
+      this.shareDataForm = null;
+      // this.modalRef.setClass('modal-sm modal-dialog-centered modal-dialog-scrollable');
+    } 
+  }
+
+
+  /**
+   * ****************************************************************
+   * MOSTRAR MODAL - INTERNO
+   * ****************************************************************
+   */
+  openModal(){
+    this.modalRefCurrent = this.modalService.show(this.contentModal, { 
+      class: 'modal-md modal-dialog-centered modal-dialog-scrollable',
+    });
+    this.modalRefCurrent.onHide.subscribe(() => {});
+    // this.modalForm.show();
   }
 }

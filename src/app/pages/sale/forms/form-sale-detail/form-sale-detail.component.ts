@@ -105,7 +105,8 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     // INSTANCIA DEL FORMULARIOS
     this.initForm();
     this.initFormMobile();    
-    this.initFormFixed();    
+    this.initFormFixed();        
+    this.initializeForms();
   }
 
   ngOnDestroy(): void {
@@ -125,7 +126,9 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   initializeForms(){
     if(this.data){
       this.apiTempInstallationSearch(''); // Filtrar direcciones
-      this.saleDetailForm.setValue(this.data);
+      if(this.saleDetailForm){
+        this.saleDetailForm.setValue(SaleDetail.cast(this.data));
+      }
     } else {
       this.data = null;
       if(this.saleDetailForm){
@@ -143,18 +146,23 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
     if(this.typeService){
       const json = this.data?.datos_json && JSON.stringify(this.data?.datos_json) !== '{}'? this.data.datos_json: null;
+      console.log(json)
 
       switch(this.typeService){
         case 'mobile':
           if(json != null){
             const value = DetailMobileLine.cast(json);
-            this.mobileLineForm.setValue(value);          
+            if(this.mobileLineForm){
+              this.mobileLineForm.setValue(value);          
+            }
           }
           break;
         case 'fixed':
           if(json != null){
             const value = DetailFixedLine.cast(json);
-            this.fixedLineForm.setValue(value);          
+            if(this.fixedLineForm){
+              this.fixedLineForm.setValue(value);          
+            }
           }
           break;
         case 'tv':

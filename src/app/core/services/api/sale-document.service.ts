@@ -53,7 +53,7 @@ export class SaleDocumentService {
     }
   }
 
-  public getBySale(saleId: any): Observable<ResponseApi> {
+  public getFilterBySale(saleId: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/filterSale/${saleId}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }

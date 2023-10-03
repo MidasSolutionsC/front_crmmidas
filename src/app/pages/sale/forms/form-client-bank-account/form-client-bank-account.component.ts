@@ -48,6 +48,7 @@ export class FormClientBankAccountComponent implements OnInit, OnDestroy, OnChan
   ngOnInit(): void {
     // Instanciar form
     this.initForm();
+    this.onChangeData();
 
     // ID CLIENTE
     this.subscription.add(
@@ -80,7 +81,10 @@ export class FormClientBankAccountComponent implements OnInit, OnDestroy, OnChan
   
   onChangeData(){
     if(this.data){
-      this.bankAccountForm.setValue({...this.data});
+      if(this.bankAccountForm){
+        this.bankAccountForm.setValue(BankAccount.cast(this.data));
+      }
+
       this.isNewData = false;
       // setTimeout(() => {
       //   this.focusTipoCuenta.nativeElement.focus();
@@ -146,7 +150,7 @@ export class FormClientBankAccountComponent implements OnInit, OnDestroy, OnChan
             data.tipo_cuentas_bancarias_nombre = typeBankAccount.nombre;
             this._bankAccountService.updateObjectObserver(data);
             this.onReset();
-            this.submit.emit({saved: true});
+            this.submit.emit({updated: true, data});
           }
         }
 

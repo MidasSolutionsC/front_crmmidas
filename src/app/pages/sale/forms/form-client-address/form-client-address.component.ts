@@ -46,6 +46,7 @@ export class FormClientAddressComponent implements OnInit, OnDestroy, OnChanges 
   ngOnInit(): void {
     // Instanciar form
     this.initForm();
+    this.onChangeData();
 
     // ID PERSONA
     this.subscription.add(
@@ -81,7 +82,9 @@ export class FormClientAddressComponent implements OnInit, OnDestroy, OnChanges 
   
   onChangeData(){
     if(this.data){
-      this.addressForm.setValue(Address.cast(this.data));
+      if(this.addressForm){
+        this.addressForm.setValue(Address.cast(this.data));
+      }
       this.isNewData = false;
       setTimeout(() => {
         this.focusDomicilio.nativeElement.focus();
@@ -162,7 +165,7 @@ export class FormClientAddressComponent implements OnInit, OnDestroy, OnChanges 
             data.direccion_completo = direccion_completo;  
             this._addressService.updateObjectObserver(data);
             this.onReset();
-            this.submit.emit({saved: true});
+            this.submit.emit({updated: true, data});
           }
         }
 

@@ -1017,7 +1017,11 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
    * @param data objeto de cada fila
    * @returns 
    */
-  getRowDetailIsNullJson(data: any){
+  getRowDetailIsNullJson(data: SaleDetailList){
+    // console.log(data)
+    if(data?.tipo_servicios_nombre?.toLowerCase().includes('tv')){
+      return false;
+    }
     return data.datos_json !== null? false: true
 
   }
@@ -1087,7 +1091,8 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: Installation = this.installationForm.value;
-      if(this.saleId !== null){
+      const localVentasId = localStorage.getItem('ventas_id');
+      if(localVentasId !== null && localVentasId !== undefined){
         values.ventas_id = this.saleId;
       }
 

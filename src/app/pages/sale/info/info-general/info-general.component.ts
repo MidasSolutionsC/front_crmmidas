@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { CompanyList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { AddressList, BankAccountList, CompanyList, ContactList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { ClientList } from 'src/app/core/models/api/client.model';
-import { ApiErrorFormattingService, ClientService, OperatorService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleDetailService, TempSaleService, TypeDocumentService } from 'src/app/core/services';
+import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, OperatorService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleCommentService, TempSaleDetailService, TempSaleDocumentService, TempSaleHistoryService, TempSaleService, TypeDocumentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-info-general',
@@ -11,6 +11,7 @@ import { ApiErrorFormattingService, ClientService, OperatorService, SharedClient
 })
 export class InfoGeneralComponent implements OnInit, OnDestroy {
 
+  URL_FILES: string = '';
 
   // DATOS CLIENTE
   dataClient: ClientList;
@@ -30,22 +31,27 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
 
   // DATOS DOCUMENTOS
   dataSaleDocument: SaleDocumentList;
+  listSaleDocument: SaleDocumentList[] = [];
 
   // DATOS COMENTARIOS
   dataSaleComment: SaleCommentList;
+  listSaleComment: SaleCommentList[] = [];
 
   // DATOS HISTORIAL
   dataSaleHistory: SaleHistoryList;
+  listSaleHistory: SaleHistoryList[] = [];
+
+  // CONTACTOS
+  listContact: ContactList[] = [];
+
+  // DIRECCIONES
+  listAddress: AddressList[] = [];
+
+  // CUENTAS BANCARIAS
+  listBankAccount: BankAccountList[] = [];
 
   // Lista de ventas detalles TEMPORALES
-  tmpListSaleDetails: SaleDetailList[] = [];
   groupSaleDetail: any;
-
-
-
-  // Controlar sub tabla del detalle
-  subTableDetails: {visible: boolean, typeService?: string,  data?: any}[] = [];
-
 
   // Tipo de documentos
   listTypeDocuments: TypeDocumentList[] = [];
@@ -57,19 +63,30 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private _configService: ConfigService,
     private _operatorService: OperatorService,
     private _typeDocumentService: TypeDocumentService,
     private _tempSaleDetailService: TempSaleDetailService,
     private _tempSaleService: TempSaleService,
+    private _tempSaleDocumentService: TempSaleDocumentService,
+    private _tempSaleCommentService: TempSaleCommentService,
+    private _tempSaleHistoryService: TempSaleHistoryService,
     private _sharedSaleService: SharedSaleService,
     private _sharedClientService: SharedClientService,
     private _clientService: ClientService,
+    private _contactService: ContactService,
+    private _addressService: AddressService,
+    private _bankAccountService: BankAccountService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
 
-  ){}
+  ){
+    this.URL_FILES = this._configService.urlFiles + 'sale/';
+  }
 
   ngOnInit(): void {
+    this.apiTypeDocumentList();
+    this.apiOperatorList();
 
     // Tipos de documentos
     this.subscription.add(
@@ -100,6 +117,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
       })
     )
     
+    
     // CLIENT ID
     this.subscription.add(
       this._sharedClientService.getClientId().subscribe((value: number) => {
@@ -109,12 +127,36 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
       })
     );
 
+            
+    // CONTACTOS
+    this.subscription.add(
+      this._contactService.listObserver$
+        .subscribe((list: ContactList[]) => {
+          this.listContact = list;
+        })
+    );
+            
+    // DIRECCIONES
+    this.subscription.add(
+      this._addressService.listObserver$
+        .subscribe((list: AddressList[]) => {
+          this.listAddress = list;
+        })
+    );
+
+    // CUENTAS BANCARIAS
+    this.subscription.add(
+      this._bankAccountService.listObserver$
+        .subscribe((list: BankAccountList[]) => {
+          this.listBankAccount = list;
+        })
+    );
+
 
     // Detalle - observado
     this.subscription.add(
       this._tempSaleDetailService.listObserver$
         .subscribe((list: SaleDetailList[]) => {
-          this.tmpListSaleDetails = list;
 
           this.groupSaleDetail = list.reduce(function (acc, detail) {
             try{
@@ -156,6 +198,37 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
           }, {});
         })
     );
+
+                
+    // Documentos
+    this.subscription.add(
+      this._tempSaleDocumentService.listObserver$
+        .subscribe((list: SaleDocumentList[]) => {
+          this.listSaleDocument = list;
+        })
+    );
+            
+    // Comentarios
+    this.subscription.add(
+      this._tempSaleCommentService.listObserver$
+        .subscribe((list: SaleCommentList[]) => {
+          this.listSaleComment = list.map((obj: any) => {
+            obj.more = false;
+            return obj;
+          });
+        })
+    );
+            
+    // Historial
+    this.subscription.add(
+      this._tempSaleHistoryService.listObserver$
+        .subscribe((list: SaleHistoryList[]) => {
+          this.listSaleHistory = list.map((obj: any) => {
+            obj.more = false;
+            return obj;
+          });
+        })
+    );
   }
 
   ngOnDestroy(): void {
@@ -165,9 +238,53 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
 
   /**
    * ****************************************************************
-   * OPERACIONES CON LA API - CLIENT
+   * OPERACIONES CON LA API
    * ****************************************************************
    */
+  // Cargar los TIPO DE DOCUMENTOS
+  public apiTypeDocumentList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this._typeDocumentService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tipos de documentos ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los OPERADORES
+  public apiOperatorList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._operatorService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this._operatorService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los operadores ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
   // OPERACIONES CON LA API - OBTENER DATOS DEL CLIENTE
   public apiClientGetById(id: number): Promise<any>{
     this._sweetAlertService.loadingUp('Obteniendo datos')
@@ -182,6 +299,9 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
                 this.dataTypeDocument = TypeDocumentList.cast(data.person.type_document);
               }
               this.dataPerson = PersonList.cast(data.person);  
+
+              this.apiContactFilterByPerson(this.dataPerson.id);
+              this.apiAddressFilterByPerson(this.dataPerson.id);
             } 
             
             if(data.company !== null){
@@ -189,9 +309,12 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
                 this.dataTypeDocument = TypeDocumentList.cast(data.company.type_document);
               }
               this.dataCompany = CompanyList.cast(data.company);
+              this.apiContactFilterByCompany(this.dataCompany.id);
+              this.apiAddressFilterByCompany(this.dataCompany.id);
             } 
   
             this.dataClient = ClientList.cast(data);
+            this.apiBankAccountFilterByClient(this.dataClient.id);
           }
 
           resolve(response.data[0]);
@@ -213,11 +336,117 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API - VENTA DETALLE
-   * ****************************************************************
-   */
+  // Cargar los contactos del cliente -  PERSONA
+  public apiContactFilterByPerson(personId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._contactService.getFilterPersonId(personId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._contactService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los contactos del cliente -   EMPRESA
+  public apiContactFilterByCompany(companyId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._contactService.getFilterCompanyId(companyId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._contactService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los direcciones del cliente -   PERSONA
+  public apiAddressFilterByPerson(personId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._addressService.getFilterPersonId(personId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._addressService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los direcciones del cliente -   EMPRESA
+  public apiAddressFilterByCompany(companyId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._addressService.getFilterCompanyId(companyId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._addressService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar las cuentas bancarias del cliente -  CLIENTE
+  public apiBankAccountFilterByClient(clientId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._bankAccountService.getFilterClientId(clientId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._bankAccountService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las cuentas bancarias ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar la VENTA DETALLE
   public apiTempSaleDetailFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tempSaleDetailService.getBySale(saleId).subscribe((response: ResponseApi) => {
@@ -240,6 +469,74 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Cargar los DOCUMENTOS DE LA VENTA
+  public apiSaleDocumentFilterSale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._tempSaleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._tempSaleDocumentService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los documentos ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // cargar los COMENTARIOS DE LA VENTA
+  public apiSaleCommentFilterSale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._tempSaleCommentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._tempSaleCommentService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los comentarios ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los COMENTARIOS DE LA VENTA
+  public apiSaleHistoryFilterSale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._tempSaleHistoryService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        console.log("HISTORIAL:", response.data)
+        this._tempSaleHistoryService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar el historial ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+
 
   /**
    * ****************************************************************
@@ -256,7 +553,20 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
    * ****************************************************************
    */
   getRowDetailIsNullJson(data: any){
+    if(data?.tipo_servicios_nombre?.toLowerCase().includes('tv')){
+      return false;
+    }
     return data.datos_json !== null? false: true
 
+  }
+
+
+  /**
+   * ****************************************************************
+   * MOSTRAR COMENTARIO
+   * ****************************************************************
+   */
+  toggleCommentMore(item: any){
+    item.more = !item.more;
   }
 }

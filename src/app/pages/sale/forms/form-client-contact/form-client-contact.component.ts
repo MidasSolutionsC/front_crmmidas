@@ -47,6 +47,7 @@ export class FormClientContactComponent implements OnInit, OnDestroy, OnChanges 
   ngOnInit(): void {
     // Instanciar form
     this.initForm();
+    this.onChangeData();
     
     // ID PERSONA
     this.subscription.add(
@@ -83,7 +84,9 @@ export class FormClientContactComponent implements OnInit, OnDestroy, OnChanges 
   // DATOS EMITIDOS
   onChangeData(){
     if(this.data){
-      this.contactForm.setValue({...this.data});
+      if(this.contactForm){
+        this.contactForm.setValue(Contact.cast(this.data));
+      }
       this.isNewData = false;
       // setTimeout(() => {
       //   this.focusTipo.nativeElement.focus();
@@ -97,7 +100,7 @@ export class FormClientContactComponent implements OnInit, OnDestroy, OnChanges 
 
   /**
    * ****************************************************************
-   * OPERACIONES CON LA API
+   * OPERACIONES CON LA API - TEMPORAL
    * ****************************************************************
    */
   private apiContactSave(data: Contact | FormData){
@@ -157,7 +160,7 @@ export class FormClientContactComponent implements OnInit, OnDestroy, OnChanges 
             data.tipo_text = tipo_text;
             this._contactService.updateObjectObserver(data);
             this.onReset();
-            this.submit.emit({saved: true});
+            this.submit.emit({updated: true, data});
           }
         }
 

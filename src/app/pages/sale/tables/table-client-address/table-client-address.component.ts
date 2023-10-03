@@ -249,7 +249,7 @@ export class TableClientAddressComponent implements OnInit, OnDestroy, OnChanges
    * ****************************************************************
    */
   onSubmit(event: any){
-    if(event?.saved){
+    if(event?.saved || event?.updated){
       this.toggleList(false);
     }
   
