@@ -15,5 +15,6 @@ export * from './address.model'
 export * from './contact.model'
 export * from './bank-account.model'
 export * from './ipAllowed.model'
+export * from './identification-document.model'
 
 

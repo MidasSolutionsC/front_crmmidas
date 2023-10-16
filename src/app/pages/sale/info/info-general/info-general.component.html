@@ -1,403 +1,206 @@
 <div>
 
-  <strong class="text-primary mb-2">DATOS DEL CLIENTE</strong>
-  <div class="card border border-info">
-    <div class="card-body">
-
-      <div class="row g-3">
-        <div class="col-md-4">
-          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-            <strong>Persona jurídica:</strong><span>{{dataClient?.persona_juridica? 'SI': 'NO'}}</span>
+  <div class="row g-2">
+    <div class="col-lg-6">
+      <strong class="text-primary mb-3 w-100">DATOS DEL CLIENTE</strong>
+      <div class="card border border-info">
+        <div class="card-body">
+    
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Persona jurídica:</strong><span>{{dataClient?.persona_juridica? 'SI': 'NO'}}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <!-- EMPRESA -->
-      <div class="row g-3" *ngIf="dataClient?.persona_juridica">
-        <div class="col-md-4">
-          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-            <strong>Razón social:</strong><span>{{dataCompany?.razon_social}}</span>
+    
+          <!-- EMPRESA -->
+          <div class="row g-3" *ngIf="dataClient?.persona_juridica">
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Razón social:</strong><span>{{dataCompany?.razon_social}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Nombre comercial:</strong><span>{{dataCompany?.nombre_comercial}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataCompany?.documento}}</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-            <strong>Nombre comercial:</strong><span>{{dataCompany?.nombre_comercial}}</span>
+    
+          <!-- PERSONA -->
+          <div class="row g-3" *ngIf="!dataClient?.persona_juridica">
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Nombres:</strong><span>{{dataPerson?.nombres}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>Apellidos:</strong><span>{{dataPerson?.apellido_paterno}} {{dataPerson?.apellido_materno}}</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataPerson?.documento}}</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-            <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataCompany?.documento}}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- PERSONA -->
-      <div class="row g-3" *ngIf="!dataClient?.persona_juridica">
-        <div class="col-md-4">
-          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-            <strong>Nombres:</strong><span>{{dataPerson?.nombres}}</span>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-            <strong>Apellidos:</strong><span>{{dataPerson?.apellido_paterno}} {{dataPerson?.apellido_materno}}</span>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-            <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataPerson?.documento}}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- MÀS DATOS DEL CLIENTE -->
-      <hr>
-      <div class="row g-2">
-        <div class="col-md-4">
-          <div class="card card-body border">
-            <h5 class="card-title font-size-13 mb-3">Contactos</h5>
-            <ul class="verti-timeline list-unstyled">
-              <ng-container *ngFor="let item of listContact; index as i">
-                <ng-template [ngTemplateOutlet]="templateContact"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
-              </ng-container>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card card-body border">
-            <h5 class="card-title font-size-13 mb-3">Direcciones</h5>
-            <ul class="verti-timeline list-unstyled">
-              <ng-container *ngFor="let item of listAddress; index as i">
-                <ng-template [ngTemplateOutlet]="templateAddress"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
-              </ng-container>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card card-body border">
-            <h5 class="card-title font-size-13 mb-3">Cuentas bancarias</h5>
-            <ul class="verti-timeline list-unstyled">
-              <ng-container *ngFor="let item of listBankAccount; index as i">
-                <ng-template [ngTemplateOutlet]="templateBankAccount"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
-              </ng-container>
-            </ul>
+    
+          <!-- MÀS DATOS DEL CLIENTE -->
+          <hr>
+          <div class="row g-2">
+            <div class="col-md-4">
+              <div class="card card-body border">
+                <h5 class="card-title font-size-13 mb-3">Contactos</h5>
+                <ul class="verti-timeline list-unstyled">
+                  <ng-container *ngFor="let item of listContact; index as i">
+                    <ng-template [ngTemplateOutlet]="templateContact"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+                  </ng-container>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card card-body border">
+                <h5 class="card-title font-size-13 mb-3">Direcciones</h5>
+                <ul class="verti-timeline list-unstyled">
+                  <ng-container *ngFor="let item of listAddress; index as i">
+                    <ng-template [ngTemplateOutlet]="templateAddress"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+                  </ng-container>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card card-body border">
+                <h5 class="card-title font-size-13 mb-3">Cuentas bancarias</h5>
+                <ul class="verti-timeline list-unstyled">
+                  <ng-container *ngFor="let item of listBankAccount; index as i">
+                    <ng-template [ngTemplateOutlet]="templateBankAccount"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+                  </ng-container>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <ng-template #templateContact let-item="item" let-i="index">
-    <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
-      <div class="event-timeline-dot">
-          <i class="bx bxs-right-arrow-circle font-size-18" [ngClass]="{'bx-fade-right': item.is_primary == 1}"></i>
-      </div>
-      <div class="d-flex flex-wrap">
-          <div class="flex-shrink-0 me-3">
-              <h5 class="font-size-14 text-capitalize">{{item.tipo_text}} <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i>
-              </h5>
-          </div>
-          <div class="flex-grow-1">
-              <div>
-                  {{item.contacto}}
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+  
+  <ng-template #content>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="invoice-title">
+              <h4 class="float-end font-size-16">Order # 12345</h4>
+              <!-- <div class="auth-logo mb-4">
+                <img src="assets/images/logo-dark.png" alt="logo" class="auth-logo-dark" height="20"/>
+                <img src="assets/images/logo-light.png" alt="logo" class="auth-logo-light" height="20"/>
+              </div> -->
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-6">
+                <address>
+                  <strong>Billed To:</strong><br>
+                  John Smith<br>
+                  1234 Main<br>
+                  Apt. 4B<br>
+                  Springfield, ST 54321
+                </address>
               </div>
-          </div>
-      </div>
-    </li>
-  </ng-template>
-
-  <ng-template #templateAddress let-item="item" let-i="index">
-    <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
-      <div class="event-timeline-dot">
-          <i class="bx bxs-right-arrow-circle font-size-18" [ngClass]="{'bx-fade-right': item.is_primary == 1}"></i>
-      </div>
-      <div class="d-flex flex-wrap">
-          <div class="flex-shrink-0 me-3">
-              <h5 class="font-size-14 text-capitalize">{{item.codigo_postal}} <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i>
-              </h5>
-          </div>
-          <div class="flex-grow-1">
-              <div>
-                  {{item.direccion_completo}}
+              <div class="col-6 text-sm-end">
+                <address>
+                  <strong>Shipped To:</strong><br>
+                  Kenny Rigdon<br>
+                  1234 Main<br>
+                  Apt. 4B<br>
+                  Springfield, ST 54321
+                </address>
               </div>
-          </div>
-      </div>
-    </li>
-  </ng-template>
-
-  <ng-template #templateBankAccount let-item="item" let-i="index">
-    <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
-      <div class="event-timeline-dot">
-          <i class="bx bxs-right-arrow-circle font-size-18" [ngClass]="{'bx-fade-right': item.is_primary == 1}"></i>
-      </div>
-      <div class="d-flex flex-wrap">
-          <div class="flex-shrink-0 me-3">
-              <h5 class="font-size-14 text-capitalize">{{item.tipo_cuentas_bancarias_nombre}} <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i>
-              </h5>
-          </div>
-          <div class="flex-grow-1">
-              <div>
-                  {{item.cuenta}}
+            </div>
+            <div class="row">
+              <div class="col-6 mt-3">
+                <address>
+                  <strong>Payment Method:</strong><br>
+                  Visa ending **** 4242<br>
+                  jsmith@email.com
+                </address>
               </div>
-          </div>
-      </div>
-    </li>
-  </ng-template>
-
-  <!-- DETALLE ´PRODUCTO -->
-  <div class="row g-2 mt-3">
-    <strong class="text-primary text-uppercase">Servicios agregado a la compra</strong>
-    <div class="col-md-4">
-      <div class="card card-header mb-2 py-2 bg-primary ">
-        <h5 class="text-white font-size-14 m-0">Linea fija</h5>
-      </div>
-
-      <div *ngFor="let item of groupSaleDetail?.fixed">
-
-        <div class="card jobs-categories">
-          <div class="card-body p-0">
-            <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2"
-              [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
-              (click)="toggleVisibility(item)">{{item?.servicios_nombre}}
-              <span accordion-heading class="float-end fs-5">
-                <i class="mdi"
-                  [ngClass]="!item.visible ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
-              </span>
-            </a>
-          </div>
-          <div class="card-body border border-info rounded" *ngIf="item.visible">
-            <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>
-            <ng-container *ngTemplateOutlet="templateFixed; context: { $implicit: item }"></ng-container>
-            <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>
+              <div class="col-6 mt-3 text-sm-end">
+                <address>
+                  <strong>Order Date:</strong><br>
+                  October 16, 2019<br><br>
+                </address>
+              </div>
+            </div>
+            <div class="py-2 mt-3">
+              <h3 class="font-size-15 fw-bold">Order summary</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 70px;">No.</th>
+                    <th>Item</th>
+                    <th class="text-end">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>01</td>
+                    <td>Skote - Admin Dashboard Template</td>
+                    <td class="text-end">$499.00</td>
+                  </tr>
+  
+                  <tr>
+                    <td>02</td>
+                    <td>Skote - Landing Template</td>
+                    <td class="text-end">$399.00</td>
+                  </tr>
+  
+                  <tr>
+                    <td>03</td>
+                    <td>Veltrix - Admin Dashboard Template</td>
+                    <td class="text-end">$499.00</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="text-end">Sub Total</td>
+                    <td class="text-end">$1397.00</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="border-0 text-end">
+                      <strong>Shipping</strong></td>
+                    <td class="border-0 text-end">$13.00</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="border-0 text-end">
+                      <strong>Total</strong></td>
+                    <td class="border-0 text-end">
+                      <h4 class="m-0">$1410.00</h4>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card card-header mb-2 py-2 bg-success ">
-        <h5 class="text-white font-size-14 m-0">Linea Mobile</h5>
-      </div>
-
-      <div *ngFor="let item of groupSaleDetail?.mobile">
-        <div class="card jobs-categories">
-          <div class="card-body p-0">
-            <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2"
-              [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
-              (click)="toggleVisibility(item)">{{item?.servicios_nombre}}
-              <span accordion-heading class="float-end fs-5">
-                <i class="mdi"
-                  [ngClass]="!item.visible ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
-              </span>
-            </a>
-          </div>
-          <div class="card-body border border-info rounded" *ngIf="item.visible">
-            <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>
-            <ng-container *ngTemplateOutlet="templateMobile; context: { $implicit: item }"></ng-container>
-            <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card card-header mb-2 py-2 bg-warning ">
-        <h5 class="text-white font-size-14 m-0">Linea TV</h5>
-      </div>
-
-      <div *ngFor="let item of groupSaleDetail?.tv">
-        <div class="card jobs-categories">
-          <div class="card-body p-0">
-            <a href="javascript:void(0);" class="px-3 py-2 rounded bg-light bg-opacity-50 d-block mb-2"
-              [ngClass]="{'border border-danger': getRowDetailIsNullJson(item)}"
-              (click)="toggleVisibility(item)">{{item?.servicios_nombre}}
-              <span accordion-heading class="float-end fs-5">
-                <i class="mdi"
-                  [ngClass]="!item.visible ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
-              </span>
-            </a>
-          </div>
-          <div class="card-body border border-info rounded" *ngIf="item.visible">
-            <ng-container *ngTemplateOutlet="templateData; context: { $implicit: item }"></ng-container>
-            <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container>
-          </div>
-        </div>
-      </div>
+  </ng-template>
+  
+  <div class="d-print-none d-none">
+    <div class="float-end">
+      <a href="javascript:void(0)" (click)="printContentInfo(content)" class="btn btn-success"><i class="fa fa-print"></i></a>
+      <a href="javascript: void(0);" class="btn btn-primary w-md ms-1">Send</a>
     </div>
   </div>
-
-  <ng-template #templateMobile let-item>
-    <div class="row g-2 mb-3" *ngIf="item.visible">
-      <strong class="text-primary">Detalle del servicio</strong>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Tipo documento:</strong><span>{{item?.datos_json?.tipo_documento_abreviacion}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>N° Documento:</strong><span>{{item?.datos_json?.documento_titular}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Titular:</strong><span>{{item?.datos_json?.titular}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Operador donante:</strong><span>{{item?.datos_json?.operador_donante_nombre}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>N° Portar:</strong><span>{{item?.datos_json?.num_portar}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>CCI:</strong><span>{{item?.datos_json?.icc}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Terminal:</strong><span>{{item?.datos_json?.terminal? 'SI': 'NO'}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Modelo terminal:</strong><span>{{item?.datos_json?.modelo_terminal}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>AOP:</strong><span>{{item?.datos_json?.aop}}</span>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #templateFixed let-item>
-    <div class="row g-2 mb-3" *ngIf="item.visible">
-      <strong class="text-primary">Detalle del servicio</strong>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Tipo documento:</strong><span>{{item?.datos_json?.tipo_documento_abreviacion}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>N° Documento:</strong><span>{{item?.datos_json?.documento_titular}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Titular:</strong><span>{{item?.datos_json?.titular}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Operador donante:</strong><span>{{item?.datos_json?.operador_donante_nombre}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>N° Portar:</strong><span>{{item?.datos_json?.num_portar}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>AOP:</strong><span>{{item?.datos_json?.aop}}</span>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #templateData let-item>
-    <div class="row g-2 mb-3" *ngIf="item.visible">
-      <strong class="text-primary">Servicio</strong>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Servicio:</strong><span>{{item?.servicios_nombre}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Tipo estado:</strong><span>{{item?.tipo_estados_nombre}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Fecha cierre:</strong><span>{{item?.fecha_cierre}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Observación:</strong><span>{{item?.observacion}}</span>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #templateInstallation let-item>
-    <div class="row g-2" *ngIf="item.visible">
-      <strong class="text-primary">Instalación</strong>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Instalación:</strong><span>{{item?.instalaciones_direccion_completo}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Provincia:</strong><span>{{item?.instalaciones_provincia}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Localidad:</strong><span>{{item?.instalaciones_localidad}}</span>
-      </div>
-      <div class="col-md-6 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-        <strong>Código postal:</strong><span>{{item?.instalaciones_codigo_postal}}</span>
-      </div>
-    </div>
-  </ng-template>
-
-  <!-- DOCUMENTOS, COMENTARIO, HISTORIAL -->
-  <div class="row g-2 mt-3">
-
-    <div class="col-md-4">
-      <strong class="text-primary text-uppercase">Archivos</strong>
-      <div *ngFor="let item of listSaleDocument">
-        <div class="card-body border border-info rounded p-1">
-          <ng-container *ngTemplateOutlet="templateDocument; context: { $implicit: item }"></ng-container>
-        </div>
-      </div>
-      <div *ngIf="!listSaleDocument?.length">
-        <p class="text-start">Sin registros</p>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <strong class="text-primary text-uppercase">Comentarios</strong>
-      <div *ngFor="let item of listSaleComment">
-        <div class="card-body border border-info rounded p-1">
-          <ng-container *ngTemplateOutlet="templateComment; context: { $implicit: item }"></ng-container>
-        </div>
-      </div>
-      <div *ngIf="!listSaleComment?.length">
-        <p class="text-start">Sin registros</p>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <strong class="text-primary text-uppercase">Historial</strong>
-      <div *ngFor="let item of listSaleHistory">
-        <div class="card-body border border-info rounded p-1">
-          <ng-container *ngTemplateOutlet="templateHistory; context: { $implicit: item }"></ng-container>
-        </div>
-      </div>
-      <div *ngIf="!listSaleHistory?.length">
-        <p class="text-start">Sin registros</p>
-      </div>
-    </div>
-  </div>
-
-
-  <ng-template #templateDocument let-item>
-    <div class="row g-2">
-      <div class="col-sm-4">
-        <img [src]="URL_FILES + item.archivo" alt="" class="rounded"
-          style="width: 100%; max-height: 80px; object-fit: contain; object-position: center;"
-          *ngIf="item.tipo == 'jpg' || item.tipo == 'jpeg' || item.tipo == 'png'">
-        <div *ngIf="item.tipo !== 'jpg' && item.tipo !== 'jpeg' && item.tipo !== 'png'"
-          class="w-100 bg-secondary rounded" style="height: 80px;">
-
-        </div>
-      </div>
-      <div class="col-sm-8">
-        <div class="h-100">
-          <span class="w-100 d-block fw-semibold">{{item.nombre}} ({{item.tipo}})</span>
-          <div class="text-start">
-            <span class="blockquote-footer">{{item.created_at}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #templateComment let-item>
-    <div *ngIf="item.comentario">
-      <p [ngClass]="{'text-truncate-3': !item.more}">{{item.comentario}}</p>
-      <b type="button" (click)="toggleCommentMore(item)">{{item.more? 'Menos': 'Más'}}</b>
-    </div>
-    <div class="text-end">
-      <span class="blockquote-footer">{{item.created_at}}</span>
-    </div>
-  </ng-template>
-
-  <ng-template #templateHistory let-item>
-    <span class="fw-semibold d-block w-100">{{item.tipo_estados_nombre}}</span>
-    <div class="w-100" *ngIf="item.comentario">
-      <p [ngClass]="{'text-truncate-3': !item.more}">{{item.comentario}}</p>
-      <b type="button" (click)="toggleCommentMore(item)">{{item.more? 'Menos': 'Más'}}</b>
-    </div>
-    <div class="text-end">
-      <span class="blockquote-footer">{{item.created_at}}</span>
-    </div>
-  </ng-template>
+  
 </div>

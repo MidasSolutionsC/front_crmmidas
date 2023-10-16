@@ -4,6 +4,7 @@ export class SaleDocument extends Model{
   public id: number;
   public ventas_id: number;
   public ventas_detalles_id: number;
+  public tipo_documentos_id: number;
   public tipo: string;
   public nombre: string;
   public archivo: string;
@@ -14,6 +15,7 @@ export class SaleDocument extends Model{
     this.id = this.id || null;
     this.ventas_id = this.ventas_id || null;
     this.ventas_detalles_id = this.ventas_detalles_id || null;
+    this.tipo_documentos_id = this.tipo_documentos_id || null;
     this.nombre = this.nombre || null;
     this.tipo = this.tipo || null;
     this.archivo = this.archivo || null;
@@ -26,6 +28,7 @@ export class SaleDocument extends Model{
       id: obj.id,
       ventas_id: obj.ventas_id,
       ventas_detalles_id: obj.ventas_detalles_id,
+      tipo_documentos_id: obj.tipo_documentos_id,
       nombre: obj.nombre,
       tipo: obj.tipo,
       archivo: obj.archivo,
@@ -42,6 +45,7 @@ export class SaleDocumentList extends Model{
   public id: number;
   public ventas_id: number;
   public ventas_detalles_id: number;
+  public tipo_documentos_id: number;
   public tipo: string;
   public nombre: string;
   public archivo: string;
@@ -52,6 +56,7 @@ export class SaleDocumentList extends Model{
     this.id = this.id || null;
     this.ventas_id = this.ventas_id || null;
     this.ventas_detalles_id = this.ventas_detalles_id || null;
+    this.tipo_documentos_id = this.tipo_documentos_id || null;
     this.nombre = this.nombre || null;
     this.tipo = this.tipo || null;
     this.archivo = this.archivo || null;
@@ -64,6 +69,7 @@ export class SaleDocumentList extends Model{
       id: obj.id,
       ventas_id: obj.ventas_id,
       ventas_detalles_id: obj.ventas_detalles_id,
+      tipo_documentos_id: obj.tipo_documentos_id,
       nombre: obj.nombre,
       tipo: obj.tipo,
       archivo: obj.archivo,

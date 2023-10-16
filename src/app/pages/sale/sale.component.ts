@@ -10,6 +10,7 @@ import {SaleService } from 'src/app/core/services/api/sale.service';
 import { ModalRegisterComponent } from './modals/modal-register/modal-register.component';
 import { ModalUpdateComponent } from './modals/modal-update/modal-update.component';
 import { ModalDetailComponent } from './modals/modal-detail/modal-detail.component';
+import { ModalFormComponent } from './modals/modal-form/modal-form.component';
 @Component({
   selector: 'app-sale',
   templateUrl: './sale.component.html',
@@ -61,6 +62,7 @@ export class SaleComponent {
     private formBuilder: FormBuilder) {
 
   }
+  
   ngOnInit(): void {
     this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Ventas', active: true }]);
 
@@ -416,6 +418,15 @@ export class SaleComponent {
    */
   openModalForm(){
     const initialState = {};
+    this.modalRef = this.modalService.show(ModalFormComponent, {initialState, class: 'modal-xl modal-dialog-centered modal-dialog-scrollable', backdrop: 'static'});
+    this.modalRef.onHide.subscribe((value) => {
+      // console.log(value);
+    });
+  }
+
+  // MODAL - FORMULARIO DE VENTA
+  openModalFormRegister(){
+    const initialState = {};
     this.modalRef = this.modalService.show(ModalRegisterComponent, {initialState, class: 'modal-fullscreen modal-dialog-centered modal-dialog-scrollable'});
     this.modalRef.onHide.subscribe((next) => {
       // console.log(next);
@@ -427,7 +438,7 @@ export class SaleComponent {
     const initialState = {
       dataInput: data
     };
-    this.modalRef = this.modalService.show(ModalUpdateComponent, {initialState, class: 'modal-fullscreen modal-dialog-centered modal-dialog-scrollable'});
+    this.modalRef = this.modalService.show(ModalUpdateComponent, {initialState, class: 'modal-xl modal-dialog-centered modal-dialog-scrollable', backdrop: 'static'});
     this.modalRef.onHide.subscribe((next) => {
       // console.log(next);
     });

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { AddressList, BankAccountList, CompanyList, ContactList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { ClientList } from 'src/app/core/models/api/client.model';
@@ -10,6 +10,10 @@ import { AddressService, ApiErrorFormattingService, BankAccountService, ClientSe
   styleUrls: ['./info-general.component.scss']
 })
 export class InfoGeneralComponent implements OnInit, OnDestroy {
+
+  @ViewChild('content') contentPrint: TemplateRef<HTMLElement>;
+  contentPrintHtml: string = '';
+
 
   URL_FILES: string = '';
 
@@ -569,4 +573,24 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
   toggleCommentMore(item: any){
     item.more = !item.more;
   }
+
+
+
+  /***
+   * *************************************************************
+   * IMPRIMIR CONTENIDOS
+   * *************************************************************
+   */
+  printContentInfo(content?: TemplateRef<any>){
+    const div = document.createElement('div');
+    div.appendChild(content.createEmbeddedView(null).rootNodes[0].cloneNode(true));
+    // const content = template.elementRef.nativeElement;
+    const windowPrint = window.open(); // '', '', 'width=800'
+    windowPrint.document.open();
+    windowPrint.document.write(div.innerHTML);
+    windowPrint.document.close();
+    windowPrint.print();
+    windowPrint.close();
+  }
+
 }

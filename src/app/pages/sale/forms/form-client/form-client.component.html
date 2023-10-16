@@ -1,779 +1,97 @@
-<div class="card shadow-sm border border-primary">
-  <div class="card-body border-bottom">
-    <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
-      <div class="mb-2">
-        <h4 class="card-title text-primary">1. Buscador de persona/empresa</h4>
-        <p class="card-sub-title">
-          Realice una búsqueda de clientes registrados
-        </p>
-        <ui-switch  
-          color="#556ee6" 
-          (change)="onSwitchChangeTypeClient($event)" 
-          [(ngModel)]="isClientPerson" 
-          uncheckedLabel="Empresa" 
-          checkedLabel="Persona" 
-          uncheckedTextColor="black"
-          checkedTextColor="white"
-          size="small" class="me-1 w-100"></ui-switch>
-
+<form (keydown.enter)="$event.preventDefault()" [formGroup]="clientForm" autocomplete="off">
+  <h5 class="card-title fw-bold">Datos del cliente</h5>
+  <div class="row g-2">
+    <div class="col-lg-3 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.type_client.label' | translate as translatedLabel;">
+      <label for="tipo_cliente" class="form-label">{{translatedLabel}}</label>
+      <ng-select id="tipo_cliente" formControlName="tipo_cliente" #focusTipoCliente
+        (change)="onChangeFieldTypeClient()"
+        [notFoundText]="'No se encontraron elementos'"
+        [ngClass]="{ 'is-invalid': fClient.tipo_cliente.errors && (fClient.tipo_cliente.dirty || fClient.tipo_cliente.touched || submittedClient) }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_client.default_option' | translate}}</ng-option>
+        <ng-option *ngFor="let typeClient of listTypeClientFilter" [value]="typeClient.id">{{typeClient.name}}</ng-option>
+      </ng-select>
+      <div *ngIf="fClient.tipo_cliente.errors && (fClient.tipo_cliente.dirty || fClient.tipo_cliente.touched || submittedClient)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="fClient.tipo_cliente.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
       </div>
-      <div class="d-flex gap-2">
-        <button type="button" class="btn btn-info" (click)="toggleFormSearchClient()">
-          <i class="mdi" [ngClass]="{'mdi-filter': isCollapseFormSearchClient, 'mdi-filter-off': !isCollapseFormSearchClient}"></i>
-        </button>
-        <button type="button" class="btn btn-primary" (click)="toggleFormClient()">
-          <i class="mdi" [ngClass]="{'mdi-plus': isCollapseFormClient, 'mdi-minus': !isCollapseFormClient}"></i>
-          {{'FORMS.BUTTONS.FORM' | translate}}
-        </button>
+    </div>  
+    <!-- <div class="col-lg-3 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.code_loaded.label' | translate as translatedLabel;">
+      <label for="codigo_carga" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="codigo_carga" class="form-control"
+        formControlName="codigo_carga"
+        placeholder="{{'FORMS.FIELD_NAMES.code_loaded.placeholder' | translate}}"
+        [ngClass]="{ 'is-invalid': fClient.codigo_carga.errors && (fClient.codigo_carga.dirty || fClient.codigo_carga.touched || submittedClient) }" />
+      <div *ngIf="fClient.codigo_carga.errors && (fClient.codigo_carga.dirty || fClient.codigo_carga.touched || submittedClient)" class="invalid-feedback" align="left">
+        <div *ngIf="fClient.codigo_carga.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="fClient.codigo_carga.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fClient.codigo_carga.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="fClient.codigo_carga.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fClient.codigo_carga.errors.maxlength.requiredLength}}
+        </div>
       </div>
     </div>
+    <div class="col-lg-3 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.vodafond_segment.label' | translate as translatedLabel;">
+      <label for="segmento_vodafond" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="segmento_vodafond" class="form-control"
+        formControlName="segmento_vodafond"
+        placeholder="{{'FORMS.FIELD_NAMES.vodafond_segment.placeholder' | translate}}"
+        [ngClass]="{ 'is-invalid': fClient.segmento_vodafond.errors && (fClient.segmento_vodafond.dirty || fClient.segmento_vodafond.touched || submittedClient) }" />
+      <div *ngIf="fClient.segmento_vodafond.errors && (fClient.segmento_vodafond.dirty || fClient.segmento_vodafond.touched || submittedClient)" class="invalid-feedback" align="left">
+        <div *ngIf="fClient.segmento_vodafond.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="fClient.segmento_vodafond.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fClient.segmento_vodafond.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="fClient.segmento_vodafond.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fClient.segmento_vodafond.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div> -->
   </div>
-  <div class="card-body border-bottom" [collapse]="isCollapseFormSearchClient" [isAnimated]="true">
-    <form (keydown.enter)="$event.preventDefault()" [formGroup]="searchClientForm" autocomplete="off">
-      <div class="row g-2">
-        <div class="col-md-3 mb-3"
-          *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
-          <label for="tipo_documentos_id" class="form-label">{{translatedLabel}}</label>
-          <ng-select id="tipo_documentos_id" formControlName="tipo_documentos_id"
-            [notFoundText]="'No se encontraron elementos'"
-            [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submittedSearchClient) }">
-            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</ng-option>
-            <ng-option *ngFor="let typeDocument of listTypeDocumentFilters" [value]="typeDocument.id">{{typeDocument.abreviacion}}</ng-option>
-          </ng-select>
-          <div *ngIf="fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submittedSearchClient)"
-            class="invalid-feedback" align="left">
-            <div *ngIf="fs.tipo_documentos_id.errors['required']">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-3"
-          *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
-          <label for="documento" class="form-label">{{translatedLabel}}</label>
-          <input type="text" id="documento" class="form-control"
-            placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}"
-            formControlName="documento"
-            [ngClass]="{ 'is-invalid': fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submittedSearchClient) }" />
-          <div *ngIf="fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submittedSearchClient)"
-            class="invalid-feedback" align="left">
-            <div *ngIf="fs.documento.errors['required']">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-              translatedLabel}}
-            </div>
-            <div *ngIf="fs.documento.errors.minlength">
-              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.documento.errors.minlength.requiredLength}}
-            </div>
-            <div *ngIf="fs.documento.errors.maxlength">
-              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.documento.errors.maxlength.requiredLength}}
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-3"
-          *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
-          <label for="nombre" class="form-label">{{translatedLabel}}</label>
-          <input type="text" id="nombre" class="form-control"
-            placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}"
-            formControlName="nombre"
-            [ngClass]="{ 'is-invalid': fs.nombre.errors && (fs.nombre.dirty || fs.nombre.touched || submittedSearchClient) }" />
-          <div *ngIf="fs.nombre.errors && (fs.nombre.dirty || fs.nombre.touched || submittedSearchClient)"
-            class="invalid-feedback" align="left">
-            <div *ngIf="fs.nombre.errors['required']">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-              translatedLabel}}
-            </div>
-            <div *ngIf="fs.nombre.errors.minlength">
-              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.nombre.errors.minlength.requiredLength}}
-            </div>
-            <div *ngIf="fs.nombre.errors.maxlength">
-              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.nombre.errors.maxlength.requiredLength}}
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-3">
-          <label for="" class="form-label w-100">&nbsp;</label>
-          <div class="input-group">
-            <button type="button" class="btn btn-info" (click)="searchClient()">
-              <i class="mdi mdi-magnify"></i>
-              {{'FORMS.BUTTONS.SEARCH' | translate}}
-            </button>
-            <button type="button" class="btn btn-secondary" (click)="resetFormSearchClient()">
-              <i class="mdi mdi-close"></i>
-              {{'FORMS.BUTTONS.RESET' | translate}}
-            </button>
-          </div>
-        </div>
-      </div>    
-    </form>
-  </div>
-  <div class="card-body border-bottom" [collapse]="isCollapseClientList" [isAnimated]="true">
-    <div class="table-responsive" *ngIf="isClientPerson">
-      <div class="w-100 border-bottom border-info pt-2">
-        <h5 class="font-size-14 fw-bold text-info">Lista de personas filtradas</h5>
-        <p class="card-sub-title">
-          Seleccione un registro, para auto completar el formulario
-        </p>
-      </div>
-      <table class="table align-middle dt-responsive nowrap w-100 table-check table-hover">
-        <thead>
-          <tr>
-            <th scope="col">N°</th>
-            <th scope="col">Nombres</th>
-            <th scope="col">Apellidos</th>
-            <th scope="col">Tipo Doc.</th>
-            <th scope="col">N° Documento</th>
-            <th scope="col">País</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of listPersons; let i = index" (click)="selectClientRowTable(data.id)" type="button">
-            <th scope="row">{{i + 1}}</th>
-            <td>{{data.nombres}}</td>
-            <td>{{data.apellido_paterno}} {{data.apellido_materno}}</td>
-            <td>{{data.tipo_documentos_abreviacion}}</td>
-            <td>{{data.documento}}</td>
-            <td>{{data.paises_nombre}}</td>
-          </tr>
+</form>
 
-          <tr *ngIf="!listPersons.length">
-            <td colspan="6" class="text-center">Sin registros.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="table-responsive" *ngIf="!isClientPerson">
-      <div class="w-100 border-bottom border-info pt-2">
-        <h5 class="font-size-14 fw-bold text-info">Lista de empresas filtradas</h5>
-        <p class="card-sub-title">
-          Seleccione un registro, para auto completar el formulario
-        </p>
-      </div>
-      <table class="table align-middle dt-responsive nowrap w-100 table-check table-hover">
-        <thead>
-          <tr>
-            <th scope="col">N°</th>
-            <th scope="col">Razón social</th>
-            <th scope="col">Nombre comercial</th>
-            <th scope="col">Tipo Doc.</th>
-            <th scope="col">N° Documento</th>
-            <th scope="col">País</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of listCompanies; let i = index" (click)="selectClientRowTable(data.id)" type="button">
-            <th scope="row">{{i + 1}}</th>
-            <td>{{data.razon_social}}</td>
-            <td>{{data.nombre_comercial}}</td>
-            <td>{{data.tipo_documentos_abreviacion}}</td>
-            <td>{{data.documento}}</td>
-            <td>{{data.paises_nombre}}</td>
-          </tr>
+<!-- PERSONA -->
+<div *ngIf="!legalPerson">
+  <app-form-person [data]="dataPerson" [hiddenButtons]="true" (submit)="onDataPerson($event)"></app-form-person>
+</div>
 
-          <tr *ngIf="!listCompanies.length">
-            <td colspan="6" class="text-center">Sin registros.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="card-body" [collapse]="isCollapseFormClient" [isAnimated]="true">
-    <div *ngIf="isClientPerson">
-      <form (keydown.enter)="$event.preventDefault()" [formGroup]="personForm" autocomplete="off">
-        <h5 class="card-title text-primary">2. Formulario de persona</h5>
-        <h5 class="card-title fw-semibold">Datos personales</h5>
-
-        <div class="row g-2">
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.country.label' | translate as translatedLabel;">
-            <label for="paises_id" class="form-label">{{translatedLabel}}</label>
-            <ng-select id="paises_id" #paises_id formControlName="paises_id" autofocus
-              [notFoundText]="'No se encontraron elementos'"
-              [ngClass]="{ 'is-invalid': fp.paises_id.errors && (fp.paises_id.dirty || fp.paises_id.touched || submittedPerson) }">
-              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.country.default_option' | translate}}</ng-option>
-              <ng-option *ngFor="let country of listCountries" [value]="country.id">{{country.nombre}}</ng-option>
-            </ng-select>
-            <div *ngIf="fp.paises_id.errors && (fp.paises_id.dirty || fp.paises_id.touched || submittedPerson)"
-              class="invalid-feedback" align="left">
-              <div *ngIf="fp.paises_id.errors['required']">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-8 mb-3" *ngIf="'FORMS.FIELD_NAMES.district.label' | translate as translatedLabel;">
-            <label for="codigo_ubigeo" class="form-label">{{translatedLabel}}</label>
-            <ng-select 
-                      id="codigo_ubigeo" [ngClass]="{ 'is-invalid': fp.codigo_ubigeo.errors && (fp.codigo_ubigeo.dirty || fp.codigo_ubigeo.touched || submittedPerson) }"
-                      [items]="listUbigeos"
-                      [bindValue]="'ubigeo'"
-                      [bindLabel]="'ciudad'"
-                      [multiple]="false"
-                      formControlName="codigo_ubigeo"
-                      (search)="searchOptionUbigeo($event.term)">
-            </ng-select>
-            <!-- <input type="text" id="codigo_ubigeo" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.code.placeholder' | translate}}" formControlName="codigo_ubigeo" [ngClass]="{ 'is-invalid': f.codigo_ubigeo.errors && (f.codigo_ubigeo.dirty || f.codigo_ubigeo.touched || submitted) }" /> -->
-            <div *ngIf="fp.codigo_ubigeo.errors && (fp.codigo_ubigeo.dirty || fp.codigo_ubigeo.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.codigo_ubigeo.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row g-2">
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.names.label' | translate as translatedLabel;">
-            <label for="nombres" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="nombres" class="form-control" focus="true"
-              placeholder="{{'FORMS.FIELD_NAMES.names.placeholder' | translate}}"
-              formControlName="nombres"
-              [ngClass]="{ 'is-invalid': fp.nombres.errors && (fp.nombres.dirty || fp.nombres.touched || submittedPerson) }" />
-            <div *ngIf="fp.nombres.errors && (fp.nombres.dirty || fp.nombres.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.nombres.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-              </div>
-              <div *ngIf="fp.nombres.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.nombres.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.nombres.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.nombres.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.father_last_name.label' | translate as translatedLabel;">
-            <label for="apellido_paterno" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="apellido_paterno" class="form-control" focus="true"
-              placeholder="{{'FORMS.FIELD_NAMES.father_last_name.placeholder' | translate}}"
-              formControlName="apellido_paterno"
-              [ngClass]="{ 'is-invalid': fp.apellido_paterno.errors && (fp.apellido_paterno.dirty || fp.apellido_paterno.touched || submittedPerson) }" />
-            <div *ngIf="fp.apellido_paterno.errors && (fp.apellido_paterno.dirty || fp.apellido_paterno.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.apellido_paterno.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.apellido_paterno.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.apellido_paterno.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.apellido_paterno.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.apellido_paterno.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.mother_last_name.label' | translate as translatedLabel;">
-            <label for="apellido_materno" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="apellido_materno" class="form-control" focus="true"
-              placeholder="{{'FORMS.FIELD_NAMES.mother_last_name.placeholder' | translate}}"
-              formControlName="apellido_materno"
-              [ngClass]="{ 'is-invalid': fp.apellido_materno.errors && (fp.apellido_materno.dirty || fp.apellido_materno.touched || submittedPerson) }" />
-            <div *ngIf="fp.apellido_materno.errors && (fp.apellido_materno.dirty || fp.apellido_materno.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.apellido_materno.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.apellido_materno.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.apellido_materno.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.apellido_materno.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.apellido_materno.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row g-2">
-          <div class="col-md-3 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
-            <label for="tipo_documentos_id" class="form-label">{{translatedLabel}}</label>
-            <ng-select id="tipo_documentos_id" formControlName="tipo_documentos_id"
-              [notFoundText]="'No se encontraron elementos'"
-              [ngClass]="{ 'is-invalid': fp.tipo_documentos_id.errors && (fp.tipo_documentos_id.dirty || fp.tipo_documentos_id.touched || submittedPerson) }">
-              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</ng-option>
-              <ng-option *ngFor="let typeDocument of listTypeDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</ng-option>
-            </ng-select>
-            <div *ngIf="fp.tipo_documentos_id.errors && (fp.tipo_documentos_id.dirty || fp.tipo_documentos_id.touched || submittedPerson)"
-              class="invalid-feedback" align="left">
-              <div *ngIf="fp.tipo_documentos_id.errors['required']">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
-            <label for="documento" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="documento" class="form-control"
-              formControlName="documento"
-              placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fp.documento.errors && (fp.documento.dirty || fp.documento.touched || submittedPerson) }" />
-            <div *ngIf="fp.documento.errors && (fp.documento.dirty || fp.documento.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.documento.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.documento.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.documento.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.documento.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.documento.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.document_reverse.label' | translate as translatedLabel;">
-            <label for="reverso_documento" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="reverso_documento" class="form-control" focus="true"
-              formControlName="reverso_documento"
-              placeholder="{{'FORMS.FIELD_NAMES.document_reverse.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fp.reverso_documento.errors && (fp.reverso_documento.dirty || fp.reverso_documento.touched || submittedPerson) }" />
-            <div *ngIf="fp.reverso_documento.errors && (fp.reverso_documento.dirty || fp.reverso_documento.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.reverso_documento.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.reverso_documento.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.reverso_documento.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.reverso_documento.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.reverso_documento.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.birth_date.label' | translate as translatedLabel;">
-            <label for="fecha_nacimiento" class="form-label">{{translatedLabel}}</label>
-            <input type="date" id="fecha_nacimientofecha_nacimiento" class="form-control"
-              formControlName="fecha_nacimiento"
-              placeholder="{{'FORMS.FIELD_NAMES.birth_date.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fp.fecha_nacimiento.errors && (fp.fecha_nacimiento.dirty || fp.fecha_nacimiento.touched || submittedPerson) }" />
-            <div *ngIf="fp.fecha_nacimiento.errors && (fp.fecha_nacimiento.dirty || fp.fecha_nacimiento.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.fecha_nacimiento.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.fecha_nacimiento.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.fecha_nacimiento.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.fecha_nacimiento.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.fecha_nacimiento.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row g-2 d-none">
-          <div class="col-md-3 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.phone.label' | translate as translatedLabel;">
-            <label for="telefono" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="telefono" class="form-control" focus="true"
-              formControlName="telefono"
-              placeholder="{{'FORMS.FIELD_NAMES.phone.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fp.telefono.errors && (fp.telefono.dirty || fp.telefono.touched || submittedPerson) }" />
-            <div *ngIf="fp.telefono.errors && (fp.telefono.dirty || fp.telefono.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.telefono.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.telefono.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.telefono.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.telefono.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.telefono.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.email.label' | translate as translatedLabel;">
-            <label for="correo" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="correo" class="form-control" focus="true"
-              formControlName="correo"
-              placeholder="{{'FORMS.FIELD_NAMES.email.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fp.correo.errors && (fp.correo.dirty || fp.correo.touched || submittedPerson) }" />
-            <div *ngIf="fp.correo.errors && (fp.correo.dirty || fp.correo.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.correo.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.correo.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.correo.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.correo.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.correo.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-12 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.address.label' | translate as translatedLabel;">
-            <label for="direccion" class="form-label">{{translatedLabel}}</label>
-            <textarea 
-              name="direccion" id="direccion" cols="30" rows="1" class="form-control"    
-              formControlName="direccion"  
-              placeholder="{{'FORMS.FIELD_NAMES.address.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fp.direccion.errors && (fp.direccion.dirty || fp.direccion.touched || submittedPerson) }" 
-            ></textarea>
-            <div *ngIf="fp.direccion.errors && (fp.direccion.dirty || fp.direccion.touched || submittedPerson)" class="invalid-feedback" align="left">
-              <div *ngIf="fp.direccion.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fp.direccion.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fp.direccion.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fp.direccion.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fp.direccion.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <div *ngIf="!isClientPerson">
-      <form (keydown.enter)="$event.preventDefault()" [formGroup]="companyForm" autocomplete="off">
-        <h5 class="card-title text-primary">2. Formulario de empresa</h5>
-        <h5 class="card-title fw-semibold">Datos personales</h5>
-        <div class="row g-2">
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.country.label' | translate as translatedLabel;">
-            <label for="paises_id" class="form-label">{{translatedLabel}}</label>
-            <ng-select id="paises_id" formControlName="paises_id" autofocus
-              [notFoundText]="'No se encontraron elementos'"
-              [ngClass]="{ 'is-invalid': fc.paises_id.errors && (fc.paises_id.dirty || fc.paises_id.touched || submittedCompany) }">
-              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.country.default_option' | translate}}</ng-option>
-              <ng-option *ngFor="let country of listCountries" [value]="country.id">{{country.nombre}}</ng-option>
-            </ng-select>
-            <div *ngIf="fc.paises_id.errors && (fc.paises_id.dirty || fc.paises_id.touched || submittedCompany)"
-              class="invalid-feedback" align="left">
-              <div *ngIf="fc.paises_id.errors['required']">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-8 mb-3" *ngIf="'FORMS.FIELD_NAMES.district.label' | translate as translatedLabel;">
-            <label for="codigo_ubigeo" class="form-label">{{translatedLabel}}</label>
-            <ng-select 
-                      id="codigo_ubigeo" [ngClass]="{ 'is-invalid': fc.codigo_ubigeo.errors && (fc.codigo_ubigeo.dirty || fc.codigo_ubigeo.touched || submittedCompany) }"
-                      [items]="listUbigeos"
-                      [bindValue]="'ubigeo'"
-                      [bindLabel]="'ciudad'"
-                      [multiple]="false"
-                      formControlName="codigo_ubigeo"
-                      (search)="searchOptionUbigeo($event.term)">
-            </ng-select>
-            <div *ngIf="fc.codigo_ubigeo.errors && (fc.codigo_ubigeo.dirty || fc.codigo_ubigeo.touched || submittedCompany)" class="invalid-feedback" align="left">
-              <div *ngIf="fc.codigo_ubigeo.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row g-2">
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
-            <label for="tipo_documentos_id" class="form-label">{{translatedLabel}}</label>
-            <ng-select id="tipo_documentos_id" formControlName="tipo_documentos_id"
-              [notFoundText]="'No se encontraron elementos'"
-              [ngClass]="{ 'is-invalid': fc.tipo_documentos_id.errors && (fc.tipo_documentos_id.dirty || fc.tipo_documentos_id.touched || submittedCompany) }">
-              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</ng-option>
-              <ng-option *ngFor="let typeDocument of listTypeDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</ng-option>
-            </ng-select>
-            <div *ngIf="fc.tipo_documentos_id.errors && (fc.tipo_documentos_id.dirty || fc.tipo_documentos_id.touched || submittedCompany)"
-              class="invalid-feedback" align="left">
-              <div *ngIf="fc.tipo_documentos_id.errors['required']">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
-            <label for="documento" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="documento" class="form-control"
-              formControlName="documento"
-              placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fc.documento.errors && (fc.documento.dirty || fc.documento.touched || submittedCompany) }" />
-            <div *ngIf="fc.documento.errors && (fc.documento.dirty || fc.documento.touched || submittedCompany)" class="invalid-feedback" align="left">
-              <div *ngIf="fc.documento.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fc.documento.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.documento.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.documento.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.documento.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.type_company.label' | translate as translatedLabel;">
-            <label for="tipo_empresa" class="form-label">{{translatedLabel}}</label>
-            <ng-select id="tipo_empresa" formControlName="tipo_empresa"
-              [notFoundText]="'No se encontraron elementos'"
-              [ngClass]="{ 'is-invalid': fc.tipo_empresa.errors && (fc.tipo_empresa.dirty || fc.tipo_empresa.touched || submittedCompany) }">
-              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_company.default_option' | translate}}</ng-option>
-              <ng-option value="Sociedad Anónima">Sociedad Anónima (S.A.)</ng-option>
-              <ng-option value="Sociedad de Responsabilidad Limitada">Sociedad de Responsabilidad Limitada (S.R.L.)</ng-option>
-              <ng-option value="Sociedad Anónima Simplificada">Sociedad Anónima Simplificada (S.A.S.)</ng-option>
-              <ng-option value="Empresa Individual de Responsabilidad Limitada">Empresa Individual de Responsabilidad Limitada (E.I.R.L.)</ng-option>
-              <ng-option value="Cooperativa">Cooperativa</ng-option>
-              <ng-option value="Asociación">Asociación</ng-option>
-              <ng-option value="Empresa Conjunta">Empresa Conjunta (Joint Venture)</ng-option>
-              <ng-option value="Emprendimiento Individual">Emprendimiento Individual</ng-option>
-              <ng-option value="Empresa Pública:">Empresa Pública:</ng-option>
-              <ng-option value="Empresa Privada:">Empresa Privada:</ng-option>
-              <ng-option value="Empresa Mixta:">Empresa Mixta:</ng-option>
-            </ng-select>
-            <div *ngIf="fc.tipo_empresa.errors && (fc.tipo_empresa.dirty || fc.tipo_empresa.touched || submittedCompany)"
-              class="invalid-feedback" align="left">
-              <div *ngIf="fc.tipo_empresa.errors['required']">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-              </div>
-              <div *ngIf="fc.tipo_empresa.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.tipo_empresa.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.tipo_empresa.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.tipo_empresa.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row g-2">
-          <div class="col-md-6 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.business_name.label' | translate as translatedLabel;">
-            <label for="razon_social" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="razon_social" class="form-control"
-              formControlName="razon_social"
-              placeholder="{{'FORMS.FIELD_NAMES.business_name.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fc.razon_social.errors && (fc.razon_social.dirty || fc.razon_social.touched || submittedCompany) }" />
-            <div *ngIf="fc.razon_social.errors && (fc.razon_social.dirty || fc.razon_social.touched || submittedCompany)" class="invalid-feedback" align="left">
-              <div *ngIf="fc.razon_social.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-              </div>
-              <div *ngIf="fc.razon_social.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.razon_social.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.razon_social.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.razon_social.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.tradename.label' | translate as translatedLabel;">
-            <label for="nombre_comercial" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="nombre_comercial" class="form-control"
-              formControlName="nombre_comercial"
-              placeholder="{{'FORMS.FIELD_NAMES.tradename.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fc.nombre_comercial.errors && (fc.nombre_comercial.dirty || fc.nombre_comercial.touched || submittedCompany) }" />
-            <div *ngIf="fc.nombre_comercial.errors && (fc.nombre_comercial.dirty || fc.nombre_comercial.touched || submittedCompany)"
-              class="invalid-feedback" align="left">
-              <div *ngIf="fc.nombre_comercial.errors['required']">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-              </div>
-              <div *ngIf="fc.nombre_comercial.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.nombre_comercial.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.nombre_comercial.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.nombre_comercial.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row g-2 d-none">
-          <div class="col-md-3 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.phone.label' | translate as translatedLabel;">
-            <label for="telefono" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="telefono" class="form-control" focus="true"
-              formControlName="telefono"
-              placeholder="{{'FORMS.FIELD_NAMES.phone.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fc.telefono.errors && (fc.telefono.dirty || fc.telefono.touched || submittedCompany) }" />
-            <div *ngIf="fc.telefono.errors && (fc.telefono.dirty || fc.telefono.touched || submittedCompany)" class="invalid-feedback" align="left">
-              <div *ngIf="fc.telefono.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fc.telefono.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.telefono.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.telefono.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.telefono.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-5 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.email.label' | translate as translatedLabel;">
-            <label for="correo" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="correo" class="form-control" focus="true"
-              formControlName="correo"
-              placeholder="{{'FORMS.FIELD_NAMES.email.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fc.correo.errors && (fc.correo.dirty || fc.correo.touched || submittedCompany) }" />
-            <div *ngIf="fc.correo.errors && (fc.correo.dirty || fc.correo.touched || submittedCompany)" class="invalid-feedback" align="left">
-              <div *ngIf="fc.correo.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fc.correo.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.correo.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.correo.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.correo.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.city.label' | translate as translatedLabel;">
-            <label for="ciudad" class="form-label">{{translatedLabel}}</label>
-            <input type="text" id="ciudad" class="form-control" focus="true"
-              formControlName="ciudad"
-              placeholder="{{'FORMS.FIELD_NAMES.city.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fc.ciudad.errors && (fc.ciudad.dirty || fc.ciudad.touched || submittedCompany) }" />
-            <div *ngIf="fc.ciudad.errors && (fc.ciudad.dirty || fc.ciudad.touched || submittedCompany)" class="invalid-feedback" align="left">
-              <div *ngIf="fc.ciudad.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fc.ciudad.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.ciudad.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.ciudad.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.ciudad.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-12 mb-3"
-            *ngIf="'FORMS.FIELD_NAMES.address.label' | translate as translatedLabel;">
-            <label for="direccion" class="form-label">{{translatedLabel}}</label>
-            <textarea 
-              name="direccion" id="direccion" cols="30" rows="1" class="form-control"    
-              formControlName="direccion"  
-              placeholder="{{'FORMS.FIELD_NAMES.address.placeholder' | translate}}"
-              [ngClass]="{ 'is-invalid': fc.direccion.errors && (fc.direccion.dirty || fc.direccion.touched || submittedCompany) }" 
-            ></textarea>
-            <div *ngIf="fc.direccion.errors && (fc.direccion.dirty || fc.direccion.touched || submittedCompany)" class="invalid-feedback" align="left">
-              <div *ngIf="fc.direccion.errors.required">
-                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
-                translatedLabel}}
-              </div>
-              <div *ngIf="fc.direccion.errors.minlength">
-                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fc.direccion.errors.minlength.requiredLength}}
-              </div>
-              <div *ngIf="fc.direccion.errors.maxlength">
-                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fc.direccion.errors.maxlength.requiredLength}}
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <accordion [isAnimated]="true" [closeOthers]="false">
-      <div class="row g-2">
-        <div class="col-md-6 mb-3">
-          <accordion-group heading="Contactos">
-            <app-table-client-contact [dataSendApi]="dataSendDetail"></app-table-client-contact>
-          </accordion-group>
-        </div>
-        <div class="col-md-6 mb-3">
-          <accordion-group heading="Direcciones">
-            <app-table-client-address [dataSendApi]="dataSendDetail"></app-table-client-address>
-          </accordion-group>
-        </div>
-      </div>
-    </accordion>
-
-    <form (keydown.enter)="$event.preventDefault()" [formGroup]="clientForm" autocomplete="off">
-      <h5 class="card-title fw-bold">Otros datos del cliente</h5>
-      <div class="row g-2">
-        <div class="col-md-2 mb-3"
-          *ngIf="'FORMS.FIELD_NAMES.type_client.label' | translate as translatedLabel;">
-          <label for="tipo_cliente" class="form-label">{{translatedLabel}}</label>
-          <ng-select id="tipo_cliente" formControlName="tipo_cliente"
-            [notFoundText]="'No se encontraron elementos'"
-            [ngClass]="{ 'is-invalid': fClient.tipo_cliente.errors && (fClient.tipo_cliente.dirty || fClient.tipo_cliente.touched || submittedClient) }">
-            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_client.default_option' | translate}}</ng-option>
-            <ng-option value="RE">RE</ng-option>
-            <ng-option value="ME">ME</ng-option>
-          </ng-select>
-          <div *ngIf="fClient.tipo_cliente.errors && (fClient.tipo_cliente.dirty || fClient.tipo_cliente.touched || submittedClient)"
-            class="invalid-feedback" align="left">
-            <div *ngIf="fClient.tipo_cliente.errors['required']">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
-            </div>
-          </div>
-        </div>  
-        <div class="col-md-3 mb-3"
-          *ngIf="'FORMS.FIELD_NAMES.cif.label' | translate as translatedLabel;">
-          <label for="cif" class="form-label">{{translatedLabel}}</label>
-          <input type="text" id="cif" class="form-control"
-            formControlName="cif"
-            placeholder="{{'FORMS.FIELD_NAMES.cif.placeholder' | translate}}"
-            [ngClass]="{ 'is-invalid': fClient.cif.errors && (fClient.cif.dirty || fClient.cif.touched || submittedClient) }" />
-          <div *ngIf="fClient.cif.errors && (fClient.cif.dirty || fClient.cif.touched || submittedClient)" class="invalid-feedback" align="left">
-            <div *ngIf="fClient.cif.errors.required">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-            </div>
-            <div *ngIf="fClient.cif.errors.minlength">
-              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fClient.cif.errors.minlength.requiredLength}}
-            </div>
-            <div *ngIf="fClient.cif.errors.maxlength">
-              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fClient.cif.errors.maxlength.requiredLength}}
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-3"
-          *ngIf="'FORMS.FIELD_NAMES.code_loaded.label' | translate as translatedLabel;">
-          <label for="codigo_carga" class="form-label">{{translatedLabel}}</label>
-          <input type="text" id="codigo_carga" class="form-control"
-            formControlName="codigo_carga"
-            placeholder="{{'FORMS.FIELD_NAMES.code_loaded.placeholder' | translate}}"
-            [ngClass]="{ 'is-invalid': fClient.codigo_carga.errors && (fClient.codigo_carga.dirty || fClient.codigo_carga.touched || submittedClient) }" />
-          <div *ngIf="fClient.codigo_carga.errors && (fClient.codigo_carga.dirty || fClient.codigo_carga.touched || submittedClient)" class="invalid-feedback" align="left">
-            <div *ngIf="fClient.codigo_carga.errors.required">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-            </div>
-            <div *ngIf="fClient.codigo_carga.errors.minlength">
-              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fClient.codigo_carga.errors.minlength.requiredLength}}
-            </div>
-            <div *ngIf="fClient.codigo_carga.errors.maxlength">
-              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fClient.codigo_carga.errors.maxlength.requiredLength}}
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3"
-          *ngIf="'FORMS.FIELD_NAMES.vodafond_segment.label' | translate as translatedLabel;">
-          <label for="segmento_vodafond" class="form-label">{{translatedLabel}}</label>
-          <input type="text" id="segmento_vodafond" class="form-control"
-            formControlName="segmento_vodafond"
-            placeholder="{{'FORMS.FIELD_NAMES.vodafond_segment.placeholder' | translate}}"
-            [ngClass]="{ 'is-invalid': fClient.segmento_vodafond.errors && (fClient.segmento_vodafond.dirty || fClient.segmento_vodafond.touched || submittedClient) }" />
-          <div *ngIf="fClient.segmento_vodafond.errors && (fClient.segmento_vodafond.dirty || fClient.segmento_vodafond.touched || submittedClient)" class="invalid-feedback" align="left">
-            <div *ngIf="fClient.segmento_vodafond.errors.required">
-              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-            </div>
-            <div *ngIf="fClient.segmento_vodafond.errors.minlength">
-              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fClient.segmento_vodafond.errors.minlength.requiredLength}}
-            </div>
-            <div *ngIf="fClient.segmento_vodafond.errors.maxlength">
-              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fClient.segmento_vodafond.errors.maxlength.requiredLength}}
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-
-    <accordion [isAnimated]="true" [closeOthers]="true">
-      <div class="row g-2">
-        <div class="col-md-12 mb-3">
-          <accordion-group heading="Cuentas bancarias del cliente">
-            <app-table-client-bank-account [dataSendApi]="dataSendDetail"></app-table-client-bank-account>
-          </accordion-group>
-        </div>
-      </div>
-    </accordion>
-  </div>
-  <div class="card-footer" [collapse]="isCollapseFormClient" [isAnimated]="true">
-    <div class="hstack gap-2 justify-content-end">
-      <button type="button" class="btn btn-light" (click)="toggleFormClient()">{{'FORMS.BUTTONS.CLOSE' | translate}}</button>
-      <button type="button" class="btn btn-secondary" (click)="resetFormClient()">{{'FORMS.BUTTONS.RESET' | translate}}</button>
-      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
-      <button type="button" class="btn btn-success"  *ngIf="isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.SAVE' | translate}}</button> -->
-      <button type="button" class="btn btn-success"  (click)="saveClient()">{{'FORMS.BUTTONS.SAVE_CHANGE' | translate}}</button>
-    </div>
-  </div>
+<!-- EMPRESA -->
+<div *ngIf="legalPerson">
+  <app-form-company [data]="dataCompany" [hiddenButtons]="true" (submit)="onDataCompany($event)"></app-form-company>
 </div>
 
 
+<div class="mb-3">
+  <app-form-array-bank-account [data]="shareBankAccounts" (submit)="onDataBankAccount($event)"></app-form-array-bank-account>
+</div>
+
+<!-- DATOS ADICIONALES -->
+<!-- <accordion [isAnimated]="true" [closeOthers]="true">
+  <accordion-group heading="Direcciones">
+    <app-table-client-address></app-table-client-address>
+  </accordion-group>
+</accordion> -->
+
+<div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
+  <button type="button" class="btn btn-light" (click)="onCancel()" *ngIf="!dataPerson && !dataCompany">
+    <i class="mdi mdi-cancel me-1"></i>{{'MODALS.BUTTONS.CANCEL' | translate}}
+  </button>
+  <button type="button" class="btn btn-secondary" (click)="onReset()" *ngIf="dataPerson || dataCompany">
+    <i class="mdi mdi-refresh me-1"></i>{{'FORMS.BUTTONS.RESET' | translate}}
+  </button>
+  <button type="button" class="btn btn-success" *ngIf="isNewDataClient" (click)="execSubmit()">
+    <i class="mdi mdi-content-save-outline me-1"></i>{{'FORMS.BUTTONS.SAVE' | translate}}
+  </button>
+  <button type="button" class="btn btn-info"  *ngIf="!isNewDataClient" (click)="execSubmit()">
+    <i class="mdi mdi-book-sync me-1"></i>{{'FORMS.BUTTONS.UPDATE' | translate}}
+  </button>
+</div>

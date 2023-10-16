@@ -1,0 +1,67 @@
+<form [formGroup]="bankAccountForm" autocomplete="off">
+  <div formArrayName="formList" class="bg-light px-2 py-2 rounded position-relative">
+
+    <div *ngIf="showList">
+      <div *ngFor="let fi of formListBankAccount.controls; let i=index;">
+        <div [formGroupName]="i" class="row g-2 bg-transparent border-top border-success mb-3">
+          <div class="col-12" style="z-index: 1500;">
+            <span class="badge rounded-pill badge-soft-success bg-success text-white position-absolute bottom-0 start-0">{{i + 1}}</span>
+            <button type="button" class="btn btn-outline-danger btn-sm rounded-circle position-absolute top-0 end-0" 
+              *ngIf="visibleCloseBtn"
+              (click)="removeFieldBankAccount(i)"> <i class="fas fa-times" ></i></button>
+          </div>
+          <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.type_bank_account.label' | translate as translatedLabel;">
+            <label for="tipo_cuentas_bancarias_id" class="form-label">{{translatedLabel}}</label>
+            <ng-select id="tipo_cuentas_bancarias_id" formControlName="tipo_cuentas_bancarias_id"
+              [notFoundText]="'No se encontraron elementos'"
+              [ngClass]="{ 'is-invalid': fi.get('tipo_cuentas_bancarias_id').errors && (fi.get('tipo_cuentas_bancarias_id').dirty || fi.get('tipo_cuentas_bancarias_id').touched || submitted) }">
+              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_bank_account.default_option' | translate}}</ng-option>
+              <ng-option *ngFor="let typeBankAccount of listTypeBankAccount" [value]="typeBankAccount.id">{{typeBankAccount.nombre}}</ng-option>
+            </ng-select>
+            <div *ngIf="fi.get('tipo_cuentas_bancarias_id').errors && (fi.get('tipo_cuentas_bancarias_id').dirty || fi.get('tipo_cuentas_bancarias_id').touched || submitted)"
+              class="invalid-feedback" align="left">
+              <div *ngIf="fi.get('tipo_cuentas_bancarias_id').errors['required']">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.account.label' | translate as translatedLabel;">
+            <label for="cuenta" class="form-label">{{translatedLabel}} (*)</label>
+            <input type="text" maxlength="250" id="cuenta" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.account.placeholder' | translate}}" formControlName="cuenta" [ngClass]="{ 'is-invalid': fi.get('cuenta').errors && (fi.get('cuenta').dirty || fi.get('cuenta').touched || submitted)}" />
+            <div *ngIf="fi.get('cuenta').errors && (fi.get('cuenta').dirty || fi.get('cuenta').touched || submitted)" class="invalid-feedback" align="left">
+              <div *ngIf="fi.get('cuenta').errors.required">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+              <div *ngIf="fi.get('cuenta').errors.maxlength">
+                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.get('cuenta').errors.maxlength.requiredLength}}
+              </div>
+              <div *ngIf="fi.get('cuenta').errors.minlength">
+                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.get('cuenta').errors.minlength.requiredLength}}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3 d-flex align-items-center" *ngIf="'FORMS.FIELD_NAMES.is_primary.label' | translate as translatedLabel;">
+            <!-- <label for="fi.get('is_primary')" class="form-label">{{translatedLabel}}</label> -->
+            <div class="form-check form-check-info">
+              <input class="form-check-input" type="checkbox" id="is_primary{{i}}_bank_account" formControlName="is_primary" [ngClass]="{ 'is-invalid': fi.get('is_primary').errors && (fi.get('is_primary').dirty || fi.get('is_primary').touched || submitted) }">
+              <label class="form-check-label" for="is_primary{{i}}_bank_account">
+                {{translatedLabel}}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-relative">
+      <strong type="button" (click)="showList = !showList" class="text-success"><i class="mdi mdi-arrow-up-thick me-1" [ngClass]="{'mdi-eye-off': showList, 'mdi-eye': !showList}"></i> Cuenta bancaria</strong>
+      <button type="button" *ngIf="visibleAddBtn" (click)="addFieldBankAccount()" class="btn btn-outline-success rounded-pill position-absolute bottom-0 end-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+        <i class="fas fa-plus me-1 font-size-10" ></i> {{'FORMS.BUTTONS.ADD' | translate}}
+      </button>
+      <!-- <button type="button" class="btn btn-sm btn-success rounded-pill position-absolute bottom-0 end-0" (click)="addFieldIdentification()"><i class="fas fa-plus"></i></button> -->
+    </div>
+  </div>
+</form>
+

@@ -1,20 +1,18 @@
+import { Contact } from "./contact.model";
+import { IdentificationDocument } from "./identification-document.model";
 import { Model } from "./model";
 
 export class Company extends Model{
-  public id: number;
-  public paises_id: number;
-  public codigo_ubigeo: string;
-  public razon_social: string;
-  public nombre_comercial: string;
-  public descripcion: string;
-  public tipo_documentos_id: number;
-  public documento: string;
-  public tipo_empresa: string;
-  public direccion: string;
-  public ciudad: string;
-  public telefono: string;
-  public correo: string;
-  public is_active: boolean | number;
+  public id?: number;
+  public paises_id?: number;
+  public codigo_ubigeo?: string;
+  public tipo_empresa?: string;
+  public razon_social?: string;
+  public nombre_comercial?: string;
+  public descripcion?: string;
+  public is_active?: boolean | number;
+  public identifications?: IdentificationDocument[];
+  public contacts?: Contact[];
 
   constructor(data?: object){
     super(data);
@@ -24,14 +22,10 @@ export class Company extends Model{
     this.razon_social = this.razon_social || '';
     this.nombre_comercial = this.nombre_comercial || '';
     this.descripcion = this.descripcion || '';
-    this.tipo_documentos_id = this.tipo_documentos_id || null;
-    this.documento = this.documento || '';
     this.tipo_empresa = this.tipo_empresa || '';
-    this.direccion = this.direccion || '';
-    this.ciudad = this.ciudad || '';
-    this.telefono = this.telefono || '';
-    this.correo = this.correo || '';
     this.is_active = this.is_active || 1;
+    this.identifications = this.identifications || [];
+    this.contacts = this.contacts || [];
   }
 
   public static cast(data: object): Company{
@@ -43,14 +37,10 @@ export class Company extends Model{
       razon_social: obj.razon_social,
       nombre_comercial: obj.nombre_comercial,
       descripcion: obj.descripcion,
-      tipo_documentos_id: obj.tipo_documentos_id,
-      documento: obj.documento,
       tipo_empresa: obj.tipo_empresa,
-      direccion: obj.direccion,
-      ciudad: obj.direccion,
-      telefono: obj.telefono,
-      correo: obj.correo,
-      is_active: obj.is_active
+      is_active: obj.is_active,
+      identifications: obj.identifications,
+      contacts: obj.contacts,
     };
   }
 

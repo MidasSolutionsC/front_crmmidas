@@ -77,21 +77,6 @@ export class UserService {
   public register(data: any): Observable<ResponseApi>{
     const endpoint = `${this.baseUrl}/register`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => {
-      if(res.code == 201){
-        if(res.data){
-          const {person, user} = res.data;
-          if(user){
-            const token_auth = user.token_auth;
-
-            const dataUser = {user: user.data, person: person};
-            localStorage.setItem('dataUser', JSON.stringify(dataUser));
-  
-            if(token_auth){  
-              this.cookieService.set('token_auth', token_auth);
-            }
-          }
-        }
-      }
       return res;
     }))
   }

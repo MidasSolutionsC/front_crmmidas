@@ -1,0 +1,51 @@
+
+<div class="card card-body border">
+  <!-- <h3 class="card-title mt-0">Servicios</h3> -->
+  <div class="row g-2">
+    <div class="col-md-6" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
+      <label for="" class="form-label">{{translatedLabel}} ({{'FORMS.FIELD_NAMES.bell.label' | translate}})</label>
+      <ng-select [(ngModel)]="brandId"
+        [notFoundText]="'No se encontraron elementos'"
+        [ngClass]="{ 'is-invalid': !brandId  }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.brand.default_option' | translate}}</ng-option>
+        <ng-option *ngFor="let brand of listBrand"
+          [value]="brand.id">{{brand.nombre}}</ng-option>
+      </ng-select>
+      <div
+        *ngIf="!brandId"
+        class="invalid-feedback" align="left">
+        <div>
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
+      <label for="" class="form-label">{{translatedLabel}}</label>
+      <div class="input-group">
+        <ng-select [(ngModel)]="typeServiceId"
+          class="flex-grow-1"
+          [notFoundText]="'No se encontraron elementos'"
+          [ngClass]="{ 'is-invalid': !typeServiceId }">
+          <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_service.default_option' | translate}}</ng-option>
+          <ng-option *ngFor="let typeService of listTypeService"
+            [value]="typeService.id">{{typeService.nombre}}</ng-option>
+        </ng-select>
+        <button type="button" (click)="openFormService()" class="btn btn-success"><i class="mdi mdi-plus me-1"></i> {{'FORMS.BUTTONS.ADD' | translate}}</button>
+        <div
+          *ngIf="!typeServiceId"
+          class="invalid-feedback" align="left">
+          <div>
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-body border border-success" [hidden]="!showFormService">
+  <div class="">
+    <strong class="text-success mb-3 w-100 d-block font-size-16">Formulario de {{typeServiceNombre}}</strong>
+    <app-form-sale-detail (cancel)="onCancel($event)" [typeService]="shareTypeService"></app-form-sale-detail>
+  </div>
+</div>

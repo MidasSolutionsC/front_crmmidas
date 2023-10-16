@@ -62,7 +62,7 @@ export function createTranslateLoader(http: HttpClient): any {
     TooltipModule.forRoot(),
     ScrollToModule.forRoot(),
     ToastrModule.forRoot(),
-    DataTablesModule
+    DataTablesModule,
   ],
   bootstrap: [AppComponent],
   providers: [

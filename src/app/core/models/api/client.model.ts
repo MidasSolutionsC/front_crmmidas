@@ -1,28 +1,31 @@
+import { BankAccount } from "./bank-account.model";
 import { Model } from "./model";
 
 export class Client extends Model{
-  public id: number;
-  public personas_id: number;
-  public empresas_id: number;
-  public tipo_cliente: string;
-  public cif: string;
-  public codigo_carga: string;
-  public segmento_vodafond: string;
-  // public cta_bco: string;
-  public persona_juridica: boolean;
-  public is_active: boolean;
+  public id?: number;
+  public personas_id?: number;
+  public empresas_id?: number;
+  public nacionalidad?: string;
+  public tipo_cliente?: string;
+  public codigo_carga?: string;
+  public segmento_vodafond?: string;
+  public persona_juridica?: boolean;
+  public is_active?: boolean;
+  public bank_accounts?: BankAccount[] = [];
+
+
   constructor(data?: object){
     super(data);
     this.id = this.id || null;
     this.personas_id = this.personas_id || null;
     this.empresas_id = this.empresas_id || null;
+    this.nacionalidad = this.nacionalidad || null;
     this.tipo_cliente = this.tipo_cliente || null;
-    this.cif = this.cif || '';
     this.codigo_carga = this.codigo_carga || '';
     this.segmento_vodafond = this.segmento_vodafond || '';
-    // this.cta_bco = this.cta_bco || '';
     this.persona_juridica = this.persona_juridica || false;
     this.is_active = this.is_active || true;
+    this.bank_accounts = this.bank_accounts || [];
   }
 
   public static cast(data: object): Client{
@@ -32,13 +35,13 @@ export class Client extends Model{
       id: obj.id,
       personas_id: obj.personas_id,
       empresas_id: obj.empresas_id,
+      nacionalidad: obj.nacionalidad,
       tipo_cliente: obj.tipo_cliente,
-      cif: obj.cif,
       codigo_carga: obj.codigo_carga,
       segmento_vodafond: obj.segmento_vodafond,
-      // cta_bco: obj.cta_bco,
       persona_juridica: obj.persona_juridica,
-      is_active: obj.is_active
+      is_active: obj.is_active,
+      bank_accounts: obj.bank_accounts
     };
   }
 
@@ -51,11 +54,10 @@ export class ClientList extends Model{
   public id: number;
   public personas_id: number;
   public empresas_id: number;
+  public nacionalidad: string;
   public tipo_cliente: string;
-  public cif: string;
   public codigo_carga: string;
   public segmento_vodafond: string;
-  public cta_bco: string;
   public persona_juridica: boolean;
   public is_active: boolean;
   public created_at: string;
@@ -67,11 +69,10 @@ export class ClientList extends Model{
     this.id = this.id || 0;
     this.personas_id = this.personas_id || 0;
     this.empresas_id = this.empresas_id || 0;
+    this.nacionalidad = this.nacionalidad || null;
     this.tipo_cliente = this.tipo_cliente || null;
-    this.cif = this.cif || '';
     this.codigo_carga = this.codigo_carga || '';
     this.segmento_vodafond = this.segmento_vodafond || '';
-    this.cta_bco = this.cta_bco || '';
     this.persona_juridica = this.persona_juridica || false;
     this.is_active = this.is_active || false;
     this.created_at = this.created_at || '';
@@ -86,11 +87,10 @@ export class ClientList extends Model{
       id: obj.id,
       personas_id: obj.personas_id,
       empresas_id: obj.empresas_id,
+      nacionalidad: obj.nacionalidad,
       tipo_cliente: obj.tipo_cliente,
-      cif: obj.cif,
       codigo_carga: obj.codigo_carga,
       segmento_vodafond: obj.segmento_vodafond,
-      cta_bco: obj.cta_bco,
       persona_juridica: obj.persona_juridica,
       is_active: obj.is_active,
       created_at: obj.created_at,

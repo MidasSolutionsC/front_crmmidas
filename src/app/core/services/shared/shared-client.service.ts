@@ -10,7 +10,10 @@ export class SharedClientService {
   private personId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private companyId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private clientId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+  private typeClient: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   private legalPerson: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+  private submitData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+  private clearData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
 
   constructor() { }
 
@@ -57,5 +60,32 @@ export class SharedClientService {
 
   setLegalPerson(value: boolean) {
     this.legalPerson.next(value);
+  }
+
+  // TIPO DE CLIENTE
+  getTypeClient() {
+    return this.typeClient.asObservable();
+  }
+
+  setTypeClient(value: string) {
+    this.typeClient.next(value);
+  }
+
+  // ENVIAR DATOS 
+  getSubmitData() {
+    return this.submitData.asObservable();
+  }
+
+  setSubmitData(value: boolean) {
+    this.submitData.next(value);
+  }
+
+  // RESET DATOS 
+  getClearData() {
+    return this.clearData.asObservable();
+  }
+
+  setClearData(value: boolean) {
+    this.clearData.next(value);
   }
 }

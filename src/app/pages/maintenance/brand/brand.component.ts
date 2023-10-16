@@ -18,7 +18,7 @@ export class BrandComponent {
   }
 
   // bread crumb items
-  titleBreadCrumb: string = 'Marcas';
+  titleBreadCrumb: string = 'marcas';
   breadCrumbItems: Array<{}>;
   
   // Form 
@@ -44,7 +44,7 @@ export class BrandComponent {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Marcas', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'marcas', active: true }]);
 
     this.initForm();
     this.listDataApi();
@@ -277,7 +277,7 @@ export class BrandComponent {
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la marca?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la campaña?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

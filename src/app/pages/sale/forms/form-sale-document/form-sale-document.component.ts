@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { ResponseApi, SaleDocument, SaleDocumentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleDocumentService } from 'src/app/core/services';
+import { Subscription, distinctUntilChanged } from 'rxjs';
+import { ResponseApi, SaleDocument, SaleDocumentList, TypeDocumentList } from 'src/app/core/models';
+import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleDocumentService, TypeDocumentService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
 
 @Component({
@@ -32,12 +32,15 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   // Previsualizar foto subido
   previewImage: any;
+
+  listTypeDocuments: TypeDocumentList[] = [];
   
     
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private _typeDocumentService: TypeDocumentService,
     private _tmpSaleDocumentService: TempSaleDocumentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -49,6 +52,16 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit(): void {
     // Instanciar form
     this.initForm();
+    this.apiTypeDocumentList();
+
+    // Tipos de documentos
+    this.subscription.add(
+      this._typeDocumentService.typeDocuments$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: TypeDocumentList[]) => {
+        this.listTypeDocuments = list;
+      })
+    )
   }
 
   ngOnDestroy(): void {
@@ -152,6 +165,32 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API FORÁNEOS
+   * ****************************************************************
+   */
+  // OPERACIONES CON LA API - TIPO DE DOCUMENTOS
+  public apiTypeDocumentList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this.listTypeServices = response.data; El servicio lo emite al observable
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tipos de documentos', message: error.message, timer: 2500});
+      }
+    });
+  }
 
     
   /**
@@ -182,6 +221,7 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
       ...this._formService.modelToFormGroupData(model),
       // tipo: [model.tipo, [Validators.required, Validators.min(1)]],
       nombre: [model.nombre, [Validators.required]],
+      tipo_documentos_id: [model.tipo_documentos_id || '', [Validators.required]],
       file: [null, [Validators.required]],
       is_active: [1, [Validators.nullValidator]],
     }

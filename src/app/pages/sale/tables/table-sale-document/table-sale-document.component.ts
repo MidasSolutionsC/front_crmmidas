@@ -66,6 +66,8 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
     this.isCollapseForm = collapse || !this.isCollapseForm;
     if(!this.isCollapseForm){
       this.isCollapseList = true;
+    } else {
+      this.isCollapseList = false;
     }
   }
 

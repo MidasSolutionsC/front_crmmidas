@@ -20,7 +20,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   @Output() cancel = new EventEmitter<any>();
 
   // DETALLE SERVICIO
-  isNewData: boolean = false;
+  isNewData: boolean = true;
   submitted: boolean = false;
   saleDetailForm: FormGroup;
 
@@ -66,6 +66,9 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
 
   ngOnInit(): void {
+    // INSTANCIA DEL FORMULARIOS
+    this.initForm();
+
     // Listar los tipos de documentos
     this.apiTypeDocumentList();
     this.apiTypeStatusList();
@@ -102,11 +105,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       })
     );
 
-    // INSTANCIA DEL FORMULARIOS
-    this.initForm();
-    this.initFormMobile();    
-    this.initFormFixed();        
-    this.initializeForms();
+
   }
 
   ngOnDestroy(): void {
@@ -310,108 +309,6 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-
-    
-  /**
-   * ***********************************************
-   * OBTENER EL FORM CONTROL - LINEA TV
-   * ***********************************************
-   */
-  get ft() {
-    return this.tvLineForm.controls;
-  }
-
-  /**
-   * INICIAR FORMULARIO CON LAS VALIDACIONES
-   * @param model 
-   */
-  private initFormTv(){
-    const formGroupData = this.getFormGroupDataTv();
-    this.tvLineForm = this.formBuilder.group(formGroupData);
-  }
-
-  /**
-   * CREAR VALIDACIONES DEL FORM GROUP
-   * @param model 
-   * @returns 
-   */
-  private getFormGroupDataTv(): object {
-    return {
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-    }
-  }
-
-    
-  /**
-   * ***********************************************
-   * OBTENER EL FORM CONTROL - LINEA MOVIL
-   * ***********************************************
-   */
-  get fm() {
-    return this.mobileLineForm.controls;
-  }
-
-  /**
-   * INICIAR FORMULARIO CON LAS VALIDACIONES
-   * @param model 
-   */
-  private initFormMobile(model: DetailMobileLine = new DetailMobileLine()){
-    const formGroupData = this.getFormGroupDataMobile(model);
-    this.mobileLineForm = this.formBuilder.group(formGroupData);
-  }
-
-  /**
-   * CREAR VALIDACIONES DEL FORM GROUP
-   * @param model 
-   * @returns 
-   */
-  private getFormGroupDataMobile(model: DetailMobileLine): object {
-    return {
-      tipo_documento_id: [model?.tipo_documento_id || '', [Validators.required, Validators.min(1)]],
-      documento_titular: [model?.documento_titular || '', [Validators.required, Validators.maxLength(11)]],
-      titular: [model?.titular || '', [Validators.required, Validators.maxLength(50)]],
-      operador_donante_id: [model?.operador_donante_id || '', [Validators.nullValidator, Validators.min(1)]],
-      num_portar: [model?.num_portar || '', [Validators.nullValidator, Validators.maxLength(50)]],
-      icc: [model?.icc || '', [Validators.nullValidator, Validators.maxLength(50)]],
-      terminal: [model?.terminal || false, [Validators.nullValidator]],
-      modelo_terminal: [model?.modelo_terminal || '', [Validators.nullValidator, Validators.maxLength(150)]],
-      aop: [model?.aop || '', [Validators.nullValidator, Validators.maxLength(60)]],
-    }
-  }
-    
-  /**
-   * ***********************************************
-   * OBTENER EL FORM CONTROL - LINEA FIJA
-   * ***********************************************
-   */
-  get fx() {
-    return this.fixedLineForm.controls;
-  }
-
-  /**
-   * INICIAR FORMULARIO CON LAS VALIDACIONES
-   * @param model 
-   */
-  private initFormFixed(model: DetailFixedLine = new DetailFixedLine()){
-    const formGroupData = this.getFormGroupDataFixed(model);
-    this.fixedLineForm = this.formBuilder.group(formGroupData);
-  }
-
-  /**
-   * CREAR VALIDACIONES DEL FORM GROUP
-   * @param model 
-   * @returns 
-   */
-  private getFormGroupDataFixed(model: DetailFixedLine): object {
-    return {
-      tipo_documento_id: [model?.tipo_documento_id || '', [Validators.required, Validators.min(1)]],
-      documento_titular: [model?.documento_titular || '', [Validators.required, Validators.maxLength(11)]],
-      titular: [model?.titular || '', [Validators.required, Validators.maxLength(50)]],
-      operador_donante_id: [model?.operador_donante_id || '', [Validators.nullValidator, Validators.min(1)]],
-      num_portar: [model?.num_portar || '', [Validators.nullValidator, Validators.maxLength(50)]],
-      aop: [model?.aop || '', [Validators.nullValidator, Validators.maxLength(60)]],
-    }
-  }
 
 
 

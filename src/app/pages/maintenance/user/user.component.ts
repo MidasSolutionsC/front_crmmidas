@@ -1,23 +1,29 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Form, FormArray, FormBuilder, FormGroup, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ExportAsConfig, ExportAsService, SupportedExtensions } from 'ngx-export-as';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, CountryList, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPerson, UserPersonList } from 'src/app/core/models';
+import { Breadcrumb, CountryList, IdentificationDocument, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPerson, UserPersonList } from 'src/app/core/models';
 import { ApiErrorFormattingService, CountryService, FormService, SweetAlertService, TypeDocumentService, TypeUserService, UserService } from 'src/app/core/services';
+import { CleanObject } from 'src/app/core/helpers/clean-object.util';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent {
+export class UserComponent implements OnInit, OnDestroy {
+  
   modalRef?: BsModalRef;
 
   dataModal = {
     title: 'Crear usuarios',
   }
 
+  // Configura las propiedades del jqxGrid
+  // dataAdapter: any; // Define tu fuente de datos aquí
+  // columns: any[] = []; // Define las columnas aquí
+  
   // bread crumb items
   titleBreadCrumb: string = 'Usuarios';
   breadCrumbItems: Array<{}>;
@@ -26,6 +32,7 @@ export class UserComponent {
   isNewData: boolean = true;
   submitted: boolean = false;
   userForm: FormGroup;
+  identificationForm: FormGroup;
 
   // TABLE USUARIOS - SERVER SIDE
   page: number = 1;
@@ -88,6 +95,12 @@ export class UserComponent {
     this.apiTypeUserList();
     this.apiUserListPagination();
 
+    this.identificationForm = this.formBuilder.group({
+      formList: this.formBuilder.array([]),
+    }),
+
+    this.formDataIdentification.push(this.fieldIdentification());
+ 
     // Usuarios
     // this.subscription.add(
     //   this._userService.listObserver$
@@ -144,6 +157,7 @@ export class UserComponent {
       })
     );
   }
+
   
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -497,8 +511,8 @@ export class UserComponent {
       apellido_materno: ['', [Validators.required, Validators.maxLength(50)]],
       paises_id: ['', [Validators.required, Validators.min(1)]],
       tipo_usuarios_id: ['', [Validators.required, Validators.min(1)]],
-      tipo_documentos_id: ['', [Validators.required, Validators.min(1)]],
-      documento: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(11)]],
+      // tipo_documentos_id: ['', [Validators.required, Validators.min(1)]],
+      // documento: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(11)]],
       nombre_usuario: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(15), Validators.pattern(/^[^\s]+$/)]],
       clave: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]],
       clave_confirmation: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]],
@@ -506,6 +520,33 @@ export class UserComponent {
     }
   }
 
+
+  /**
+   * *******************************************************
+   * AGREGAR MÁS CAMPOS DE TIPO Y DOCUMENTO
+   * *******************************************************
+   */
+  
+  fieldIdentification(model: IdentificationDocument = new IdentificationDocument()): FormGroup {
+    return this.formBuilder.group({
+      ...this._formService.modelToFormGroupData(model),
+      tipo_documentos_id: [model?.tipo_documentos_id || '', [Validators.required, Validators.min(1)]],
+      documento: [model?.documento, [Validators.required, Validators.minLength(5), Validators.maxLength(11)]],
+    });
+  }
+
+  get formDataIdentification(): FormArray {
+    return this.identificationForm.get('formList') as FormArray;
+  }
+
+  removeFieldIdentification(i: number) {
+    this.formDataIdentification.removeAt(i);
+  }
+
+  addFieldIdentification() {
+    this.formDataIdentification.push(this.fieldIdentification());
+  }
+  
 
   
   /**
@@ -530,6 +571,12 @@ export class UserComponent {
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: UserPerson = this.userForm.value;
+      // Obtén el FormArray de usuarios
+      const docsArray = this.identificationForm.get('formList') as FormArray;
+      const docsValues = docsArray.getRawValue();
+      values.identificaciones = docsValues.map((obj) => IdentificationDocument.cast(obj));
+      values.identificaciones = CleanObject.cleanArrayOfObjects(values.identificaciones);
+
 
       if(this.isNewData){
         // Crear nuevo registro
@@ -570,6 +617,19 @@ export class UserComponent {
       clave_confirmation: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]],
       id: [data.id]
     });
+
+
+    this.identificationForm = this.formBuilder.group({
+      formList: this.formBuilder.array([]),
+    });
+
+    if(data.identificaciones.length > 0){
+      data?.identificaciones?.forEach((doc) => {
+        this.formDataIdentification.push(this.fieldIdentification({...doc,tipo_documentos_id: doc.tipo_documentos_id, documento: doc.documento}));
+      });
+    } else {
+      // this.formDataIdentification.push(this.fieldIdentification());
+    }
   }
 
 

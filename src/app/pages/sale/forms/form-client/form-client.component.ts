@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription, distinctUntilChanged, of } from 'rxjs';
-import { Company, CompanyList, CountryList, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
-import { Client } from 'src/app/core/models/api/client.model';
+import { BehaviorSubject, Observable, Subscription, debounceTime, distinctUntilChanged, of, pipe } from 'rxjs';
+import { BankAccount, Company, CompanyList, Contact, CountryList, IdentificationDocument, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { Client, ClientList } from 'src/app/core/models/api/client.model';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
 import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SharedClientService, SweetAlertService, TempSaleService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
 
@@ -11,65 +11,69 @@ import { ApiErrorFormattingService, ClientService, CompanyService, CountryServic
   templateUrl: './form-client.component.html',
   styleUrls: ['./form-client.component.scss']
 })
-export class FormClientComponent implements OnInit, OnDestroy{
+export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
+  
+  @ViewChild('focusTipoCliente') focusTipoCliente: ElementRef<HTMLInputElement>;
 
-  @ViewChild('paises_id', { static: false }) paises_id: ElementRef<HTMLInputElement>;
+  // Datos de entrada
+  @Input() data: Client = null;
+  @Input() dataPerson: Person = null;
+  @Input() dataCompany: Company = null;
+  @Input() dataReset: boolean = false;
 
-  // DATOS EMITIR A LOS FORMULARIOS DETALLES
-  dataSendDetail: any = null;
+  // Datos de salida
+  @Output() submit = new EventEmitter<any>();
+  @Output() cancel = new EventEmitter<any>();
 
+
+  // COMPARTIDO
+  shareBankAccounts: BankAccount[] = [];
+  
 
   // Formulario para buscar cliente
   isClientPerson: boolean = true;
-  submittedSearchClient: boolean = false;
-  searchClientForm: FormGroup;
+  listTypeClientLocal: any[] = [
+    {id: 'RE', name: 'Particular'}, // Residencial
+    {id: 'ME', name: 'Micro Empresa'}, // Micro Empresa'
+    {id: 'PM', name: 'PYMES'}, // PYMES
+    {id: 'CO', name: 'Corporativo'}, // PYMES
+  ];
 
-  // COLLAPSE SEARCH CLIENTE
-  isCollapseFormSearchClient: boolean = false;
-  isCollapseClientList: boolean = true;
-  isCollapseFormClient: boolean = true;
+  listTypeClientFilter: any[] = [];
 
-  // Formulario persona
-  submittedPerson: boolean = false;
-  personForm: FormGroup;
+  // IDENTIFICACIONES
+  listIdentifications: IdentificationDocument[] = [];
   
-  // Formulario empresa
-  submittedCompany: boolean = false;
-  companyForm: FormGroup;
+  // CONTACTOS
+  listContacts: Contact[] = [];
+
+  // CUENTAS BANCARIAS
+  listBankAccount: BankAccount[] = [];
+
+  // DATOS DE LA PERSONA OBTENIDO DEL FORMULARIO 
+  dataPersonSend: Person;
+  dataCompanySend: Company;
 
   // Formulario cliente
-  submittedClient: boolean = false;
   isNewDataClient: boolean = true;
+  submittedClient: boolean = false;
   clientForm: FormGroup;
 
-  // LISTA DE TIPO DE DOCUMENTOS
-  listTypeDocuments: TypeDocumentList[] = [];
-  listTypeDocumentFilters: TypeDocumentList[] = [];
 
-  // LISTA DE PERSONAS
-  listPersons: PersonList[] = [];
+  // CAMPOS MOSTRAR/OCULTAR
+  showFieldCif: boolean = false;
 
-  // LISTA DE PERSONAS
-  listCompanies: CompanyList[] = [];
-
-  // PAISES
-  listCountries: CountryList[] = [];
-
-  // UBIGEOS
-  listUbigeos: UbigeoList[] = [];
+  clientId: number;
+  personId: number;
+  companyId: number;
+  legalPerson: boolean = false;
 
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private _sharedClientService: SharedClientService,
-    private _tempSaleService: TempSaleService,
-    private _countryService: CountryService,
-    private _ubigeoService: UbigeoService,
-    private _personService: PersonService,
-    private _companyService: CompanyService,
     private _clientService: ClientService,
-    private _typeDocumentService: TypeDocumentService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private _formService: FormService,
@@ -77,59 +81,103 @@ export class FormClientComponent implements OnInit, OnDestroy{
   ){}
 
   ngOnInit(): void {
-
-    // Inicializar formularios
-    this.initFs(); // SEARCH
-    this.initFp(); // PERSONA
-    this.initFc(); // EMPRESA
     this.initFClient();
+    this.onChangeData();
 
-    // Listar
-    this.apiCountryList();
-    this.apiTypeDocumentList();
-    this.searchOptionUbigeo('');
-
-    // Ventas OBTENER CLIENTE
+    // ID PERSONA
     this.subscription.add(
-      this._tempSaleService.dataObserver$
-      .pipe(distinctUntilChanged())
-      .subscribe((data: SaleList) => {
-        if(data?.clientes_id){
-          this.apiClientGetById(data.clientes_id);
-        }
-      })
+      this._sharedClientService.getPersonId().subscribe((value: number) =>  this.personId = value)
     )
 
-    // Tipos de documentos
+    // ID EMPRESA
     this.subscription.add(
-      this._typeDocumentService.typeDocuments$
-      .pipe(distinctUntilChanged())
-      .subscribe((list: TypeDocumentList[]) => {
-        this.listTypeDocuments = list;
+      this._sharedClientService.getCompanyId().subscribe((value: number) => this.companyId = value)
+    )
 
-        if(this.isClientPerson){
-          this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
+    // PERSONA LEGAL
+    this.subscription.add(
+      this._sharedClientService.getLegalPerson().subscribe((value: boolean) =>  {
+        this.legalPerson = value;
+        if(value){
+          this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'RE');
+          this.fClient.tipo_cliente.setValue('ME');
         } else {
-          this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion == 'RUC');
-          // this.listTypeDocumentFilters = this.listTypeDocuments;
+          this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'PM' && item.id !== 'CO');
+          this.fClient.tipo_cliente.setValue('RE');
         }
       })
     )
 
-    // Países
     this.subscription.add(
-      this._countryService.listObserver$
-      .pipe(distinctUntilChanged())
-      .subscribe((list: CountryList[]) => {
-        this.listCountries = list;
+      this._sharedClientService.getClearData().subscribe((value: boolean) =>  {
+        if(value){
+          this.onReset();
+        }
       })
     )
+
+
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.data && !changes.data.firstChange){
+     this.onChangeData();
+    }
+
+    if(changes.dataPerson && !changes.dataPerson.firstChange){
+     this.onChangeDataPerson();
+    }
+
+    if(changes.dataCompany && !changes.dataCompany.firstChange){
+     this.onChangeDataCompany();
+    }
+  }
+
+  onChangeData(){
+    if(this.clientForm){
+      if(this.data){
+        this.shareBankAccounts = this.data.bank_accounts;
+        this.clientForm.setValue(Client.cast(this.data));
+        this.isNewDataClient = false;
+      } else {
+        this.shareBankAccounts = [];
+        this.clientForm.setValue(new Client());
+        this.isNewDataClient = true;
+      }
+    }
+  }
+
+  onChangeDataPerson(){
+    if(this.dataPerson){
+      // console.log(this.dataPerson);
+    } 
+  }
+  
+  onChangeDataCompany(){
+    if(this.dataCompany){
+      // console.log(this.dataPerson);
+    } 
+  }
+
+  // RESPETAR FROMULARIOS
+  onChangeReset(){
+    console.log("RESET:", this.dataReset);
+    if(this.dataReset){
+      this.onReset();
+
+      if(this.legalPerson){
+        this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'RE');
+        this.fClient.tipo_cliente.setValue('ME');
+      } else {
+        this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'PM' && item.id !== 'CO');
+        this.fClient.tipo_cliente.setValue('RE');
+      }
+    }
+  }
 
   /**
    * ****************************************************************
@@ -198,16 +246,12 @@ export class FormClientComponent implements OnInit, OnDestroy{
           const data = response.data[0];
           if(data){
             if(data.person !== null){
-              const person = Person.cast(data.person);
-              this.personForm.setValue(person);
-              this._sharedClientService.setPersonId(person.id);
+              this._sharedClientService.setPersonId(data.person.id);
               this._sharedClientService.setLegalPerson(false);
             } 
             
             if(data.company !== null){
-              const company = Company.cast(data.company);
-              this.companyForm.setValue(company);
-              this._sharedClientService.setCompanyId(company.id);
+              this._sharedClientService.setCompanyId(data.company.id);
               this._sharedClientService.setLegalPerson(true);
             } 
   
@@ -215,7 +259,6 @@ export class FormClientComponent implements OnInit, OnDestroy{
             this.clientForm.setValue(client);
             this.isNewDataClient = false;
             this.isClientPerson = client.persona_juridica? false: true;
-            this.toggleFormClient(false);
             this._sharedClientService.setClientId(client.id);
           }
 
@@ -249,14 +292,15 @@ export class FormClientComponent implements OnInit, OnDestroy{
           const dataEmit: any = {};
 
           if(person){
-            this.personForm.setValue(Person.cast(person));
+            this.dataPerson = Person.cast(person);
             this._sharedClientService.setPersonId(person.id);
             this._sharedClientService.setLegalPerson(false);
             dataEmit.personas_id = person.id;
             dataEmit.persona_juridica = false;
           }
+          
           if(company){
-            this.companyForm.setValue(Company.cast(company));
+            this.dataCompany = Company.cast(company);
             this._sharedClientService.setCompanyId(company.id);
             this._sharedClientService.setLegalPerson(true);
             dataEmit.empresas_id = company.id;
@@ -264,13 +308,12 @@ export class FormClientComponent implements OnInit, OnDestroy{
           }
 
           if(client){
+            this.data = Client.cast(client);
             this.clientForm.setValue(Client.cast(client));
             this.isNewDataClient = false;
             this._sharedClientService.setClientId(client.id);
             dataEmit.clientes_id = client.id;
           }
-
-          this.dataSendDetail = dataEmit;
         }
 
         if(response.code == 422){
@@ -313,21 +356,19 @@ export class FormClientComponent implements OnInit, OnDestroy{
   }
 
   // Registrar cliente
-  private apiClientUpdate(data: Client){
+  private apiClientUpdate(data: Client, id: number){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
-      this._clientService.update(data, data.id).subscribe((response: ResponseApi) => {
+      this._clientService.update(data, id).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 200){
           const {person, company, client} = response.data;
 
           if(person){
-            this.personForm.setValue(Person.cast(person));
             this._sharedClientService.setPersonId(person.id);
             this._sharedClientService.setLegalPerson(false);
           }
           if(company){
-            this.companyForm.setValue(Company.cast(company));
             this._sharedClientService.setCompanyId(company.id);
             this._sharedClientService.setLegalPerson(true);
           }
@@ -377,155 +418,9 @@ export class FormClientComponent implements OnInit, OnDestroy{
       })
     )
   }
-  
-
-  /**
-   * ****************************************************************
-   * OPERACIONES CON LA API FORÁNEOS
-   * ****************************************************************
-   */
-  // OPERACIONES CON LA API - TIPO DE DOCUMENTOS
-  public apiTypeDocumentList(forceRefresh: boolean = false){
-    this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        // this.listTypeServices = response.data; El servicio lo emite al observable
-      }
-
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tipos de documentos', message: error.message, timer: 2500});
-      }
-    });
-  }
-
-
-  // OPERACIONES CON LA API - BUSCAR PERSONA
-  public apiPersonListSearch(params: any){
-    this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._personService.getSearch(params).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        this.listPersons = response.data;
-      }
-
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las personas', message: error.message, timer: 2500});
-      }
-    });
-  }
-
-  // OPERACIONES CON LA API - BUSCAR EMPRESA
-  public apiCompanyListSearch(params: any){
-    this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._companyService.getSearch(params).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        this.listCompanies = response.data;
-      }
-
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las empresas', message: error.message, timer: 2500});
-      }
-    });
-  }
-
-
-  // OPERACIONES CON LA API - BUSCAR CLIENTE
-  public apiCountryList(forceRefresh: boolean = false){
-    this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._countryService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        // this.listCountries = response.data;
-      }
-
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los países', message: error.message, timer: 2500});
-      }
-    });
-  }
-
-  
-  // Buscar ubigeos
-  public searchOptionUbigeo(search: string) {
-    this._ubigeoService.getSearch({search}).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        this.listUbigeos = response.data;
-      }
-
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      console.log(error);
-    });
-  }
 
 
 
-  /**
-   * *****************************************************************
-   * FORMULARIO  - SEARCH CLIENTE 
-   * *****************************************************************
-   */
-  get fs() {
-    return this.searchClientForm.controls;
-  }
-
-  /**
-   * INICIAR FORMULARTO CON LAS VALIDACIONES
-   * @param model 
-   */
-  private initFs(){
-    const formGroupData = this.getFormGroupDataSearchClient();
-    this.searchClientForm = this.formBuilder.group(formGroupData);
-  }
-
-  /**
-   * CREAR VALIDACIONES DEL FORMGROUP
-   * @param model 
-   * @returns 
-   */
-  private getFormGroupDataSearchClient(model?: any): object {
-    return {
-      tipo_documentos_id: ['', [Validators.nullValidator, Validators.min(1)]],
-      documento: ['', [Validators.nullValidator, Validators.min(1)]],
-      nombre: ['', [Validators.nullValidator, Validators.maxLength(50)]],
-    }
-  }
 
   /**
    * *****************************************************************
@@ -554,8 +449,7 @@ export class FormClientComponent implements OnInit, OnDestroy{
   private getFormGroupDataClient(model?: Client): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      tipo_cliente: [model?.tipo_cliente || '', [Validators.required, Validators.maxLength(25)]],
-      cif: [model?.cif, [Validators.nullValidator, Validators.minLength(9), Validators.maxLength(9)]],
+      tipo_cliente: [model?.tipo_cliente || 'RE', [Validators.required, Validators.maxLength(25)]],
       codigo_carga: [model?.codigo_carga, [Validators.nullValidator, Validators.maxLength(50)]],
       segmento_vodafond: [model?.segmento_vodafond, [Validators.nullValidator, Validators.maxLength(50)]],
       persona_juridica: [model?.persona_juridica, [Validators.nullValidator]],
@@ -564,189 +458,20 @@ export class FormClientComponent implements OnInit, OnDestroy{
   }
 
 
-  /**
-   * *****************************************************************
-   * FORMULARIO  - REGISTRAR PERSONA 
-   * *****************************************************************
-   */
-  get fp() {
-    return this.personForm.controls;
-  }
-
-  /**
-   * INICIAR FORMULARTO CON LAS VALIDACIONES
-   * @param model 
-   */
-  private initFp(){
-    const model = new Person()
-    const formGroupData = this.getFormGroupDataPerson(model);
-    this.personForm = this.formBuilder.group(formGroupData);
-  }
-
-  /**
-   * CREAR VALIDACIONES DEL FORMGROUP
-   * @param model 
-   * @returns 
-   */
-  private getFormGroupDataPerson(model?: Person): object {
-    return {
-      ...this._formService.modelToFormGroupData(model),
-      paises_id: [model?.paises_id, [Validators.required, Validators.min(1)]],
-      codigo_ubigeo: [model?.codigo_ubigeo, [Validators.nullValidator, Validators.maxLength(50)]],
-      nombres: [model?.nombres, [Validators.required, Validators.maxLength(50)]],
-      apellido_paterno: [model?.apellido_paterno, [Validators.required, Validators.maxLength(50)]],
-      apellido_materno: [model?.apellido_materno, [Validators.required, Validators.maxLength(50)]],
-      tipo_documentos_id: [model?.tipo_documentos_id, [Validators.required, Validators.maxLength(50)]],
-      documento: [model?.documento, [Validators.required, Validators.maxLength(11)]],
-      reverso_documento: [model?.reverso_documento, [Validators.nullValidator, Validators.maxLength(50)]],
-      fecha_nacimiento: [model?.fecha_nacimiento, [Validators.nullValidator, Validators.maxLength(20)]],
-      telefono: [model?.telefono, [Validators.nullValidator, Validators.maxLength(11)]],
-      correo: [model?.correo, [Validators.nullValidator, Validators.maxLength(150)]],
-      direccion: [model?.direccion, [Validators.nullValidator, Validators.maxLength(150)]],
-    }
+  /* CAMBIAR DE TIPO DE CLIENTE */
+  onChangeFieldTypeClient(){
+    const tipoClienteValue = this.clientForm.get('tipo_cliente').value;
+    this._sharedClientService.setTypeClient(tipoClienteValue);
   }
 
 
-  /**
-   * *****************************************************************
-   * FORMULARIO  - REGISTRAR EMPRESA 
-   * *****************************************************************
-   */
-  get fc() {
-    return this.companyForm.controls;
-  }
-
-  /**
-   * INICIAR FORMULARTO CON LAS VALIDACIONES
-   * @param model 
-   */
-  private initFc(){
-    const model = new Company()
-    const formGroupData = this.getFormGroupDataCompany(model);
-    this.companyForm = this.formBuilder.group(formGroupData);
-  }
-
-  /**
-   * CREAR VALIDACIONES DEL FORMGROUP
-   * @param model 
-   * @returns 
-   */
-  private getFormGroupDataCompany(model?: Company): object {
-    return {
-      ...this._formService.modelToFormGroupData(model),
-      paises_id: [model?.paises_id, [Validators.required, Validators.min(1)]],
-      codigo_ubigeo: [model?.codigo_ubigeo, [Validators.nullValidator, Validators.maxLength(50)]],
-      tipo_empresa: [model?.tipo_empresa, [Validators.required, Validators.maxLength(50)]],
-      razon_social: [model?.razon_social, [Validators.required, Validators.maxLength(50)]],
-      nombre_comercial: [model?.nombre_comercial, [Validators.required, Validators.maxLength(50)]],
-      descripcion: [model?.descripcion, [Validators.nullValidator, Validators.maxLength(50)]],
-      tipo_documentos_id: [model?.tipo_documentos_id, [Validators.required, Validators.maxLength(50)]],
-      documento: [model?.documento, [Validators.required, Validators.maxLength(11)]],
-      telefono: [model?.telefono, [Validators.nullValidator, Validators.maxLength(11)]],
-      correo: [model?.correo, [Validators.nullValidator, Validators.maxLength(150)]],
-      direccion: [model?.direccion, [Validators.nullValidator, Validators.maxLength(150)]],
-      ciudad: [model?.ciudad, [Validators.nullValidator, Validators.maxLength(150)]],
-    }
-  }
-
-
-
-  // Cambiar entre PERSONA O EMPRESA
-  onSwitchChangeTypeClient(isPerson: any) { 
-    if(isPerson){
-      this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
-      this.fClient.persona_juridica.setValue(0);
-    } else {
-      this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion == 'RUC');
-      this.fClient.persona_juridica.setValue(1);
-      this.fc.is_active.setValue(1);
-      // this.listTypeDocumentFilters = this.listTypeDocuments;
-    }
-
-    this.fClient.is_active.setValue(1);
-
-  }
-
-
-
-  /**
-   * *******************************************************
-   * TOGGLE SEARCH CLIENTE
-   * *******************************************************
-   */
-  // Toggle formulario de instalaciones
-  toggleFormSearchClient(){
-    this.isCollapseFormSearchClient = !this.isCollapseFormSearchClient;
-    if(this.isCollapseFormSearchClient){
-      this.isCollapseClientList = true;
-    }
-  }
-
-  // Toggle formulario de instalaciones
-  toggleListSearchClient(){
-    this.isCollapseClientList = !this.isCollapseClientList;
-    if(!this.isCollapseClientList){
-      this.isCollapseFormSearchClient = true;
-    }
-  }
-
-  // Mostrar/ocultar formulario de registro
-  toggleFormClient(collapse: boolean = null){
-    this.isCollapseFormSearchClient = true;
-    this.isCollapseClientList = true;
-    this.isCollapseFormClient = collapse || !this.isCollapseFormClient;
-  }
-
-
-  // Buscar cliente
-  searchClient(){
-    this.submittedSearchClient = true;
-    this.isCollapseClientList = false;
-
-    if(this.searchClientForm.valid){
-      const values = this.searchClientForm.value;
-
-      const params = {
-        tipo_documentos_id: values.tipo_documentos_id,
-        documento: values.documento,
-        search: values.nombre,
-      }
-  
-      if(this.isClientPerson){
-        this.apiPersonListSearch(params);
-      } else {
-        this.apiCompanyListSearch(params);
-      }
-    }
-  }
-
-  // RESET FORM  SEARCH CLIENT
-  resetFormSearchClient(){
-    this.searchClientForm.reset();
-    // this.isCollapseFormSearchClient = true;
-    this.isCollapseClientList = true;
-    this.listPersons = [];
-  }
 
   // RESET FORMS - CLIENT
   resetFormClient(){
     this.clientForm.reset();
-    this.personForm.reset();
-    this.companyForm.reset();
     this.isNewDataClient = true;
     this.fClient.is_active.setValue(1);
 
-
-    if(this.isClientPerson){
-      this.fClient.persona_juridica.setValue(false);
-    } else {
-      this.fClient.persona_juridica.setValue(true);
-      this.fc.is_active.setValue(1);
-    }
-
-    if(this?.paises_id?.nativeElement){
-      this.paises_id?.nativeElement.focus();
-    }
 
     // Eliminar las variables locales
     this._sharedClientService.setPersonId(null);
@@ -755,139 +480,141 @@ export class FormClientComponent implements OnInit, OnDestroy{
     this._sharedClientService.setLegalPerson(null);
   }
 
-
+  
+  
   /**
    * ************************************************************
-   * SELECCIÓN DE CLIENTE - ROW TABLE CLIENTE SEARCHED
+   * CAPTURAR DATOS DE LOS FORMULARIOS REFERENCIADOS
    * ************************************************************
-   * @param id 
    */
-  async selectClientRowTable(id: any){
-    this.isNewDataClient = true;
+  // PERSONA
+  onDataPerson(event: any){
+    let {emit, person, identifications, contacts} = event;
+    if(emit){
+      const dPerson = Person.cast(person);
+      this.dataPersonSend = dPerson;
 
-    if(this.isClientPerson){
-      const person = this.listPersons.find((per) => per.id === id);
-      
-      // Buscar cliente por id personal
-      const resPerson = await this.apiClientFilterByPerson(person.id);
-      if(resPerson.length > 0){
-        const client = Client.cast(resPerson[0]);
-        this.clientForm.setValue(client);        
-        this.isNewDataClient = false;
-        this._sharedClientService.setClientId(client.id);
-      } else {
-        this.clientForm.reset();
-        this.fClient.is_active.setValue(1);
+      if(identifications.length > 0){
+        this.listIdentifications = IdentificationDocument.casts(identifications);
       }
 
-      if(person){
-        this.personForm.setValue(Person.cast(person));   
-        this.fClient.personas_id.setValue(person.id);  
-
-        this._sharedClientService.setPersonId(person.id);
-        this._sharedClientService.setLegalPerson(false);
+      if(contacts.length > 0){
+        this.listContacts = Contact.casts(contacts);
       }
-      
     } else {
-      const company = this.listCompanies.find((com) => com.id === id);
-
-      // Buscar cliente por id empresa
-      const resCompany = await this.apiClientFilterByCompany(company.id);
-      if(resCompany.length > 0){
-        const client = Client.cast(resCompany[0]);
-        this.clientForm.setValue(client);
-        this.isNewDataClient = false;
-        this._sharedClientService.setClientId(client.id);
-      } else {
-        this.clientForm.reset();
-        this.fClient.is_active.setValue(1);
-      }
-
-      if(company){
-        this.companyForm.setValue(Company.cast(company));      
-        this.fClient.empresas_id.setValue(company.id);
-
-        this._sharedClientService.setCompanyId(company.id);
-        this._sharedClientService.setLegalPerson(true);
-      }
+      this.dataPersonSend = null;
+      this.listIdentifications = [];
+      this.listContacts = [];
     }
 
-    this.fClient.persona_juridica.setValue(!this.isClientPerson);
-    
-    // Mostrar formulario
-    this.isCollapseFormClient = false;
-
-    // Ocultar lista de clientes buscados
-    this.isCollapseClientList = true; 
-    this.isCollapseFormSearchClient = true;
+    this.onSubmit();
   }
-  
 
-  /**
-   * *******************************************************
-   *  PROCEDER A GUARDAR LOS DATOS DEL CLIENTE
-   * *******************************************************
-   */
-  saveClient(){
-    this.submittedPerson = true;
-    this.submittedCompany = true;
-    this.submittedClient = true;
+  // EMPRESA
+  onDataCompany(event: any){
+    let {emit, company, identifications, contacts} = event;
+    if(emit){
+      const dCompany = Company.cast(company);
+      this.dataCompanySend = dCompany;
 
-    if(this.isClientPerson){
-      if(this.personForm.invalid){
-        this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Datos obligatorios incompletos', type: 'warning', timer: 1500});
-        return;
+      if(identifications.length > 0){
+        this.listIdentifications = IdentificationDocument.casts(identifications);
       }
-    } 
 
-    if(!this.isClientPerson){
-      if(this.companyForm.invalid){
-        this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Datos obligatorios incompletos', type: 'warning', timer: 1500});
-        return;
+      if(contacts.length > 0){
+        this.listContacts = Contact.casts(contacts);
       }
-    } 
-
-    if(this.clientForm.invalid){
-      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Datos obligatorios incompletos', type: 'warning', timer: 1500});
     } else {
-      
-      const valuesCompany = this.companyForm.value;
-      const valuesPerson = this.personForm.value;
-      const valuesClient = this.clientForm.value;
+      this.dataCompanySend = null;
+      this.listIdentifications = [];
+      this.listContacts = [];
+    }
 
-      const ventaId = localStorage.getItem('ventas_id');
-      if(ventaId != null && ventaId !== undefined){
-        valuesClient['ventas_id'] = ventaId;
+    this.onSubmit();
+  }
+
+  // CUENTA BANCARIAS
+  onDataBankAccount(event: any){
+    let {emit, values} = event;
+    if(emit){
+      this.listBankAccount = BankAccount.casts(values);
+    } else {
+      this.listBankAccount = [];
+    }
+  }
+
+  
+  /**
+   * ************************************************************
+   * EMITIR EL VALOR DEL FORMULARIO
+   * ************************************************************
+   */
+  execSubmit(){
+    this.submittedClient = true;
+    this._sharedClientService.setSubmitData(true);
+  }
+
+  onSubmit() {
+    if(this.clientForm.invalid || (this.dataPersonSend && this.dataCompanySend) || this.listContacts.length == 0 || this.listIdentifications.length == 0 || this.listBankAccount.length == 0){
+      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    } else {
+      const values: Client = this.clientForm.value;
+      values['identificaciones'] = this.listIdentifications;
+      values['contactos'] = this.listContacts;
+      values['cuentas_bancarias'] = this.listBankAccount;
+      values.persona_juridica = this.legalPerson;
+
+      // TIPO DE CLIENTE
+      if(this.legalPerson){
+        if(this.companyId){
+          values.empresas_id = this.companyId;
+        }
+        values['datos_empresa'] = this.dataCompanySend;
+      } else {
+        if(this.personId){
+          values.personas_id = this.personId;
+        }
+        values['datos_persona'] = this.dataPersonSend;
       }
 
-      if(this.isClientPerson){
-        valuesClient['datos_persona'] = valuesPerson;
-      } else{
-        valuesClient['datos_empresa'] = valuesCompany;
-      }
-
-      // this.dataSendDetail = {
-      //   persona_juridica: false,
-      //   personas_id: 0,
-      //   empresas_id: 0
-      // }
 
       if(this.isNewDataClient){
-        // Crear nuevo registro
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar al cliente?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el cliente?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiClientRegister(valuesClient);
+            this.apiClientRegister(values);
           }
         });
       } else {
-        // Modificar
-        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar los datos del cliente?').then((confirm) => {
+        this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar el cliente?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiClientUpdate(valuesClient);
+            this.apiClientUpdate(values, values.id);
           }
         });
-      }
-
+      }     
     }
+  }
+
+  onCancel(){
+    // this.onReset();
+    // this.focusTipoCliente.nativeElement.focus();
+    this._sharedClientService.setClearData(true);
+    this.cancel.emit({message: 'Cancelado'});
+  }
+
+  onReset(){
+    this.submittedClient = false;
+    this.isNewDataClient = true;
+    this.clientForm.reset(new Client());
+    this.clientForm.get('tipo_cliente').setValue('RE');
+    this.clientForm.get('is_active').setValue(1);
+    this._sharedClientService.setPersonId(null);
+    this._sharedClientService.setCompanyId(null);
+    this._sharedClientService.setClientId(null);
+    // this._sharedClientService.setLegalPerson(false);
+    // this._sharedClientService.setTypeClient(null);
+    this.dataPerson = null;
+    this.dataCompany = null;
+    this.dataReset = false;
+    this.shareBankAccounts = [];
   }
 }

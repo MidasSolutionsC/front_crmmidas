@@ -1,3 +1,4 @@
+import { IdentificationDocument, IdentificationDocumentList } from "./identification-document.model";
 import { Model } from "./model";
 
 export class User extends Model {
@@ -57,6 +58,7 @@ export class UserPersonSignup extends Model {
   public documento: string;
   public nombre_usuario: string;
   public clave: string;
+  public identificaciones?: IdentificationDocument[];
 
   constructor(data?: object) {
     super(data);
@@ -69,12 +71,23 @@ export class UserPersonSignup extends Model {
     this.documento = this.documento || '';
     this.nombre_usuario = this.nombre_usuario || '';
     this.clave = this.clave || '';
+    this.identificaciones = this.identificaciones || [];
   }
 
   public static cast(data: object): UserPersonSignup {
-    const userPerson = new UserPersonSignup(data);
-    const { id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_documentos_id, documento, nombre_usuario, clave } = userPerson;
-    return { id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_documentos_id, documento, nombre_usuario, clave };
+    const obj = new UserPersonSignup(data);
+    return { 
+      id: obj.id, 
+      nombres: obj.nombres, 
+      apellido_paterno: obj.apellido_materno, 
+      apellido_materno: obj.apellido_materno, 
+      paises_id: obj.paises_id, 
+      tipo_documentos_id: obj.tipo_documentos_id, 
+      documento: obj.documento, 
+      nombre_usuario: obj.nombre_usuario, 
+      clave: obj.clave,
+      identificaciones: obj.identificaciones,
+    };
   }
 
   public static casts(dataArray: object[]): UserPersonSignup[] {
@@ -94,6 +107,7 @@ export class UserPerson extends Model {
   public documento: string;
   public nombre_usuario: string;
   public clave: string;
+  public identificaciones?: IdentificationDocument[];
 
   constructor(data?: object) {
     super(data);
@@ -107,12 +121,13 @@ export class UserPerson extends Model {
     this.documento = this.documento || '';
     this.nombre_usuario = this.nombre_usuario || '';
     this.clave = this.clave || '';
+    this.identificaciones = this.identificaciones || [];
   }
 
   public static cast(data: object): UserPerson {
     const userPerson = new UserPerson(data);
-    const { id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_usuarios_id, tipo_documentos_id, documento, nombre_usuario, clave } = userPerson;
-    return { id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_usuarios_id, tipo_documentos_id, documento, nombre_usuario, clave };
+    const { id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_usuarios_id, tipo_documentos_id, documento, nombre_usuario, clave, identificaciones } = userPerson;
+    return { id, nombres, apellido_paterno, apellido_materno, paises_id, tipo_usuarios_id, tipo_documentos_id, documento, nombre_usuario, clave, identificaciones };
   }
 
   public static casts(dataArray: object[]): UserPerson[] {
@@ -140,6 +155,7 @@ export class UserPersonList extends Model {
   public created_at: string;
   public updated_at: string;
   public deleted_at: string;
+  public identificaciones?: IdentificationDocumentList[];
 
 
   constructor(data?: object) {
@@ -162,12 +178,32 @@ export class UserPersonList extends Model {
     this.created_at = this.created_at || '';
     this.updated_at = this.updated_at || '';
     this.deleted_at = this.deleted_at || '';
+    this.identificaciones = this.identificaciones || [];
   }
 
   public static cast(data: object): UserPersonList {
-    const userPersonList = new UserPersonList(data);
-    const { id, index, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, created_at, updated_at, deleted_at } = userPersonList;
-    return { id, index, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, created_at, updated_at, deleted_at };
+    const obj = new UserPersonList(data);
+    return {
+      id: obj.id,
+      index: obj.index,
+      nombres: obj.nombres,
+      apellido_paterno: obj.apellido_paterno,
+      apellido_materno: obj.apellido_materno,
+      paises_id: obj.paises_id,
+      personas_id: obj.personas_id,
+      tipo_usuarios_id: obj.tipo_usuarios_id,
+      tipo_documentos_id: obj.tipo_documentos_id,
+      paises_nombre: obj.paises_nombre,
+      tipo_usuarios_nombre: obj.tipo_usuarios_nombre,
+      tipo_documentos_abreviacion: obj.tipo_documentos_abreviacion,
+      documento: obj.documento,
+      nombre_usuario: obj.nombre_usuario,
+      is_active: obj.is_active,
+      created_at: obj.created_at,
+      updated_at: obj.updated_at,
+      deleted_at: obj.deleted_at,
+      identificaciones: obj.identificaciones,
+    };
   }
 
   public static casts(dataArray: object[]): UserPersonList[] {

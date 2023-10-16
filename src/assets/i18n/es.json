@@ -263,6 +263,7 @@
         "CAMPUS": "Sedes",
         "CATEGORY": "Categorías",
         "BRAND": "Marcas",
+        "BELL": "Campañas",
         "PRODUCT": "Productos",
         "SERVICE": "Servicios"
       }
@@ -360,6 +361,11 @@
         "placeholder": "Ingrese la marca...",
         "default_option": "Seleccione una marca..."
       },
+      "bell": {
+        "label": "Campaña",
+        "placeholder": "Ingrese la campaña...",
+        "default_option": "Seleccione una campaña..."
+      },
       "campus": {
         "label": "Sede",
         "placeholder": "Ingrese la sede...",
@@ -414,8 +420,8 @@
         "default_option": "Seleccione un distrito..."
       },
       "cif": {
-        "label": "Cif",
-        "placeholder": "Ingrese el cif..."
+        "label": "CIF/NIF",
+        "placeholder": "Ingrese el CIF..."
       },
       "city": {
         "label": "Ciudad",
@@ -494,6 +500,10 @@
       "document": {
         "label": "Documento",
         "placeholder": "Ingrese el documento..."
+      },
+      "document_number": {
+        "label": "N° Documento",
+        "placeholder": "Ingrese el numero de documento..."
       },
       "document_reverse": {
         "label": "Reverso documento",
@@ -722,10 +732,19 @@
         "label": "Cliente",
         "placeholder": "Ingrese el cliente.."
       },
+      "different_holder": {
+        "label": "Diferente titular",
+        "placeholder": "Ingrese el titular..."
+      },
       "aop": {
         "label": "Aop",
         "placeholder": "Ingrese el aop...",
         "default_option": "Seleccione el aop..."
+      },
+      "high_or_portability": {
+        "label": "Alta o Portabilidad",
+        "placeholder": "Ingrese la alta o portabilidad...",
+        "default_option": "Seleccione..."
       },
       "icc": {
         "label": "ICC",
@@ -749,6 +768,10 @@
       "type_user_id": {
         "label": "Tipo de Usuario Id",
         "placeholder": "Ingrese el id del tipo de Usuario "
+      },
+      "nationality": {
+        "label": "Nacionalidad",
+        "placeholder": "Ingrese la nacionalidad..."
       }
     },
     "VALIDATION": {
@@ -762,6 +785,8 @@
     },
     "BUTTONS": {
       "FORM": "Formulario",
+      "LIST": "Lista",
+      "FILTER": "Filtrar",
       "SEARCH": "Buscar",
       "SEND": "Enviar",
       "ADD": "Agregar",

@@ -55,8 +55,7 @@
                   <th scope="col">Nombres</th>
                   <th scope="col">Apellido paterno</th>
                   <th scope="col">Apellido materno</th>
-                  <th scope="col">Tipo Doc.</th>
-                  <th scope="col">N° Doc.</th>
+                  <th scope="col">Documento</th>
                   <th scope="col">Usuario</th>
                   <th scope="col">Tipo de usuario</th>
                   <th scope="col">Estado</th>
@@ -71,8 +70,11 @@
                   <td>{{data.nombres}}</td>
                   <td>{{data.apellido_paterno}}</td>
                   <td>{{data.apellido_materno}}</td>
-                  <td>{{data.tipo_documentos_abreviacion}}</td>
-                  <td>{{data.documento}}</td>
+                  <td>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item p-1 font-size-11" *ngFor="let identificacion of data?.identificaciones" [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}} {{identificacion.documento}}</li>
+                    </ul>
+                  </td>
                   <td>{{data.nombre_usuario}}</td>
                   <td>{{data.tipo_usuarios_nombre}}</td>
                   <!-- <td><span class="badge text-md bg-info">{{data.nombre_tipo_usuario}}</span></td> -->
@@ -117,6 +119,7 @@
       </div>
     </div>
   </div>
+
 </div>
 
 <!-- MODAL FORMULARIO -->
@@ -125,8 +128,8 @@
     <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
   </div>
-  <form (keydown.enter)="$event.preventDefault()" [formGroup]="userForm" autocomplete="off">
-    <div class="modal-body">
+  <div class="modal-body">
+    <form (keydown.enter)="$event.preventDefault()" [formGroup]="userForm" autocomplete="off">
       <!-- <input type="hidden" name="id" value="" formControlName="id" /> -->
       <div class="row g-2">
         <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.country.label' | translate as translatedLabel;">
@@ -186,15 +189,13 @@
           </div>
         </div>
       </div>
-      <div class="row g-2">
+      <!-- <div class="row g-2">
         <div class="col-md-7 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
           <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
           <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': f.tipo_documentos_id.errors && (f.tipo_documentos_id.dirty || f.tipo_documentos_id.touched || submitted) }">
             <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
             <option *ngFor="let typeDocument of listDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
           </select>
-
-          <!-- <input type="text" id="apellido_materno" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.type_document.placeholder' | translate}}" formControlName="apellido_materno" [ngClass]="{ 'is-invalid': f.apellido_materno.errors && (f.apellido_materno.dirty || f.apellido_materno.touched || submitted) }" /> -->
           <div *ngIf="f.tipo_documentos_id.errors && (f.tipo_documentos_id.dirty || f.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
             <div *ngIf="f.tipo_documentos_id.errors.required">
               {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
@@ -216,7 +217,47 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
+      <form [formGroup]="identificationForm" autocomplete="off">
+        <div formArrayName="formList">
+          <div *ngFor="let fi of formDataIdentification.controls; let i=index;">
+            <div [formGroupName]="i" class="row g-2">
+              <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
+                <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
+                <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fi.get('tipo_documentos_id').errors && (fi.get('tipo_documentos_id').dirty || fi.get('tipo_documentos_id').touched || submitted) }">
+                  <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
+                  <option *ngFor="let typeDocument of listDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
+                </select>
+                <div *ngIf="fi.get('tipo_documentos_id').errors && (fi.get('tipo_documentos_id').dirty || fi.get('tipo_documentos_id').touched || submitted)" class="invalid-feedback" align="left">
+                  <div *ngIf="fi.get('tipo_documentos_id').errors.required">
+                    {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
+                <label for="documento" class="form-label">{{translatedLabel}} *</label>
+                <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fi.get('documento').errors && (fi.get('documento').dirty || fi.get('tipo_documentos_id').touched || submitted)}" />
+                <div *ngIf="fi.get('documento').errors && (fi.get('documento').dirty || fi.get('tipo_documentos_id').touched || submitted)" class="invalid-feedback" align="left">
+                  <div *ngIf="fi.get('documento').errors.required">
+                    {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+                  </div>
+                  <div *ngIf="fi.get('documento').errors.maxlength">
+                    {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.get('documento').errors.maxlength.requiredLength}}
+                  </div>
+                  <div *ngIf="fi.get('documento').errors.minlength">
+                    {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.get('documento').errors.minlength.requiredLength}}
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-md-2 mb-3">
+                <label for="">&nbsp;</label>
+                <input type="button" class="btn btn-primary" value="Delete" (click)="removeFieldIdentification(i)">
+              </div> -->
+            </div>
+          </div>
+          <!-- <input type="button" class="btn btn-success mt-3 mt-lg-0" value="Add" (click)="addFieldIdentification()"> -->
+        </div>
+      </form>
       <div class="row g-2">
         <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_user.label' | translate as translatedLabel;">
           <label for="tipo_usuarios_id" class="form-label">{{translatedLabel}} *</label>
@@ -287,14 +328,15 @@
           </div>
         </div>
       </div>
+    </form>
+
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+      <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
     </div>
-    <div class="modal-footer">
-      <div class="hstack gap-2 justify-content-end">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
-        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
-        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
-      </div>
-    </div>
-  </form>
+  </div>
 </ng-template>
 <!--End Modal -->

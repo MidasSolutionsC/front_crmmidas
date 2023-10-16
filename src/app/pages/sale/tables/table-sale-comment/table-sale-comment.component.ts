@@ -63,7 +63,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
     this.isCollapseForm = collapse || !this.isCollapseForm;
     if(!this.isCollapseForm){
       this.isCollapseList = true;
-    }
+    } 
   }
 
 

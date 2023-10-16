@@ -9,6 +9,8 @@ import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
 import { AllowedIpComponent } from './allowed-ip/allowed-ip.component';
 
+import {FormComponent } from './sale/form/form.component';
+
 
 const routes: Routes = [
   // { path: '', redirectTo: 'dashboard' },
@@ -23,7 +25,8 @@ const routes: Routes = [
   { path: 'maintenances', loadChildren: () => import('./maintenance/maintenance.module').then(m => m.MaintenanceModule), canActivate: [hasRoleGuard] },
   { path: 'calendar', component: CalendarComponent, canActivate: [hasRoleGuard] },
   { path: 'call', component: CallComponent, canActivate: [hasRoleGuard] },
-  { path: 'sale', component: SaleComponent, canActivate: [hasRoleGuard] },
+  { path: 'sale', loadChildren: () => import('./sale/sale.module').then(m => m.SaleModule), canActivate: [hasRoleGuard] },
+  // { path: 'sale', component: FormComponent, canActivate: [hasRoleGuard] },
   { path: 'allowed-ip', component: AllowedIpComponent, canActivate: [hasRoleGuard] },
   { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule), canActivate: [hasRoleGuard] },
 ];

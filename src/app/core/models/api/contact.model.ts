@@ -1,13 +1,13 @@
 import { Model } from "./model";
 
 export class Contact extends Model{
-  public id: number;
-  public empresas_id: number;
-  public personas_id: number;
-  public tipo: string;
-  public contacto: string;
-  public is_primary: boolean | number;
-  public is_active: boolean | number;
+  public id?: number;
+  public empresas_id?: number;
+  public personas_id?: number;
+  public tipo?: string;
+  public contacto?: string;
+  public is_primary?: boolean | number;
+  public is_active?: boolean | number;
 
   constructor(data?: object){
     super(data);

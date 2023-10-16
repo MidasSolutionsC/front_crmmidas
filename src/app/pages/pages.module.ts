@@ -53,6 +53,7 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { ModalRegisterComponent } from './sale/modals/modal-register/modal-register.component';
 import { FormClientComponent } from './sale/forms/form-client/form-client.component';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+
 import { FormSaleDetailComponent } from './sale/forms/form-sale-detail/form-sale-detail.component';
 import { TableSaleDetailComponent } from './sale/tables/table-sale-detail/table-sale-detail.component';
 import { FormSaleDocumentComponent } from './sale/forms/form-sale-document/form-sale-document.component';
@@ -61,15 +62,32 @@ import { FormSaleCommentComponent } from './sale/forms/form-sale-comment/form-sa
 import { TableSaleDocumentComponent } from './sale/tables/table-sale-document/table-sale-document.component';
 import { TableSaleHistoryComponent } from './sale/tables/table-sale-history/table-sale-history.component';
 import { TableSaleCommentComponent } from './sale/tables/table-sale-comment/table-sale-comment.component';
-import { FormClientContactComponent } from './sale/forms/form-client-contact/form-client-contact.component';
-import { FormClientAddressComponent } from './sale/forms/form-client-address/form-client-address.component';
-import { FormClientBankAccountComponent } from './sale/forms/form-client-bank-account/form-client-bank-account.component';
+import { FormClientContactComponent } from './sale/forms/form-client/form-client-contact/form-client-contact.component';
+import { FormClientAddressComponent } from './sale/forms/form-client/form-client-address/form-client-address.component';
+import { FormClientBankAccountComponent } from './sale/forms/form-client/form-client-bank-account/form-client-bank-account.component';
 import { TableClientAddressComponent } from './sale/tables/table-client-address/table-client-address.component';
 import { TableClientBankAccountComponent } from './sale/tables/table-client-bank-account/table-client-bank-account.component';
 import { TableClientContactComponent } from './sale/tables/table-client-contact/table-client-contact.component';
 import { InfoGeneralComponent } from './sale/info/info-general/info-general.component';
 import { ModalUpdateComponent } from './sale/modals/modal-update/modal-update.component';
 import { ModalDetailComponent } from './sale/modals/modal-detail/modal-detail.component';
+import { ModalFormComponent } from './sale/modals/modal-form/modal-form.component';
+import { FormSearchClientComponent } from './sale/forms/form-client/form-search-client/form-search-client.component';
+import { FormPersonComponent } from './sale/forms/form-client/form-person/form-person.component';
+import { FormCompanyComponent } from './sale/forms/form-client/form-company/form-company.component';
+import { FormClientFullComponent } from './sale/forms/form-client-full/form-client-full.component';
+import { FormIdentificationComponent } from './sale/forms/form-client/form-identification/form-identification.component';
+import { FormSaleInstallationComponent } from './sale/forms/form-sale-installation/form-sale-installation.component';
+import { FormMobileComponent } from './sale/forms/form-sale-detail/form-mobile/form-mobile.component';
+import { FormFixedComponent } from './sale/forms/form-sale-detail/form-fixed/form-fixed.component';
+import { FormTvComponent } from './sale/forms/form-sale-detail/form-tv/form-tv.component';
+import { FormSaleDetailFullComponent } from './sale/forms/form-sale-detail-full/form-sale-detail-full.component';
+import { TableSaleDetailFullComponent } from './sale/tables/table-sale-detail-full/table-sale-detail-full.component';
+import { FormArrayContactComponent } from './sale/forms/form-client/form-client-contact/form-array-contact/form-array-contact.component';  
+import { FormComponent } from './sale/form/form.component';
+import { FormArrayBankAccountComponent } from './sale/forms/form-client/form-client-bank-account/form-array-bank-account/form-array-bank-account.component'; 
+
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -96,6 +114,21 @@ import { ModalDetailComponent } from './sale/modals/modal-detail/modal-detail.co
     InfoGeneralComponent,
     ModalUpdateComponent,
     ModalDetailComponent,
+    ModalFormComponent,
+    FormSearchClientComponent,
+    FormPersonComponent,
+    FormCompanyComponent,
+    FormClientFullComponent,
+    FormIdentificationComponent,
+    FormComponent,
+    FormSaleInstallationComponent,
+    FormMobileComponent,
+    FormFixedComponent,
+    FormTvComponent,
+    FormSaleDetailFullComponent,
+    TableSaleDetailFullComponent,
+    FormArrayContactComponent,
+    FormArrayBankAccountComponent
   ],
   imports: [
     CoreModule,
@@ -142,7 +175,7 @@ import { ModalDetailComponent } from './sale/modals/modal-detail/modal-detail.co
     // NgxDatatableModule,
     // ExportAsModule,
     // DataTablesModule
-    AccordionModule
+    AccordionModule,
   ],
   providers: [BsDropdownConfig, provideNgxMask()]
 })

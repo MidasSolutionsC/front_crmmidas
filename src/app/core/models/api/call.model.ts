@@ -19,9 +19,9 @@ export class Call extends Model{
     super(data);
     this.id = this.id || 0;
     this.numero = this.numero || 0;
-    this.operadores_id = this.operadores_id || undefined;
-    this.operadores_llamo_id = this.operadores_llamo_id || undefined;
-    this.tipificaciones_llamadas_id = this.tipificaciones_llamadas_id || undefined;
+    this.operadores_id = this.operadores_id || null;
+    this.operadores_llamo_id = this.operadores_llamo_id || null;
+    this.tipificaciones_llamadas_id = this.tipificaciones_llamadas_id || null;
     this.nombres = this.nombres || '';
     this.apellido_paterno = this.apellido_paterno || '';
     this.apellido_materno = this.apellido_materno || '';

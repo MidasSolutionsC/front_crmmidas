@@ -63,6 +63,11 @@ export class PersonService {
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
+  public getByIdentification(data: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/getByIdentification`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
+  }
+
   public register(data: any): Observable<ResponseApi>{
     const endpoint = `${this.baseUrl}`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))

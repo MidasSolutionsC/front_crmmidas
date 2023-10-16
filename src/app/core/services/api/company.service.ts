@@ -58,6 +58,11 @@ export class CompanyService {
     return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
+  public getByIdentification(data: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/getByIdentification`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
+  }
+
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))

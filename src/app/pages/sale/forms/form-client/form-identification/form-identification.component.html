@@ -1,0 +1,85 @@
+<form [formGroup]="identificationForm" autocomplete="off">
+  <div formArrayName="formList" class="bg-light px-2 py-2 rounded position-relative">
+
+    <div *ngIf="showList">
+      <div *ngFor="let fi of formDataIdentification.controls; let i=index;">
+        <div [formGroupName]="i" class="row g-2 bg-transparent border-top border-primary mb-3">
+          <div class="col-12" style="z-index: 1500;">
+            <span class="badge rounded-pill badge-soft-primary bg-primary text-white position-absolute bottom-0 start-0">{{i + 1}}</span>
+            <button type="button" class="btn btn-outline-danger btn-sm rounded-circle position-absolute top-0 end-0" 
+              *ngIf="visibleCloseBtn"
+              (click)="removeFieldIdentification(i)"> <i class="fas fa-times" ></i></button>
+          </div>
+          <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
+            <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} (*)</label>
+            <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fi.get('tipo_documentos_id').errors && (fi.get('tipo_documentos_id').dirty || fi.get('tipo_documentos_id').touched || submitted) }">
+              <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
+              <option *ngFor="let typeDocument of listTypeDocumentFilter" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
+            </select>
+            <div *ngIf="fi.get('tipo_documentos_id').errors && (fi.get('tipo_documentos_id').dirty || fi.get('tipo_documentos_id').touched || submitted)" class="invalid-feedback" align="left">
+              <div *ngIf="fi.get('tipo_documentos_id').errors.required">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.document_number.label' | translate as translatedLabel;">
+            <label for="documento" class="form-label me-2">{{translatedLabel}} (*)</label>
+            <!-- <ui-switch disabled="false" 
+              defaultBgColor="#f2f2f2" 
+              defaultBoColor="#556ee6"
+              color="#556ee6"
+              formControlName="show_reverse" uncheckedLabel="Sin Reverso" checkedLabel="Con reverso" 
+              uncheckedTextColor="black"
+              checkedTextColor="white" size="small" class="w-auto font-size-8">
+            </ui-switch> -->
+            <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document_number.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fi.get('documento').errors && (fi.get('documento').dirty || fi.get('documento').touched || submitted)}" />
+            <div *ngIf="fi.get('documento').errors && (fi.get('documento').dirty || fi.get('tipo_documentos_id').touched || submitted)" class="invalid-feedback" align="left">
+              <div *ngIf="fi.get('documento').errors.required">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+              <div *ngIf="fi.get('documento').errors.maxlength">
+                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.get('documento').errors.maxlength.requiredLength}}
+              </div>
+              <div *ngIf="fi.get('documento').errors.minlength">
+                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.get('documento').errors.minlength.requiredLength}}
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-2" *ngIf="fi.get('show_reverse').value && 'FORMS.FIELD_NAMES.document_reverse.label' | translate as translatedLabel;">
+            <label for="reverso_documento" class="form-label">{{translatedLabel}}</label>
+            <input type="text" maxlength="250" id="reverso_documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="reverso_documento" [ngClass]="{ 'is-invalid': fi.get('reverso_documento').errors && (fi.get('reverso_documento').dirty || fi.get('reverso_documento').touched || submitted)}" />
+            <div *ngIf="fi.get('reverso_documento').errors && (fi.get('reverso_documento').dirty || fi.get('reverso_documento').touched || submitted)" class="invalid-feedback" align="left">
+              <div *ngIf="fi.get('reverso_documento').errors.required">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+              <div *ngIf="fi.get('reverso_documento').errors.maxlength">
+                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.get('reverso_documento').errors.maxlength.requiredLength}}
+              </div>
+              <div *ngIf="fi.get('reverso_documento').errors.minlength">
+                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.get('reverso_documento').errors.minlength.requiredLength}}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3 d-flex align-items-center" *ngIf="'FORMS.FIELD_NAMES.is_primary.label' | translate as translatedLabel;">
+            <!-- <label for="fi.get('is_primary')" class="form-label">{{translatedLabel}}</label> -->
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="is_primary{{i}}" formControlName="is_primary" [ngClass]="{ 'is-invalid': fi.get('is_primary').errors && (fi.get('is_primary').dirty || fi.get('is_primary').touched || submitted) }">
+              <label class="form-check-label" for="is_primary{{i}}">
+                {{translatedLabel}}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-relative">
+      <strong type="button" (click)="showList = !showList" class="text-primary"><i class="mdi mdi-arrow-up-thick me-1" [ngClass]="{'mdi-eye-off': showList, 'mdi-eye': !showList}"></i> Identificación</strong>
+      <button type="button" (click)="addFieldIdentification()" class="btn btn-outline-primary rounded-pill position-absolute bottom-0 end-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+        <i class="fas fa-plus me-1 font-size-10" ></i> {{'FORMS.BUTTONS.ADD' | translate}}
+      </button>
+      <!-- <button type="button" class="btn btn-sm btn-success rounded-pill position-absolute bottom-0 end-0" (click)="addFieldIdentification()"><i class="fas fa-plus"></i></button> -->
+    </div>
+  </div>
+</form>
+

@@ -1,3 +1,4 @@
+import { IdentificationDocumentList } from "../identification-document.model";
 import { Model } from "../model";
 
 export class Member extends Model{
@@ -48,6 +49,7 @@ export class MemberList extends Model{
   public created_at: string;
   public updated_at: string;
   public deleted_at: string;
+  public identificaciones?: IdentificationDocumentList[];
 
   constructor(data?: object){
     super(data);
@@ -73,12 +75,13 @@ export class MemberList extends Model{
     this.created_at = this.created_at || '';
     this.updated_at = this.updated_at || '';
     this.deleted_at = this.deleted_at || '';
+    this.identificaciones = this.identificaciones || [];
   }
 
   public static cast(data: object): MemberList{
     const memberList = new MemberList(data);
-    const { id, grupos_id, usuarios_id, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at } = memberList;
-    return {id, grupos_id, usuarios_id, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at};
+    const { id, grupos_id, usuarios_id, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at, identificaciones } = memberList;
+    return {id, grupos_id, usuarios_id, nombres, apellido_paterno, apellido_materno, paises_id, personas_id, tipo_usuarios_id, tipo_documentos_id, paises_nombre, tipo_usuarios_nombre, tipo_documentos_abreviacion, documento, nombre_usuario, is_active, user_create_id, user_update_id, user_delete_id, created_at, updated_at, deleted_at, identificaciones};
   }
 
   public static casts(dataArray: object[]): MemberList[]{

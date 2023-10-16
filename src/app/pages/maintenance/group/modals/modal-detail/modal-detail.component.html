@@ -51,8 +51,7 @@
               <th scope="col">N°</th>
               <th scope="col">Nombres</th>
               <th scope="col">Apellidos</th>
-              <th scope="col">Tipo Doc.</th>
-              <th scope="col">N° Doc.</th>
+              <th scope="col">Documento</th>
               <th scope="col">Usuario</th>
               <th scope="col">Tipo de usuario</th>
             </tr>
@@ -62,8 +61,11 @@
               <th scope="row">{{i + 1}}</th>
               <td>{{data.nombres}}</td>
               <td>{{data.apellido_paterno}} {{data.apellido_materno}}</td>
-              <td>{{data.tipo_documentos_abreviacion}}</td>
-              <td>{{data.documento}}</td>
+              <td>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item p-1 font-size-11" *ngFor="let identificacion of data?.identificaciones" [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}} {{identificacion.documento}}</li>
+                </ul>
+              </td>
               <td>{{data.nombre_usuario}}</td>
               <td>{{data.tipo_usuarios_nombre}}</td>
             </tr>

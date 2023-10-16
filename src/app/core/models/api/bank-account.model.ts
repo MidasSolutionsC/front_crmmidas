@@ -1,13 +1,13 @@
 import { Model } from "./model";
 
 export class BankAccount extends Model{
-  public id: number;
-  public clientes_id: number;
-  public tipo_cuentas_bancarias_id: number;
-  public cuenta: string;
-  public fecha_apertura: string;
-  public is_primary: boolean | number;
-  public is_active: boolean | number;
+  public id?: number;
+  public clientes_id?: number;
+  public tipo_cuentas_bancarias_id?: number;
+  public cuenta?: string;
+  public fecha_apertura?: string;
+  public is_primary?: boolean | number;
+  public is_active?: boolean | number;
 
   constructor(data?: object){
     super(data);

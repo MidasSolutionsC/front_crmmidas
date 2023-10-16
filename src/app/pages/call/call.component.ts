@@ -395,7 +395,7 @@ export class CallComponent {
       numero: ['', [Validators.required, Validators.maxLength(11)]],
       operadores_id: ['', [Validators.required, Validators.min(1)]],
       operadores_llamo_id: ['', [Validators.nullValidator, Validators.min(1)]],
-      tipificaciones_llamadas_id: ['', [Validators.nullValidator, Validators.min(1)]],
+      tipificaciones_llamadas_id: [null, [Validators.nullValidator, Validators.min(1)]],
       nombres: ['', [Validators.nullValidator, Validators.maxLength(60)]],
       apellido_paterno: ['', [Validators.nullValidator, Validators.maxLength(60)]],
       apellido_materno: ['', [Validators.nullValidator, Validators.maxLength(60)]],
@@ -432,6 +432,9 @@ export class CallComponent {
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: Call = this.callForm.value;
+      if(values.tipificaciones_llamadas_id == null){
+        delete values.tipificaciones_llamadas_id;
+      }
 
       if(this.isNewData){
         // Crear nuevo registro

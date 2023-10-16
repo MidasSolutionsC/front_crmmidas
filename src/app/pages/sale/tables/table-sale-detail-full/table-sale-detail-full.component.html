@@ -1,0 +1,65 @@
+
+<div class="card card-body border">
+  <div class="">
+    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>FECHA:</strong> <span>{{dataBasicPreview?.fecha}}</span></div>
+    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>ID SMART:</strong> <span>{{dataBasicPreview?.smart_id}}</span></div>
+    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>ID DIRECCIÓN SMART:</strong> <span>{{dataBasicPreview?.smart_address_id}}</span></div>
+    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>Dirección:</strong> <span>{{dataBasicPreview?.address}}</span></div>
+  </div>     
+</div>
+
+<div class="card shadow-sm border border-primary">
+  <div class="card-body border-bottom">
+    <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+      <div class="">
+        <h4 class="card-title text-primary">Productos</h4>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-md btn-primary" (click)="toggleForm()" [ngClass]="{'btn-success': isCollapseForm, 'btn-primary': !isCollapseForm}">
+          <i class="mdi" [ngClass]="{'mdi-clipboard-edit': isCollapseForm, 'mdi-format-list-bulleted-square': !isCollapseForm}"></i>
+          {{isCollapseForm? ('FORMS.BUTTONS.FORM' | translate): 'FORMS.BUTTONS.LIST' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card-body border-bottom border-primary" [collapse]="isCollapseForm" [isAnimated]="true">
+    <app-form-sale-detail-full ></app-form-sale-detail-full>
+  </div>
+  <div class="card-body"  [collapse]="isCollapseList" [isAnimated]="true">
+    <div class="table-responsive">
+      <table class="table align-middle dt-responsive nowrap w-100 table-check">
+        <thead>
+          <tr>
+            <th scope="col">N°</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Archivo</th>
+            <th scope="col">Estado</th>
+            <th scope="col" style="width: 5%;">Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of listSaleDetail; let i = index" >
+            <th scope="row">{{i + 1}}</th>
+            <td>{{data.nombre}}</td>
+            <td><a [href]="'http://localhost:8000/files/sale/' + data.archivo" target="_blank">Ver archivo</a></td>
+            <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
+            <td >
+              <!-- <ul class="list-unstyled hstack gap-1 mb-0">
+                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                  <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getDataRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
+                </li>
+                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                  <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                </li>
+              </ul> -->
+            </td>
+          </tr>
+          <tr *ngIf="!listSaleDetail.length">
+            <td colspan="7" class="text-center">Sin registros.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -207,8 +207,8 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
   private getFormGroupData(model: TypeDocument): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      abreviacion: ['', [Validators.required, Validators.maxLength(15)]],
+      nombre: [model.nombre || '', [Validators.required, Validators.maxLength(50)]],
+      abreviacion: [model.abreviacion || '', [Validators.required, Validators.maxLength(15)]],
       is_active: [true, [Validators.nullValidator]]
     }
   }
@@ -220,7 +220,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    * @param content modal content
    */
   openModal(content: any) {
-    // this.initForm();
+    this.initForm();
     this.dataModal.title = 'Crear tipo de documento';
     this.submitted = false;
     this.isNewData = true;

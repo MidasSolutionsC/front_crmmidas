@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div *ngIf="typeService.includes('mobile')">
+    <div *ngIf="typeService?.includes('mobile')">
       <div class="row g-2 mb-3">
         <strong class="text-primary">Detalle del servicio</strong>
         <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <div *ngIf="typeService.includes('fixed')">
+    <div *ngIf="typeService?.includes('fixed')">
       <div class="row g-2 mb-3">
         <strong class="text-primary">Detalle del servicio</strong>
         <div class="col-md-3 d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
@@ -157,8 +157,8 @@
         <strong>Código postal:</strong><span>{{saleDetail?.instalaciones_codigo_postal}}</span>
       </div>
     </div>
-    <div *ngIf="typeService.includes('fixed')"></div>
-    <div *ngIf="typeService.includes('tv')"></div>
+    <div *ngIf="typeService?.includes('fixed')"></div>
+    <div *ngIf="typeService?.includes('tv')"></div>
 
   </div>
   <div class="card-footer">
