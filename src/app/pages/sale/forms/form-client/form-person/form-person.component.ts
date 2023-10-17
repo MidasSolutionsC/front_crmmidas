@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged, take } from 'rxjs';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged, filter, take } from 'rxjs';
 import { Contact, CountryList, IdentificationDocument, Person, ResponseApi } from 'src/app/core/models';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
 import { ApiErrorFormattingService, CountryService, FormService, PersonService, SharedClientService, SweetAlertService, UbigeoService } from 'src/app/core/services';
@@ -66,7 +66,11 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
 
     // RESETEAR DATOS
     this.subscription.add(
-      this._sharedClientService.getClearData().subscribe((value: boolean) => {
+      this._sharedClientService.getClearData()
+      .pipe(
+        filter(value => value !== null)
+      )
+      .subscribe((value: boolean) => {
         if(value){
           this.onReset();
         }
@@ -108,6 +112,7 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
   onChangeData() {
     if (this.personForm) {
       if (this.data) {
+        // console.log("DATOS EN PERSONA:", this.data);
         this.shareIdentifications = this.data.identifications;
         this.shareContacts = this.data.contacts;
         this.personForm.setValue(Person.cast(this.data));
@@ -238,7 +243,9 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
       this.listIdentification = []
     }
 
-    this.onSubmit();
+    setTimeout(() => {
+      this.onSubmit();
+    }, 250);
   }
 
   // FORMULARIO DE IDENTIFICACIONES

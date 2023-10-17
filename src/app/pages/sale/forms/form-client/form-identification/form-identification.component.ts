@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { IdentificationDocument, ResponseApi, TypeDocumentList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SharedClientService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 
@@ -50,17 +50,20 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
 
   ngOnInit(): void {
     this.apiTypeDocumentList();
-
+    
     this.identificationForm = this.formBuilder.group({
       formList: this.formBuilder.array([]),
     }),
-
+    
     this.formDataIdentification.push(this.fieldIdentification({is_primary: 1, show_reverse: false}));
-
+    
+    this.onChangeData();
     
     // RESETEAR DATOS
     this.subscription.add(
-      this._sharedClientService.getClearData().subscribe((value: boolean) => {
+      this._sharedClientService.getClearData()
+        .pipe(filter(value => value !== null))
+        .subscribe((value: boolean) => {
         if(value){
           this.onReset();
         }
@@ -109,6 +112,7 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
     // SUMMIT - EMITIR DATOS HACIA AFUERA
     this.subscription.add(
       this._sharedClientService.getSubmitData()
+      .pipe(filter(value => value !== null))
       .subscribe((value: boolean) => {
         if(value){
           this.onSubmit();
@@ -136,13 +140,14 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
 
       if (this.data.length > 0) {
         this.data.forEach((item) => {
-          if(!item.show_reverse){
-            item.show_reverse = false;
-          }
+          // if(!item.show_reverse){
+            //   item.show_reverse = false;
+            // }
           this.formDataIdentification.push(this.fieldIdentification(IdentificationDocument.cast(item)));
         })
         this.isNewData = false;
       } else {
+        this.formDataIdentification.push(this.fieldIdentification({is_primary: 1}));
         this.isNewData = true;
       }
     }

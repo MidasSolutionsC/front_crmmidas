@@ -1,4 +1,5 @@
- import { Contact } from "./contact.model";
+ import { Address } from "./address.model";
+import { Contact } from "./contact.model";
 import { IdentificationDocument, IdentificationDocumentList } from "./identification-document.model";
 import { Model } from "./model";
 
@@ -13,6 +14,7 @@ export class Person extends Model{
   public fecha_nacimiento?: string;
   public identifications?: IdentificationDocument[];
   public contacts?: Contact[];
+  public addresses?: Address[];
 
   constructor(data?: object){
     super(data);
@@ -26,6 +28,7 @@ export class Person extends Model{
     this.fecha_nacimiento = this.fecha_nacimiento || null;
     this.identifications = this.identifications || [];
     this.contacts = this.contacts || [];
+    this.addresses = this.addresses || [];
   }
 
   public static cast(data: object): Person{
@@ -41,6 +44,7 @@ export class Person extends Model{
       fecha_nacimiento: obj.fecha_nacimiento,
       identifications: obj.identifications,
       contacts: obj.contacts,
+      addresses: obj.addresses,
     };
   }
 

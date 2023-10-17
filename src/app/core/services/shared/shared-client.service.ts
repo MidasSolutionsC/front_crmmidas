@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Address, Company, Person } from '../../models';
+import { Client } from '../../models/api/client.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,10 @@ export class SharedClientService {
   private legalPerson: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   private submitData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   private clearData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+  private address: BehaviorSubject<Address[]> = new BehaviorSubject<Address[]>(null);
+  private dataPerson: BehaviorSubject<Person> = new BehaviorSubject<Person>(null);
+  private dataCompany: BehaviorSubject<Company> = new BehaviorSubject<Company>(null);
+  private dataClient: BehaviorSubject<Client> = new BehaviorSubject<Client>(null);
 
   constructor() { }
 
@@ -87,5 +93,41 @@ export class SharedClientService {
 
   setClearData(value: boolean) {
     this.clearData.next(value);
+  }
+
+  // DIRECCIÓN 
+  getAddress() {
+    return this.address.asObservable();
+  }
+
+  setAddress(value: any) {
+    this.address.next(value);
+  }
+
+  // DATOS PERSONA
+  getDataPerson() {
+    return this.dataPerson.asObservable();
+  }
+
+  setDataPerson(value: Person) {
+    this.dataPerson.next(value);
+  }
+
+  // DATOS EMPRESA
+  getDataCompany() {
+    return this.dataCompany.asObservable();
+  }
+
+  setDataCompany(value: Company) {
+    this.dataCompany.next(value);
+  }
+
+  // DATOS CLIENTE
+  getDataClient() {
+    return this.dataClient.asObservable();
+  }
+
+  setDataClient(value: Client) {
+    this.dataClient.next(value);
   }
 }

@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="d-flex flex-wrap gap-2">
-        <button type="button" class="btn btn-md btn-sucess" (click)="toggleFormClient()" [ngClass]="{'btn-success': isCollapseFormClient, 'btn-warning': !isCollapseFormClient}">
+        <button type="button" class="btn btn-md btn-sucess" *ngIf="!isCollapseFormClient" (click)="toggleFormClient()" [ngClass]="{'btn-success': isCollapseFormClient, 'btn-warning': !isCollapseFormClient}">
           <i class="mdi" [ngClass]="{'mdi-clipboard-edit': isCollapseFormClient, 'mdi-account-search': !isCollapseFormClient}"></i>
           {{isCollapseFormClient? ('FORMS.BUTTONS.FORM' | translate): 'FORMS.BUTTONS.SEARCH' | translate}}
         </button>

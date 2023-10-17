@@ -1,3 +1,4 @@
+import { Address } from "./address.model";
 import { Contact } from "./contact.model";
 import { IdentificationDocument } from "./identification-document.model";
 import { Model } from "./model";
@@ -13,6 +14,7 @@ export class Company extends Model{
   public is_active?: boolean | number;
   public identifications?: IdentificationDocument[];
   public contacts?: Contact[];
+  public addresses?: Address[];
 
   constructor(data?: object){
     super(data);
@@ -26,6 +28,7 @@ export class Company extends Model{
     this.is_active = this.is_active || 1;
     this.identifications = this.identifications || [];
     this.contacts = this.contacts || [];
+    this.addresses = this.addresses || [];
   }
 
   public static cast(data: object): Company{
@@ -41,6 +44,7 @@ export class Company extends Model{
       is_active: obj.is_active,
       identifications: obj.identifications,
       contacts: obj.contacts,
+      addresses: obj.addresses,
     };
   }
 

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, Observable, Subscription, debounceTime, distinctUntilChanged, of, pipe } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, debounceTime, distinctUntilChanged, filter, of, pipe, take } from 'rxjs';
 import { BankAccount, Company, CompanyList, Contact, CountryList, IdentificationDocument, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { Client, ClientList } from 'src/app/core/models/api/client.model';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
@@ -78,11 +78,13 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     private _sweetAlertService: SweetAlertService,
     private _formService: FormService,
     private formBuilder: FormBuilder
-  ){}
+  ){
+
+  }
 
   ngOnInit(): void {
     this.initFClient();
-    this.onChangeData();
+    // this.onChangeData();
 
     // ID PERSONA
     this.subscription.add(
@@ -96,8 +98,13 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
 
     // PERSONA LEGAL
     this.subscription.add(
-      this._sharedClientService.getLegalPerson().subscribe((value: boolean) =>  {
+      this._sharedClientService.getLegalPerson()
+      .pipe(
+        filter(value => value !== null)
+      )
+      .subscribe((value: boolean) =>  {
         this.legalPerson = value;
+        
         if(value){
           this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'RE');
           this.fClient.tipo_cliente.setValue('ME');
@@ -108,14 +115,39 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       })
     )
 
+    // LIMPIAR DATOS
     this.subscription.add(
-      this._sharedClientService.getClearData().subscribe((value: boolean) =>  {
+      this._sharedClientService.getClearData()
+      .pipe(
+        filter(value => value !== null)
+      )
+      .subscribe((value: boolean) =>  {
         if(value){
           this.onReset();
         }
       })
     )
 
+    // DATOS PERSONA
+    this.subscription.add(
+      this._sharedClientService.getDataPerson().pipe(take(1)).subscribe((data: Person) => {
+        if(data){
+          this.dataPerson = data;
+        }
+      })
+    )
+
+    // DATOS CLIENTE
+    this.subscription.add(
+      this._sharedClientService.getDataClient().pipe(take(1)).subscribe((data: Client) => {
+        if(data){
+          this.data = data;
+          this.shareBankAccounts = this.data.bank_accounts;
+          this.clientForm.setValue(Client.cast(this.data));
+          this.isNewDataClient = false;
+        }
+      })
+    )
 
   }
 
@@ -125,18 +157,22 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes.data && !changes.data.firstChange){
-     this.onChangeData();
+      this.data = changes.data.currentValue;
+      this.onChangeData();
     }
 
     if(changes.dataPerson && !changes.dataPerson.firstChange){
-     this.onChangeDataPerson();
+      this.dataPerson = changes.dataPerson.currentValue;
+      this.onChangeDataPerson();
     }
 
     if(changes.dataCompany && !changes.dataCompany.firstChange){
-     this.onChangeDataCompany();
+      this.dataCompany = changes.dataCompany.currentValue;
+      this.onChangeDataCompany();
     }
   }
 
+  // DETECCIÓN DE CAMBIOS PARA CLIENTE
   onChangeData(){
     if(this.clientForm){
       if(this.data){
@@ -165,7 +201,6 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
 
   // RESPETAR FROMULARIOS
   onChangeReset(){
-    console.log("RESET:", this.dataReset);
     if(this.dataReset){
       this.onReset();
 
@@ -365,15 +400,19 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
           const {person, company, client} = response.data;
 
           if(person){
+            this.dataPerson = Person.cast(person);
             this._sharedClientService.setPersonId(person.id);
             this._sharedClientService.setLegalPerson(false);
           }
+
           if(company){
+            this.dataCompany = Company.cast(company);
             this._sharedClientService.setCompanyId(company.id);
             this._sharedClientService.setLegalPerson(true);
           }
 
           if(client){
+            this.data = Client.cast(client);
             this.clientForm.setValue(Client.cast(client));
             this.isNewDataClient = false;
             this._sharedClientService.setClientId(client.id);
@@ -439,6 +478,14 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     const model = new Client();
     const formGroupData = this.getFormGroupDataClient(model);
     this.clientForm = this.formBuilder.group(formGroupData);
+
+    if(this.legalPerson){
+      this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'RE');
+      this.fClient.tipo_cliente.setValue('ME');
+    } else {
+      this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'PM' && item.id !== 'CO');
+      this.fClient.tipo_cliente.setValue('RE');
+    }
   }
 
   /**
@@ -507,7 +554,9 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       this.listContacts = [];
     }
 
-    this.onSubmit();
+    setTimeout(() => {
+      this.onSubmit();
+    }, 0);
   }
 
   // EMPRESA
@@ -530,7 +579,9 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       this.listContacts = [];
     }
 
-    this.onSubmit();
+    setTimeout(() => {
+      this.onSubmit();
+    }, 0);
   }
 
   // CUENTA BANCARIAS
@@ -610,6 +661,8 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     this._sharedClientService.setPersonId(null);
     this._sharedClientService.setCompanyId(null);
     this._sharedClientService.setClientId(null);
+    this._sharedClientService.setDataClient(null);
+    this._sharedClientService.setDataPerson(null);
     // this._sharedClientService.setLegalPerson(false);
     // this._sharedClientService.setTypeClient(null);
     this.dataPerson = null;

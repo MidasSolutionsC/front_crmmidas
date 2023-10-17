@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 import { Contact } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SharedClientService, SweetAlertService } from 'src/app/core/services';
 
@@ -50,16 +50,31 @@ export class FormArrayContactComponent implements OnInit, OnDestroy, OnChanges {
       formList: this.formBuilder.array([]),
     }),
 
-    this.formListContact.push(this.fieldContact({ is_primary: 1 }));
+    this.formListContact.push(this.fieldContact({tipo: 'EML', is_primary: 1 }));
+    this.formListContact.push(this.fieldContact({tipo: 'CEL', is_primary: 1 }));
+
+    this.onChangeData(); // CAMBIOS INICIALES
 
     // SUMMIT - EMITIR DATOS HACIA AFUERA
     this.subscription.add(
       this._sharedClientService.getSubmitData()
+        .pipe(filter(value => value !== null))
         .subscribe((value: boolean) => {
           if (value) {
             this.onSubmit();
           }
         })
+    )
+
+    // RESETEAR DATOS
+    this.subscription.add(
+      this._sharedClientService.getClearData()
+        .pipe(filter(value => value !== null))
+        .subscribe((value: boolean) => {
+        if(value){
+          this.onReset();
+        }
+      })
     )
   }
 
@@ -83,9 +98,12 @@ export class FormArrayContactComponent implements OnInit, OnDestroy, OnChanges {
       if (this.data.length > 0) {
         this.data.forEach((item) => {
           this.formListContact.push(this.fieldContact(Contact.cast(item)));
+          
         })
         this.isNewData = false;
       } else {
+        this.formListContact.push(this.fieldContact({tipo: 'EML', is_primary: 1 }));
+        this.formListContact.push(this.fieldContact({tipo: 'CEL', is_primary: 1 }));
         this.isNewData = true;
       }
     }
@@ -163,7 +181,8 @@ export class FormArrayContactComponent implements OnInit, OnDestroy, OnChanges {
     this.isNewData = true;
     this.formListContact.reset();
     this.formListContact.clear();
-    this.formListContact.push(this.fieldContact({ is_primary: 1 }));
+    this.formListContact.push(this.fieldContact({tipo: 'EML', is_primary: 1 }));
+    this.formListContact.push(this.fieldContact({tipo: 'CEL', is_primary: 1 }));
   }
 }
 

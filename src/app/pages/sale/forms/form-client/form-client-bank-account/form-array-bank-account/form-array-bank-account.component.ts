@@ -48,7 +48,10 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
 
     this.formListBankAccount.push(this.fieldBankAccount({ is_primary: 1 }));
 
-    this.apiATypeBankAccountList();
+    // CAMBIOS DETECTADOS AL INICIO
+    this.onChangeData();
+
+    this.apiTypeBankAccountList();
 
     // Subscriptionciones
     this.subscription.add(
@@ -87,12 +90,15 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
         formList: this.formBuilder.array([]),
       })
 
-      if (this?.data) {
+      
+      if (this.data && this.data?.length > 0) {
         this?.data.forEach((item) => {
           this.formListBankAccount.push(this.fieldBankAccount(BankAccount.cast(item)));
         })
         this.isNewData = false;
+        console.log("CUENTAS BANCARIAS:", this.formListBankAccount.value);
       } else {
+        this.formListBankAccount.push(this.fieldBankAccount({is_primary: 1}));
         this.isNewData = true;
       }
     }
@@ -104,7 +110,7 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
    * OPERACIONES CON LA API - FORÁNEOS
    * ****************************************************************
    */
-  public apiATypeBankAccountList(force: boolean = false){
+  public apiTypeBankAccountList(force: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._typeBankAccountService.getAll(force).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -144,6 +150,27 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
 
 
     return formGroup;
+  }
+
+  duplicateError(field: string) {
+    return (formArray: FormArray) => {
+      let duplicate = [];
+      formArray.value.forEach((x: any, index: any) => {
+        if (formArray.value.filter((y: any) => y[field] == x[field]).length > 1) {
+          duplicate.push(index);
+        }
+      });
+      return duplicate.length ? { error: duplicate } : null;
+    };
+  }
+
+  uniqueBankAccountValidator() {
+    return (formArray: FormArray) => {
+      const values = formArray.value.map((item) => JSON.stringify(item));
+      const hasDuplicates = new Set(values).size !== values.length;
+
+      return hasDuplicates ? { duplicateBankAccounts: true } : null;
+    };
   }
 
 

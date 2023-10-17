@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription, distinctUntilChanged, filter, take } from 'rxjs';
 import { Company, CompanyList, CountryList, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { Client } from 'src/app/core/models/api/client.model';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
@@ -70,7 +70,11 @@ export class FormClientFullComponent {
 
     // PERSONA LEGAL
     this.subscription.add(
-      this._sharedClientService.getLegalPerson().subscribe((value: boolean) => {
+      this._sharedClientService.getLegalPerson()
+      .pipe(
+        filter(value => value !== null)
+      )
+      .subscribe((value: boolean) => {
         this.isClientPerson = !value;
       })
     )
@@ -80,6 +84,15 @@ export class FormClientFullComponent {
       this._sharedClientService.getClientId().subscribe((value: number) => {
         if(value){
           this.alertMsg.show = false;
+        }
+      })
+    )
+
+    // DATOS PERSONA
+    this.subscription.add(
+      this._sharedClientService.getDataPerson().pipe(take(1)).subscribe((data: Person) => {
+        if(data){
+          this.toggleFormClient(false);
         }
       })
     )
@@ -354,7 +367,6 @@ export class FormClientFullComponent {
     
 
     this._sharedClientService.setClearData(true);
-    console.log(isPerson)
     this.fs.tipo_documentos_id.setValue(selectedTypeDocumentId);
   }
 
@@ -401,11 +413,18 @@ export class FormClientFullComponent {
           if(!resPerson?.client){
             this._sweetAlertService.showTopEnd({type: 'warning', title: 'No encontrado', message: 'La persona no se encuentra registrado como cliente', timer: 2500});
             this.setAlertMsg('La persona no se encuentra registrado como cliente!', 'text-danger');
+          } else {
+            this.shareDataClient = resPerson?.client;    
+            this._sharedClientService.setDataClient(Client.cast(resPerson?.client));
+            this._sharedClientService.setClientId(resPerson?.client?.id)
           } 
-
+          
           this.toggleFormClient(false);     
-          this.shareDataClient = resPerson?.client;    
-          this.shareDataPerson = Person.cast(resPerson); 
+          this.shareDataPerson = Person.cast(resPerson);    
+          this._sharedClientService.setDataPerson(Person.cast(resPerson));
+          this._sharedClientService.setPersonId(resPerson?.id);
+          this._sharedClientService.setAddress(resPerson?.addresses);
+          // console.log("DIRECCIÓN PERSONA:",resPerson.addresses);
         }
    
       } else {
@@ -422,6 +441,7 @@ export class FormClientFullComponent {
           this.toggleFormClient(false);     
           this.shareDataClient = resCompany?.client;    
           this.shareDataCompany = Company.cast(resCompany); 
+          // console.log("DIRECCIÓN EMPRESA:", resCompany.addresses);
         }   
       }
     }
