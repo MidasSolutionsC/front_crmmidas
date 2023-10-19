@@ -11,7 +11,7 @@ import { AddressService, ApiErrorFormattingService, BankAccountService, ClientSe
 })
 export class InfoGeneralComponent implements OnInit, OnDestroy {
 
-  @ViewChild('content') contentPrint: TemplateRef<HTMLElement>;
+  @ViewChild('contentDetail') contentPrint: TemplateRef<HTMLElement>;
   contentPrintHtml: string = '';
 
 

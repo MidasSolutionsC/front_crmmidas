@@ -1,8 +1,12 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { DetailFixedLine, DetailMobileLine, InstallationList, OperatorList, ResponseApi, SaleDetail, TypeDocumentList, TypeStatusList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, OperatorService, SweetAlertService, TempInstallationService, TypeDocumentService, TypeStatusService } from 'src/app/core/services';
+
+import { FormMobileComponent } from './form-mobile/form-mobile.component';
+import { FormFixedComponent } from './form-fixed/form-fixed.component';
+import { FormTvComponent } from './form-tv/form-tv.component';
 
 @Component({
   selector: 'app-form-sale-detail',
@@ -10,6 +14,9 @@ import { ApiErrorFormattingService, FormService, OperatorService, SweetAlertServ
   styleUrls: ['./form-sale-detail.component.scss']
 })
 export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
+  @ViewChild('mobileForm') mobileForm!: FormMobileComponent;
+  @ViewChild('fixedForm') fixedForm!: FormFixedComponent;
+  @ViewChild('tvForm') tvForm!: FormTvComponent;
 
   // Datos de entrada
   @Input() typeService: string = null;
@@ -292,6 +299,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   private initForm(model: SaleDetail = new SaleDetail()){
     const formGroupData = this.getFormGroupData(model);
     this.saleDetailForm = this.formBuilder.group(formGroupData);
+    // this.saleDetailForm.get('is_other').value
   }
 
   /**
@@ -306,6 +314,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       fecha_cierre: [model.fecha_cierre, [Validators.nullValidator]],
       observacion: [model.observacion, [Validators.nullValidator, Validators.maxLength(450)]],
       is_active: [true, [Validators.nullValidator]],
+      is_other_address: [false, [Validators.nullValidator]],
     }
   }
 
@@ -362,12 +371,12 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   // Mobile
   submitMobile(){
-    if(this.mobileLineForm.invalid){
+    if(this.mobileForm.mobileLineForm.invalid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
       return false;
     } else {
       // this.formSubmit.emit(this.mobileLineForm.value);
-      return this.mobileLineForm.value;
+      return this.mobileForm.mobileLineForm.value;
     }
   }
 

@@ -102,11 +102,9 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
     if(this.installationForm){
       if(this.data){
         this.installationForm.setValue(Installation.cast(this.data));
-        this.installationForm.get('is_other').setValue(false);
         this.isNewData = false;
       } else {
         this.installationForm.setValue(new Installation());
-        this.installationForm.get('is_other').setValue(false);
         this.isNewData = true;
       }
     }
@@ -353,6 +351,7 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             
             // GUARDAR EN EL LOCAL STORAGE SOLO SI NO SE ENCUENTRA 
             this._shareSaleService.setSaleId(data.ventas_id);
+            this._shareSaleService.setInstallationId(data.id);
           }
         }
 
@@ -397,6 +396,7 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             data.direccion_completo = direccion_completo;
             this._tempInstallationService.updateObjectObserver(data);
             this._sharedClientService.setSaleId(data.ventas_id);
+            this._shareSaleService.setInstallationId(data.id);
           }
         }
 

@@ -1,11 +1,132 @@
 <div>
 
-  <div class="row g-2">
+  <!-- ROWS -->
+  <div class="row gx-2">
+    <div class="col-lg-5 mb-2">
+      <accordion [isAnimated]="true" [closeOthers]="false">
+        <accordion-group heading="DATOS DEL CLIENTE" [isOpen]="true" class="border border-primary rounded">
+          <div class="row gx-2">
+            <div class="col-lg-6">
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Nombre:</strong> <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Apellido:</strong> <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>NIF:</strong> <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Correo:</strong> <span>...</span></div>
+            </div>
+            <div class="col-lg-6">
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Fecha de nacimiento:</strong>
+                <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Teléfono:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Teléfono fijo:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Teléfono alternativo:</strong>
+                <span>...</span></div>
+            </div>
+          </div>
+        </accordion-group>
+        <accordion-group heading="DIRECCIÓN" [isOpen]="true" class="border mt-2 border-primary rounded">
+          <div class="row gx-2">
+            <div class="col-lg-12">
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Tipo de cliente:</strong>
+                <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Dirección:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Población:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Provincia:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Código postal:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID Vodafond:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>IBAN:</strong> <span>...</span></div>
+            </div>
+          </div>
+        </accordion-group>
+        <accordion-group heading="DATOS DE LA OFERTA" [isOpen]="true" class="border mt-2 border-primary rounded">
+          <div class="row gx-2">
+            <div class="col-lg-12">
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DE OFERTA:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DE ORDEN:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DE OFERTA SMART:</strong>
+                <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Tipo de oferta:</strong>
+                <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Estado de la oferta:</strong>
+                <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Comercial:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Método de entrega:</strong>
+                <span>...</span></div>
+            </div>
+          </div>
+        </accordion-group>
+        <accordion-group heading="ESTADO DE LA ORDEN" [isOpen]="true" class="border mt-2 border-primary rounded">
+          <div class="row gx-2">
+            <div class="col-lg-12">
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Número OT:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID OT Padre:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Clasificación:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Código OT:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Descripción:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Estado OT:</strong> <span>...</span>
+              </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Ticket portabilidad:</strong>
+                <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Número Movil:</strong> <span>...</span>
+              </div>
+            </div>
+          </div>
+        </accordion-group>
+        <accordion-group heading="DOCUMENTOS" [isOpen]="true" class="border mt-2 border-primary rounded">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>N°</th>
+                  <th>TIPO</th>
+                  <th>NOMBRE</th>
+                  <th>FECHA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>DNI</td>
+                  <td>Documento</td>
+                  <td>18-10-2023</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </accordion-group>
+      </accordion>
+    </div>
+    <div class="col-lg-7 mb-2">
+      <accordion [isAnimated]="true" [closeOthers]="false">
+        <accordion-group heading="DETALLE VENTA" [isOpen]="true" class="border border-primary rounded">
+          <ng-container *ngTemplateOutlet="contentDetail"></ng-container>
+        </accordion-group>
+        <accordion-group heading="COMENTARIO (Opcional)" [isOpen]="true" class="border mt-2 border-primary rounded">
+          <app-form-sale-comment></app-form-sale-comment>
+        </accordion-group>
+      </accordion>
+    </div>
+  </div>
+
+  <div class="row g-2 d-none">
     <div class="col-lg-6">
       <strong class="text-primary mb-3 w-100">DATOS DEL CLIENTE</strong>
       <div class="card border border-info">
         <div class="card-body">
-    
+
           <div class="row g-3">
             <div class="col-md-4">
               <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
@@ -13,7 +134,7 @@
               </div>
             </div>
           </div>
-    
+
           <!-- EMPRESA -->
           <div class="row g-3" *ngIf="dataClient?.persona_juridica">
             <div class="col-md-4">
@@ -32,7 +153,7 @@
               </div>
             </div>
           </div>
-    
+
           <!-- PERSONA -->
           <div class="row g-3" *ngIf="!dataClient?.persona_juridica">
             <div class="col-md-4">
@@ -42,7 +163,8 @@
             </div>
             <div class="col-md-4">
               <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>Apellidos:</strong><span>{{dataPerson?.apellido_paterno}} {{dataPerson?.apellido_materno}}</span>
+                <strong>Apellidos:</strong><span>{{dataPerson?.apellido_paterno}}
+                  {{dataPerson?.apellido_materno}}</span>
               </div>
             </div>
             <div class="col-md-4">
@@ -51,7 +173,7 @@
               </div>
             </div>
           </div>
-    
+
           <!-- MÀS DATOS DEL CLIENTE -->
           <hr>
           <div class="row g-2">
@@ -60,7 +182,8 @@
                 <h5 class="card-title font-size-13 mb-3">Contactos</h5>
                 <ul class="verti-timeline list-unstyled">
                   <ng-container *ngFor="let item of listContact; index as i">
-                    <ng-template [ngTemplateOutlet]="templateContact"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+                    <ng-template [ngTemplateOutlet]="templateContact"
+                      [ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
                   </ng-container>
                 </ul>
               </div>
@@ -70,7 +193,8 @@
                 <h5 class="card-title font-size-13 mb-3">Direcciones</h5>
                 <ul class="verti-timeline list-unstyled">
                   <ng-container *ngFor="let item of listAddress; index as i">
-                    <ng-template [ngTemplateOutlet]="templateAddress"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+                    <ng-template [ngTemplateOutlet]="templateAddress"
+                      [ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
                   </ng-container>
                 </ul>
               </div>
@@ -80,7 +204,8 @@
                 <h5 class="card-title font-size-13 mb-3">Cuentas bancarias</h5>
                 <ul class="verti-timeline list-unstyled">
                   <ng-container *ngFor="let item of listBankAccount; index as i">
-                    <ng-template [ngTemplateOutlet]="templateBankAccount"[ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
+                    <ng-template [ngTemplateOutlet]="templateBankAccount"
+                      [ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
                   </ng-container>
                 </ul>
               </div>
@@ -91,116 +216,108 @@
     </div>
   </div>
 
-  <ng-container *ngTemplateOutlet="content"></ng-container>
-  
-  <ng-template #content>
+  <ng-template #contentDetail>
+    <div class="invoice-title">
+      <h4 class="float-end font-size-14">Orden # 01</h4>
+    </div>
+    <hr>
+
     <div class="row">
-      <div class="col-lg-12">
-        <div class="card">
-          <div class="card-body">
-            <div class="invoice-title">
-              <h4 class="float-end font-size-16">Order # 12345</h4>
-              <!-- <div class="auth-logo mb-4">
-                <img src="assets/images/logo-dark.png" alt="logo" class="auth-logo-dark" height="20"/>
-                <img src="assets/images/logo-light.png" alt="logo" class="auth-logo-light" height="20"/>
-              </div> -->
-            </div>
-            <hr>
-            <div class="row">
-              <div class="col-6">
-                <address>
-                  <strong>Billed To:</strong><br>
-                  John Smith<br>
-                  1234 Main<br>
-                  Apt. 4B<br>
-                  Springfield, ST 54321
-                </address>
-              </div>
-              <div class="col-6 text-sm-end">
-                <address>
-                  <strong>Shipped To:</strong><br>
-                  Kenny Rigdon<br>
-                  1234 Main<br>
-                  Apt. 4B<br>
-                  Springfield, ST 54321
-                </address>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6 mt-3">
-                <address>
-                  <strong>Payment Method:</strong><br>
-                  Visa ending **** 4242<br>
-                  jsmith@email.com
-                </address>
-              </div>
-              <div class="col-6 mt-3 text-sm-end">
-                <address>
-                  <strong>Order Date:</strong><br>
-                  October 16, 2019<br><br>
-                </address>
-              </div>
-            </div>
-            <div class="py-2 mt-3">
-              <h3 class="font-size-15 fw-bold">Order summary</h3>
-            </div>
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 70px;">No.</th>
-                    <th>Item</th>
-                    <th class="text-end">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>01</td>
-                    <td>Skote - Admin Dashboard Template</td>
-                    <td class="text-end">$499.00</td>
-                  </tr>
-  
-                  <tr>
-                    <td>02</td>
-                    <td>Skote - Landing Template</td>
-                    <td class="text-end">$399.00</td>
-                  </tr>
-  
-                  <tr>
-                    <td>03</td>
-                    <td>Veltrix - Admin Dashboard Template</td>
-                    <td class="text-end">$499.00</td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" class="text-end">Sub Total</td>
-                    <td class="text-end">$1397.00</td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" class="border-0 text-end">
-                      <strong>Shipping</strong></td>
-                    <td class="border-0 text-end">$13.00</td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" class="border-0 text-end">
-                      <strong>Total</strong></td>
-                    <td class="border-0 text-end">
-                      <h4 class="m-0">$1410.00</h4>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+      <div class="col-6">
+        <address>
+          <strong>Factura a:</strong><br>
+          John Smith<br>
+          1234 Main<br>
+          Apt. 4B<br>
+          Springfield, ST 54321
+        </address>
+      </div>
+      <div class="col-6 text-sm-end">
+        <address>
+          <strong>Enviado a:</strong><br>
+          Kenny Rigdon<br>
+          1234 Main<br>
+          Apt. 4B<br>
+          Springfield, ST 54321
+        </address>
+      </div>
+    </div>
+
+    <div class="py-2 mt-3">
+      <h3 class="font-size-15 fw-bold">Productos/Servicios</h3>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width: 70px;">N°.</th>
+            <th>Servicio</th>
+            <th class="text-end">Cantidad</th>
+            <th class="text-end">Precio</th>
+            <th class="text-end">Descuento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>01</td>
+            <td>
+              <strong>Skote - Admin Dashboard Template</strong>
+              <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque amet doloremque ullam alias! Aspernatur
+                corrupti iusto nesciunt facilis tenetur tempore impedit illo rerum cum maxime.
+              </p>
+            </td>
+            <td class="text-end">1</td>
+            <td class="text-end">$499.00</td>
+            <td class="text-end">$0.00</td>
+          </tr>
+
+          <tr>
+            <td>02</td>
+            <td>Skote - Landing Template</td>
+            <td class="text-end">1</td>
+            <td class="text-end">$399.00</td>
+            <td class="text-end">$0.00</td>
+          </tr>
+
+          <tr>
+            <td>03</td>
+            <td>Veltrix - Admin Dashboard Template</td>
+            <td class="text-end">1</td>
+            <td class="text-end">$499.00</td>
+            <td class="text-end">$0.00</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="border-0 text-end">
+              <strong>Sub Total</strong>
+            </td>
+            <td class="border-0 text-end">$1410.00</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="border-0 text-end">
+              <strong>Descuento</strong>
+            </td>
+            <td class="border-0 text-end">$13.00</td>
+          </tr>
+          <tr class=" border-top">
+            <td colspan="4" class="border-bottom-0 text-end">
+              <strong class="font-size-17 text-primary">Total</strong>
+            </td>
+            <td class="border-bottom-0 text-end">
+              <h4 class="m-0 text-primary">$1410.00</h4>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="d-print-none d-none">
+      <div class="float-end">
+        <a href="javascript:void(0)" (click)="printContentInfo(contentDetail)" class="btn btn-success"><i
+            class="fa fa-print"></i></a>
       </div>
     </div>
   </ng-template>
-  
-  <div class="d-print-none d-none">
-    <div class="float-end">
-      <a href="javascript:void(0)" (click)="printContentInfo(content)" class="btn btn-success"><i class="fa fa-print"></i></a>
-      <a href="javascript: void(0);" class="btn btn-primary w-md ms-1">Send</a>
-    </div>
-  </div>
-  
 </div>

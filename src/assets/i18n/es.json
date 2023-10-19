@@ -359,7 +359,8 @@
       "brand": {
         "label": "Marca",
         "placeholder": "Ingrese la marca...",
-        "default_option": "Seleccione una marca..."
+        "default_option": "Seleccione una marca...",
+        "default_option_all": "Todos"
       },
       "bell": {
         "label": "Campaña",
@@ -735,6 +736,10 @@
       "different_holder": {
         "label": "Diferente titular",
         "placeholder": "Ingrese el titular..."
+      },
+      "different_address": {
+        "label": "Diferente dirección",
+        "placeholder": "Ingrese la dirección..."
       },
       "aop": {
         "label": "Aop",

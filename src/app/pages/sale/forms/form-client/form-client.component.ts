@@ -137,6 +137,16 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       })
     )
 
+    // DATOS EMPRESA
+    this.subscription.add(
+      this._sharedClientService.getDataCompany().pipe(take(1)).subscribe((data: Company) => {
+        if(data){
+          console.log("DATOS EMPRESA:", data);
+          this.dataCompany = data;
+        }
+      })
+    )
+
     // DATOS CLIENTE
     this.subscription.add(
       this._sharedClientService.getDataClient().pipe(take(1)).subscribe((data: Client) => {
@@ -663,6 +673,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     this._sharedClientService.setClientId(null);
     this._sharedClientService.setDataClient(null);
     this._sharedClientService.setDataPerson(null);
+    this._sharedClientService.setDataCompany(null);
     // this._sharedClientService.setLegalPerson(false);
     // this._sharedClientService.setTypeClient(null);
     this.dataPerson = null;

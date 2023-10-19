@@ -19,6 +19,8 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
     address: ''
   };
 
+  // MOSTRAR FORMULARIO PARA INDICAR EL SERVICIO AÑADIR
+  showFormIndicationService: boolean = true;
 
   // MOSTRAR FORMULARIO DE SERVICIO
   showFormService: boolean = false;
@@ -140,6 +142,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
     if(!this.typeServiceId){
       this._sweetAlertService.showCenter({type: 'warning', title: 'Error al agregar servicio', message: 'Por favor indique el tipo de servicio', timer: 2500});
     } else {
+      this.showFormIndicationService = false;
       this.showFormService = true;
       const typeService = this.listTypeService.find((item) => item.id == this.typeServiceId);
       this.typeServiceNombre = typeService.nombre;
@@ -161,7 +164,8 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
    * ***********************************************************
    */
   onCancel(event: any){
-    console.log(event);
+    // console.log(event);
     this.showFormService = false;
+    this.showFormIndicationService = true;
   }
 }

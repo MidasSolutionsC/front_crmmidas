@@ -1,8 +1,8 @@
 
-<div class="card card-body border">
+<div class="card card-body border" *ngIf="showFormIndicationService">
   <!-- <h3 class="card-title mt-0">Servicios</h3> -->
   <div class="row g-2">
-    <div class="col-md-6" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
+    <div class="col-md-6 d-none" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
       <label for="" class="form-label">{{translatedLabel}} ({{'FORMS.FIELD_NAMES.bell.label' | translate}})</label>
       <ng-select [(ngModel)]="brandId"
         [notFoundText]="'No se encontraron elementos'"
@@ -43,9 +43,9 @@
   </div>
 </div>
 
-<div class="card card-body border border-success" [hidden]="!showFormService">
+<div class="card card-body border border-success" *ngIf="showFormService">
   <div class="">
-    <strong class="text-success mb-3 w-100 d-block font-size-16">Formulario de {{typeServiceNombre}}</strong>
+    <strong class="text-success text-uppercase mb-3 w-100 d-block font-size-16">Formulario - {{typeServiceNombre}}</strong>
     <app-form-sale-detail (cancel)="onCancel($event)" [typeService]="shareTypeService"></app-form-sale-detail>
   </div>
 </div>

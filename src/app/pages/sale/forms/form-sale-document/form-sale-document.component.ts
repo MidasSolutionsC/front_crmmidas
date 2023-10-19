@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { ResponseApi, SaleDocument, SaleDocumentList, TypeDocumentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleDocumentService, TypeDocumentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SharedSaleService, SweetAlertService, TempSaleDocumentService, TypeDocumentService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
 
 @Component({
@@ -34,12 +34,19 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
   previewImage: any;
 
   listTypeDocuments: TypeDocumentList[] = [];
+
+  saleId: number;
+  clientId: number;
+  personId: number;
+  companyId: number;
+  legalPerson: boolean = false;
   
     
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private _shareSaleService: SharedSaleService,
     private _typeDocumentService: TypeDocumentService,
     private _tmpSaleDocumentService: TempSaleDocumentService,
     private _formService: FormService,
@@ -53,6 +60,13 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
     // Instanciar form
     this.initForm();
     this.apiTypeDocumentList();
+
+    // ID VENTA
+    this.subscription.add(
+      this._shareSaleService.getSaleId().subscribe((value: number) => {
+        this.saleId = value;
+      })
+    )
 
     // Tipos de documentos
     this.subscription.add(
@@ -94,10 +108,10 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  private apiSaleDocumentSave(data: SaleDocument | FormData){
+  private apiTempSaleDocumentSave(data: SaleDocument | FormData){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
-      this._tmpSaleDocumentService.register(data).subscribe((response: ResponseApi) => {
+      this._tmpSaleDocumentService.registerComplete(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
           if(response.data[0]){
@@ -105,6 +119,10 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
             this._tmpSaleDocumentService.addObjectObserver(data);
             this.onReset();
             this.submit.emit({saved: true, data});
+
+            if(data.ventas_id){
+              this._shareSaleService.setSaleId(data.ventas_id);
+            }
           }
         }
 
@@ -129,7 +147,7 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
     )
   }
 
-  private apiSaleDocumentUpdate(data: SaleDocument | FormData, id: number){
+  private apiTempSaleDocumentUpdate(data: SaleDocument | FormData, id: number){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
       this._tmpSaleDocumentService.update(data, id).subscribe((response: ResponseApi) => {
@@ -280,17 +298,16 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
       const values: SaleDocument = this.documentForm.value;
       const formData = new FormData();
 
-      const idVenta = localStorage.getItem('ventas_id');
-      if(idVenta !== null && idVenta !== undefined){
-        values.ventas_id = parseInt(idVenta);
-        formData.append('ventas_id', idVenta);
-      }
-
-      // Iterar a través de las propiedades de 'values' y agregarlas al FormData
-      for (const key of Object.keys(values)) {
+       // Iterar a través de las propiedades de 'values' y agregarlas al FormData
+       for (const key of Object.keys(values)) {
         if(values[key] != null){
           formData.append(key, values[key]);
         }
+      }
+
+      if(this.saleId){
+        values.ventas_id = this.saleId;
+        formData.append('ventas_id', this.saleId.toString());
       }
 
       if(this.uploadFiles && this.uploadFiles.length > 0){
@@ -304,13 +321,13 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
       if(this.isNewData){
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el archivo?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiSaleDocumentSave(formData);
+            this.apiTempSaleDocumentSave(formData);
           }
         });
       } else {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar el archivo?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiSaleDocumentUpdate(formData, values.id);
+            this.apiTempSaleDocumentUpdate(formData, values.id);
           }
         });
       }

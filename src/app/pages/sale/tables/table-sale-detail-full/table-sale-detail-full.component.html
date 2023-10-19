@@ -1,18 +1,37 @@
 
-<div class="card card-body border">
-  <div class="">
-    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>FECHA:</strong> <span>{{dataBasicPreview?.fecha}}</span></div>
-    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>ID SMART:</strong> <span>{{dataBasicPreview?.smart_id}}</span></div>
-    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>ID DIRECCIÓN SMART:</strong> <span>{{dataBasicPreview?.smart_address_id}}</span></div>
-    <div class="d-flex justify-content-start gap-2 flex-wrap"><strong>Dirección:</strong> <span>{{dataBasicPreview?.address}}</span></div>
-  </div>     
-</div>
+<accordion [isAnimated]="true" [closeOthers]="true">
+  <accordion-panel heading="Instalaciones" [isOpen]="true" class="border rounded">
+    <div class="row gy-3">
+      <div class="col-lg-8">
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>FECHA:</strong> <span>{{dataBasicPreview?.fecha}}</span></div>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID RETAIL X:</strong> <input type="text" class="form-control w-auto"></div>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <input type="text" class="form-control w-auto"></div>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <input type="text" class="form-control w-auto"></div>
+        <!-- <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <span>{{dataBasicPreview?.smart_id}}</span></div>
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <span>{{dataBasicPreview?.smart_address_id}}</span></div> -->
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>DIRECCIÓN:</strong> <span>{{dataBasicPreview?.address}}</span></div>
+      </div>      
+      <div class="col-lg-4">
+        <div class="w-100" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
+          <label for="" class="form-label text-primary">{{translatedLabel}} ({{'FORMS.FIELD_NAMES.bell.label' | translate}})</label>
+          <ng-select [(ngModel)]="brandId" (change)="onChangeBrand($event)"
+            [notFoundText]="'No se encontraron elementos'">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.brand.default_option_all' | translate}}</ng-option>
+            <ng-option *ngFor="let brand of listBrand"
+              [value]="brand.id">{{brand.nombre}}</ng-option>
+          </ng-select>
+        </div>
+      </div>
+    </div>
+  </accordion-panel>
+</accordion>
 
-<div class="card shadow-sm border border-primary">
+
+<div class="card shadow-sm border border-primary mt-2">
   <div class="card-body border-bottom">
     <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
       <div class="">
-        <h4 class="card-title text-primary">Productos</h4>
+        <h4 class="card-title text-primary">Productos/Servicios</h4>
       </div>
       <div class="d-flex gap-2">
         <button type="button" class="btn btn-md btn-primary" (click)="toggleForm()" [ngClass]="{'btn-success': isCollapseForm, 'btn-primary': !isCollapseForm}">
@@ -23,9 +42,12 @@
     </div>
   </div>
   
+  <!-- FORMULARIO DE SERVICIOS -->
   <div class="card-body border-bottom border-primary" [collapse]="isCollapseForm" [isAnimated]="true">
     <app-form-sale-detail-full ></app-form-sale-detail-full>
   </div>
+
+  <!-- LISTA DE SERVICIOS AÑADIDOS -->
   <div class="card-body"  [collapse]="isCollapseList" [isAnimated]="true">
     <div class="table-responsive">
       <table class="table align-middle dt-responsive nowrap w-100 table-check">

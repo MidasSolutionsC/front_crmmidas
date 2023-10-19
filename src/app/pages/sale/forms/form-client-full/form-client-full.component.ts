@@ -97,6 +97,15 @@ export class FormClientFullComponent {
       })
     )
 
+    // DATOS EMPRESA
+    this.subscription.add(
+      this._sharedClientService.getDataCompany().pipe(take(1)).subscribe((data: Company) => {
+        if(data){
+          this.toggleFormClient(false);
+        }
+      })
+    )
+
     // Ventas OBTENER CLIENTE
     this.subscription.add(
       this._tempSaleService.dataObserver$
@@ -436,11 +445,17 @@ export class FormClientFullComponent {
           if(!resCompany?.client){
             this._sweetAlertService.showTopEnd({type: 'warning', title: 'No encontrado', message: 'La empresa no se encuentra registrado como cliente', timer: 2500});
             this.setAlertMsg('La persona no se encuentra registrado como cliente!', 'text-danger');
-          } 
+          } else {
+            this.shareDataClient = resCompany?.client;    
+            this._sharedClientService.setDataClient(Client.cast(resCompany?.client));
+            this._sharedClientService.setClientId(resCompany?.client?.id)
+          }
 
-          this.toggleFormClient(false);     
-          this.shareDataClient = resCompany?.client;    
+          this.toggleFormClient(false);        
           this.shareDataCompany = Company.cast(resCompany); 
+          this._sharedClientService.setDataCompany(Company.cast(resCompany));
+          this._sharedClientService.setCompanyId(resCompany?.id);
+          this._sharedClientService.setAddress(resCompany?.addresses);
           // console.log("DIRECCIÓN EMPRESA:", resCompany.addresses);
         }   
       }

@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DetailMobileLine } from 'src/app/core/models';
+import { DetailMobileLine, OperatorList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
@@ -8,13 +8,22 @@ import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/a
   templateUrl: './form-mobile.component.html',
   styleUrls: ['./form-mobile.component.scss']
 })
-export class FormMobileComponent implements OnInit, OnDestroy{
+export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
+
+  @Input() submitted: Boolean = false;
+  @Input() listOperators?: OperatorList[] = [];
 
   // FORM LINEA MOVIL
+  isNewData: boolean = true;
+  // submitted: boolean = false;
   mobileLineForm: FormGroup;
 
   differentHolder: boolean = false;
+  aop: string = 'Alta';
   terminal: boolean = false;
+
+  // Operadores;
+  // listOperators?: OperatorList[] = [];
   
   constructor(
     private cdr: ChangeDetectorRef,
@@ -31,6 +40,14 @@ export class FormMobileComponent implements OnInit, OnDestroy{
   ngOnDestroy(): void {
     
   }
+
+    
+  ngOnChanges(changes: SimpleChanges) { 
+    if(changes.submitted && !changes.submitted.firstChange){
+      //
+    }   
+  }
+
 
 
   /**
@@ -71,5 +88,14 @@ export class FormMobileComponent implements OnInit, OnDestroy{
     }
   }
 
+
+  /***
+   * **************************************************************
+   * CAMBIAR ENTRE ALTA O PORTABILIDAD
+   * **************************************************************
+   */
+  onChangeAOP(event: any){
+    console.log(event)
+  }
 
 }

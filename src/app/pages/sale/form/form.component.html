@@ -85,12 +85,8 @@
             <span>Detalle venta</span>
           </ng-template>
           <section *ngIf="cdkStepper.selectedIndex === 4" role="tabpanel">
-            <div>
-              <accordion [isAnimated]="true" [closeOthers]="true">
-                <accordion-panel heading="Vista previa" [isOpen]="true" >
-                  <app-info-general></app-info-general>
-                </accordion-panel>
-              </accordion>
+            <div class="w-100">
+              <app-info-general></app-info-general>
             </div>
             <ul class="list-inline wizard d-flex justify-content-end mb-0">
               <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
