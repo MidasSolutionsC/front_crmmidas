@@ -24,14 +24,14 @@ let aMenu: MenuItem[] = [
         roles: ['ADMINISTRADOR', 'VENDEDOR', 'COORDINADOR', 'BACKOFFICE']
 
     },
-    {
-        id: 4,
-        label: 'MENUITEMS.CALL.TEXT',
-        icon: 'bx bxs-phone-call ',
-        link: '/call',
-        roles: ['ADMINISTRADOR', 'VENDEDOR', 'COORDINADOR', 'BACKOFFICE']
+    // {
+    //     id: 4,
+    //     label: 'MENUITEMS.CALL.TEXT',
+    //     icon: 'bx bxs-phone-call ',
+    //     link: '/call',
+    //     roles: ['ADMINISTRADOR', 'VENDEDOR', 'COORDINADOR', 'BACKOFFICE']
 
-    },
+    // },
     {
         id: 5,
         label: 'MENUITEMS.APPS.TEXT',
@@ -53,7 +53,7 @@ let aMenu: MenuItem[] = [
     },
 
     // {
-    //     id: 5,
+    //     id: 7,
     //     label: 'MENUITEMS.CHAT.TEXT',
     //     icon: 'bx bx-chat',
     //     badge: {
@@ -67,14 +67,14 @@ let aMenu: MenuItem[] = [
 
 
     {
-        id: 7,
+        id: 8,
         label: 'MENUITEMS.MAINTENANCE.TEXT',
         isTitle: true,
         roles: ['ADMINISTRADOR', 'COORDINADOR', 'BACKOFFICE']
 
     },
     {
-        id: 8,
+        id: 9,
         label: 'MENUITEMS.MAINTENANCE.LIST.COUNTRY',
         icon: 'bx bxs-flag',
         link: '/maintenances/country',
@@ -82,7 +82,7 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 9,
+        id: 10,
         label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_CURRENCY',
         icon: 'mdi mdi-currency-btc',
         link: '/maintenances/typeCurrency',
@@ -90,7 +90,7 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 9,
+        id: 11,
         label: 'MENUITEMS.MAINTENANCE.LIST.CAMPUS',
         icon: 'bx bx-buildings',
         link: '/maintenances/campus',
@@ -98,7 +98,7 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 10,
+        id: 12,
         label: 'MENUITEMS.MAINTENANCE.LIST.USER',
         icon: 'bx bx-user',
         link: '/maintenances/user',
@@ -106,7 +106,7 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 11,
+        id: 13,
         label: 'MENUITEMS.MAINTENANCE.LIST.GROUP',
         icon: 'bx bx-group  ',
         link: '/maintenances/group',
@@ -114,7 +114,7 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 12,
+        id: 14,
         label: 'MENUITEMS.MAINTENANCE.LIST.CATEGORY',
         icon: 'mdi mdi-shape ',
         link: '/maintenances/category',
@@ -122,7 +122,7 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 13,
+        id: 15,
         label: 'MENUITEMS.MAINTENANCE.LIST.BRAND',
         icon: 'mdi mdi-watermark',
         link: '/maintenances/brand',
@@ -130,31 +130,30 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 14,
+        id: 16,
         label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT',
         icon: 'mdi mdi-shopping',
         link: '/maintenances/product',
         roles: ['ADMINISTRADOR']
-
     },
     {
-        id: 14,
-        label: 'MENUITEMS.MAINTENANCE.LIST.SERVICE',
-        icon: 'bx bxl-dropbox ',
-        link: '/maintenances/service',
-        roles: ['ADMINISTRADOR']
-
-    },
-    {
-        id: 15,
+        id: 17,
         label: 'MENUITEMS.MAINTENANCE.LIST.PROMOTION',
         icon: 'bx bx-purchase-tag-alt ',
         link: '/maintenances/promotion',
         roles: ['ADMINISTRADOR', 'COORDINADOR']
 
     },
+    // {
+    //     id: 18,
+    //     label: 'MENUITEMS.MAINTENANCE.LIST.SERVICE',
+    //     icon: 'bx bxl-dropbox ',
+    //     link: '/maintenances/service',
+    //     roles: ['ADMINISTRADOR']
+
+    // },
     {
-        id: 16,
+        id: 19,
         label: 'MENUITEMS.MAINTENANCE.LIST.ADVERTISEMENT',
         icon: 'bx bxs-megaphone ',
         link: '/maintenances/advertisement',
@@ -163,7 +162,7 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 17,
+        id: 20,
         label: 'MENUITEMS.MAINTENANCE.LIST.MANUAL',
         icon: 'bx bxs-book ',
         link: '/maintenances/manual',
@@ -172,44 +171,44 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 18,
+        id: 21,
         label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LABEL',
         icon: 'bx bxs-cog ',
         link: '/',
         roles: ['ADMINISTRADOR'],
         subItems: [
             {
-                id: 17,
-                parentId: 16,
+                id: 22,
+                parentId: 21,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_BANK_ACCOUNT',
                 link: '/maintenances/types/typeBankAccount',
                 roles: ['ADMINISTRADOR']
 
             },
             {
-                id: 18,
-                parentId: 16,
+                id: 23,
+                parentId: 21,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_DOCUMENT',
                 link: '/maintenances/types/typeDocument',
                 roles: ['ADMINISTRADOR']
             },
             {
-                id: 19,
-                parentId: 16,
+                id: 24,
+                parentId: 21,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_USER',
                 link: '/maintenances/types/typeUser',
                 roles: ['ADMINISTRADOR']
             },
             {
-                id: 20,
-                parentId: 16,
+                id: 25,
+                parentId: 21,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_STATUS',
                 link: '/maintenances/types/typeStatus',
                 roles: ['ADMINISTRADOR']
             },
             {
-                id: 21,
-                parentId: 16,
+                id: 26,
+                parentId: 21,
                 label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_SERVICE',
                 link: '/maintenances/types/typeService',
                 roles: ['ADMINISTRADOR']
@@ -218,22 +217,22 @@ let aMenu: MenuItem[] = [
         ]
     },
     {
-        id: 22,
+        id: 27,
         label: 'MENUITEMS.MAINTENANCE.LIST.CALL.LABEL',
         icon: 'mdi mdi-cellphone-cog',
         link: '/',
         roles: ['ADMINISTRADOR'],
         subItems: [
             {
-                id: 23,
-                parentId: 22,
+                id: 28,
+                parentId: 27,
                 label: 'MENUITEMS.MAINTENANCE.LIST.CALL.LIST.OPERATOR',
                 link: '/call-settings/operator',
                 roles: ['ADMINISTRADOR']
             },
             {
-                id: 24,
-                parentId: 22,
+                id: 29,
+                parentId: 27,
                 label: 'MENUITEMS.MAINTENANCE.LIST.CALL.LIST.TYPIFICATION',
                 link: '/call-settings/typification',
                 roles: ['ADMINISTRADOR']
@@ -242,27 +241,27 @@ let aMenu: MenuItem[] = [
     },
 
     {
-        id: 22,
+        id: 30,
         label: 'MENUITEMS.SETTINGS.TEXT',
         isTitle: true,
         roles: ['ADMINISTRADOR']
     },
     {
-        id: 23,
+        id: 31,
         label: 'MENUITEMS.SETTINGS.LIST.ALLOWED_IPS',
         icon: 'bx bx-link-external  ',
         link: '/allowed-ip',
         roles: ['ADMINISTRADOR']
     },
     {
-        id: 24,
+        id: 32,
         label: 'MENUITEMS.SETTINGS.LIST.PERMISSION',
         icon: 'bx bx-shield-quarter',
         link: '/settings/permission',
         roles: ['ADMINISTRADOR']
     },
     {
-        id: 25,
+        id: 33,
         label: 'MENUITEMS.SETTINGS.LIST.PERMISSION_ACCOUNT',
         icon: 'bx bx-shield-quarter',
         link: '/settings/type_user_permission',
@@ -270,36 +269,36 @@ let aMenu: MenuItem[] = [
     },
 
     {
-        id: 26,
+        id: 34,
         label: 'MENUITEMS.CHARTS.TEXT',
         isTitle: true,
         roles: ['ADMINISTRADOR']
     },
     {
-        id: 27,
+        id: 35,
         icon: 'bxs-bar-chart-alt-2',
         label: 'MENUITEMS.CHARTS.TEXT',
         roles: ['ADMINISTRADOR'],
         subItems: [
             {
-                id: 28,
+                id: 36,
                 label: 'MENUITEMS.CHARTS.LIST.ALL',
                 link: '/',
-                parentId: 27,
+                parentId: 35,
                 roles: ['ADMINISTRADOR']
             },
             {
-                id: 29,
+                id: 37,
                 label: 'MENUITEMS.CHARTS.LIST.COMERCIAL',
                 link: '/',
-                parentId: 27,
+                parentId: 35,
                 roles: ['ADMINISTRADOR']
             },
             {
-                id: 30,
+                id: 38,
                 label: 'MENUITEMS.CHARTS.LIST.COORDINATION',
                 link: '/',
-                parentId: 27,
+                parentId: 35,
                 roles: ['ADMINISTRADOR']
             }
         ]

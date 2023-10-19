@@ -1,24 +1,28 @@
 import { Model } from "../model";
 
 export class Product extends Model{
-  public id: number;
-  public tipo_servicios_id: number;
-  public categorias_id: number;
-  public tipo_monedas_id: number;
-  public marcas_id: number;
-  public nombre: string;
-  public descripcion: string;
-  public precio: number;
-  public is_active: boolean;
+  public id?: number;
+  public tipo_producto?: 'F' | 'S';
+  public tipo_servicios_id?: number;
+  public categorias_id?: number;
+  public tipo_monedas_id?: number;
+  public marcas_id?: number;
+  public nombre?: string;
+  public especificaciones?: string;
+  public descripcion?: string;
+  public precio?: number;
+  public is_active?: boolean;
 
   constructor(data?: object){
     super(data);
     this.id = this.id || null;
+    this.tipo_producto = this.tipo_producto || null;
     this.tipo_servicios_id = this.tipo_servicios_id || null;
     this.categorias_id = this.categorias_id || null; 
     this.marcas_id = this.marcas_id || null;
     this.tipo_monedas_id = this.tipo_monedas_id || null;
     this.nombre = this.nombre || '';
+    this.especificaciones = this.especificaciones || '';
     this.descripcion = this.descripcion || '';
     this.precio = this.precio || 0;
     this.is_active = this.is_active || true;
@@ -26,8 +30,20 @@ export class Product extends Model{
 
   public static cast(data: object): Product{
     const product = new Product(data);
-    const {id, categorias_id, marcas_id, tipo_monedas_id, tipo_servicios_id, nombre, descripcion, precio, is_active} = product;
-    return {id, categorias_id, marcas_id, tipo_monedas_id, tipo_servicios_id, nombre, descripcion, precio, is_active};
+
+    return {
+      id: product.id,
+      tipo_producto: product.tipo_producto,
+      categorias_id: product.categorias_id,
+      marcas_id: product.marcas_id,
+      tipo_monedas_id: product.tipo_monedas_id,
+      tipo_servicios_id: product.tipo_servicios_id,
+      nombre: product.nombre,
+      descripcion: product.descripcion,
+      especificaciones: product.especificaciones,
+      precio: product.precio,
+      is_active: product.is_active,
+    }
   }
 
   public static casts(dataArray: object[]): Product[]{

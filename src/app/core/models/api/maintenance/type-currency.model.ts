@@ -13,14 +13,14 @@ export class TypeCurrency extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || undefined;
-    this.paises_id = this.paises_id || undefined;
+    this.id = this.id || null;
+    this.paises_id = this.paises_id || null;
     this.nombre = this.nombre || '';
     this.descripcion = this.descripcion || '';
     this.iso_code = this.iso_code || '';
     this.simbolo = this.simbolo || '';
-    this.tasa_cambio = this.tasa_cambio || undefined;
-    this.fecha_actualizado = this.fecha_actualizado || undefined;
+    this.tasa_cambio = this.tasa_cambio || null;
+    this.fecha_actualizado = this.fecha_actualizado || null;
     this.is_active = this.is_active || true;
   }
 

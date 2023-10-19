@@ -108,7 +108,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-4 mb-3" *ngIf="terminal && 'FORMS.FIELD_NAMES.model_terminal.label' | translate as translatedLabel;">
+    <div class="col-lg mb-3" *ngIf="terminal && 'FORMS.FIELD_NAMES.model_terminal.label' | translate as translatedLabel;">
       <label for="modelo_terminal" class="form-label">{{translatedLabel}}</label>
       <input type="text" id="modelo_terminal" class="form-control"  placeholder="{{'FORMS.FIELD_NAMES.model_terminal.placeholder' | translate}}" formControlName="modelo_terminal" [ngClass]="{ 'is-invalid': fm.modelo_terminal.errors && (fm.modelo_terminal.dirty || fm.modelo_terminal.touched || submitted) }" />
       <div *ngIf="fm.modelo_terminal.errors && (fm.modelo_terminal.dirty || fm.modelo_terminal.touched || submitted)" class="invalid-feedback" align="left">
@@ -123,7 +123,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-4 mb-3" *ngIf="terminal && 'FORMS.FIELD_NAMES.icc.label' | translate as translatedLabel;">
+    <div class="col-lg mb-3" *ngIf="terminal && 'FORMS.FIELD_NAMES.icc.label' | translate as translatedLabel;">
       <label for="icc" class="form-label">{{translatedLabel}}</label>
       <input type="text" id="icc" class="form-control"  placeholder="{{'FORMS.FIELD_NAMES.icc.placeholder' | translate}}" formControlName="icc" [ngClass]="{ 'is-invalid': fm.icc.errors && (fm.icc.dirty || fm.icc.touched || submitted) }" />
       <div *ngIf="fm.icc.errors && (fm.icc.dirty || fm.icc.touched || submitted)" class="invalid-feedback" align="left">

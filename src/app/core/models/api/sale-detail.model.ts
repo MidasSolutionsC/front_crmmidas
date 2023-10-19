@@ -3,7 +3,9 @@ import { Model } from "./model";
 export class SaleDetail extends Model{
   public id: number;
   public ventas_id: number;
-  public servicios_id: number;
+  public productos_id: number;
+  public promociones_id: number;
+  public cantidad: number;
   public instalaciones_id: number;
   public tipo_estados_id: number;
   public observacion: string;
@@ -15,7 +17,9 @@ export class SaleDetail extends Model{
     super(data);
     this.id = this.id || null;
     this.ventas_id = this.ventas_id || null;
-    this.servicios_id = this.servicios_id || null;
+    this.productos_id = this.productos_id || null;
+    this.promociones_id = this.promociones_id || null;
+    this.cantidad = this.cantidad || null;
     this.instalaciones_id = this.instalaciones_id || null;
     this.tipo_estados_id = this.tipo_estados_id || null;
     this.observacion = this.observacion || null;
@@ -26,28 +30,18 @@ export class SaleDetail extends Model{
 
   public static cast(data: object): SaleDetail{
     const saleDetail = new SaleDetail(data);
-    const {
-      id, 
-      ventas_id,
-      servicios_id,
-      instalaciones_id,
-      tipo_estados_id,
-      observacion,
-      fecha_cierre,
-      datos_json,
-      is_active
-    } = saleDetail;
-
     return {
-      id, 
-      ventas_id,
-      servicios_id,
-      instalaciones_id,
-      tipo_estados_id,
-      observacion,
-      fecha_cierre,
-      datos_json,
-      is_active
+      id: saleDetail.id, 
+      ventas_id: saleDetail.ventas_id,
+      productos_id: saleDetail.productos_id,
+      promociones_id: saleDetail.promociones_id,
+      cantidad: saleDetail.cantidad,
+      instalaciones_id: saleDetail.instalaciones_id,
+      tipo_estados_id: saleDetail.tipo_estados_id,
+      observacion: saleDetail.observacion,
+      fecha_cierre: saleDetail.fecha_cierre,
+      datos_json: saleDetail.datos_json,
+      is_active: saleDetail.is_active
     }
   }
 

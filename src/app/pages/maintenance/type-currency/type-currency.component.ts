@@ -247,13 +247,13 @@ export class TypeCurrencyComponent {
   private getFormGroupData(model: TypeCurrency): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
-      paises_id: ['', [Validators.nullValidator, Validators.maxLength(150)]],
-      iso_code: ['', [Validators.required, Validators.maxLength(3)]],
-      simbolo: ['', [Validators.required, Validators.maxLength(10)]],
-      tasa_cambio: [undefined, [Validators.nullValidator]],
-      fecha_actualizado: [undefined, [Validators.nullValidator]],
+      nombre: [model.nombre || '', [Validators.required, Validators.maxLength(50)]],
+      descripcion: [model.descripcion || '', [Validators.nullValidator, Validators.maxLength(150)]],
+      paises_id: [model.paises_id || '', [Validators.nullValidator, Validators.maxLength(150)]],
+      iso_code: [model.iso_code || '', [Validators.required, Validators.maxLength(3)]],
+      simbolo: [model.simbolo || '', [Validators.required, Validators.maxLength(10)]],
+      tasa_cambio: [model.tasa_cambio || null, [Validators.nullValidator]],
+      fecha_actualizado: [model.fecha_actualizado || null, [Validators.nullValidator]],
       is_active: [true, [Validators.nullValidator]],
     }
   }
@@ -313,18 +313,8 @@ export class TypeCurrencyComponent {
     this.isNewData = false;
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
-    const ypeCurrency = TypeCurrency.cast(data);
-    this.typeCurrencyForm = this.formBuilder.group({
-      ...this._formService.modelToFormGroupData(ypeCurrency), 
-      id: [data.id],
-      nombre: [data.nombre, [Validators.required, Validators.maxLength(50)]],
-      descripcion: [data.descripcion, [Validators.nullValidator, Validators.maxLength(150)]],
-      paises_id: [data.paises_id, [Validators.nullValidator, Validators.maxLength(150)]],
-      iso_code: [data.iso_code, [Validators.required, Validators.maxLength(3)]],
-      simbolo: [data.simbolo, [Validators.required, Validators.maxLength(10)]],
-      tasa_cambio: [data.tasa_cambio, [Validators.nullValidator]],
-      fecha_actualizado: [data.fecha_actualizado, [Validators.nullValidator]],
-    });
+    const typeCurrency = TypeCurrency.cast(data);
+    this.typeCurrencyForm.setValue(TypeCurrency.cast(data));
   }
 
 

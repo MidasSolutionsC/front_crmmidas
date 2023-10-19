@@ -2,8 +2,9 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Pagination, Promotion, PromotionList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, PromotionService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
+import { BrandList, Breadcrumb, Pagination, Promotion, PromotionList, ResponseApi, ResponsePagination, TypeCurrencyList, TypeServiceList } from 'src/app/core/models';
+import { ApiErrorFormattingService, BrandService, FormService, PromotionService, SweetAlertService, TypeCurrencyService, TypeServiceService } from 'src/app/core/services';
+import { CleanObject } from 'src/app/core/helpers/clean-object.util';
 
 @Component({
   selector: 'app-promotion',
@@ -37,6 +38,13 @@ export class PromotionComponent implements OnInit, OnDestroy{
   total: number = 0;
   pagination: Pagination = new Pagination();
 
+  // VALIDAR SI ES PRODUCTO FÍSICO O SERVICIO
+  isInfoProduct: boolean = true;
+
+  showDiscount: boolean = false;
+  showCodeMinMax: boolean = false;
+  showDates: boolean = false;
+
   // Table data
   // content?: any;
   lists?: PromotionList[] = [];
@@ -44,11 +52,19 @@ export class PromotionComponent implements OnInit, OnDestroy{
   // Tipo de servicios;
   listServices?: TypeServiceList[];
   
+  // Marcas
+  listBrands: BrandList[] = [];
+
+  // Divisas
+  listCurrencies: TypeCurrencyList[] = [];
+
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private modalService: BsModalService, 
+    private _brandService: BrandService,
+    private _typeCurrencyService: TypeCurrencyService,
     private _typeServiceService: TypeServiceService,
     private _promotionService: PromotionService,
     private _formService: FormService,
@@ -65,6 +81,8 @@ export class PromotionComponent implements OnInit, OnDestroy{
     this.listDataApi();
     // this.apiTypeServiceList();
     this.apiTypeServiceList();
+    this.apiBrandList();
+    this.apiTypeCurrencyList();
     this.apiPromotionListPagination();
 
     // Promociones
@@ -88,6 +106,25 @@ export class PromotionComponent implements OnInit, OnDestroy{
       .pipe(distinctUntilChanged())
       .subscribe((list: TypeServiceList[]) => {
         this.listServices = list;
+      })
+    );
+
+
+    // Marcas
+    this.subscription.add(
+      this._brandService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: BrandList[]) => {
+        this.listBrands = list;
+      })
+    );
+
+    // Divisas
+    this.subscription.add(
+      this._typeCurrencyService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: TypeCurrencyList[]) => {
+        this.listCurrencies = list;
       })
     );
   }
@@ -296,6 +333,46 @@ export class PromotionComponent implements OnInit, OnDestroy{
     });
   }
 
+  // Marcas
+  public apiBrandList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._brandService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this.listBrands = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+  }
+
+  // Divisas
+  public apiTypeCurrencyList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._typeCurrencyService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listCurrencies = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      console.log(error);
+    });
+    }
+
 
   /**
    * Form data get
@@ -322,16 +399,60 @@ export class PromotionComponent implements OnInit, OnDestroy{
   private getFormGroupData(model: Promotion): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
-      tipo_servicios_id: ['', [Validators.required, Validators.min(1)]],
-      tipo_descuento: ['C', [Validators.nullValidator]],
-      descuento: [0, [Validators.nullValidator, Validators.min(0)]],
+      nombre: [model.nombre || '', [Validators.required, Validators.maxLength(50)]],
+      descripcion: [model.descripcion || '', [Validators.nullValidator, Validators.maxLength(150)]],
+      is_info_producto: [true, [Validators.required]],
+      tipo_producto: [model?.tipo_producto || 'S', []],
+      tipo_servicios_id: [model.tipo_servicios_id || '', [Validators.required, Validators.min(1)]],
+      marcas_id: [model?.marcas_id || '', [Validators.nullValidator, Validators.min(1)]],
+      tipo_descuento: [model.tipo_descuento || 'P', [Validators.nullValidator]],
+      tipo_monedas_id: [model?.tipo_monedas_id || '', [Validators.nullValidator, Validators.min(1)]],
+      descuento: [model.descuento || 0, [Validators.nullValidator, Validators.min(0)]],
       fecha_inicio: [new Date().toISOString().split('T')[0], [Validators.required]],
-      fecha_fin: [undefined, [Validators.nullValidator]],
+      fecha_fin: [model.fecha_fin || null, [Validators.nullValidator]],
+      is_private: [model.is_private || false, [Validators.nullValidator]],
       is_active: [true, [Validators.nullValidator]],
+      show_discount: [this.showDiscount, [Validators.nullValidator]],
+      show_code_min_max: [this.showCodeMinMax, [Validators.nullValidator]],
+      show_dates: [this.showDates, [Validators.nullValidator]],
     }
   }
+
+  // CAMBIAR TIPO DE PRODUCTO
+  onChangeTypeProduct(isInfoProduct: any){
+    const controlTypeService = this.promotionForm.get('tipo_servicios_id');
+
+    if (isInfoProduct) {
+      // Agregar validación "required" si no es producto físico
+      this.promotionForm.get('tipo_producto').setValue('S');
+      controlTypeService.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      // Quitar la validación "required" si es producto físico
+      this.promotionForm.get('tipo_producto').setValue('F');
+      controlTypeService.clearValidators();
+    }
+
+    // Actualizar el control y marcarlo como "tocado" para forzar la validación
+    controlTypeService.updateValueAndValidity();
+  }
+
+  // CAMBIAR TIPO DE DESCUENTO
+  onChangeTypeDiscount(value: 'C' | 'P'){
+    const controlTypeCurrency = this.promotionForm.get('tipo_monedas_id');
+    console.log(value)
+
+    if (value == 'C') {
+      // Agregar validación "required"
+      controlTypeCurrency.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      // Quitar la validación "required"
+      controlTypeCurrency.clearValidators();
+    }
+
+    // Actualizar el control y marcarlo como "tocado" para forzar la validación
+    controlTypeCurrency.updateValueAndValidity();
+  }
+
 
 
   
@@ -341,6 +462,7 @@ export class PromotionComponent implements OnInit, OnDestroy{
    */
   openModal(content: any) {
     this.initForm();
+    this.isInfoProduct = true;
     this.isNewData = true;
     this.dataModal.title = 'Crear promoción';
     this.submitted = false;
@@ -356,7 +478,8 @@ export class PromotionComponent implements OnInit, OnDestroy{
     if(!this.promotionForm.valid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
-      const values: Promotion = this.promotionForm.value;
+      let values: any = this.promotionForm.value;
+      values = CleanObject.assignNullFields(values);
 
       if(this.isNewData){
         // Crear nuevo registro
@@ -390,7 +513,17 @@ export class PromotionComponent implements OnInit, OnDestroy{
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const promotion = Promotion.cast(data);
-    this.promotionForm = this.formBuilder.group({...this._formService.modelToFormGroupData(promotion), id: [data.id]});
+
+    this.isInfoProduct = promotion.tipo_producto == 'S'? true: false;
+
+    this.promotionForm = this.formBuilder.group({
+      ...this._formService.modelToFormGroupData(promotion), 
+      id: [data.id], 
+      is_info_producto: promotion.tipo_producto == 'S'? true: false,
+      show_discount: [this.showDiscount, [Validators.nullValidator]],
+      show_code_min_max: [this.showCodeMinMax, [Validators.nullValidator]],
+      show_dates: [this.showDates, [Validators.nullValidator]],
+    });
   }
 
 

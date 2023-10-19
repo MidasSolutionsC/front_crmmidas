@@ -385,6 +385,9 @@
       "is_primary": {
         "label": "Es Primario"
       },
+      "is_private": {
+        "label": "Es Privado"
+      },
       "symbol": {
         "label": "Símbolo",
         "placeholder": "Ingrese el símbolo...",
@@ -493,6 +496,11 @@
         "placeholder": "Ingrese el producto...",
         "default_option": "Seleccione un producto..."
       },
+      "product_type": {
+        "label": "Tipo de Producto",
+        "placeholder": "Ingrese el tipo de producto...",
+        "default_option": "Seleccione un tipo de producto..."
+      },
       "promotion": {
         "label": "Promoción",
         "placeholder": "Ingrese la promoción...",
@@ -514,6 +522,10 @@
         "label": "Descuento",
         "placeholder": "Ingrese el descuento..."
       },
+      "show_discount": {
+        "label": "Mostrar Descuento",
+        "placeholder": "Ingrese el descuento..."
+      },
       "price": {
         "label": "Precio",
         "placeholder": "Ingrese el precio..."
@@ -527,6 +539,9 @@
         "label": "Fecha",
         "placeholder": "Ingrese la fecha...",
         "default_option": "Seleccione una fecha..."
+      },
+      "show_dates": {
+        "label": "Mostrar Fechas"
       },
       "time": {
         "label": "Hora",
@@ -583,6 +598,10 @@
       },
       "code": {
         "label": "Código",
+        "placeholder": "Ingrese el código..."
+      },
+      "show_code_min_max": {
+        "label": "Mostrar Código - Min/Max",
         "placeholder": "Ingrese el código..."
       },
       "code_ubigeo": {

@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { DetailFixedLine, DetailMobileLine, InstallationList, OperatorList, ResponseApi, SaleDetail, TypeDocumentList, TypeStatusList } from 'src/app/core/models';
+import { DetailFixedLine, DetailMobileLine, InstallationList, OperatorList, ProductList, PromotionList, ResponseApi, SaleDetail, TypeDocumentList, TypeStatusList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, OperatorService, SweetAlertService, TempInstallationService, TypeDocumentService, TypeStatusService } from 'src/app/core/services';
 
 import { FormMobileComponent } from './form-mobile/form-mobile.component';
@@ -51,6 +51,12 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   
   // Operadores;
   listOperators?: OperatorList[] = [];
+  
+  // Productos;
+  listProducts?: ProductList[] = [];
+
+  // Promociones
+  listPromotions?: PromotionList[] = [];
 
   // Lista de instalaciones
   tmpListInstallationOptions: InstallationList[] = [];
@@ -311,6 +317,8 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     return {
       ...this._formService.modelToFormGroupData(model),
       tipo_estados_id: [model.tipo_estados_id, [Validators.required, Validators.min(0)]],
+      productos_id: [model.productos_id, [Validators.required, Validators.min(1)]],
+      promociones_id: [model.promociones_id, [Validators.nullValidator, Validators.min(1)]],
       fecha_cierre: [model.fecha_cierre, [Validators.nullValidator]],
       observacion: [model.observacion, [Validators.nullValidator, Validators.maxLength(450)]],
       is_active: [true, [Validators.nullValidator]],

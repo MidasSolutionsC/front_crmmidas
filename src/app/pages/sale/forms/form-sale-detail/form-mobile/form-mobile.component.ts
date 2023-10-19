@@ -95,7 +95,7 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
    * **************************************************************
    */
   onChangeAOP(event: any){
-    console.log(event)
+    // console.log(event)
   }
 
 }

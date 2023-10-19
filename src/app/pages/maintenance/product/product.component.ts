@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BrandList, Breadcrumb, CategoryList, TypeCurrencyList, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, CategoryService, TypeCurrencyService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
+import { CleanObject } from 'src/app/core/helpers/clean-object.util';
 
 @Component({
   selector: 'app-product',
@@ -36,6 +37,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   total: number = 0;
   pagination: Pagination = new Pagination();
 
+  // VALIDAR SI ES PRODUCTO FÍSICO O SERVICIO
+  isInfoProduct: boolean = true;
 
   // Table data
   // content?: any;
@@ -447,14 +450,36 @@ export class ProductComponent implements OnInit, OnDestroy {
     return {
       ...this._formService.modelToFormGroupData(model),
       nombre: [model?.nombre || '', [Validators.required, Validators.maxLength(50)]],
-      descripcion: [model?.descripcion || '', [Validators.nullValidator, Validators.maxLength(150)]],
-      tipo_servicios_id: [model?.tipo_servicios_id || null, [Validators.required, Validators.min(1)]],
-      categorias_id: [model?.categorias_id || null, [Validators.nullValidator, Validators.min(1)]],
-      marcas_id: [model?.marcas_id || null, [Validators.nullValidator, Validators.min(1)]],
-      tipo_monedas_id: [model?.tipo_monedas_id || null, [Validators.required, Validators.min(1)]],
+      descripcion: [model?.descripcion || '', [Validators.nullValidator, Validators.maxLength(450)]],
+      especificaciones: [model?.especificaciones || '', [Validators.nullValidator, Validators.maxLength(450)]],
+      is_info_producto: [true, [Validators.required]],
+      tipo_producto: [model?.tipo_producto || 'S', []],
+      tipo_servicios_id: [model?.tipo_servicios_id || '', [Validators.required, Validators.min(1)]],
+      categorias_id: [model?.categorias_id || '', [Validators.nullValidator, Validators.min(1)]],
+      marcas_id: [model?.marcas_id || '', [Validators.nullValidator, Validators.min(1)]],
+      tipo_monedas_id: [model?.tipo_monedas_id || '', [Validators.required, Validators.min(1)]],
       precio: [0, [Validators.nullValidator, Validators.min(0)]],
       is_active: [true, [Validators.nullValidator]],
     }
+  }
+
+
+  // CAMBIAR TIPO DE PRODUCTO
+  onChangeTypeProduct(isInfoProduct: any){
+      const controlTypeService = this.productForm.get('tipo_servicios_id');
+
+    if (isInfoProduct) {
+      // Agregar validación "required" si no es producto físico
+      this.productForm.get('tipo_producto').setValue('S');
+      controlTypeService.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      // Quitar la validación "required" si es producto físico
+      this.productForm.get('tipo_producto').setValue('F');
+      controlTypeService.clearValidators();
+    }
+
+    // Actualizar el control y marcarlo como "tocado" para forzar la validación
+    controlTypeService.updateValueAndValidity();
   }
 
 
@@ -465,6 +490,7 @@ export class ProductComponent implements OnInit, OnDestroy {
    */
   openModal(content: any) {
     this.initForm();
+    this.isInfoProduct = true;
     this.isNewData = true;
     this.dataModal.title = 'Crear producto';
     this.submitted = false;
@@ -480,11 +506,8 @@ export class ProductComponent implements OnInit, OnDestroy {
     if(!this.productForm.valid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
-      const values: Product = this.productForm.value;
-
-      if(values.categorias_id == null){
-        delete values.categorias_id;
-      }
+      let values: any = this.productForm.value;
+      values = CleanObject.assignNullFields(values);
 
       if(this.isNewData){
         // Crear nuevo registro
@@ -518,7 +541,14 @@ export class ProductComponent implements OnInit, OnDestroy {
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const product = Product.cast(data);
-    this.productForm = this.formBuilder.group({...this._formService.modelToFormGroupData(product), id: [data.id]});
+    // this.productForm.setValue(Product.cast(data));
+    if(product.tipo_producto == 'S'){
+      this.isInfoProduct = true;
+    } else {
+      this.isInfoProduct = false;
+    }
+
+    this.productForm = this.formBuilder.group({...this._formService.modelToFormGroupData(product), is_info_producto: product.tipo_producto == 'S'? true: false, id: [data.id]});
   }
 
 

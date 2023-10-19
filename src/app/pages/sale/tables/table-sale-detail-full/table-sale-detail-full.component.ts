@@ -14,6 +14,9 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   isCollapseForm: boolean = true;
   isCollapseList: boolean = false;
 
+  //
+  isInfoProduct: boolean = true;
+
   // Datos de la venta
   dataBasicPreview: any = {
     fecha: '11-10-2023',
@@ -109,6 +112,11 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
     } else {
       this._sharedSaleService.setBrandId('');
     }
+  }
+
+  // CAMBIO DE TIPO SERVICIO
+  onChangeTypeProduct(isService: any){
+   console.log(isService)
   }
 
 
