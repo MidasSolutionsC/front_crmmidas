@@ -189,7 +189,9 @@ export class SaleComponent {
       }
     }, (error: ResponseApi) => {
       this._sweetAlertService.stop();
-      console.log(error);
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al modificar la venta', message: error.message, timer: 2500});
+      }
     });
   }
 
@@ -216,7 +218,9 @@ export class SaleComponent {
       }
     }, (error: ResponseApi) => {
       this._sweetAlertService.stop();
-      console.log(error);
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al eliminar una venta', message: error.message, timer: 2500});
+      }
     });
   }
 
@@ -241,7 +245,9 @@ export class SaleComponent {
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      console.log(error);
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tips de documentos', message: error.message, timer: 2500});
+      }
     });
   }
 

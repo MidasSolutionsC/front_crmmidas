@@ -499,7 +499,8 @@
       "product_type": {
         "label": "Tipo de Producto",
         "placeholder": "Ingrese el tipo de producto...",
-        "default_option": "Seleccione un tipo de producto..."
+        "default_option": "Seleccione un tipo de producto...",
+        "default_option_all": "Todos"
       },
       "promotion": {
         "label": "Promoción",

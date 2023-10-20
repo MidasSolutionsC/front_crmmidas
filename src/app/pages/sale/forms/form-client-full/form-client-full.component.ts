@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged, filter, take } from 'rxjs';
-import { Company, CompanyList, CountryList, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { Company, CompanyList, CountryList, InstallationList, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { Client } from 'src/app/core/models/api/client.model';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
-import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SharedClientService, SweetAlertService, TempSaleService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
+import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-client-full',
@@ -47,6 +47,7 @@ export class FormClientFullComponent {
   constructor(
     private cdr: ChangeDetectorRef,
     private _sharedClientService: SharedClientService,
+    private _shareSaleService: SharedSaleService,
     private _tempSaleService: TempSaleService,
     private _countryService: CountryService,
     private _ubigeoService: UbigeoService,
@@ -433,6 +434,9 @@ export class FormClientFullComponent {
           this._sharedClientService.setDataPerson(Person.cast(resPerson));
           this._sharedClientService.setPersonId(resPerson?.id);
           this._sharedClientService.setAddress(resPerson?.addresses);
+          
+          const dataInstallation = InstallationList.cast(resPerson?.addresses[0]);
+          this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
           // console.log("DIRECCIÓN PERSONA:",resPerson.addresses);
         }
    

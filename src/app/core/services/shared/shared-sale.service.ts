@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Installation, SaleDetailList } from '../../models';
+import { Installation, InstallationList, SaleDetailList } from '../../models';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +8,10 @@ import { Installation, SaleDetailList } from '../../models';
 export class SharedSaleService {
   private saleId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private brandId: BehaviorSubject<number | string> = new BehaviorSubject<number | string>(null);
+  private typeProduct: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  private typeServiceId: BehaviorSubject<number | string> = new BehaviorSubject<number | string>(null);
   private installationId: BehaviorSubject<number | string> = new BehaviorSubject<number | string>(null);
-  private dataInstallation: BehaviorSubject<Installation> = new BehaviorSubject<Installation>(null);
+  private dataInstallation: BehaviorSubject<InstallationList> = new BehaviorSubject<InstallationList>(null);
   private saleDetail: BehaviorSubject<SaleDetailList> = new BehaviorSubject<SaleDetailList>(null);
 
   constructor() { }
@@ -32,6 +34,24 @@ export class SharedSaleService {
     this.brandId.next(value);
   }
 
+  // TIPO SERVICIO
+  getTypeServiceId() {
+    return this.typeServiceId.asObservable();
+  }
+
+  setTypeServiceId(value: number | string) {
+    this.typeServiceId.next(value);
+  }
+
+  // TIPO PRODUCTO
+  getTypeProduct() {
+    return this.typeProduct.asObservable();
+  }
+
+  setTypeProduct(value: string) {
+    this.typeProduct.next(value);
+  }
+
   // INSTALACIÓN
   getInstallationId() {
     return this.installationId.asObservable();
@@ -46,7 +66,7 @@ export class SharedSaleService {
     return this.dataInstallation.asObservable();
   }
 
-  setDataInstallation(value: Installation) {
+  setDataInstallation(value: InstallationList) {
     this.dataInstallation.next(value);
   }
 

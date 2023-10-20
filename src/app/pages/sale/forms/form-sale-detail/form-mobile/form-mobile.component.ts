@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DetailMobileLine, OperatorList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
+import { Subscription, filter } from 'rxjs';
+import { Company, DetailMobileLine, OperatorList, Person, TypeDocumentList } from 'src/app/core/models';
+import { Client } from 'src/app/core/models/api/client.model';
+import { ApiErrorFormattingService, FormService, SharedClientService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-mobile',
@@ -12,6 +14,7 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
 
   @Input() submitted: Boolean = false;
   @Input() listOperators?: OperatorList[] = [];
+  @Input() listTypeDocuments?: TypeDocumentList[] = [];
 
   // FORM LINEA MOVIL
   isNewData: boolean = true;
@@ -22,11 +25,20 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
   aop: string = 'Alta';
   terminal: boolean = false;
 
+  // CLIENTE ACTIVO
+  dataClient: Client;
+  dataPerson: Person;
+  dataCompany: Company;
+
   // Operadores;
   // listOperators?: OperatorList[] = [];
+
+    
+  private subscription: Subscription = new Subscription();
   
   constructor(
     private cdr: ChangeDetectorRef,
+    private _sharedClientService: SharedClientService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -35,10 +47,31 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
 
   ngOnInit(): void {
     this.initForm();
+
+
+    // PERSONA
+    this.subscription.add(
+      this._sharedClientService.getDataPerson()
+      .pipe(filter((value) => value != null))
+      .subscribe((data: Person) => {
+        this.dataPerson = data;
+
+        const contact = data.contacts.find((item) => item.tipo == 'CEL');
+        const identification = data.identifications[0];
+
+        if(this.mobileLineForm){
+          this.mobileLineForm.get('titular').setValue(`${data.nombres} ${data.apellido_paterno} ${data.apellido_materno}`)
+          this.mobileLineForm.get('tipo_documento_id').setValue(identification?.tipo_documentos_id)
+          this.mobileLineForm.get('documento_titular').setValue(identification?.documento)
+          this.mobileLineForm.get('num_portar').setValue(contact?.contacto)
+        }
+
+      })
+    );
   }
 
   ngOnDestroy(): void {
-    
+    this.subscription.unsubscribe();
   }
 
     

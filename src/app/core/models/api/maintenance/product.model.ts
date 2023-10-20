@@ -60,6 +60,8 @@ export class ProductList extends Model{
   public marcas_nombre: string;
   public tipo_monedas_id: number;
   public tipo_monedas_nombre: string;
+  public tipo_monedas_simbolo: string;
+  public tipo_monedas_iso_code: string;
   public tipo_servicios_id: number;
   public tipo_servicios_nombre: string;
   public nombre: string;
@@ -80,6 +82,8 @@ export class ProductList extends Model{
     this.marcas_nombre = this.marcas_nombre || '';
     this.tipo_monedas_id = this.tipo_monedas_id || undefined;
     this.tipo_monedas_nombre = this.tipo_monedas_nombre || '';
+    this.tipo_monedas_simbolo = this.tipo_monedas_simbolo || '';
+    this.tipo_monedas_iso_code = this.tipo_monedas_iso_code || '';
     this.tipo_servicios_id = this.tipo_servicios_id || 0;
     this.tipo_servicios_nombre = this.tipo_servicios_nombre || '';
     this.nombre = this.nombre || '';
@@ -102,6 +106,8 @@ export class ProductList extends Model{
       marcas_nombre: obj.marcas_nombre, 
       tipo_monedas_id: obj.tipo_monedas_id, 
       tipo_monedas_nombre: obj.tipo_monedas_nombre, 
+      tipo_monedas_simbolo: obj.tipo_monedas_simbolo, 
+      tipo_monedas_iso_code: obj.tipo_monedas_iso_code, 
       tipo_servicios_id: obj.tipo_servicios_id, 
       tipo_servicios_nombre: obj.tipo_servicios_nombre, 
       nombre: obj.nombre, 

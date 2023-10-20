@@ -1,35 +1,19 @@
 
 <accordion [isAnimated]="true" [closeOthers]="true">
-  <accordion-panel heading="Instalaciones" [isOpen]="true" class="border rounded">
+  <accordion-panel heading="Información de la venta" [isOpen]="true" class="border rounded">
     <div class="row gy-2">
-      <div class="col-lg-8">
-        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>FECHA:</strong> <span>{{dataBasicPreview?.fecha}}</span></div>
-        <!-- <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID RETAIL X:</strong> <input type="text" class="form-control w-auto"></div>
-        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <input type="text" class="form-control w-auto"></div>
-        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <input type="text" class="form-control w-auto"></div> -->
-        <!-- <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <span>{{dataBasicPreview?.smart_id}}</span></div>
-        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <span>{{dataBasicPreview?.smart_address_id}}</span></div> -->
-        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>DIRECCIÓN:</strong> <span>{{dataBasicPreview?.address}}</span></div>
-
-        <div class="row">
-          <div class="col-xl-4">
-            <div class="form-floating mb-2">
-              <input type="text" class="form-control" id="retailx_id" placeholder="ID RETAIL X:" value="">
-              <label for="retailx_id">ID RETAIL X:</label>
-            </div>
-            <div class="form-floating mb-2">
-              <input type="text" class="form-control" id="smart_id" placeholder="ID RETAIL X:" value="">
-              <label for="smart_id">ID SMART:</label>
-            </div>
-            <div class="form-floating mb-2">
-              <input type="text" class="form-control" id="smart_address_id" placeholder="ID RETAIL X:" value="">
-              <label for="smart_address_id">ID DIRECCIÓN SMART:</label>
-            </div>
-          </div>
+      <div class="col-lg-6">
+        <div class="w-100 mb-3" *ngIf="'FORMS.FIELD_NAMES.product_type.label' | translate as translatedLabel;">
+          <label for="is_info_producto" class="form-label fw-bold text-primary w-100">{{translatedLabel}}</label>
+          <ng-select id="is_info_producto" class="is-valid"
+            [(ngModel)]="typeProduct"
+            (change)="onChangeTypeProduct($event)"
+            [notFoundText]="'No se encontraron elementos'">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.product_type.default_option_all' | translate}}</ng-option>
+            <ng-option value="S">Servicios</ng-option>
+            <ng-option value="P">Productos</ng-option>
+          </ng-select>
         </div>
-
-      </div>      
-      <div class="col-lg-4">
         <div class="w-100 mb-3" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
           <label for="" class="form-label fw-bold text-primary">{{translatedLabel}} ({{'FORMS.FIELD_NAMES.bell.label' | translate}})</label>
           <ng-select [(ngModel)]="brandId" (change)="onChangeBrand($event)"
@@ -39,10 +23,34 @@
               [value]="brand.id">{{brand.nombre}}</ng-option>
           </ng-select>
         </div>
-        <div class="w-100 mb-3" *ngIf="'FORMS.FIELD_NAMES.product_type.label' | translate as translatedLabel;">
-          <label for="is_info_producto" class="form-label fw-bold w-100">{{translatedLabel}}</label>
-          <ui-switch id="is_info_producto" disabled="true" name="is_info_producto" color="#556ee6" [(ngModel)]="isInfoProduct" (change)="onChangeTypeProduct($event)" uncheckedLabel="Producto" checkedLabel="Servicio" size="small" class="me-1 w-100"></ui-switch>
+      </div>
+      <div class="col-lg-6">
+       
+        <!-- <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID RETAIL X:</strong> <input type="text" class="form-control w-auto"></div>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <input type="text" class="form-control w-auto"></div>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <input type="text" class="form-control w-auto"></div> -->
+        <!-- <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <span>{{dataBasicPreview?.smart_id}}</span></div>
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <span>{{dataBasicPreview?.smart_address_id}}</span></div> -->
+   
+        <div class="row g-2" *ngIf="typeProduct !== 'P'">
+          <div class="col-lg-6 mb-2">
+            <label for="retailx_id" class="form-label">ID RETAIL X:</label>
+            <input type="text" class="form-control" id="retailx_id" [(ngModel)]="retailxId" placeholder="ID RETAIL X" value="">
+          </div>
+          <div class="col-lg-6 mb-2">
+            <label for="smart_id" class="form-label">ID SMART:</label>
+            <input type="text" class="form-control" id="smart_id" [(ngModel)]="smartId" placeholder="ID SMART" value="">
+          </div>
+          <div class="col-lg-6 mb-2">
+            <label for="smart_address_id" class="form-label">ID DIRECCIÓN SMART:</label>
+            <input type="text" class="form-control" id="smart_address_id"  [(ngModel)]="smartAddressId"  placeholder="ID DIRECCIÓN SMART" value="">
+          </div>
         </div>
+
+      </div>      
+      <div class="col-12">
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>FECHA:</strong> <span>{{dataBasicPreview?.fecha}}</span></div>
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>DIRECCIÓN:</strong> <span>{{dataBasicPreview?.address}}</span></div>
       </div>
     </div>
   </accordion-panel>
@@ -53,7 +61,7 @@
   <div class="card-body border-bottom">
     <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
       <div class="">
-        <h4 class="card-title text-primary">Productos/Servicios</h4>
+        <h4 class="card-title text-primary">{{title}}</h4>
       </div>
       <div class="d-flex gap-2">
         <button type="button" class="btn btn-md btn-primary" (click)="toggleForm()" [ngClass]="{'btn-success': isCollapseForm, 'btn-primary': !isCollapseForm}">

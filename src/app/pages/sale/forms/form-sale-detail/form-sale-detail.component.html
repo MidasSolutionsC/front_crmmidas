@@ -1,5 +1,5 @@
 <div *ngIf="typeService?.includes('mobile')">
-  <app-form-mobile #mobileForm [submitted]="submitted" [listOperators]="listOperators"></app-form-mobile>
+  <app-form-mobile #mobileForm [submitted]="submitted" [listOperators]="listOperators" [listTypeDocuments]="listTypeDocuments"></app-form-mobile>
 </div>
 
 <div *ngIf="typeService?.includes('fixed')">
@@ -9,17 +9,33 @@
 <form (keydown.enter)="$event.preventDefault()" [formGroup]="saleDetailForm" autocomplete="off">
   <div class="row g-2">
     <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.product.label' | translate as translatedLabel;">
-      <label for="productos_id" class="form-label">{{translatedLabel}} *</label>
+      <label for="productos_id" class="form-label">{{translatedLabel}} (*) 
+        <strong *ngIf="selectedProduct" class="ms-2 text-primary">Precio: 
+          <span *ngIf="selectedProduct?.tipo_monedas_iso_code != 'EUR'">{{selectedProduct?.tipo_monedas_simbolo}}</span>
+          {{selectedProduct?.precio}}
+          <span *ngIf="selectedProduct?.tipo_monedas_iso_code == 'EUR'">{{selectedProduct?.tipo_monedas_simbolo}}</span>
+        </strong>
+      </label>
       <ng-select 
           id="productos_id" [ngClass]="{ 'is-invalid': f.productos_id.errors && (f.productos_id.dirty || f.productos_id.touched || submitted) }"
+          [notFoundText]="'No se encontraron elementos'"
           [items]="listProducts"
           [bindValue]="'id'"
           [bindLabel]="'nombre'"
           [multiple]="false"
+          (change)="onChangeSelectedProduct($event)"
+          (search)="apiProductGetSearch($event.term)"
           formControlName="productos_id">
+          <ng-template ng-option-tmp let-item="item">
+            <span>{{ item.nombre }}</span>
+            <!-- <span class="fw-semibold"> -{{ item.descuento }}</span> -->
+            <strong *ngIf="item" class="ms-2 text-primary">
+              <span *ngIf="item?.tipo_monedas_iso_code != 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+              {{item?.precio}}
+              <span *ngIf="item?.tipo_monedas_iso_code == 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+            </strong>
+          </ng-template>
       </ng-select>
-              <!-- (change)="onSelectUbigeo($event)"
-              (search)="searchOptionUbigeo($event.term)"> -->
       <div *ngIf="f.productos_id.errors && (f.productos_id.dirty || f.productos_id.touched || submitted)" class="invalid-feedback" align="left">
         <div *ngIf="f.productos_id.errors.required">
           {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
@@ -27,17 +43,39 @@
       </div>
     </div>
     <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.promotion.label' | translate as translatedLabel;">
-      <label for="productos_id" class="form-label">{{translatedLabel}} *</label>
+      <label for="promociones_id" class="form-label">{{translatedLabel}}
+        <span class="badge text-md ms-2" *ngIf="selectedPromotion" [ngClass]="{ 'bg-info': selectedPromotion.is_private == 1, 'bg-primary': selectedPromotion.is_private == 0}">{{selectedPromotion.is_private? 'Privado': 'Publico'}}</span>
+
+        <strong *ngIf="selectedPromotion" class="ms-2 text-danger">Descuento: 
+          <!-- {{selectedPromotion?.tipo_descuento == 'P'? '': selectedPromotion?.tipo_monedas_simbolo}} -->
+          <span *ngIf="selectedPromotion?.tipo_descuento == 'C' && selectedPromotion?.tipo_monedas_iso_code != 'EUR'">{{selectedPromotion?.tipo_monedas_simbolo}}</span>
+          {{selectedPromotion?.descuento}}
+          <span *ngIf="selectedPromotion?.tipo_descuento == 'C' && selectedPromotion?.tipo_monedas_iso_code == 'EUR'">{{selectedPromotion?.tipo_monedas_simbolo}}</span>
+          <span *ngIf="selectedPromotion?.tipo_descuento == 'P'">%</span>
+        </strong>
+      </label>
       <ng-select 
           id="promociones_id" [ngClass]="{ 'is-invalid': f.promociones_id.errors && (f.promociones_id.dirty || f.promociones_id.touched || submitted) }"
+          [notFoundText]="'No se encontraron elementos'"
           [items]="listPromotions"
           [bindValue]="'id'"
           [bindLabel]="'nombre'"
           [multiple]="false"
+          (change)="onChangeSelectedPromotion($event)"
+          (search)="apiPromotionGetSearch($event.term)"
           formControlName="promociones_id">
+          <ng-template ng-option-tmp let-item="item">
+            <span>{{ item.nombre }}</span>
+            <span class="badge text-md ms-2" [ngClass]="{ 'bg-info': item.is_private == 1, 'bg-primary': item.is_private == 0}">{{item.is_private? 'Privado': 'Publico'}}</span>
+
+            <strong *ngIf="item" class="ms-2 text-danger"> -
+              <span *ngIf="item?.tipo_descuento == 'C' && item?.tipo_monedas_iso_code != 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+              {{item?.descuento}}
+              <span *ngIf="item?.tipo_descuento == 'C' && item?.tipo_monedas_iso_code == 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+              <span *ngIf="item?.tipo_descuento == 'P'">%</span>
+            </strong>
+          </ng-template>
       </ng-select>
-              <!-- (change)="onSelectUbigeo($event)"
-              (search)="searchOptionUbigeo($event.term)"> -->
       <div *ngIf="f.promociones_id.errors && (f.promociones_id.dirty || f.promociones_id.touched || submitted)" class="invalid-feedback" align="left">
         <div *ngIf="f.promociones_id.errors.required">
           {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}

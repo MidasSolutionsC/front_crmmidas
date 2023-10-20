@@ -187,6 +187,9 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             `;
             data.direccion_completo = direccion_completo;
             this._addressService.addObjectObserver(data);
+
+            const dataInstallation = InstallationList.cast(response.data[0])
+            this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
           }
         }
 
@@ -231,6 +234,9 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             `;
             data.direccion_completo = direccion_completo;
             this._addressService.updateObjectObserver(data);
+
+            const dataInstallation = InstallationList.cast(response.data[0])
+            this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
           }
         }
 
@@ -352,6 +358,7 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             // GUARDAR EN EL LOCAL STORAGE SOLO SI NO SE ENCUENTRA 
             this._shareSaleService.setSaleId(data.ventas_id);
             this._shareSaleService.setInstallationId(data.id);
+            this._shareSaleService.setDataInstallation(data);
           }
         }
 
@@ -397,6 +404,7 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             this._tempInstallationService.updateObjectObserver(data);
             this._sharedClientService.setSaleId(data.ventas_id);
             this._shareSaleService.setInstallationId(data.id);
+            this._shareSaleService.setDataInstallation(data);
           }
         }
 

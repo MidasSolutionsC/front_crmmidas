@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { BrandList, ResponseApi, TypeServiceList } from 'src/app/core/models';
-import { ApiErrorFormattingService, BrandService, FormService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
+import { ApiErrorFormattingService, BrandService, FormService, SharedSaleService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-sale-detail-full',
@@ -48,6 +48,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
     private cdr: ChangeDetectorRef,
     private _typeServiceService: TypeServiceService,
     private _brandService: BrandService,
+    private _sharedSaleService: SharedSaleService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -146,6 +147,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
       this.showFormService = true;
       const typeService = this.listTypeService.find((item) => item.id == this.typeServiceId);
       this.typeServiceNombre = typeService.nombre;
+      this._sharedSaleService.setTypeServiceId(this.typeServiceId);
 
       if(typeService.nombre.toLowerCase().includes('movil')){
         this.shareTypeService = 'mobile';

@@ -72,6 +72,10 @@ export class PromotionList extends Model{
   public nombre: string;
   public descripcion: string;
   public tipo_descuento: 'C' | 'D';
+  public tipo_monedas_id: number;
+  public tipo_monedas_nombre: string;
+  public tipo_monedas_simbolo: string;
+  public tipo_monedas_iso_code: string;
   public descuento: number;
   public fecha_inicio: string;
   public fecha_fin: string;
@@ -79,6 +83,7 @@ export class PromotionList extends Model{
   public cantidad_minima: number;
   public cantidad_maxima: number;
   public is_active: boolean;
+  public is_private: boolean;
   public created_at: string;
   public updated_at: string;
   public deleted_at: string;
@@ -91,6 +96,10 @@ export class PromotionList extends Model{
     this.nombre = this.nombre || '';
     this.descripcion = this.descripcion || '';
     this.tipo_descuento = this.tipo_descuento || 'C';
+    this.tipo_monedas_id = this.tipo_monedas_id || null;
+    this.tipo_monedas_nombre = this.tipo_monedas_nombre || '';
+    this.tipo_monedas_simbolo = this.tipo_monedas_simbolo || '';
+    this.tipo_monedas_iso_code = this.tipo_monedas_iso_code || '';
     this.descuento = this.descuento || 0;
     this.fecha_inicio = this.fecha_inicio || '',
     this.fecha_fin = this.fecha_fin || '',
@@ -98,6 +107,7 @@ export class PromotionList extends Model{
     this.cantidad_minima = this.cantidad_minima || 0,
     this.cantidad_maxima = this.cantidad_maxima || 0,
     this.is_active = this.is_active || true;
+    this.is_private = this.is_private || false;
     this.created_at = this.created_at || '';
     this.updated_at = this.updated_at || '';
     this.deleted_at = this.deleted_at || '';
@@ -105,8 +115,30 @@ export class PromotionList extends Model{
 
   public static cast(data: object): PromotionList{
     const promotionList = new PromotionList(data);
-    const {id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, tipo_descuento, descuento, fecha_inicio, fecha_fin, codigo, cantidad_minima, cantidad_maxima, is_active, created_at, updated_at, deleted_at} = promotionList;
-    return {id, tipo_servicios_id, tipo_servicios_nombre, nombre, descripcion, tipo_descuento, descuento, fecha_inicio, fecha_fin, codigo, cantidad_minima, cantidad_maxima, is_active, created_at, updated_at, deleted_at};
+
+    return {
+      id: promotionList.id,
+      tipo_servicios_id: promotionList.tipo_servicios_id,
+      tipo_servicios_nombre: promotionList.tipo_servicios_nombre,
+      nombre: promotionList.nombre,
+      descripcion: promotionList.descripcion,
+      tipo_descuento: promotionList.tipo_descuento,
+      tipo_monedas_id: promotionList.tipo_monedas_id,
+      tipo_monedas_nombre: promotionList.tipo_monedas_nombre,
+      tipo_monedas_simbolo: promotionList.tipo_monedas_simbolo,
+      tipo_monedas_iso_code: promotionList.tipo_monedas_iso_code,
+      descuento: promotionList.descuento,
+      fecha_inicio: promotionList.fecha_inicio,
+      fecha_fin: promotionList.fecha_fin,
+      codigo: promotionList.codigo,
+      cantidad_minima: promotionList.cantidad_minima,
+      cantidad_maxima: promotionList.cantidad_maxima,
+      is_active: promotionList.is_active,
+      is_private: promotionList.is_private,
+      created_at: promotionList.created_at,
+      updated_at: promotionList.updated_at,
+      deleted_at: promotionList.deleted_at,
+    }
   }
 
   public static casts(dataArray: object[]): PromotionList[]{
