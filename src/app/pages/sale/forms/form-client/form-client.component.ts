@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subscription, debounceTime, distinctUntilChanged, filter, of, pipe, take } from 'rxjs';
-import { BankAccount, Company, CompanyList, Contact, CountryList, IdentificationDocument, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { BankAccount, Company, CompanyList, Contact, CountryList, IdentificationDocument, InstallationList, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { Client, ClientList } from 'src/app/core/models/api/client.model';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
-import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SharedClientService, SweetAlertService, TempSaleService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
+import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-client',
@@ -68,11 +68,15 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   companyId: number;
   legalPerson: boolean = false;
 
+  // ID VENTA PARA SABER SI EXISTE 
+  saleId: number = null;
+
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private _sharedClientService: SharedClientService,
+    private _sharedSaleService: SharedSaleService,
     private _clientService: ClientService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -85,6 +89,11 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   ngOnInit(): void {
     this.initFClient();
     // this.onChangeData();
+
+    // ID VENTA
+    this.subscription.add(
+      this._sharedSaleService.getSaleId().subscribe((value: number) =>  this.saleId = value)
+    )
 
     // ID PERSONA
     this.subscription.add(
@@ -408,6 +417,9 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
         this._sweetAlertService.stop();
         if(response.code == 200){
           const {person, company, client} = response.data;
+
+          // const dataInstallation = InstallationList.cast(person?.addresses[0]);
+          // this._sharedSaleService.setDataInstallation({...dataInstallation, id: null});
 
           if(person){
             this.dataPerson = Person.cast(person);

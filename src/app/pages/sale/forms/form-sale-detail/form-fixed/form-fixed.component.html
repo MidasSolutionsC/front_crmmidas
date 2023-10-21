@@ -1,17 +1,17 @@
 <form (keydown.enter)="$event.preventDefault()" [formGroup]="fixedLineForm" autocomplete="off">
   <div class="row g-2">
     <div class="col-md-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
-      <label for="tipo_documento_id" class="form-label">{{translatedLabel}} *</label>
-      <ng-select id="tipo_documento_id" formControlName="tipo_documento_id" [ngClass]="{ 'is-invalid': fx.tipo_documento_id.errors && (fx.tipo_documento_id.dirty || fx.tipo_documento_id.touched || submitted) }">
+      <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
+      <ng-select id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fx.tipo_documentos_id.errors && (fx.tipo_documentos_id.dirty || fx.tipo_documentos_id.touched || submitted) }">
         <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</ng-option>
         <ng-option *ngFor="let typeDocument of listTypeDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</ng-option>
       </ng-select>
-      <div *ngIf="fx.tipo_documento_id.errors && (fx.tipo_documento_id.dirty || fx.tipo_documento_id.touched || submitted)" class="invalid-feedback" align="left">
-        <div *ngIf="fx.tipo_documento_id.errors.required">
+      <div *ngIf="fx.tipo_documentos_id.errors && (fx.tipo_documentos_id.dirty || fx.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="fx.tipo_documentos_id.errors.required">
           {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
         </div>
-        <div *ngIf="fx.tipo_documento_id.errors.min">
-          {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': fx.tipo_documento_id.errors.min.requiredLength}}
+        <div *ngIf="fx.tipo_documentos_id.errors.min">
+          {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': fx.tipo_documentos_id.errors.min.requiredLength}}
         </div>
       </div>
     </div>

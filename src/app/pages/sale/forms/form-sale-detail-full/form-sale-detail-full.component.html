@@ -49,6 +49,6 @@
       <strong class="text-success text-uppercase font-size-16">Formulario - {{typeServiceNombre}}</strong>
       <button type="button" (click)="onCancel()" class="btn btn-light rounded-pill"><i class="mdi mdi-close me-1"></i> {{'FORMS.BUTTONS.CLOSE' | translate}}</button>
     </div>
-    <app-form-sale-detail (cancel)="onCancel($event)" [typeService]="shareTypeService"></app-form-sale-detail>
+    <app-form-sale-detail (cancel)="onCancel($event)" (submit)="onDataSaleDetail($event)" [typeService]="shareTypeService"></app-form-sale-detail>
   </div>
 </div>

@@ -84,9 +84,9 @@
         <thead>
           <tr>
             <th scope="col">N°</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Archivo</th>
-            <th scope="col">Estado</th>
+            <th scope="col">Producto</th>
+            <th scope="col">Promoción</th>
+            <th scope="col">Subtotal</th>
             <th scope="col" style="width: 5%;">Operaciones</th>
           </tr>
         </thead>
@@ -94,7 +94,8 @@
           <tr *ngFor="let data of listSaleDetail; let i = index" >
             <th scope="row">{{i + 1}}</th>
             <td>{{data.nombre}}</td>
-            <td><a [href]="'http://localhost:8000/files/sale/' + data.archivo" target="_blank">Ver archivo</a></td>
+            <td>{{data.nombre}}</td>
+            <td>{{data.nombre}}</td>
             <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
             <td >
               <!-- <ul class="list-unstyled hstack gap-1 mb-0">

@@ -49,7 +49,7 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
     this.initForm();
 
 
-    // PERSONA
+    // DATOS PERSONA COMPARTIDO
     this.subscription.add(
       this._sharedClientService.getDataPerson()
       .pipe(filter((value) => value != null))
@@ -61,7 +61,7 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
 
         if(this.mobileLineForm){
           this.mobileLineForm.get('titular').setValue(`${data.nombres} ${data.apellido_paterno} ${data.apellido_materno}`)
-          this.mobileLineForm.get('tipo_documento_id').setValue(identification?.tipo_documentos_id)
+          this.mobileLineForm.get('tipo_documentos_id').setValue(identification?.tipo_documentos_id)
           this.mobileLineForm.get('documento_titular').setValue(identification?.documento)
           this.mobileLineForm.get('num_portar').setValue(contact?.contacto)
         }
@@ -108,7 +108,7 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
    */
   private getFormGroupDataMobile(model: DetailMobileLine): object {
     return {
-      tipo_documento_id: [model?.tipo_documento_id || '', [Validators.required, Validators.min(1)]],
+      tipo_documentos_id: [model?.tipo_documentos_id || '', [Validators.required, Validators.min(1)]],
       documento_titular: [model?.documento_titular || '', [Validators.required, Validators.maxLength(11)]],
       titular: [model?.titular || '', [Validators.required, Validators.maxLength(50)]],
       operador_donante_id: [model?.operador_donante_id || '', [Validators.nullValidator, Validators.min(1)]],

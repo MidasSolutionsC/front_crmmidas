@@ -53,17 +53,17 @@
       <ui-switch id="diferente_titular" name="diferente_titular" color="#556ee6" [(ngModel)]="differentHolder" formControlName="diferente_titular" uncheckedLabel="No" checkedLabel="Si" size="small" class="me-1 w-100"></ui-switch>
     </div>
     <div class="col-lg-3 mb-3" *ngIf="differentHolder && ('FORMS.FIELD_NAMES.type_document.label' | translate) as translatedLabel;">
-      <label for="tipo_documento_id" class="form-label">{{translatedLabel}} (*)</label>
-      <ng-select id="tipo_documento_id" formControlName="tipo_documento_id" [ngClass]="{ 'is-invalid': fm.tipo_documento_id.errors && (fm.tipo_documento_id.dirty || fm.tipo_documento_id.touched || submitted) }">
+      <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} (*)</label>
+      <ng-select id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fm.tipo_documentos_id.errors && (fm.tipo_documentos_id.dirty || fm.tipo_documentos_id.touched || submitted) }">
         <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</ng-option>
         <ng-option *ngFor="let typeDocument of listTypeDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</ng-option>
       </ng-select>
-      <div *ngIf="fm.tipo_documento_id.errors && (fm.tipo_documento_id.dirty || fm.tipo_documento_id.touched || submitted)" class="invalid-feedback" align="left">
-        <div *ngIf="fm.tipo_documento_id.errors.required">
+      <div *ngIf="fm.tipo_documentos_id.errors && (fm.tipo_documentos_id.dirty || fm.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="fm.tipo_documentos_id.errors.required">
           {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
         </div>
-        <div *ngIf="fm.tipo_documento_id.errors.min">
-          {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': fm.tipo_documento_id.errors.min.requiredLength}}
+        <div *ngIf="fm.tipo_documentos_id.errors.min">
+          {{'FORMS.VALIDATION.min' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':min': fm.tipo_documentos_id.errors.min.requiredLength}}
         </div>
       </div>
     </div>

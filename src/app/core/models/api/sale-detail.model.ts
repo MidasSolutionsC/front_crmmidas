@@ -139,7 +139,7 @@ export class SaleDetailList extends Model{
 }
 
 export class DetailMobileLine extends Model{
-  public tipo_documento_id: number;
+  public tipo_documentos_id: number;
   public documento_titular: string;
   public titular: string;
   public operador_donante_id: number;
@@ -152,7 +152,7 @@ export class DetailMobileLine extends Model{
 
   constructor(data?: object){
     super(data);
-    this.tipo_documento_id = this.tipo_documento_id || 0;
+    this.tipo_documentos_id = this.tipo_documentos_id || 0;
     this.documento_titular = this.documento_titular || null;
     this.titular = this.titular || null;
     this.operador_donante_id = this.operador_donante_id || 0;
@@ -166,7 +166,7 @@ export class DetailMobileLine extends Model{
   public static cast(data: object): DetailMobileLine{
     const detailMobileList = new DetailMobileLine(data);
     const {
-      tipo_documento_id,
+      tipo_documentos_id,
       documento_titular,
       titular,
       operador_donante_id,
@@ -178,7 +178,7 @@ export class DetailMobileLine extends Model{
     }= detailMobileList;
     
     return {
-      tipo_documento_id,
+      tipo_documentos_id,
       documento_titular,
       titular,
       operador_donante_id,
@@ -195,9 +195,9 @@ export class DetailMobileLine extends Model{
 }
 
 export class DetailMobileLineList extends Model{
-  public tipo_documento_id: number;
-  public tipo_documento_nombre: string;
-  public tipo_documento_abreviacion: string;
+  public tipo_documentos_id: number;
+  public tipo_documentos_nombre: string;
+  public tipo_documentos_abreviacion: string;
   public documento_titular: string;
   public titular: string;
   public operador_donante_id: number;
@@ -211,9 +211,9 @@ export class DetailMobileLineList extends Model{
 
   constructor(data?: object){
     super(data);
-    this.tipo_documento_id = this.tipo_documento_id || 0;
-    this.tipo_documento_nombre = this.tipo_documento_nombre || null;
-    this.tipo_documento_abreviacion = this.tipo_documento_abreviacion || null;
+    this.tipo_documentos_id = this.tipo_documentos_id || 0;
+    this.tipo_documentos_nombre = this.tipo_documentos_nombre || null;
+    this.tipo_documentos_abreviacion = this.tipo_documentos_abreviacion || null;
     this.documento_titular = this.documento_titular || null;
     this.titular = this.titular || null;
     this.operador_donante_id = this.operador_donante_id || 0;
@@ -228,9 +228,9 @@ export class DetailMobileLineList extends Model{
   public static cast(data: object): DetailMobileLineList{
     const detailMobileList = new DetailMobileLineList(data);
     const {
-      tipo_documento_id,
-      tipo_documento_nombre,
-      tipo_documento_abreviacion,
+      tipo_documentos_id,
+      tipo_documentos_nombre,
+      tipo_documentos_abreviacion,
       documento_titular,
       titular,
       operador_donante_id,
@@ -243,9 +243,9 @@ export class DetailMobileLineList extends Model{
     }= detailMobileList;
     
     return {
-      tipo_documento_id,
-      tipo_documento_nombre,
-      tipo_documento_abreviacion,
+      tipo_documentos_id,
+      tipo_documentos_nombre,
+      tipo_documentos_abreviacion,
       documento_titular,
       titular,
       operador_donante_id,
@@ -263,7 +263,7 @@ export class DetailMobileLineList extends Model{
 }
 
 export class DetailFixedLine extends Model{
-  public tipo_documento_id: number;
+  public tipo_documentos_id: number;
   public documento_titular: string;
   public titular: string;
   public operador_donante_id: number;
@@ -273,7 +273,7 @@ export class DetailFixedLine extends Model{
 
   constructor(data?: object){
     super(data);
-    this.tipo_documento_id = this.tipo_documento_id || 0;
+    this.tipo_documentos_id = this.tipo_documentos_id || 0;
     this.documento_titular = this.documento_titular || null;
     this.titular = this.titular || null;
     this.operador_donante_id = this.operador_donante_id || 0;
@@ -284,7 +284,7 @@ export class DetailFixedLine extends Model{
   public static cast(data: object): DetailFixedLine{
     const detailFixedList = new DetailFixedLine(data);
     const {
-      tipo_documento_id,
+      tipo_documentos_id,
       documento_titular,
       titular,
       operador_donante_id,
@@ -293,7 +293,7 @@ export class DetailFixedLine extends Model{
     }= detailFixedList;
     
     return {
-      tipo_documento_id,
+      tipo_documentos_id,
       documento_titular,
       titular,
       operador_donante_id,
@@ -307,9 +307,9 @@ export class DetailFixedLine extends Model{
 }
 
 export class DetailFixedLineList extends Model{
-  public tipo_documento_id: number;
-  public tipo_documento_nombre: string;
-  public tipo_documento_abreviacion: string;
+  public tipo_documentos_id: number;
+  public tipo_documentos_nombre: string;
+  public tipo_documentos_abreviacion: string;
   public documento_titular: string;
   public titular: string;
   public operador_donante_id: number;
@@ -320,9 +320,9 @@ export class DetailFixedLineList extends Model{
 
   constructor(data?: object){
     super(data);
-    this.tipo_documento_id = this.tipo_documento_id || 0;
-    this.tipo_documento_nombre = this.tipo_documento_nombre || null;
-    this.tipo_documento_abreviacion = this.tipo_documento_abreviacion || null;
+    this.tipo_documentos_id = this.tipo_documentos_id || 0;
+    this.tipo_documentos_nombre = this.tipo_documentos_nombre || null;
+    this.tipo_documentos_abreviacion = this.tipo_documentos_abreviacion || null;
     this.documento_titular = this.documento_titular || null;
     this.titular = this.titular || null;
     this.operador_donante_id = this.operador_donante_id || 0;
@@ -334,9 +334,9 @@ export class DetailFixedLineList extends Model{
   public static cast(data: object): DetailFixedLineList{
     const detailFixedList = new DetailFixedLineList(data);
     const {
-      tipo_documento_id,
-      tipo_documento_nombre,
-      tipo_documento_abreviacion,
+      tipo_documentos_id,
+      tipo_documentos_nombre,
+      tipo_documentos_abreviacion,
       documento_titular,
       titular,
       operador_donante_id,
@@ -346,9 +346,9 @@ export class DetailFixedLineList extends Model{
     }= detailFixedList;
     
     return {
-      tipo_documento_id,
-      tipo_documento_nombre,
-      tipo_documento_abreviacion,
+      tipo_documentos_id,
+      tipo_documentos_nombre,
+      tipo_documentos_abreviacion,
       documento_titular,
       titular,
       operador_donante_id,

@@ -61,7 +61,7 @@ export class FormFixedComponent implements OnInit, OnDestroy {
    */
   private getFormGroupDataFixed(model: DetailFixedLine): object {
     return {
-      tipo_documento_id: [model?.tipo_documento_id || '', [Validators.required, Validators.min(1)]],
+      tipo_documentos_id: [model?.tipo_documentos_id || '', [Validators.required, Validators.min(1)]],
       documento_titular: [model?.documento_titular || '', [Validators.required, Validators.maxLength(11)]],
       titular: [model?.titular || '', [Validators.required, Validators.maxLength(50)]],
       operador_donante_id: [model?.operador_donante_id || '', [Validators.nullValidator, Validators.min(1)]],

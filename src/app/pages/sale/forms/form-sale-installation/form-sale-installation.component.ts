@@ -74,14 +74,31 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
     )
 
     // DIRECCIÓN DEL CLIENTE
+    // this.subscription.add(
+    //   this._sharedClientService.getAddress().pipe(filter((data) => data !== null)).subscribe((data: Address[]) => {
+    //     if(data){
+    //       this.listInstallation = Installation.casts(data);
+    //       this.listAddress = data;
+    //       this.data = Installation.cast(data[0]);
+    //       this.installationForm.setValue(this.data);
+    //       this.isNewData = false;
+    //     }
+    //   })
+    // )
+
+    // DIRECCIÓN DEL CLIENTE - INSTALACIÓN
     this.subscription.add(
-      this._sharedClientService.getAddress().pipe(filter((data) => data !== null)).subscribe((data: Address[]) => {
+      this._shareSaleService.getDataInstallation().pipe(filter((data) => data !== null)).subscribe((data: InstallationList) => {
         if(data){
-          this.listInstallation = Installation.casts(data);
-          this.listAddress = data;
-          this.data = Installation.cast(data[0]);
-          this.installationForm.setValue(this.data);
-          this.isNewData = false;
+          const requestInstallation = Installation.cast(data);
+          const requestAddress = Address.cast(data);
+          if(data.id){
+            this.isNewData = false;
+            this.installationForm.setValue(requestInstallation);
+          } else {
+            this.apiAddressRegister(requestAddress);
+            // this.apiTempInstallationRegister(request);
+          }
         }
       })
     )
@@ -188,8 +205,10 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             data.direccion_completo = direccion_completo;
             this._addressService.addObjectObserver(data);
 
-            const dataInstallation = InstallationList.cast(response.data[0])
-            this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
+            // --- REGISTRAR INSTALACIÓN
+            const installation = Installation.cast(data);
+            this.apiTempInstallationRegister({...installation, id: null});
+          
           }
         }
 
@@ -234,9 +253,6 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
             `;
             data.direccion_completo = direccion_completo;
             this._addressService.updateObjectObserver(data);
-
-            const dataInstallation = InstallationList.cast(response.data[0])
-            this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
           }
         }
 
@@ -335,6 +351,7 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
     });
   }
 
+  // REGISTRAR
   private apiTempInstallationRegister(data: Installation){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
@@ -383,6 +400,7 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
     )
   }
 
+  // ACTUALIZAR
   private apiTempInstallationUpdate(data: Installation, id: number){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
@@ -496,21 +514,23 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
       if(this.isNewData){
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la dirección?').then((confirm) => {
           if(confirm.isConfirmed){
-            if(!this.isOtherDirection){
-              this.apiAddressRegister(valuesAddress);
-            } else {
-              this.apiTempInstallationRegister(values);
-            }
+            this.apiAddressRegister(valuesAddress);
+            // if(!this.isOtherDirection){
+            //   this.apiAddressRegister(valuesAddress);
+            // } else {
+            //   this.apiTempInstallationRegister(values);
+            // }
           }
         });
       } else {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar la dirección?').then((confirm) => {
           if(confirm.isConfirmed){
-            if(!this.isOtherDirection){
-              this.apiAddressUpdate(valuesAddress, valuesAddress.id);
-            } else {
-              this.apiTempInstallationUpdate(values, values.id);
-            }
+            this.apiAddressUpdate(valuesAddress, valuesAddress.id);
+            // if(!this.isOtherDirection){
+            //   this.apiAddressUpdate(valuesAddress, valuesAddress.id);
+            // } else {
+            //   this.apiTempInstallationUpdate(values, values.id);
+            // }
           }
         });
       }     

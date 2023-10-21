@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { BrandList, ResponseApi, TypeServiceList } from 'src/app/core/models';
-import { ApiErrorFormattingService, BrandService, FormService, SharedSaleService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
+import { ApiErrorFormattingService, BrandService, FormService, SharedSaleService, SweetAlertService, TempSaleDetailService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-sale-detail-full',
@@ -49,6 +49,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
     private _typeServiceService: TypeServiceService,
     private _brandService: BrandService,
     private _sharedSaleService: SharedSaleService,
+    private _tempSaleDetailService: TempSaleDetailService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -132,6 +133,17 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
       }
     });
   }
+
+
+  /** 
+   * ***********************************************************
+   * DATOS RECIBIDO DEL FORMULARIO - FORM SALE DETAIL
+   * ***********************************************************
+  */
+  onDataSaleDetail(data: any){
+    // console.log("DATOS RECIBIDO EN DETAIL FULL:", data);
+  }
+
 
 
   /**
