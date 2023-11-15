@@ -5,45 +5,77 @@
     <div class="col-lg-5 mb-2">
       <accordion [isAnimated]="true" [closeOthers]="false">
         <accordion-group heading="DATOS DEL CLIENTE" [isOpen]="true" class="border border-primary rounded">
-          <div class="row gx-2">
+          <div *ngIf="dataClient?.persona_juridica"></div>
+          <div class="row gx-2">           
             <div class="col-lg-6">
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Nombre:</strong> <span>...</span></div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Apellido:</strong> <span>...</span></div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>NIF:</strong> <span>...</span></div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Correo:</strong> <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Nombre:</strong> <span>{{dataPerson?.nombres}}</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Apellido:</strong> <span>{{dataPerson?.apellido_paterno}}</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2" *ngFor="let identification of dataPerson?.identifications"><strong>{{identification?.tipo_documentos_abreviacion}}:</strong> <span>{{identification?.documento}}</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2">
+                <strong>Fecha de nac.:</strong> <span>{{dataPerson?.fecha_nacimiento}}</span>
+              </div>
             </div>
             <div class="col-lg-6">
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Fecha de nacimiento:</strong>
-                <span>...</span></div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Teléfono:</strong> <span>...</span>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2" *ngFor="let contact of dataPerson?.contacts">
+                <ng-container [ngSwitch]="contact?.tipo">
+                  <ng-container *ngSwitchCase="'EML'">
+                    <strong>Correo electrónico:</strong> <span>{{contact?.contacto}}</span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'CEL'">
+                    <strong>Celular:</strong> <span>{{contact?.contacto}}</span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'TEL'">
+                    <strong>Teléfono:</strong> <span>{{contact?.contacto}}</span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'TEF'">
+                    <strong>Teléfono fijo:</strong> <span>{{contact?.contacto}}</span>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    <strong>{{contact?.tipo}}:</strong> <span>{{contact?.contacto}}</span>
+                  </ng-container>
+                </ng-container>
               </div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Teléfono fijo:</strong> <span>...</span>
+            </div>
+            <div class="col-12">
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2">
+                <strong>Tipo cliente:</strong>
+                <ng-container [ngSwitch]="dataClient?.tipo_cliente">
+                  <ng-container *ngSwitchCase="'RE'">
+                    <span>Particular</span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'ME'">
+                    <span>Micro Empresa</span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'PM'">
+                    <span>PYMES</span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'CO'">
+                    <span>Corporativo</span>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    <span>{{dataClient?.tipo_cliente}}</span>
+                  </ng-container>
+                </ng-container>
               </div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Teléfono alternativo:</strong>
-                <span>...</span></div>
+            </div>
+            <div class="col-12">
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2">
+                <strong>Nacionalidad:</strong> <span>{{dataPerson?.nacionalidad}}</span>
+              </div>
             </div>
           </div>
         </accordion-group>
         <accordion-group heading="DIRECCIÓN" [isOpen]="true" class="border mt-2 border-primary rounded">
           <div class="row gx-2">
             <div class="col-lg-12">
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Tipo de cliente:</strong>
-                <span>...</span></div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Dirección:</strong> <span>...</span>
-              </div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Población:</strong> <span>...</span>
-              </div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Provincia:</strong> <span>...</span>
-              </div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Código postal:</strong> <span>...</span>
-              </div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID Vodafond:</strong> <span>...</span>
-              </div>
-              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>IBAN:</strong> <span>...</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Dirección:</strong> <span>{{dataInstallation?.direccion_completo}}</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Provincia:</strong> <span>{{dataInstallation?.provincia}}</span></div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Población:</strong> <span>{{dataInstallation?.localidad}}</span> </div>
+              <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Código postal:</strong> <span>{{dataInstallation?.codigo_postal}}</span></div>
             </div>
           </div>
         </accordion-group>
-        <accordion-group heading="DATOS DE LA OFERTA" [isOpen]="true" class="border mt-2 border-primary rounded">
+        <accordion-group heading="DATOS DE LA OFERTA" [isOpen]="false" class="border mt-2 border-primary rounded d-none">
           <div class="row gx-2">
             <div class="col-lg-12">
               <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DE OFERTA:</strong> <span>...</span>
@@ -63,7 +95,7 @@
             </div>
           </div>
         </accordion-group>
-        <accordion-group heading="ESTADO DE LA ORDEN" [isOpen]="true" class="border mt-2 border-primary rounded">
+        <accordion-group heading="ESTADO DE LA ORDEN" [isOpen]="false" class="border mt-2 border-primary rounded d-none">
           <div class="row gx-2">
             <div class="col-lg-12">
               <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>Número OT:</strong> <span>...</span>
@@ -90,18 +122,21 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>N°</th>
-                  <th>TIPO</th>
-                  <th>NOMBRE</th>
-                  <th>FECHA</th>
+                  <th scope="col">N°</th>
+                  <th scope="col">TIPO DOC.</th>
+                  <th scope="col">NOMBRE</th>
+                  <th scope="col">ARCHIVO</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>DNI</td>
-                  <td>Documento</td>
-                  <td>18-10-2023</td>
+                <tr *ngFor="let data of listSaleDocument; let i = index" >
+                  <th scope="row">{{i + 1}}</th>
+                  <td>{{data?.type_document?.abreviacion}}</td>
+                  <td>{{data.nombre}}</td>
+                  <td><a [href]="URL_FILES + data.archivo" target="_blank">Ver archivo</a></td>
+                </tr>
+                <tr *ngIf="!listSaleDocument.length">
+                  <td colspan="5" class="text-center">Sin registros.</td>
                 </tr>
               </tbody>
             </table>
@@ -115,114 +150,20 @@
           <ng-container *ngTemplateOutlet="contentDetail"></ng-container>
         </accordion-group>
         <accordion-group heading="COMENTARIO (Opcional)" [isOpen]="true" class="border mt-2 border-primary rounded">
-          <app-form-sale-comment></app-form-sale-comment>
+          <!-- <app-form-sale-comment></app-form-sale-comment> -->
+          <app-table-sale-comment></app-table-sale-comment>
         </accordion-group>
       </accordion>
     </div>
   </div>
 
-  <div class="row g-2 d-none">
-    <div class="col-lg-6">
-      <strong class="text-primary mb-3 w-100">DATOS DEL CLIENTE</strong>
-      <div class="card border border-info">
-        <div class="card-body">
-
-          <div class="row g-3">
-            <div class="col-md-4">
-              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>Persona jurídica:</strong><span>{{dataClient?.persona_juridica? 'SI': 'NO'}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- EMPRESA -->
-          <div class="row g-3" *ngIf="dataClient?.persona_juridica">
-            <div class="col-md-4">
-              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>Razón social:</strong><span>{{dataCompany?.razon_social}}</span>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>Nombre comercial:</strong><span>{{dataCompany?.nombre_comercial}}</span>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataCompany?.documento}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- PERSONA -->
-          <div class="row g-3" *ngIf="!dataClient?.persona_juridica">
-            <div class="col-md-4">
-              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>Nombres:</strong><span>{{dataPerson?.nombres}}</span>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>Apellidos:</strong><span>{{dataPerson?.apellido_paterno}}
-                  {{dataPerson?.apellido_materno}}</span>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
-                <strong>{{dataTypeDocument?.abreviacion}}:</strong><span>{{dataPerson?.documento}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- MÀS DATOS DEL CLIENTE -->
-          <hr>
-          <div class="row g-2">
-            <div class="col-md-4">
-              <div class="card card-body border">
-                <h5 class="card-title font-size-13 mb-3">Contactos</h5>
-                <ul class="verti-timeline list-unstyled">
-                  <ng-container *ngFor="let item of listContact; index as i">
-                    <ng-template [ngTemplateOutlet]="templateContact"
-                      [ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
-                  </ng-container>
-                </ul>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card card-body border">
-                <h5 class="card-title font-size-13 mb-3">Direcciones</h5>
-                <ul class="verti-timeline list-unstyled">
-                  <ng-container *ngFor="let item of listAddress; index as i">
-                    <ng-template [ngTemplateOutlet]="templateAddress"
-                      [ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
-                  </ng-container>
-                </ul>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card card-body border">
-                <h5 class="card-title font-size-13 mb-3">Cuentas bancarias</h5>
-                <ul class="verti-timeline list-unstyled">
-                  <ng-container *ngFor="let item of listBankAccount; index as i">
-                    <ng-template [ngTemplateOutlet]="templateBankAccount"
-                      [ngTemplateOutletContext]="{item:item, index: i}"></ng-template>
-                  </ng-container>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <ng-template #contentDetail>
     <div class="invoice-title">
-      <h4 class="float-end font-size-14">Orden # 01</h4>
+      <h4 class="float-end font-size-14">Orden # {{dataSale?.nro_orden}}</h4>
     </div>
     <hr>
 
-    <div class="row">
+    <div class="row d-none">
       <div class="col-6">
         <address>
           <strong>Factura a:</strong><br>
@@ -250,42 +191,56 @@
       <table class="table">
         <thead>
           <tr>
-            <th style="width: 70px;">N°.</th>
-            <th>Servicio</th>
+            <th style="width: 70px;">N°</th>
+            <th>Nombre</th>
             <th class="text-end">Cantidad</th>
             <th class="text-end">Precio</th>
             <th class="text-end">Descuento</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>01</td>
+          <tr *ngFor="let data of listSaleDetail; let i = index" >
+            <th scope="row">{{i + 1}}</th>
             <td>
-              <strong>Skote - Admin Dashboard Template</strong>
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque amet doloremque ullam alias! Aspernatur
-                corrupti iusto nesciunt facilis tenetur tempore impedit illo rerum cum maxime.
-              </p>
+              <strong class="me-2">{{data?.product?.nombre}}</strong>
+              <span class="badge text-sm me-1" [ngClass]="{ 'bg-info': data?.product?.tipo_producto == 'S', 'bg-primary': data?.product?.tipo_producto == 'F'}">
+                {{data?.product?.tipo_producto == 'S'? 'Servicio' : 'Producto Físico'}}
+              </span>
+              <span class="badge text-sm bg-warning" >
+                {{data?.product?.type_service?.nombre}}
+              </span>
+              <p class="text-truncate-3">{{data?.product?.descripcion}}</p>
+              <small *ngIf="data?.promotion">Promo: {{data?.promotion?.nombre}}</small>
             </td>
-            <td class="text-end">1</td>
-            <td class="text-end">$499.00</td>
-            <td class="text-end">$0.00</td>
-          </tr>
+            <td>{{data?.cantidad}}</td>
+            <td>
+              {{convertCurrencyFormat(data?.product?.latest_price?.precio, data?.product?.latest_price?.type_currency?.iso_code)}}
+              <!-- <ng-container [ngSwitch]="data?.product?.latest_price?.type_currency?.iso_code">
+                <ng-container *ngSwitchCase="'EUR'">
+                  {{data?.product?.latest_price?.precio}} {{data?.product?.latest_price?.type_currency?.simbolo}}
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  {{data?.product?.latest_price?.type_currency?.simbolo}} {{data?.product?.latest_price?.precio}} 
+                </ng-container>
+              </ng-container> -->
+            </td>
+            <td>
+              <ng-container [ngSwitch]="data?.promotion?.tipo_descuento">
+                <ng-container *ngSwitchCase="'C'">
+                  {{convertCurrencyFormat(data?.promotion?.descuento, data?.promotion?.type_currency?.iso_code)}}
+                </ng-container>
+                <ng-container *ngSwitchCase="'P'">
+                  {{data?.promotion?.descuento || 0}} %
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  {{data?.promotion?.descuento || 0}}
+                </ng-container>
+              </ng-container>
+            </td>
 
-          <tr>
-            <td>02</td>
-            <td>Skote - Landing Template</td>
-            <td class="text-end">1</td>
-            <td class="text-end">$399.00</td>
-            <td class="text-end">$0.00</td>
           </tr>
-
-          <tr>
-            <td>03</td>
-            <td>Veltrix - Admin Dashboard Template</td>
-            <td class="text-end">1</td>
-            <td class="text-end">$499.00</td>
-            <td class="text-end">$0.00</td>
+          <tr *ngIf="!listSaleDetail.length">
+            <td colspan="5" class="text-center">Sin registros.</td>
           </tr>
         </tbody>
         <tfoot>
@@ -293,20 +248,26 @@
             <td colspan="4" class="border-0 text-end">
               <strong>Sub Total</strong>
             </td>
-            <td class="border-0 text-end">$1410.00</td>
+            <td class="border-0 text-end">
+              {{convertCurrencyFormat(subTotal, iso_code_currency)}}
+            </td>
           </tr>
           <tr>
             <td colspan="4" class="border-0 text-end">
               <strong>Descuento</strong>
             </td>
-            <td class="border-0 text-end">$13.00</td>
+            <td class="border-0 text-end">
+              {{convertCurrencyFormat(descuento, iso_code_currency)}}
+            </td>
           </tr>
           <tr class=" border-top">
             <td colspan="4" class="border-bottom-0 text-end">
               <strong class="font-size-17 text-primary">Total</strong>
             </td>
             <td class="border-bottom-0 text-end">
-              <h4 class="m-0 text-primary">$1410.00</h4>
+              <h4 class="m-0 text-primary">
+                {{convertCurrencyFormat(total, iso_code_currency)}}
+              </h4>
             </td>
           </tr>
         </tfoot>

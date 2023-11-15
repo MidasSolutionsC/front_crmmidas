@@ -24,6 +24,7 @@ import { TypeDocumentComponent } from './type-document/type-document.component';
 import { TypeServiceComponent } from './type-service/type-service.component';
 import { TypeStatusComponent } from './type-status/type-status.component';
 import { TypeUserComponent } from './type-user/type-user.component';
+import { TypeCurrencyComponent } from './type-currency/type-currency.component';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { TypeUserComponent } from './type-user/type-user.component';
     TypeServiceComponent,
     TypeStatusComponent,
     TypeUserComponent,
+    TypeCurrencyComponent
   ],
   imports: [
     CommonModule,

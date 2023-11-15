@@ -5,6 +5,9 @@ import { Contact, CountryList, IdentificationDocument, Person, ResponseApi } fro
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
 import { ApiErrorFormattingService, CountryService, FormService, PersonService, SharedClientService, SweetAlertService, UbigeoService } from 'src/app/core/services';
 
+import { FormIdentificationComponent } from '../form-identification/form-identification.component';
+import { FormArrayContactComponent } from '../form-client-contact/form-array-contact/form-array-contact.component';
+
 @Component({
   selector: 'app-form-person',
   templateUrl: './form-person.component.html',
@@ -13,9 +16,15 @@ import { ApiErrorFormattingService, CountryService, FormService, PersonService, 
 export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('paises_id') focusPais: ElementRef<HTMLInputElement>;
 
+  @ViewChild('formIdentification') formIdentification!: FormIdentificationComponent;
+  @ViewChild('formContact') formContact!: FormArrayContactComponent;
+
+  
+
   // Datos de entrada
   @Input() hiddenButtons: boolean = false;
   @Input() data: Person = null;
+  @Input() submitted: boolean = false;
   
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
@@ -23,7 +32,7 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
 
   
   isNewData: boolean = true;
-  submitted: boolean = false;
+  // submitted: boolean = false;
   personForm: FormGroup;
 
   // COMPARTIDO
@@ -234,26 +243,24 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
  * ************************************************************
  * CAPTURAR DATOS DE LOS FORMULARIOS REFERENCIADOS
  * ************************************************************
- */
-  // FORMULARIO DE IDENTIFICACIONES
-  onDataIdentification(data: any){
-    if(data.emit){
-      this.listIdentification = data.values;
+ */    
+  // DATOS DEL FORM - IDENTIFICACIONES
+  submitIdentification(){
+    if(this.formIdentification.formDataIdentification.invalid){
+      // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para identificaciones', type: 'warning', timer: 1500});
+      return false;
     } else {
-      this.listIdentification = []
+      return this.formIdentification.formDataIdentification.value;
     }
-
-    setTimeout(() => {
-      this.onSubmit();
-    }, 250);
   }
-
-  // FORMULARIO DE IDENTIFICACIONES
-  onDataContact(data: any){
-    if(data.emit){
-      this.listContact = data.values;
+  
+  // DATOS DEL FORM - CONTACTOS
+  submitContact(){
+    if(this.formContact.formListContact.invalid){
+      // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para contactos', type: 'warning', timer: 1500});
+      return false;
     } else {
-      this.listContact = []
+      return this.formContact.formListContact.value;
     }
   }
 
@@ -265,11 +272,12 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
  */
   onSubmit() {
     this.submitted = true;
-
+    
     if (this.personForm.invalid || this.listIdentification.length == 0 || this.listContact.length == 0) {
       this._sweetAlertService.showTopEnd({ title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500 });
       this.submit.emit({emit: false});
     } else {
+      this.personForm.get('identifications').setValue(this.listIdentification);
       const values = this.personForm.value;
       this.submit.emit({ emit: true, person: values, identifications: this.listIdentification, contacts: this.listContact});
     }
@@ -286,4 +294,7 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
     this.isNewData = true;
     this.personForm.reset(new Person());
   }
+
+
+
 }

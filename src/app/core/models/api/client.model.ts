@@ -1,5 +1,7 @@
 import { BankAccount } from "./bank-account.model";
+import { Company } from "./company.model";
 import { Model } from "./model";
+import { Person } from "./person.model";
 
 export class Client extends Model{
   public id?: number;
@@ -11,6 +13,8 @@ export class Client extends Model{
   public segmento_vodafond?: string;
   public persona_juridica?: boolean;
   public is_active?: boolean;
+  public person?: Person;
+  public company?: Company;
   public bank_accounts?: BankAccount[] = [];
 
 
@@ -25,6 +29,8 @@ export class Client extends Model{
     this.segmento_vodafond = this.segmento_vodafond || '';
     this.persona_juridica = this.persona_juridica || false;
     this.is_active = this.is_active || true;
+    this.person = this.person || null;
+    this.company = this.company || null;
     this.bank_accounts = this.bank_accounts || [];
   }
 
@@ -41,6 +47,8 @@ export class Client extends Model{
       segmento_vodafond: obj.segmento_vodafond,
       persona_juridica: obj.persona_juridica,
       is_active: obj.is_active,
+      person: obj.person,
+      company: obj.company,
       bank_accounts: obj.bank_accounts
     };
   }

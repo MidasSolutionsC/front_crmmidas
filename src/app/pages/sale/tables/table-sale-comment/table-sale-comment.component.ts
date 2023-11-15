@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { ResponseApi, SaleComment, SaleCommentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SharedSaleService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-comment',
@@ -17,6 +17,9 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
   // Datos emitidos al formulario
   dataForm: SaleComment;
 
+  // ID VENTA
+  saleId: number = null;
+
 
   // Lista de documentos
   listSaleComments: SaleCommentList[] = [];
@@ -25,6 +28,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private _sharedSaleService: SharedSaleService,
     private _tmpSaleCommentService: TempSaleCommentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -33,10 +37,16 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
   ){}
 
   ngOnInit(): void {
-    const ventaId = localStorage.getItem('ventas_id');
-    if(ventaId !== null && ventaId !== undefined){
-      this.apiSaleCommentFilterBySale(parseInt(ventaId));
-    }
+    
+    // VENTA ID
+    this.subscription.add(
+      this._sharedSaleService.getSaleId()
+      .pipe(filter((value) => value != null))
+      .subscribe((value: number) => {
+        this.saleId = value;
+        this.apiTmpSaleCommentFilterBySale(value);
+        })
+    )
 
     // Subscriptionciones
     this.subscription.add(
@@ -63,7 +73,9 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
     this.isCollapseForm = collapse || !this.isCollapseForm;
     if(!this.isCollapseForm){
       this.isCollapseList = true;
-    } 
+    } else {
+      this.isCollapseList = false;
+    }
   }
 
 
@@ -84,7 +96,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
  * OPERACIONES CON LA API
  * ****************************************************************
  */
-  public apiSaleCommentFilterBySale(saleId: number){
+  public apiTmpSaleCommentFilterBySale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tmpSaleCommentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -105,7 +117,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
     });
   }
 
-  public apiSaleCommentDelete(id: number){
+  public apiTmpSaleCommentDelete(id: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tmpSaleCommentService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -135,16 +147,26 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
    * ****************************************************************
    */
   onSubmit(event: any){
-    if(event?.saved){
-      this.toggleList(false);
-      
-      const ventaId = localStorage.getItem('ventas_id');
-      if(ventaId !== null && ventaId !== undefined){
-        this.apiSaleCommentFilterBySale(parseInt(ventaId));
-      } else {
-        this.apiSaleCommentFilterBySale(event?.data?.ventas_id);
+    const {process, data} = event;
+    if(process == 'saved'){
+      const indexRow = this.listSaleComments.findIndex((item) => item.id == data.id);
+      if(indexRow == -1){
+        this.listSaleComments.push(data);
       }
     }
+
+    if(process == 'updated'){
+      const indexRow = this.listSaleComments.findIndex((item) => item.id == data.id);
+      if(indexRow !== -1){
+        this.listSaleComments[indexRow] = data;
+      }
+    }
+    
+    
+    
+    // if(this.saleId){
+    //   this.apiTmpSaleCommentFilterBySale(this.saleId);
+    // }
   }
 
   onCancel(event: any){
@@ -165,7 +187,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
   deleteRow(id: any){
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el comentario?').then((confirm) => {
       if(confirm.isConfirmed){
-        this.apiSaleCommentFilterBySale(id);
+        this.apiTmpSaleCommentFilterBySale(id);
       }
     });
   }

@@ -30,6 +30,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
   
   // ID TIPO DE SERVICIO
   typeServiceId: any = '';
+  typeServiceIcon: string = '';
   typeServiceNombre: string = '';
 
   // ID MARCA
@@ -159,6 +160,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
       this.showFormService = true;
       const typeService = this.listTypeService.find((item) => item.id == this.typeServiceId);
       this.typeServiceNombre = typeService.nombre;
+      this.typeServiceIcon = typeService.icono;
       this._sharedSaleService.setTypeServiceId(this.typeServiceId);
 
       if(typeService.nombre.toLowerCase().includes('movil')){

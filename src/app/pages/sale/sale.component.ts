@@ -390,9 +390,9 @@ export class SaleComponent {
     this.submitted = false;
     this.previewImage = '';
     // Cargando datos al formulario
-    var data = this.lists.find((data: { id: any; }) => data.id === id);
-    const sale = Sale.cast(data);
-    this.saleForm = this.formBuilder.group({...this._formService.modelToFormGroupData(sale), id: [data.id], file: [null, []]});
+    // var data = this.lists.find((data: { id: any; }) => data.id === id);
+    // const sale = Sale.cast(data);
+    // this.saleForm = this.formBuilder.group({...this._formService.modelToFormGroupData(sale), id: [data.id], file: [null, []]});
     
   }
 

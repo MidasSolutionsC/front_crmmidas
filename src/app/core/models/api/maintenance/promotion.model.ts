@@ -71,7 +71,7 @@ export class PromotionList extends Model{
   public tipo_servicios_nombre: string;
   public nombre: string;
   public descripcion: string;
-  public tipo_descuento: 'C' | 'D';
+  public tipo_descuento: 'C' | 'P';
   public tipo_monedas_id: number;
   public tipo_monedas_nombre: string;
   public tipo_monedas_simbolo: string;

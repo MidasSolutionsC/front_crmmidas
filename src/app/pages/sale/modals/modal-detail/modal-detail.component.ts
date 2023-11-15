@@ -187,15 +187,15 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
             
             let typeService = null;
 
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
-              typeService = 'mobile';
-            }
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
-              typeService = 'fixed';
-            }
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
-              typeService = 'tv';
-            }
+            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
+            //   typeService = 'mobile';
+            // }
+            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
+            //   typeService = 'fixed';
+            // }
+            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
+            //   typeService = 'tv';
+            // }
 
             detail['visible'] = false;
 
@@ -261,18 +261,18 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   onChanges(){
     if(this.dataInput){
       // console.log("DATOS DE LA VENTA:",this.dataInput);
-      const {id, clientes_id, clientes_persona_juridica} = this.dataInput;
+      // const {id, clientes_id, clientes_persona_juridica} = this.dataInput;
 
-      if(id){
-        this.apiSaleDetailFilterSale(id);
-        this.apiSaleDocumentFilterSale(id);
-        this.apiSaleCommentFilterSale(id);
-        this.apiSaleHistoryFilterSale(id);
-      }
+      // if(id){
+      //   this.apiSaleDetailFilterSale(id);
+      //   this.apiSaleDocumentFilterSale(id);
+      //   this.apiSaleCommentFilterSale(id);
+      //   this.apiSaleHistoryFilterSale(id);
+      // }
 
-      if(clientes_id){
-        this.apiClientGetById(clientes_id);
-      }
+      // if(clientes_id){
+      //   this.apiClientGetById(clientes_id);
+      // }
     }
   }
 

@@ -207,7 +207,8 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
   private getFormGroupData(model: TypeService): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
+      nombre: [model.nombre || '', [Validators.required, Validators.maxLength(50)]],
+      icono: [model.icono || '', [Validators.required, Validators.maxLength(100)]],
       descripcion: ['', [Validators.nullValidator, Validators.maxLength(150)]],
       is_active: [true, [Validators.nullValidator]],
     }

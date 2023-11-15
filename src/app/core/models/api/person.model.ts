@@ -63,10 +63,9 @@ export class PersonList extends Model{
   public apellido_materno: string;
   public codigo_ubigeo: string;
   public fecha_nacimiento: string;
-  public telefono: string;
-  public correo: string;
-  public direccion: string;
-  public identifications: IdentificationDocumentList[];
+  public identifications?: IdentificationDocument[];
+  public contacts?: Contact[];
+  public addresses?: Address[];
 
   constructor(data?: object){
     super(data);
@@ -79,10 +78,9 @@ export class PersonList extends Model{
     this.apellido_materno = this.apellido_materno || '';
     this.codigo_ubigeo = this.codigo_ubigeo || '';
     this.fecha_nacimiento = this.fecha_nacimiento || '';
-    this.telefono = this.telefono || '';
-    this.correo = this.correo || '';
-    this.direccion = this.direccion || '';
     this.identifications = this.identifications || [];
+    this.contacts = this.contacts || [];
+    this.addresses = this.addresses || [];
   }
 
   public static cast(data: object): PersonList{
@@ -97,10 +95,9 @@ export class PersonList extends Model{
       apellido_materno: obj.apellido_materno,
       codigo_ubigeo: obj.codigo_ubigeo,
       fecha_nacimiento: obj.fecha_nacimiento,
-      telefono: obj.telefono,
-      correo: obj.correo,
-      direccion: obj.direccion,
       identifications: obj.identifications,
+      contacts: obj.contacts,
+      addresses: obj.addresses,
     };
   }
 

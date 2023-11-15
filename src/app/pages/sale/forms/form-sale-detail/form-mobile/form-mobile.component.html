@@ -1,5 +1,9 @@
 <form (keydown.enter)="$event.preventDefault()" [formGroup]="mobileLineForm" autocomplete="off" >
   <div class="row g-2">
+    <div class="col-lg-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.is_main_line.label' | translate as translatedLabel;">
+      <label for="es_linea_principal" class="form-label w-100">¿{{translatedLabel}}?</label>
+      <ui-switch id="es_linea_principal" name="es_linea_principal"  color="#556ee6" formControlName="es_linea_principal" uncheckedLabel="No" checkedLabel="Si" size="small" class="me-1 w-100"></ui-switch>
+    </div>
     <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.high_or_portability.label' | translate as translatedLabel;">
       <label for="aop" class="form-label">{{translatedLabel}} (*)</label>
       <ng-select id="aop" formControlName="aop"
@@ -82,7 +86,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-4 mb-3" *ngIf="differentHolder && 'FORMS.FIELD_NAMES.holder_name.label' | translate as translatedLabel;">
+    <div class="col-lg-4 mb-3" *ngIf="differentHolder && ('FORMS.FIELD_NAMES.holder_name.label' | translate) as translatedLabel;">
       <label for="titular" class="form-label">{{translatedLabel}} (*)</label>
       <input type="text" id="titular" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.holder_name.placeholder' | translate}}" formControlName="titular" [ngClass]="{ 'is-invalid': fm.titular.errors && (fm.titular.dirty || fm.titular.touched || submitted) }" />
       <div *ngIf="fm.titular.errors && (fm.titular.dirty || fm.titular.touched || submitted)" class="invalid-feedback" align="left">
@@ -137,6 +141,10 @@
           {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fm.icc.errors.maxlength.requiredLength}}
         </div>
       </div>
+    </div>
+    <div class="col-lg-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.is_contract.label' | translate as translatedLabel;">
+      <label for="es_contrato" class="form-label w-100">¿{{translatedLabel}}?</label>
+      <ui-switch id="es_contrato" name="es_contrato"  color="#556ee6" formControlName="es_contrato" uncheckedLabel="No" checkedLabel="Si" size="small" class="me-1 w-100"></ui-switch>
     </div>
   </div>
 </form>

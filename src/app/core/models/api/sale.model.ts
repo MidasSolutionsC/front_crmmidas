@@ -26,27 +26,30 @@ export class Sale extends Model{
 }
 
 export class SaleList extends Model{
-  public id: number;
-  public clientes_id: number;
-  public clientes_persona_juridica: string;
-  public clientes_nombre: string;
-  public clientes_tipo_documento: string;
-  public clientes_documento: string;
-  public comentario: string;
-  public is_active: boolean;
+  public id?: number;
+  public nro_orden?: number;
+  public retailx_id?: string;
+  public smart_id?: string;
+  public direccion_smart_id?: string;
+  public clientes_id?: number;
+  public fecha?: string;
+  public hora?: string;
+  public comentario?: string;
+  public is_active?: boolean;
   public created_at: string;
   public updated_at: string;
   public deleted_at: string;
 
-
   constructor(data?: object){
     super(data);
     this.id = this.id || null;
+    this.nro_orden = this.nro_orden || null;
+    this.retailx_id = this.retailx_id || null;
+    this.smart_id = this.smart_id || null;
+    this.direccion_smart_id = this.direccion_smart_id || null;
     this.clientes_id = this.clientes_id || null;
-    this.clientes_persona_juridica = this.clientes_persona_juridica || null;
-    this.clientes_nombre = this.clientes_nombre || null;
-    this.clientes_tipo_documento = this.clientes_tipo_documento || null;
-    this.clientes_documento = this.clientes_documento || null;
+    this.fecha = this.fecha || null;
+    this.hora = this.hora || null;
     this.comentario = this.comentario || '';
     this.is_active = this.is_active || true;
     this.created_at = this.created_at || '';
@@ -58,11 +61,13 @@ export class SaleList extends Model{
     const obj = new SaleList(data);
     return {
       id: obj.id,
+      nro_orden: obj.nro_orden,
+      retailx_id: obj.retailx_id,
+      smart_id: obj.smart_id,
+      direccion_smart_id: obj.direccion_smart_id,
       clientes_id: obj.clientes_id,
-      clientes_persona_juridica: obj.clientes_persona_juridica,
-      clientes_nombre: obj.clientes_nombre,
-      clientes_tipo_documento: obj.clientes_tipo_documento,
-      clientes_documento: obj.clientes_documento,
+      fecha: obj.fecha,
+      hora: obj.hora,
       comentario: obj.comentario,
       is_active: obj.is_active,
       created_at: obj.created_at,

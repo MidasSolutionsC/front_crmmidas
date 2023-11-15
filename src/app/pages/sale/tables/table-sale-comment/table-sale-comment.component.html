@@ -3,17 +3,14 @@
     <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
       <div class="">
         <h4 class="card-title text-primary">Comentarios de la venta</h4>
-        <p class="card-sub-title">
+        <!-- <p class="card-sub-title">
           Comentarios realizados
-        </p>
+        </p> -->
       </div>
       <div class="d-flex gap-2">
-        <button type="button" class="btn btn-primary" (click)="toggleForm()">
-          <i class="mdi" [ngClass]="{'mdi-plus': isCollapseForm, 'mdi-minus': !isCollapseForm}"></i>
-          Formulario
-        </button>
-        <button type="button" class="btn btn-secondary " (click)="toggleList()">
-          <i class="mdi" [ngClass]="{'mdi-arrow-collapse-down': isCollapseList, 'mdi-arrow-collapse-up': !isCollapseList}"></i>
+        <button type="button" class="btn btn-md btn-primary" (click)="toggleForm()" [ngClass]="{'btn-success': isCollapseForm, 'btn-primary': !isCollapseForm}">
+          <i class="mdi" [ngClass]="{'mdi-clipboard-edit': isCollapseForm, 'mdi-format-list-bulleted-square': !isCollapseForm}"></i>
+          {{isCollapseForm? ('FORMS.BUTTONS.FORM' | translate): 'FORMS.BUTTONS.LIST' | translate}}
         </button>
       </div>
     </div>
@@ -29,7 +26,6 @@
           <tr>
             <th scope="col">N°</th>
             <th scope="col">Comentario</th>
-            <th scope="col">Estado</th>
             <th scope="col" style="width: 5%;">Operaciones</th>
           </tr>
         </thead>
@@ -37,7 +33,6 @@
           <tr *ngFor="let data of listSaleComments; let i = index" >
             <th scope="row">{{i + 1}}</th>
             <td>{{data.comentario}}</td>
-            <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
             <td >
               <ul class="list-unstyled hstack gap-1 mb-0">
                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">

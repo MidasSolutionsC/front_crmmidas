@@ -6,6 +6,10 @@ import { Client, ClientList } from 'src/app/core/models/api/client.model';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
 import { ApiErrorFormattingService, ClientService, CompanyService, CountryService, FormService, PersonService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleService, TypeDocumentService, UbigeoService } from 'src/app/core/services';
 
+import { FormCompanyComponent } from './form-company/form-company.component';
+import { FormPersonComponent } from './form-person/form-person.component';
+import { FormArrayBankAccountComponent } from './form-client-bank-account/form-array-bank-account/form-array-bank-account.component';
+
 @Component({
   selector: 'app-form-client',
   templateUrl: './form-client.component.html',
@@ -14,6 +18,9 @@ import { ApiErrorFormattingService, ClientService, CompanyService, CountryServic
 export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   
   @ViewChild('focusTipoCliente') focusTipoCliente: ElementRef<HTMLInputElement>;
+  @ViewChild('formPerson') formPerson!: FormPersonComponent;
+  @ViewChild('formCompany') formCompany!: FormCompanyComponent;
+  @ViewChild('formBankAccount') formBankAccount!: FormArrayBankAccountComponent;
 
   // Datos de entrada
   @Input() data: Client = null;
@@ -88,7 +95,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
 
   ngOnInit(): void {
     this.initFClient();
-    // this.onChangeData();
+    this.onChangeData();
 
     // ID VENTA
     this.subscription.add(
@@ -142,6 +149,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       this._sharedClientService.getDataPerson().pipe(take(1)).subscribe((data: Person) => {
         if(data){
           this.dataPerson = data;
+          console.log("DATOS PERSONA:", this.dataPerson)
         }
       })
     )
@@ -150,8 +158,8 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     this.subscription.add(
       this._sharedClientService.getDataCompany().pipe(take(1)).subscribe((data: Company) => {
         if(data){
-          console.log("DATOS EMPRESA:", data);
           this.dataCompany = data;
+          console.log("DATOS EMPRESA:", this.dataCompany)
         }
       })
     )
@@ -176,17 +184,14 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes.data && !changes.data.firstChange){
-      this.data = changes.data.currentValue;
       this.onChangeData();
     }
 
     if(changes.dataPerson && !changes.dataPerson.firstChange){
-      this.dataPerson = changes.dataPerson.currentValue;
       this.onChangeDataPerson();
     }
 
     if(changes.dataCompany && !changes.dataCompany.firstChange){
-      this.dataCompany = changes.dataCompany.currentValue;
       this.onChangeDataCompany();
     }
   }
@@ -362,7 +367,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
           }
 
           if(client){
-            this.data = Client.cast(client);
+            this.data = client;
             this.clientForm.setValue(Client.cast(client));
             this.isNewDataClient = false;
             this._sharedClientService.setClientId(client.id);
@@ -434,11 +439,13 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
           }
 
           if(client){
-            this.data = Client.cast(client);
             this.clientForm.setValue(Client.cast(client));
-            this.isNewDataClient = false;
             this._sharedClientService.setClientId(client.id);
+            this.isNewDataClient = false;
+            this.shareBankAccounts = client.bank_accounts;
+            this.data = client;
           }
+
         }
 
         if(response.code == 422){
@@ -616,6 +623,46 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     }
   }
 
+  // DATOS DE PERSONA
+  submitPerson(){
+    const identifications = this.formPerson.submitIdentification();
+    const contacts = this.formPerson.submitContact();
+    if(this.formPerson.personForm.invalid || !identifications || !contacts){
+      // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para persona', type: 'warning', timer: 1500});
+      return false;
+    } else {
+      this.formPerson.personForm.get('identifications').setValue(IdentificationDocument.casts(identifications));
+      this.formPerson.personForm.get('contacts').setValue(Contact.casts(contacts));
+      return this.formPerson.personForm.value;
+    }
+  }
+
+  // DATOS DE EMPRESA
+  submitCompany(){
+    const identifications = this.formCompany.submitIdentification();
+    const contacts = this.formCompany.submitContact();
+    console.log("TEST:", identifications, contacts, this.formCompany.companyForm.invalid);
+    console.log("COMOPANY:", this.formCompany.companyForm.value)
+    if(this.formCompany.companyForm.invalid || !identifications || !contacts){
+      // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para persona', type: 'warning', timer: 1500});
+      return false;
+    } else {
+      this.formCompany.companyForm.get('identifications').setValue(IdentificationDocument.casts(identifications));
+      this.formCompany.companyForm.get('contacts').setValue(Contact.casts(contacts));
+      return this.formCompany.companyForm.value;
+    }
+  }
+
+  // DATOS DE CUENTAS BANCARIAS
+  submitBankAccount(){
+    if(this.formBankAccount.formListBankAccount.invalid){
+      // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para cuentas bancarias', type: 'warning', timer: 1500});
+      return false;
+    } else {
+      return this.formBankAccount.formListBankAccount.value;
+    }
+  }
+
   
   /**
    * ************************************************************
@@ -624,17 +671,46 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
    */
   execSubmit(){
     this.submittedClient = true;
-    this._sharedClientService.setSubmitData(true);
+    // this._sharedClientService.setSubmitData(true);
+    if(this.legalPerson){
+      // DATOS EMPRESA
+      this.dataCompanySend = this.submitCompany();
+
+    } else {
+      // DATOS PERSONA
+      this.dataPersonSend = this.submitPerson();
+    }
+
+
+
+    // CUENTAS BANCARIAS
+    const bankAccounts = this.submitBankAccount();
+    if(bankAccounts){
+      this.listBankAccount = BankAccount.casts(bankAccounts);
+    } else {
+      this.listBankAccount = [];
+    }
+
+
+    this.onSubmit();
   }
 
   onSubmit() {
-    if(this.clientForm.invalid || (this.dataPersonSend && this.dataCompanySend) || this.listContacts.length == 0 || this.listIdentifications.length == 0 || this.listBankAccount.length == 0){
+    if(this.legalPerson && !this.dataCompanySend){
+      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+      return
+    }
+
+    if(!this.legalPerson && !this.dataPersonSend){
+      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+      return
+    }
+
+    if(this.clientForm.invalid || this.listBankAccount.length == 0){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: Client = this.clientForm.value;
-      values['identificaciones'] = this.listIdentifications;
-      values['contactos'] = this.listContacts;
-      values['cuentas_bancarias'] = this.listBankAccount;
+      values.bank_accounts = this.listBankAccount;
       values.persona_juridica = this.legalPerson;
 
       // TIPO DE CLIENTE
@@ -642,12 +718,12 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
         if(this.companyId){
           values.empresas_id = this.companyId;
         }
-        values['datos_empresa'] = this.dataCompanySend;
+        values.company = this.dataCompanySend;
       } else {
         if(this.personId){
           values.personas_id = this.personId;
         }
-        values['datos_persona'] = this.dataPersonSend;
+        values.person = this.dataPersonSend;
       }
 
 
@@ -693,4 +769,8 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     this.dataReset = false;
     this.shareBankAccounts = [];
   }
+
+
+
+  
 }

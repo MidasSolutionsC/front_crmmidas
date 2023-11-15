@@ -11,7 +11,6 @@ import { CampusComponent } from './campus/campus.component';
 import { BrandComponent } from './brand/brand.component';
 import { ServiceComponent } from './service/service.component';
 import { CategoryComponent } from './category/category.component';
-import { TypeCurrencyComponent } from './type-currency/type-currency.component';
 
 
 const routes: Routes = [
@@ -59,10 +58,6 @@ const routes: Routes = [
   {
     path: 'campus',
     component: CampusComponent
-  },
-  {
-    path: 'typeCurrency',
-    component: TypeCurrencyComponent
   },
   { path: 'types', loadChildren: () => import('./type/type.module').then(m => m.TypeModule) },
   { path: 'call-settings', loadChildren: () => import('./call/call.module').then(m => m.CallModule) },

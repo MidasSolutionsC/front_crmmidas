@@ -13,6 +13,7 @@ export class SharedSaleService {
   private installationId: BehaviorSubject<number | string> = new BehaviorSubject<number | string>(null);
   private dataInstallation: BehaviorSubject<InstallationList> = new BehaviorSubject<InstallationList>(null);
   private saleDetail: BehaviorSubject<SaleDetailList> = new BehaviorSubject<SaleDetailList>(null);
+  private clearSale: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
 
   constructor() { }
 
@@ -77,5 +78,14 @@ export class SharedSaleService {
 
   setSaleDetail(value: SaleDetailList) {
     this.saleDetail.next(value);
+  }
+
+  // LIMPIAR DATOS Y VARIABLES DE LA VENTA
+  getClear() {
+    return this.clearSale.asObservable();
+  }
+
+  setClear(value: boolean) {
+    this.clearSale.next(value);
   }
 }

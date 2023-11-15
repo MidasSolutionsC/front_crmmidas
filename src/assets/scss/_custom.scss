@@ -137,23 +137,23 @@
     }
 }
 
-// .ng-dropdown-panel {
-//     border-color: $input-border-color;
-//     background-color: var(--#{$prefix}custom-white);
-// }
+.ng-dropdown-panel {
+    border-color: $input-border-color;
+    background-color: var(--#{$prefix}custom-white);
+}
 
 // .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
-//     background-color: var(--#{$prefix}custom-white);
+//     background-color: var(--#{$prefix}custom-white) !important;
 //     color: var(--#{$prefix}body-color);
 // }
 
-// .ng-dropdown-panel.ng-select-bottom {
-//     border-top-color: $input-border-color;
-// }
+.ng-dropdown-panel.ng-select-bottom {
+    border-top-color: $input-border-color;
+}
 
-// .ng-dropdown-panel.ng-select-top {
-//     border-bottom-color: $input-border-color;
-// }
+.ng-dropdown-panel.ng-select-top {
+    border-bottom-color: $input-border-color;
+}
 
 //dropzone
 
@@ -229,6 +229,29 @@ a.ck.ck-button.ck-on {
 
     .accordion-button {
         color: var(--bs-body-color);
+    }
+
+    // NG SELECT
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+        background-color: #222736;
+        color: #fff;
+        &.ng-option-selected{
+            background: #2a3042;
+            color: #c3cbe4;
+        }
+        &:hover{
+            background: #556ee6;
+        }
+    }
+
+    // SEET ALERT
+    .swal2-html-container{
+        color: #c3cbe4;
+    }
+
+    .swal2-popup.swal2-toast{
+        background: var(--bs-secondary-bg);
+        border: 1px solid #b0c4de8e;
     }
 }
 

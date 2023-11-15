@@ -1,4 +1,6 @@
 import { Model } from "../model";
+import { BrandList } from "./brand.model";
+import { TypeServiceList } from "./type-service.model";
 
 export class Product extends Model{
   public id?: number;
@@ -71,6 +73,9 @@ export class ProductList extends Model{
   public created_at: string;
   public updated_at: string;
   public deleted_at: string;
+  public latest_price: any;
+  public brand?: BrandList;
+  public type_service?: TypeServiceList;
 
   constructor(data?: object){
     super(data);
@@ -93,6 +98,9 @@ export class ProductList extends Model{
     this.created_at = this.created_at || '';
     this.updated_at = this.updated_at || '';
     this.deleted_at = this.deleted_at || '';
+    this.latest_price = this.latest_price || null;
+    this.brand = this.brand || null;
+    this.type_service = this.type_service || null;
   }
 
   public static cast(data: object): ProductList{
@@ -116,7 +124,11 @@ export class ProductList extends Model{
       is_active: obj.is_active, 
       created_at: obj.created_at, 
       updated_at: obj.updated_at, 
-      deleted_at: obj.deleted_at
+      deleted_at: obj.deleted_at,
+      latest_price: obj.latest_price,
+      brand: obj.brand,
+      type_service: obj.type_service,
+
     };
   }
 

@@ -22,8 +22,9 @@
               <thead>
                 <tr>
                   <th scope="col">N°</th>
+                  <th scope="col">Icono</th>
                   <th scope="col">Nombre</th>
-                  <th scope="col">descripción</th>
+                  <th scope="col">Descripción</th>
                   <th scope="col">Estado</th>
                   <th scope="col">Fecha creado</th>
                   <th scope="col">Fecha modificado</th>
@@ -33,6 +34,9 @@
               <tbody>
                 <tr *ngFor="let data of lists; let i = index">
                   <th scope="row">{{i + 1}}</th>
+                  <td>
+                    <div [innerHTML]="data.icono" class="font-size-22 text-info"></div>
+                  </td>
                   <td>{{data.nombre}}</td>
                   <td>{{data.descripcion}}</td>
                   <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
@@ -49,7 +53,7 @@
                     </ul>
                   </td>
                 </tr>
-                <tr *ngIf="!lists.length"><td colspan="7" class="text-center">Sin registros.</td></tr>
+                <tr *ngIf="!lists.length"><td colspan="8" class="text-center">Sin registros.</td></tr>
               </tbody>
             </table>
           </div>
@@ -77,6 +81,18 @@
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
           </div>
         </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.icon.label' | translate as translatedLabel;">
+        <label for="icono" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="icono" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.icon.placeholder' | translate}}" formControlName="icono" [ngClass]="{ 'is-invalid': form['icono'].errors && (form.icono.dirty || form.icono.touched || submitted) }" />
+        <div *ngIf="form['icono'].errors && (form.icono.dirty || form.icono.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['icono'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+        <span class="me-4">Link 1: <a href="https://pictogrammers.com/library/mdi/" target="_blank" rel="noopener noreferrer">MDI Icons</a></span>
+        <span>Link 2: <a href="https://boxicons.com/" target="_blank" rel="noopener noreferrer">BOX Icons</a></span>
       </div>
 
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">

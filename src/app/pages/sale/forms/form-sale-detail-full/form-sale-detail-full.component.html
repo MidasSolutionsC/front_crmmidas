@@ -28,7 +28,12 @@
           [ngClass]="{ 'is-invalid': !typeServiceId }">
           <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_service.default_option' | translate}}</ng-option>
           <ng-option *ngFor="let typeService of listTypeService"
-            [value]="typeService.id">{{typeService.nombre}}</ng-option>
+            [value]="typeService.id"> 
+            <div class="d-flex flex-row align-items-center">
+              <div [innerHTML]="typeService.icono" class="font-size-16 text-info me-1"></div>
+              {{typeService.nombre}}
+            </div>
+          </ng-option>
         </ng-select>
         <button type="button" (click)="openFormService()" class="btn btn-success"><i class="mdi mdi-plus me-1"></i> {{'FORMS.BUTTONS.ADD' | translate}}</button>
         <div
@@ -46,8 +51,11 @@
 <div class="card card-body border border-success" *ngIf="showFormService">
   <div class="">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-      <strong class="text-success text-uppercase font-size-16">Formulario - {{typeServiceNombre}}</strong>
-      <button type="button" (click)="onCancel()" class="btn btn-light rounded-pill"><i class="mdi mdi-close me-1"></i> {{'FORMS.BUTTONS.CLOSE' | translate}}</button>
+      <strong class="text-success text-uppercase font-size-16 d-flex flex-row align-items-center flex-wrap"> 
+        <div [innerHTML]="typeServiceIcon" class="font-size-22 text-success me-1"></div>
+         Formulario - {{typeServiceNombre}}
+        </strong>
+      <button type="button" (click)="onCancel()" class="btn btn-success"><i class="mdi mdi-plus me-1"></i> {{'FORMS.FIELD_NAMES.new_service.label' | translate}}</button>
     </div>
     <app-form-sale-detail (cancel)="onCancel($event)" (submit)="onDataSaleDetail($event)" [typeService]="shareTypeService"></app-form-sale-detail>
   </div>

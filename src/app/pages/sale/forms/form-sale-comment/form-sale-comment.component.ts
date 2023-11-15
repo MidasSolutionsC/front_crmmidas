@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { ResponseApi, SaleComment, SaleCommentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SharedSaleService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-sale-comment',
@@ -26,11 +26,15 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
   submitted: boolean = false;
   commentForm: FormGroup;
 
+  // VENTA
+  saleId: number = null;
+
     
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private _sharedSaleService: SharedSaleService,
     private _tmpSaleCommentService: TempSaleCommentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -42,6 +46,15 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
   ngOnInit(): void {
     // Instanciar form
     this.initForm();
+
+    // VENTA ID
+    this.subscription.add(
+      this._sharedSaleService.getSaleId()
+        .pipe(filter(value => value != null))
+        .subscribe((value: number) => {
+          this.saleId = value;
+        })
+    )
   }
 
   ngOnDestroy(): void {
@@ -83,7 +96,7 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
           if(response.data[0]){
             const data: SaleCommentList = SaleCommentList.cast(response.data[0]);
             this._tmpSaleCommentService.addObjectObserver(data);
-            this.submit.emit({saved: true, data});
+            this.submit.emit({process: 'saved', data});
             this.onReset();
           }
         }
@@ -119,7 +132,7 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
             const data: SaleCommentList = SaleCommentList.cast(response.data[0]);
             this._tmpSaleCommentService.updateObjectObserver(data);
             this.onReset();
-            this.submit.emit({saved: true});
+            this.submit.emit({process: 'updated', data});
           }
         }
 
@@ -173,7 +186,7 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
   private getFormGroupData(model: SaleComment): object {
     return {
       ...this._formService.modelToFormGroupData(model),
-      comentario: [model.comentario, [Validators.required, Validators.maxLength(250)]],
+      comentario: [model.comentario, [Validators.required, Validators.maxLength(800)]],
       is_active: [1, [Validators.nullValidator]],
     }
   }
@@ -193,9 +206,8 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
     } else {
       const values: SaleComment = this.commentForm.value;
-      const idVenta = localStorage.getItem('ventas_id');
-      if(idVenta !== null && idVenta !== undefined){
-        values.ventas_id = parseInt(idVenta);
+      if(this.saleId){
+        values.ventas_id = this.saleId;
       }
 
       if(this.isNewData){

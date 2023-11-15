@@ -18,7 +18,7 @@ export class Company extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || 0;
+    this.id = this.id || null;
     this.paises_id = this.paises_id || null;
     this.codigo_ubigeo = this.codigo_ubigeo || '';
     this.razon_social = this.razon_social || '';

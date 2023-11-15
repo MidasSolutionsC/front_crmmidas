@@ -50,6 +50,7 @@ export class SaleDocumentList extends Model{
   public nombre: string;
   public archivo: string;
   public is_active: boolean | number;
+  public type_document?: object;
 
   constructor(data?: object){
     super(data);
@@ -61,6 +62,7 @@ export class SaleDocumentList extends Model{
     this.tipo = this.tipo || null;
     this.archivo = this.archivo || null;
     this.is_active = this.is_active || 1;
+    this.type_document = this.type_document || Object;
   }
 
   public static cast(data: object): SaleDocumentList{
@@ -73,7 +75,8 @@ export class SaleDocumentList extends Model{
       nombre: obj.nombre,
       tipo: obj.tipo,
       archivo: obj.archivo,
-      is_active: obj.is_active
+      is_active: obj.is_active,
+      type_document: obj.type_document,
     }
   }
 

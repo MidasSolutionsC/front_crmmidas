@@ -238,12 +238,12 @@
         "TYPES": {
           "LABEL": "Mant. de tipos",
           "LIST": {
-            "TYPE_BANK_ACCOUNT": "Tipo de cuenta bancaria",
-            "TYPE_USER": "Tipo de usuario",
-            "TYPE_STATUS": "Tipo de estado",
-            "TYPE_DOCUMENT": "Tipo de documento",
-            "TYPE_SERVICE": "Tipo de servicio",
-            "TYPE_CURRENCY": "Tipo de divisa"
+            "TYPE_BANK_ACCOUNT": "Tipo de cuenta bancarias",
+            "TYPE_USER": "Tipo de usuarios",
+            "TYPE_STATUS": "Tipo de estados",
+            "TYPE_DOCUMENT": "Tipo de documentos",
+            "TYPE_SERVICE": "Tipo de servicios",
+            "TYPE_CURRENCY": "Tipo de monedas"
           }
         },
         "CALL": {
@@ -388,10 +388,27 @@
       "is_private": {
         "label": "Es Privado"
       },
+      "is_contract": {
+        "label": "Es Contrato"
+      },
+      "is_main_line": {
+        "label": "Es Linea principal"
+      },
+      "new_service": {
+        "label": "Nuevo servicio"
+      },
+      "wear_deco": {
+        "label": "Lleva deco"
+      },
       "symbol": {
         "label": "Símbolo",
         "placeholder": "Ingrese el símbolo...",
         "default_option": "Seleccione un símbolo..."
+      },
+      "icon": {
+        "label": "Icono",
+        "placeholder": "Ingrese el icono...",
+        "default_option": "Seleccione un icono..."
       },
       "exchange_rate": {
         "label": "Tipo de cambio",

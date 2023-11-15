@@ -5,6 +5,9 @@ import { Company, Contact, CountryList, IdentificationDocument, ResponseApi } fr
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
 import { ApiErrorFormattingService, CompanyService, CountryService, FormService, SharedClientService, SweetAlertService, UbigeoService } from 'src/app/core/services';
 
+import { FormIdentificationComponent } from '../form-identification/form-identification.component';
+import { FormArrayContactComponent } from '../form-client-contact/form-array-contact/form-array-contact.component';
+
 @Component({
   selector: 'app-form-company',
   templateUrl: './form-company.component.html',
@@ -13,17 +16,20 @@ import { ApiErrorFormattingService, CompanyService, CountryService, FormService,
 export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
 
   // @ViewChild('paises_id') focusPais: ElementRef<HTMLInputElement>;
+  @ViewChild('formIdentification') formIdentification!: FormIdentificationComponent;
+  @ViewChild('formContact') formContact!: FormArrayContactComponent;
 
   // Datos de entrada
   @Input() hiddenButtons: boolean = false;
   @Input() data: Company = null;
-
+  @Input() submitted: boolean = false;
+  
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
   @Output() cancel = new EventEmitter<any>();
 
   isNewData: boolean = true;
-  submitted: boolean = false;
+  // submitted: boolean = false;
   companyForm: FormGroup;
 
   // COMPARTIDO
@@ -104,7 +110,7 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
       if (this.data) {
         this.shareIdentifications = this.data.identifications;
         this.shareContacts = this.data.contacts;
-        this.companyForm.setValue(Company.cast(this.data));
+        this.companyForm.setValue(this.data);
         this.isNewData = false;
       } else {
         this.shareIdentifications = [];
@@ -224,26 +230,24 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
   * ************************************************************
   * CAPTURAR DATOS DE LOS FORMULARIOS REFERENCIADOS
   * ************************************************************
-  */
-  // FORMULARIO DE IDENTIFICACIONES
-  onDataIdentification(data: any) {
-    if (data.emit) {
-      this.listIdentification = data.values;
+  */   
+  // DATOS DEL FORM - IDENTIFICACIONES
+  submitIdentification(){
+    if(this.formIdentification.formDataIdentification.invalid){
+      // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para identificaciones', type: 'warning', timer: 1500});
+      return false;
     } else {
-      this.listIdentification = []
+      return this.formIdentification.formDataIdentification.value;
     }
-
-    setTimeout(() => {
-      this.onSubmit();
-    }, 250);
   }
-
-  // FORMULARIO DE IDENTIFICACIONES
-  onDataContact(data: any) {
-    if (data.emit) {
-      this.listContact = data.values;
+  
+  // DATOS DEL FORM - CONTACTOS
+  submitContact(){
+    if(this.formContact.formListContact.invalid){
+      // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para contactos', type: 'warning', timer: 1500});
+      return false;
     } else {
-      this.listContact = []
+      return this.formContact.formListContact.value;
     }
   }
 

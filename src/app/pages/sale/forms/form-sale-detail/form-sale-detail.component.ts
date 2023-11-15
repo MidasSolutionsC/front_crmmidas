@@ -113,7 +113,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     this.apiTypeStatusList();
     this.apiOperatorList();
     this.apiProductGetSearch('');
-    this.apiPromotionGetSearch('');
+    this.apiPromotionGetSearch('');    
 
     // Tipo de documentos  observado
     this.subscription.add(
@@ -152,6 +152,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(filter((value) => value != null))
       .subscribe((value: number) => {
         this.saleId = value;
+        this.apiTempInstallationSearch('');
       })
     );
 
@@ -161,6 +162,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(filter((value) => value != null))
       .subscribe((value: number) => {
         this.installationId = value;
+        this.saleDetailForm.get('instalaciones_id').setValue(value);
       })
     );
 
@@ -313,8 +315,9 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
         if(response.code == 201){
           const result = response.data;
           // console.log(result);
-
-        }
+          this._sweetAlertService.showTopEnd({type: 'success', title: 'Registrado!', message: 'El Producto/Servicio se agrego con éxito.', timer: 1500});
+          this.resetSomeFieldSaleDetail();
+        } 
 
         if(response.code == 422){
           if(response.errors){
@@ -461,7 +464,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   // Buscar instalaciones
   public apiTempInstallationSearch(search: string) {
-    this._tempInstallationService.getSearch({search, ventas_id: this.data?.ventas_id}).subscribe((response: ResponseApi) => {
+    this._tempInstallationService.getSearch({search, ventas_id: this.saleId}).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if(response.code == 200){
         this.tmpListInstallationOptions = response.data;
@@ -571,6 +574,35 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
+  // RESPETAR ALGOS CAMPOS DE DETALLE
+  private resetSomeFieldSaleDetail(){
+    this.selectedProduct = null;
+    this.selectedPromotion = null;
+    this.saleDetailForm.get('productos_id').setValue('');
+    this.saleDetailForm.get('promociones_id').setValue('');
+
+    if(this.typeService == 'mobile'){
+      this.resetSomeFieldMobile();
+    }
+    if(this.typeService == 'fixed'){
+      this.resetSomeFieldFixed();
+    }
+  }
+
+
+  // RESPETAR ALGUNOS VALORES DE MOBILE
+  private resetSomeFieldMobile(){
+    this.mobileForm.mobileLineForm.get('es_linea_principal').setValue(false);
+    this.mobileForm.mobileLineForm.get('es_contrato').setValue(false);
+    this.mobileForm.mobileLineForm.get('aop').setValue('Alta');
+  }
+
+  // RESPETAR ALGUNOS VALORES DE MOBILE
+  private resetSomeFieldFixed(){
+    this.fixedForm.fixedLineForm.get('aop').setValue('Alta');
+  }
+
+
   // SELECTED PRODUCT
   onChangeSelectedProduct(product: ProductList){
     if(product){
@@ -610,7 +642,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
           data = this.submitFixed();
           break;
         case 'tv':
-          // data = this.submitTv();
+          data = this.submitTv();
           break;
 
         default: break;
@@ -653,12 +685,12 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   // Tv
   submitTv(){
-    if(this.tvLineForm.invalid){
+    if(this.tvForm.tvLineForm.invalid){
       this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
       return false;
     } else {
       // this.submit.emit(this.tvLineForm.value);
-      return this.tvLineForm.value;
+      return this.tvForm.tvLineForm.value;
     }
   }
 

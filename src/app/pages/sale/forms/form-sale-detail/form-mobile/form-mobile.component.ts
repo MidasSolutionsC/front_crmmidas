@@ -118,6 +118,8 @@ export class FormMobileComponent implements OnInit, OnDestroy, OnChanges{
       diferente_titular: [false, [Validators.nullValidator]],
       modelo_terminal: [model?.modelo_terminal || '', [Validators.nullValidator, Validators.maxLength(150)]],
       aop: [model?.aop || 'Alta', [Validators.nullValidator, Validators.maxLength(60)]],
+      es_contrato: [model?.es_contrato || false, [Validators.nullValidator]],
+      es_linea_principal: [model?.es_linea_principal || false, [Validators.nullValidator]],
     }
   }
 

@@ -156,10 +156,10 @@
     </div>  
   </div>
   <div class="mb-3">
-    <app-form-identification [data]="shareIdentifications" (submit)="onDataIdentification($event)"></app-form-identification>
+    <app-form-identification #formIdentification [submitted]="submitted" [data]="shareIdentifications" ></app-form-identification>
   </div>
   <div class="mb-3">
-    <app-form-array-contact [data]="shareContacts" (submit)="onDataContact($event)"></app-form-array-contact>
+    <app-form-array-contact #formContact [submitted]="submitted" [data]="shareContacts" ></app-form-array-contact>
   </div>
   <div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
     <button type="button" class="btn btn-light" (click)="onCancel()" [hidden]="hiddenButtons">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>

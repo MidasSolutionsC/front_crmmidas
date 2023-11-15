@@ -11,6 +11,7 @@ import { ApiErrorFormattingService, FormService, SharedClientService, SweetAlert
 })
 export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChanges {
   @Input() data: BankAccount[] = [];
+  @Input() submitted: boolean = false;
 
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
@@ -20,7 +21,7 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
   showList: boolean = true;
 
   isNewData: boolean = true;
-  submitted: boolean = false;
+  // submitted: boolean = false;
   bankAccountForm: FormGroup;
 
   // Tipo de cuentas
@@ -49,9 +50,9 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
     this.formListBankAccount.push(this.fieldBankAccount({ is_primary: 1 }));
 
     // CAMBIOS DETECTADOS AL INICIO
+    this.apiTypeBankAccountList();
     this.onChangeData();
 
-    this.apiTypeBankAccountList();
 
     // Subscriptionciones
     this.subscription.add(
@@ -89,14 +90,12 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
       this.bankAccountForm = this.formBuilder.group({
         formList: this.formBuilder.array([]),
       })
-
       
-      if (this.data && this.data?.length > 0) {
-        this?.data.forEach((item) => {
+      if (this.data?.length > 0) {
+        this.data.forEach((item) => {
           this.formListBankAccount.push(this.fieldBankAccount(BankAccount.cast(item)));
         })
         this.isNewData = false;
-        console.log("CUENTAS BANCARIAS:", this.formListBankAccount.value);
       } else {
         this.formListBankAccount.push(this.fieldBankAccount({is_primary: 1}));
         this.isNewData = true;
@@ -143,7 +142,7 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
     const formGroup = this.formBuilder.group({
       ...this._formService.modelToFormGroupData(model),
       tipo_cuentas_bancarias_id: [model?.tipo_cuentas_bancarias_id || '', [Validators.required, Validators.min(1)]],
-      cuenta: [model.cuenta || '', [Validators.required, Validators.maxLength(50)]],
+      cuenta: [model?.cuenta || '', [Validators.required, Validators.maxLength(50)]],
       is_primary: [model?.is_primary || 0, [Validators.nullValidator]],
       is_active: [1, [Validators.nullValidator]],
     });

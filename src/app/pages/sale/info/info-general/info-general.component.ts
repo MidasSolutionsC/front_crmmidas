@@ -1,8 +1,11 @@
 import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { AddressList, BankAccountList, CompanyList, ContactList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
-import { ClientList } from 'src/app/core/models/api/client.model';
+import { Subscription, distinctUntilChanged, filter } from 'rxjs';
+import { AddressList, BankAccountList, CompanyList, ContactList, InstallationList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { Client, ClientList } from 'src/app/core/models/api/client.model';
 import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, OperatorService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleCommentService, TempSaleDetailService, TempSaleDocumentService, TempSaleHistoryService, TempSaleService, TypeDocumentService } from 'src/app/core/services';
+
+import { CurrencyUtil } from 'src/app/core/helpers/currency.util';
+import { CalculateUtil } from 'src/app/core/helpers/calculate.util';
 
 @Component({
   selector: 'app-info-general',
@@ -17,6 +20,9 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
 
   URL_FILES: string = '';
 
+  // VENTA ID
+  saleId: number = null;
+
   // DATOS CLIENTE
   dataClient: ClientList;
 
@@ -26,9 +32,19 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
   // DATOS EMPRESA
   dataCompany: CompanyList;
 
+  // DIRECCIÓN
+  dataInstallation: InstallationList;
+
+  dataSale: SaleList;
+
   // DATOS DETALLE
-  dataSaleDetail: SaleDetailList;
-  
+  dataSaleDetail: SaleDetailList; 
+  listSaleDetail: SaleDetailList[] = [];
+
+  iso_code_currency: string = 'EUR';
+  subTotal: number = 0;
+  descuento: number = 0;
+  total: number = 0;
 
   // DATOS TIPO DE DOCUMENTOS
   dataTypeDocument: TypeDocumentList;
@@ -131,6 +147,46 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
       })
     );
 
+    // DATOS CLIENTE
+    this.subscription.add(
+      this._sharedClientService.getDataClient()
+        .pipe(filter((data) => data != null))
+        .subscribe((data: ClientList) => {
+          this.dataClient = data;
+          console.log("DATOS CLIENTE:", data)
+        })
+    )
+
+    // DATOS PERSONA
+    this.subscription.add(
+      this._sharedClientService.getDataPerson()
+        .pipe(filter((data) => data != null))
+        .subscribe((data: PersonList) => {
+          this.dataPerson = data;
+        })
+    )
+
+    // DIRECCIÓN
+    this.subscription.add(
+      this._sharedSaleService.getDataInstallation()
+        .pipe(filter((data) => data != null))
+        .subscribe((data: InstallationList) => {
+          const direccion_completo = `
+            ${data.tipo} 
+            ${data.direccion} 
+            ${data.numero != '' ? ', ' + data.numero : ''} 
+            ${data.escalera != '' ? ', ' + data.escalera : ''} 
+            ${data.portal != '' ? ', ' + data.portal : ''} 
+            ${data.planta != '' ? ', ' + data.planta : ''} 
+            ${data.puerta != '' ? ', ' + data.puerta : ''}
+          `;
+
+          // this.dataBasicPreview.fecha = new Date().toLocaleString();
+          data.direccion_completo = direccion_completo;
+          this.dataInstallation = data;
+        })
+    );
+
             
     // CONTACTOS
     this.subscription.add(
@@ -141,12 +197,21 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     );
             
     // DIRECCIONES
+    // this.subscription.add(
+    //   this._addressService.listObserver$
+    //     .subscribe((list: AddressList[]) => {
+    //       this.listAddress = list;
+    //     })
+    // );
+            
+    // DIRECCIONES
     this.subscription.add(
-      this._addressService.listObserver$
-        .subscribe((list: AddressList[]) => {
-          this.listAddress = list;
+      this._sharedSaleService.getDataInstallation()
+        .pipe(filter((data) => data != null))
+        .subscribe((data: InstallationList) => {
+          this.dataInstallation = data;
         })
-    );
+    )
 
     // CUENTAS BANCARIAS
     this.subscription.add(
@@ -156,50 +221,87 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
         })
     );
 
+        
+    // VENTA ID
+    this.subscription.add(
+      this._sharedSaleService.getSaleId().subscribe((value: number) => {
+        if(value){
+          this.saleId = value;
+          this.apiTempSaleGetById(value);
+          this.apiTempSaleDetailFilterSale(value);
+          this.apiTempSaleDocumentFilterSale(value);
+        }
+      })
+    );
+
 
     // Detalle - observado
     this.subscription.add(
       this._tempSaleDetailService.listObserver$
         .subscribe((list: SaleDetailList[]) => {
-
-          this.groupSaleDetail = list.reduce(function (acc, detail) {
-            try{
-              detail.datos_json = JSON.parse(detail.datos_json);
-              const typeDocument = this.listTypeDocuments.find((obj) => obj.id === detail?.datos_json?.tipo_documento_id);
-              const operator = this.listOperators.find((obj) => obj.id === detail?.datos_json?.operador_donante_id);
-              
-              if (typeDocument !== undefined) {
-                detail.datos_json.tipo_documento_nombre = typeDocument.nombre;
-                detail.datos_json.tipo_documento_abreviacion = typeDocument.abreviacion;
-              }
-              if (operator !== undefined) {
-                detail.datos_json.operador_donante_nombre = operator.nombre;
-              }
-            }catch(error){
-
-            }
+          this.listSaleDetail = list;
+          this.subTotal = CalculateUtil.calculateTotal(list, (item: SaleDetailList) => (item.product?.latest_price?.precio || 0) * (item?.cantidad || 1));
+          this.descuento = CalculateUtil.calculateTotal(list, (item: SaleDetailList) => {
+            if(item?.promotion?.tipo_descuento == 'C'){
+              return (item?.promotion?.descuento || 0) * (item?.cantidad || 1)
+            } else if (item?.promotion?.tipo_descuento == 'P') {
+              // Descuento porcentual
+              const subtotal = (item.product?.latest_price?.precio || 0) * (item?.cantidad || 1);
+              const porcentajeDescuento = (item?.promotion?.descuento || 0);
             
-            let typeService = null;
+              // Calcula el descuento en base al porcentaje
+              const descuento = (porcentajeDescuento / 100) * subtotal;
+              return descuento;
+            } else {
+              return 0; // Manejar otros tipos de descuento o valores no válidos
+            }
+          });
+          
+          this.total = this.subTotal - this.descuento;
+          if(list.length > 0){
+            this.iso_code_currency = list[0].product?.latest_price?.type_currency?.iso_code;
+          }
 
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
-              typeService = 'mobile';
-            }
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
-              typeService = 'fixed';
-            }
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
-              typeService = 'tv';
-            }
 
-            detail['visible'] = false;
+          // this.groupSaleDetail = list.reduce(function (acc, detail) {
+          //   try{
+          //     const typeDocument = this.listTypeDocuments.find((obj) => obj.id === detail?.datos_json?.tipo_documento_id);
+          //     const operator = this.listOperators.find((obj) => obj.id === detail?.datos_json?.operador_donante_id);
+              
+          //     if (typeDocument !== undefined) {
+          //       detail.datos_json.tipo_documento_nombre = typeDocument.nombre;
+          //       detail.datos_json.tipo_documento_abreviacion = typeDocument.abreviacion;
+          //     }
+          //     if (operator !== undefined) {
+          //       detail.datos_json.operador_donante_nombre = operator.nombre;
+          //     }
+          //   }catch(error){
 
-            var key = typeService;
-            if (!acc[key]) {
-                acc[key] = [];
-            }
-            acc[key].push(detail);
-            return acc;
-          }, {});
+          //   }
+            
+          //   let typeService = null;
+
+          //   if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
+          //     typeService = 'mobile';
+          //   }
+          //   if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
+          //     typeService = 'fixed';
+          //   }
+          //   if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
+          //     typeService = 'tv';
+          //   }
+
+          //   detail['visible'] = false;
+
+          //   var key = typeService;
+          //   if (!acc[key]) {
+          //       acc[key] = [];
+          //   }
+          //   acc[key].push(detail);
+          //   return acc;
+          // }, {});
+
+         
         })
     );
 
@@ -237,6 +339,12 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+
+  // CONVERTIDOR DE MONEDAS
+  public convertCurrencyFormat(amount: number, currency: string, format: string = 'en-US') {
+    return CurrencyUtil.convertCurrencyFormat(amount, currency, format);
   }
 
 
@@ -450,6 +558,29 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     });
   }
 
+  // VENTA
+  public apiTempSaleGetById(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._tempSaleService.getById(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.dataSale = response.data[0];
+        
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al obtener datos de la venta actual ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
   // Cargar la VENTA DETALLE
   public apiTempSaleDetailFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
@@ -474,7 +605,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
   }
 
   // Cargar los DOCUMENTOS DE LA VENTA
-  public apiSaleDocumentFilterSale(saleId: number){
+  public apiTempSaleDocumentFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tempSaleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -551,18 +682,6 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     item.visible = !item.visible;
   }
   
-  /**
-   * ****************************************************************
-   * VALIDAR DATOS JSON
-   * ****************************************************************
-   */
-  getRowDetailIsNullJson(data: any){
-    if(data?.tipo_servicios_nombre?.toLowerCase().includes('tv')){
-      return false;
-    }
-    return data.datos_json !== null? false: true
-
-  }
 
 
   /**

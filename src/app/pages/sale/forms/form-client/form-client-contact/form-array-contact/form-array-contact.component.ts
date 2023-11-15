@@ -12,6 +12,7 @@ import { ApiErrorFormattingService, FormService, SharedClientService, SweetAlert
 export class FormArrayContactComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() data: Contact[] = [];
+  @Input() submitted: boolean = false;
 
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
@@ -21,14 +22,15 @@ export class FormArrayContactComponent implements OnInit, OnDestroy, OnChanges {
   showList: boolean = true;
 
   isNewData: boolean = true;
-  submitted: boolean = false;
+  // submitted: boolean = false;
   contactForm: FormGroup;
 
   // Tipo documentos
   listTypeContact: any[] = [
     { id: 'EML', name: 'Correo electrónico' },
     { id: 'CEL', name: 'Celular' },
-    { id: 'TEL', name: 'Teléfono fijo' },
+    { id: 'TEL', name: 'Teléfono' },
+    { id: 'TEF', name: 'Teléfono fijo' },
   ];
 
   legalPerson: boolean = false;
@@ -56,15 +58,15 @@ export class FormArrayContactComponent implements OnInit, OnDestroy, OnChanges {
     this.onChangeData(); // CAMBIOS INICIALES
 
     // SUMMIT - EMITIR DATOS HACIA AFUERA
-    this.subscription.add(
-      this._sharedClientService.getSubmitData()
-        .pipe(filter(value => value !== null))
-        .subscribe((value: boolean) => {
-          if (value) {
-            this.onSubmit();
-          }
-        })
-    )
+    // this.subscription.add(
+    //   this._sharedClientService.getSubmitData()
+    //     .pipe(filter(value => value !== null))
+    //     .subscribe((value: boolean) => {
+    //       if (value) {
+    //         this.onSubmit();
+    //       }
+    //     })
+    // )
 
     // RESETEAR DATOS
     this.subscription.add(

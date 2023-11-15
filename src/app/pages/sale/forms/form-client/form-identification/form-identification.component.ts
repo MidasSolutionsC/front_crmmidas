@@ -14,6 +14,7 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
 
   // Datos de entrada
   @Input() data: IdentificationDocument[] = [];
+  @Input() submitted: boolean = false;
 
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
@@ -24,7 +25,7 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
   showDocumentReverse: boolean = false;
     
   isNewData: boolean = true;
-  submitted: boolean = false;
+  // submitted: boolean = false;
   identificationForm: FormGroup;
 
   // Tipo documentos
@@ -110,15 +111,15 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
     );
   
     // SUMMIT - EMITIR DATOS HACIA AFUERA
-    this.subscription.add(
-      this._sharedClientService.getSubmitData()
-      .pipe(filter(value => value !== null))
-      .subscribe((value: boolean) => {
-        if(value){
-          this.onSubmit();
-        }
-      })
-    )
+    // this.subscription.add(
+    //   this._sharedClientService.getSubmitData()
+    //   .pipe(filter(value => value !== null))
+    //   .subscribe((value: boolean) => {
+    //     if(value){
+    //       this.onSubmit();
+    //     }
+    //   })
+    // )
   }
 
   ngOnDestroy(): void {

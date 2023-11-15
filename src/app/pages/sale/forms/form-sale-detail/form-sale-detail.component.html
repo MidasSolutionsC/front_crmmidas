@@ -1,10 +1,3 @@
-<div *ngIf="typeService?.includes('mobile')">
-  <app-form-mobile #mobileForm [submitted]="submitted" [listOperators]="listOperators" [listTypeDocuments]="listTypeDocuments"></app-form-mobile>
-</div>
-
-<div *ngIf="typeService?.includes('fixed')">
-  <app-form-fixed></app-form-fixed>
-</div>
 
 <form (keydown.enter)="$event.preventDefault()" [formGroup]="saleDetailForm" autocomplete="off">
   <div class="row g-2">
@@ -83,8 +76,22 @@
       </div>
     </div>
   </div>
-  <div class="row g-2">
-    <!-- <div class="col-md-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_status.label' | translate as translatedLabel;">
+
+  <!-- DATOS DETALLE SERVICIO -->
+  <div *ngIf="typeService?.includes('mobile')">
+    <app-form-mobile #mobileForm [submitted]="submitted" [listOperators]="listOperators" [listTypeDocuments]="listTypeDocuments"></app-form-mobile>
+  </div>
+  
+  <div *ngIf="typeService?.includes('fixed')">
+    <app-form-fixed #fixedForm [submitted]="submitted" [listOperators]="listOperators" [listTypeDocuments]="listTypeDocuments"></app-form-fixed>
+  </div>
+  
+  <div *ngIf="typeService?.includes('tv')">
+    <app-form-tv #tvForm [submitted]="submitted"></app-form-tv>
+  </div>
+  
+  <!-- <div class="row g-2">
+    <div class="col-md-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_status.label' | translate as translatedLabel;">
       <label for="tipo_estados_id" class="form-label">{{translatedLabel}}</label>  
       <ng-select id="tipo_estados_id" formControlName="tipo_estados_id" [ngClass]="{ 'is-invalid': f.tipo_estados_id.errors && (f.tipo_estados_id.dirty || f.tipo_estados_id.touched || submitted) }">
         <ng-option [value]="''">{{'FORMS.FIELD_NAMES.operator_donor.default_option' | translate}}</ng-option>
@@ -116,24 +123,9 @@
           {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.fecha_cierre.errors.maxlength.requiredLength}}
         </div>
       </div>
-    </div> -->
-    <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.observation.label' | translate as translatedLabel;">
-      <label for="observacion" class="form-label">{{translatedLabel}}</label>
-      <textarea  id="observacion" cols="30" rows="1" formControlName="observacion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.observation.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.observacion.errors && (f.observacion.dirty || f.observacion.touched || submitted) }" ></textarea>
-      <div *ngIf="f.observacion.errors && (f.observacion.dirty || f.observacion.touched || submitted)" class="invalid-feedback" align="left">
-        <div *ngIf="f.observacion.errors.required">
-          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
-        </div>
-        <div *ngIf="f.observacion.errors.minlength">
-          {{ 'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.observacion.errors.minlength.requiredLength}}
-        </div>
-        <div *ngIf="f.observacion.errors.maxlength">
-          {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.observacion.errors.maxlength.requiredLength}}
-        </div>
-      </div>
-    </div>
-  </div>  
-  <div class="row">
+    </div>   
+  </div>   -->
+  <div class="row g-2">
     <div class="col-lg-2 mb-3" *ngIf="'FORMS.FIELD_NAMES.different_address.label' | translate as translatedLabel;">
       <label for="is_other_address" class="form-label w-100">¿{{translatedLabel}}?</label>
       <ui-switch id="is_other_address" name="is_other_address" color="#556ee6" formControlName="is_other_address" uncheckedLabel="No" checkedLabel="Si" size="small" class="me-1 w-100"></ui-switch>
@@ -155,11 +147,26 @@
       </div>
       
     </div>
+    <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.observation.label' | translate as translatedLabel;">
+      <label for="observacion" class="form-label">{{translatedLabel}}</label>
+      <textarea  id="observacion" cols="30" rows="1" formControlName="observacion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.observation.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.observacion.errors && (f.observacion.dirty || f.observacion.touched || submitted) }" ></textarea>
+      <div *ngIf="f.observacion.errors && (f.observacion.dirty || f.observacion.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.observacion.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.observacion.errors.minlength">
+          {{ 'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.observacion.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.observacion.errors.maxlength">
+          {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.observacion.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
   </div>
 </form>
 
 <div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
-  <button type="button" class="btn btn-light" (click)="onCancel()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
-  <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.REGISTER' | translate}}</button>
-  <button type="button" class="btn btn-info"  *ngIf="!isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+  <button type="button" class="btn btn-light" (click)="onCancel()"><i class="mdi mdi-cancel me-1"></i>{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+  <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="onSubmit()"><i class="mdi mdi-content-save me-1"></i> {{'FORMS.BUTTONS.REGISTER' | translate}}</button>
+  <button type="button" class="btn btn-info"  *ngIf="!isNewData" (click)="onSubmit()"><i class="mdi mdi-content-save me-1"></i> {{'FORMS.BUTTONS.UPDATE' | translate}}</button>
 </div>

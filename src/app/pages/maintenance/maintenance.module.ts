@@ -34,7 +34,6 @@ import { DataTablesModule} from 'angular-datatables';
 import { BrandComponent } from './brand/brand.component';
 import { ServiceComponent } from './service/service.component';
 import { CategoryComponent } from './category/category.component';
-import { TypeCurrencyComponent } from './type-currency/type-currency.component'
 import { UiSwitchModule } from 'ngx-ui-switch';
 
 @NgModule({
@@ -51,7 +50,6 @@ import { UiSwitchModule } from 'ngx-ui-switch';
     BrandComponent,
     ServiceComponent,
     CategoryComponent,
-    TypeCurrencyComponent,
     
   ],
   imports: [

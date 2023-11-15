@@ -210,7 +210,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
           this.tmpListSaleDetails = list;
 
           // Obtener los servicio añadidos
-          this.tmpListServiceRegistered = list.map((item) => item.servicios_id);
+          // this.tmpListServiceRegistered = list.map((item) => item.servicios_id);
 
           // Cargar de datos a la subtabla
           this.subTableDetails = list.map((detail) => {
@@ -233,15 +233,15 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
             
             let typeService = null;
 
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
-              typeService = 'mobile';
-            }
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
-              typeService = 'fixed';
-            }
-            if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
-              typeService = 'tv';
-            }
+            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
+            //   typeService = 'mobile';
+            // }
+            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
+            //   typeService = 'fixed';
+            // }
+            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
+            //   typeService = 'tv';
+            // }
 
             return {visible: false, typeService, data: detail }
           });
@@ -1019,9 +1019,9 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
    */
   getRowDetailIsNullJson(data: SaleDetailList){
     // console.log(data)
-    if(data?.tipo_servicios_nombre?.toLowerCase().includes('tv')){
-      return false;
-    }
+    // if(data?.tipo_servicios_nombre?.toLowerCase().includes('tv')){
+    //   return false;
+    // }
     return data.datos_json !== null? false: true
 
   }
@@ -1276,17 +1276,17 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
     const saleDetail= SaleDetail.cast(data);
     this.saleDetailActive = saleDetail;
 
-    if(data.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
-      this.typeServiceFormSaleDetail = 'mobile';
-    }
-    if(data.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
-      this.typeServiceFormSaleDetail = 'fixed';
-    }
-    if(data.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
-      this.typeServiceFormSaleDetail = 'tv';
-    }
+    // if(data.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
+    //   this.typeServiceFormSaleDetail = 'mobile';
+    // }
+    // if(data.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
+    //   this.typeServiceFormSaleDetail = 'fixed';
+    // }
+    // if(data.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
+    //   this.typeServiceFormSaleDetail = 'tv';
+    // }
 
-    this.titleFormSaleDetail = data.tipo_servicios_nombre;
+    // this.titleFormSaleDetail = data.tipo_servicios_nombre;
   }
 
 

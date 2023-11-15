@@ -82,14 +82,6 @@ let aMenu: MenuItem[] = [
 
     },
     {
-        id: 10,
-        label: 'MENUITEMS.MAINTENANCE.LIST.TYPE_CURRENCY',
-        icon: 'mdi mdi-currency-btc',
-        link: '/maintenances/typeCurrency',
-        roles: ['ADMINISTRADOR']
-
-    },
-    {
         id: 11,
         label: 'MENUITEMS.MAINTENANCE.LIST.CAMPUS',
         icon: 'bx bx-buildings',
@@ -177,6 +169,14 @@ let aMenu: MenuItem[] = [
         link: '/',
         roles: ['ADMINISTRADOR'],
         subItems: [
+            {
+                id: 22,
+                parentId: 21,
+                label: 'MENUITEMS.MAINTENANCE.LIST.TYPES.LIST.TYPE_CURRENCY',
+                link: '/maintenances/types/typeCurrency',
+                roles: ['ADMINISTRADOR']
+
+            },
             {
                 id: 22,
                 parentId: 21,

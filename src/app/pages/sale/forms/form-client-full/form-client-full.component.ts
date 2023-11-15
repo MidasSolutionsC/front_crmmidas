@@ -108,15 +108,15 @@ export class FormClientFullComponent {
     )
 
     // Ventas OBTENER CLIENTE
-    this.subscription.add(
-      this._tempSaleService.dataObserver$
-      .pipe(distinctUntilChanged())
-      .subscribe((data: SaleList) => {
-        if(data?.clientes_id){
-          this.apiClientGetById(data.clientes_id);
-        }
-      })
-    )
+      // this.subscription.add(
+      //   this._tempSaleService.dataObserver$
+      //   .pipe(distinctUntilChanged())
+      //   .subscribe((data: SaleList) => {
+      //     if(data?.clientes_id){
+      //       this.apiClientGetById(data.clientes_id);
+      //     }
+      //   })
+      // )
 
     // Tipos de documentos
     this.subscription.add(
@@ -127,6 +127,7 @@ export class FormClientFullComponent {
         let selectedTypeDocumentId = null;
 
         if(list.length > 0){
+          // SELECCIÓN POR DEFECTO DE TIPO DOCUMENTO
           if(this.isClientPerson){
             this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
             selectedTypeDocumentId = this.listTypeDocuments?.find((typeDocument) => typeDocument.abreviacion == 'DNI').id;
@@ -425,7 +426,7 @@ export class FormClientFullComponent {
             this.setAlertMsg('La persona no se encuentra registrado como cliente!', 'text-danger');
           } else {
             this.shareDataClient = resPerson?.client;    
-            this._sharedClientService.setDataClient(Client.cast(resPerson?.client));
+            this._sharedClientService.setDataClient(resPerson?.client);
             this._sharedClientService.setClientId(resPerson?.client?.id)
           } 
           
@@ -451,7 +452,7 @@ export class FormClientFullComponent {
             this.setAlertMsg('La persona no se encuentra registrado como cliente!', 'text-danger');
           } else {
             this.shareDataClient = resCompany?.client;    
-            this._sharedClientService.setDataClient(Client.cast(resCompany?.client));
+            this._sharedClientService.setDataClient(resCompany?.client);
             this._sharedClientService.setClientId(resCompany?.client?.id)
           }
 
@@ -460,7 +461,12 @@ export class FormClientFullComponent {
           this._sharedClientService.setDataCompany(Company.cast(resCompany));
           this._sharedClientService.setCompanyId(resCompany?.id);
           this._sharedClientService.setAddress(resCompany?.addresses);
+
+          const dataInstallation = InstallationList.cast(resCompany?.addresses[0]);
+          this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
           // console.log("DIRECCIÓN EMPRESA:", resCompany.addresses);
+
+          console.log("EMPRESA ENCONTRADA:", Company.cast(resCompany))
         }   
       }
     }
