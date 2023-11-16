@@ -62,16 +62,6 @@ export class FormArrayBankAccountComponent implements OnInit, OnDestroy, OnChang
         this.listTypeBankAccount = list;
       })
     );
-
-    // SUMMIT - EMITIR DATOS HACIA AFUERA
-    this.subscription.add(
-      this._sharedClientService.getSubmitData()
-        .subscribe((value: boolean) => {
-          if (value) {
-            this.onSubmit();
-          }
-        })
-    )
   }
 
   ngOnDestroy(): void {

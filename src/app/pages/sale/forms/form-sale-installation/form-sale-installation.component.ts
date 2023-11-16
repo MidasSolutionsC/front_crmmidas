@@ -21,7 +21,6 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
   submitted: boolean = false;
   installationForm: FormGroup;
 
-
   // INSTALACIONES OBTENIDAS DEL CLIENTE
   listInstallation: Installation[] = [];
   listAddress: Address[] = [];
@@ -39,8 +38,8 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
   constructor(
     private cdr: ChangeDetectorRef,
     private _installationService: InstallationService,
-    private _addressService: AddressService,
     private _tempInstallationService: TempInstallationService,
+    private _addressService: AddressService,
     private _sharedClientService: SharedClientService,
     private _shareSaleService: SharedSaleService,
     private _formService: FormService,
@@ -58,6 +57,11 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
       this._sharedClientService.getPersonId().pipe(filter(value => value !== null)).subscribe((value: number) =>  this.personId = value)
     )
 
+    // ID VENTA
+    this.subscription.add(
+      this._shareSaleService.getSaleId().pipe(filter(value => value !== null)).subscribe((value: number) =>  this.saleId = value)
+    )
+
     // ID EMPRESA
     this.subscription.add(
       this._sharedClientService.getCompanyId().pipe(filter(value => value !== null)).subscribe((value: number) => this.companyId = value)
@@ -73,31 +77,42 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
       this._sharedClientService.getClientId().pipe(filter(value => value !== null)).subscribe((value: number) => this.clientId = value)
     )
 
-    // DIRECCIÓN DEL CLIENTE
-    // this.subscription.add(
-    //   this._sharedClientService.getAddress().pipe(filter((data) => data !== null)).subscribe((data: Address[]) => {
-    //     if(data){
-    //       this.listInstallation = Installation.casts(data);
-    //       this.listAddress = data;
-    //       this.data = Installation.cast(data[0]);
-    //       this.installationForm.setValue(this.data);
-    //       this.isNewData = false;
-    //     }
-    //   })
-    // )
+    // DIRECCIÓN DEL CLIENTE - RELLENAR FORMULARIO
+    this.subscription.add(
+      this._sharedClientService.getAddress().pipe(filter((data) => data !== null)).subscribe(async(data: Address[]) => {
+        if(data){
+          this.listAddress = data;
+          const lastAddress = data[data.length - 1];
+
+          if(lastAddress){            
+            const installation = await this.apInstallationGetByAddress(lastAddress?.id);
+            if(installation){
+              delete installation.id;
+              delete installation.ventas_id;
+              this._shareSaleService.setDataInstallation(installation);
+            } else {
+              const reqInstallation = InstallationList.cast(lastAddress);
+              delete reqInstallation.id;
+              reqInstallation.direcciones_id = lastAddress.id;
+              this._shareSaleService.setDataInstallation(reqInstallation);
+              this.installationForm.setValue(Installation.cast(lastAddress));
+            }
+          }
+        }
+      })
+    )
 
     // DIRECCIÓN DEL CLIENTE - INSTALACIÓN
     this.subscription.add(
       this._shareSaleService.getDataInstallation().pipe(filter((data) => data !== null)).subscribe((data: InstallationList) => {
         if(data){
           const requestInstallation = Installation.cast(data);
-          const requestAddress = Address.cast(data);
+          this.listInstallation = [requestInstallation];
           if(data.id){
             this.isNewData = false;
             this.installationForm.setValue(requestInstallation);
           } else {
-            this.apiAddressRegister(requestAddress);
-            // this.apiTempInstallationRegister(request);
+            this.installationForm.setValue(requestInstallation);
           }
         }
       })
@@ -161,7 +176,7 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
       direccion: ['', [Validators.required, Validators.maxLength(150)]],
       localidad: ['', [Validators.required, Validators.maxLength(70)]],
       provincia: ['', [Validators.required, Validators.maxLength(70)]],
-      codigo_postal: ['', [Validators.required, Validators.maxLength(20)]],
+      codigo_postal: ['', [Validators.required, Validators.maxLength(5)]],
       is_active: [true, [Validators.nullValidator]],
     }
   }
@@ -173,8 +188,12 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
       this.isNewData = true;
     } else {
       if(this.listInstallation.length > 0){
-        this.installationForm.setValue(this.listInstallation[0]);
-        this.isNewData = false;
+        const installation = this.listInstallation[this.listInstallation.length - 1];
+        this.installationForm.setValue(installation);
+
+        if(installation.id){
+          this.isNewData = false;
+        }
       }
     }
   }
@@ -207,7 +226,11 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
 
             // --- REGISTRAR INSTALACIÓN
             const installation = Installation.cast(data);
-            this.apiTempInstallationRegister({...installation, id: null});
+            if(this.saleId){
+              installation.ventas_id = this.saleId;
+            }
+      
+            this.apiInstallationRegister({...installation, direcciones_id: data.id, id: null});
           
           }
         }
@@ -279,10 +302,160 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
 
 
   /**
- * ****************************************************************
- * OPERACIONES CON LA API - INSTALACIONES TEMPORALES  
- * ****************************************************************
- */
+   * ****************************************************************
+   * OPERACIONES CON LA API - INSTALACIONES  
+   * ****************************************************************
+   */
+  // REGISTRAR
+  private apiInstallationRegister(data: Installation){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._installationService.register(data).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 201){
+          if(response.data[0]){
+            const data: InstallationList = InstallationList.cast(response.data[0]);
+            const direccion_completo = `
+              ${data.tipo} 
+              ${data.direccion} 
+              ${data.numero != ''? ', '+ data.numero: ''} 
+              ${data.escalera != ''? ', '+ data.escalera: ''} 
+              ${data.portal != ''? ', '+ data.portal: ''} 
+              ${data.planta != ''? ', '+ data.planta: ''} 
+              ${data.puerta != ''? ', '+ data.puerta: ''}
+            `;
+            data.direccion_completo = direccion_completo;
+            this._installationService.addObjectObserver(data);
+            
+            // GUARDAR EN EL LOCAL STORAGE SOLO SI NO SE ENCUENTRA 
+            this._shareSaleService.setSaleId(data.ventas_id);
+            this._shareSaleService.setInstallationId(data.id);
+            this._shareSaleService.setDataInstallation(data);
+          }
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al registrar la instalación', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+
+  // ACTUALIZAR
+  private apiInstallationUpdate(data: Installation, id: number){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._installationService.update(data, id).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 200){
+          if(response.data[0]){
+            const data: InstallationList = InstallationList.cast(response.data[0]);
+            const direccion_completo = `
+              ${data.tipo} 
+              ${data.direccion} 
+              ${data.numero != ''? ', '+ data.numero: ''} 
+              ${data.escalera != ''? ', '+ data.escalera: ''} 
+              ${data.portal != ''? ', '+ data.portal: ''} 
+              ${data.planta != ''? ', '+ data.planta: ''} 
+              ${data.puerta != ''? ', '+ data.puerta: ''}
+            `;
+            data.direccion_completo = direccion_completo;
+            this._installationService.updateObjectObserver(data);
+            this._sharedClientService.setSaleId(data.ventas_id);
+            this._shareSaleService.setInstallationId(data.id);
+            this._shareSaleService.setDataInstallation(data);
+          }
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 400){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al actualizar la instalación', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+  
+  // OBTENER DATOS DE LA INSTALACIÓN
+  public apInstallationGetByAddress(addressId: number): Promise<InstallationList>{
+    this._sweetAlertService.loadingUp('Obteniendo datos');
+
+    return new Promise((resolve, reject) => {
+      this._installationService.getByAddress(addressId).subscribe(
+        (response: ResponseApi) => {
+          this._sweetAlertService.stop();
+  
+          if (response.code === 200) {
+            const installation = response.data[0];
+            resolve(installation);
+          }
+  
+          if (response.code === 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({
+                type: 'error',
+                title: response.errors?.message,
+                message: response.errors?.error
+              });
+            }
+            reject(response);
+          }
+        },
+        (error: any) => {
+          this._sweetAlertService.stop();
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({
+              type: 'error',
+              title: 'Error al listar las instalación',
+              message: error.message,
+              timer: 2500
+            });
+          }
+          reject(error);
+        }
+      );
+    });
+  }
+
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - INSTALACIONES TEMPORALES  
+   * ****************************************************************
+   */
   public apiTempInstallationList(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tempInstallationService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
@@ -508,29 +681,21 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
         }
       }
 
-      // console.log("DATOS INSTALACIÓN:", values);
-      // console.log("DATOS DIRECCIÓN:", valuesAddress);
+      if(this.saleId){
+        values.ventas_id = this.saleId;
+      }
+
 
       if(this.isNewData){
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la dirección?').then((confirm) => {
           if(confirm.isConfirmed){
             this.apiAddressRegister(valuesAddress);
-            // if(!this.isOtherDirection){
-            //   this.apiAddressRegister(valuesAddress);
-            // } else {
-            //   this.apiTempInstallationRegister(values);
-            // }
           }
         });
       } else {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar la dirección?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiAddressUpdate(valuesAddress, valuesAddress.id);
-            // if(!this.isOtherDirection){
-            //   this.apiAddressUpdate(valuesAddress, valuesAddress.id);
-            // } else {
-            //   this.apiTempInstallationUpdate(values, values.id);
-            // }
+            this.apiInstallationUpdate(values, values.id);
           }
         });
       }     

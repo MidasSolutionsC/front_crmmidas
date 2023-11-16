@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnCha
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { Company, DetailFixedLine, DetailMobileLine, InstallationList, OperatorList, Person, ProductList, PromotionList, ResponseApi, SaleDetail, TypeDocumentList, TypeStatusList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, OperatorService, ProductService, PromotionService, SharedClientService, SharedSaleService, SweetAlertService, TempInstallationService, TempSaleDetailService, TypeDocumentService, TypeStatusService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, InstallationService, OperatorService, ProductService, PromotionService, SaleDetailService, SharedClientService, SharedSaleService, SweetAlertService, TempInstallationService, TempSaleDetailService, TypeDocumentService, TypeStatusService } from 'src/app/core/services';
 
 import { FormMobileComponent } from './form-mobile/form-mobile.component';
 import { FormFixedComponent } from './form-fixed/form-fixed.component';
@@ -75,6 +75,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   listPromotions?: PromotionList[] = [];
 
   // Lista de instalaciones
+  listInstallationOptions: InstallationList[] = [];
   tmpListInstallationOptions: InstallationList[] = [];
 
   // CLIENTE ACTIVO
@@ -88,7 +89,9 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private cdr: ChangeDetectorRef,
     private _tempInstallationService: TempInstallationService,
+    private _installationService: InstallationService,
     private _tempSaleDetailService: TempSaleDetailService,
+    private _saleDetailService: SaleDetailService,
     private _operatorService: OperatorService,
     private _typeStatusService: TypeStatusService,
     private _typeDocumentService: TypeDocumentService,
@@ -152,7 +155,8 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(filter((value) => value != null))
       .subscribe((value: number) => {
         this.saleId = value;
-        this.apiTempInstallationSearch('');
+        // this.apiTempInstallationSearch('');
+        this.apiInstallationSearch('');
       })
     );
 
@@ -234,7 +238,9 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   initializeForms(){
     if(this.data){
-      this.apiTempInstallationSearch(''); // Filtrar direcciones
+      // this.apiTempInstallationSearch(''); // Filtrar direcciones
+      this.apiInstallationSearch(''); // Filtrar direcciones
+
       if(this.saleDetailForm){
         this.saleDetailForm.setValue(SaleDetail.cast(this.data));
       }
@@ -303,7 +309,98 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   /**
    * ****************************************************************
-   * OPERACIONES CON LA API
+   * OPERACIONES CON LA API - DETALLE TEMPORAL
+   * ****************************************************************
+   */
+  // Registrar detalle
+  private apiSaleDetailRegister(data: SaleDetail){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._saleDetailService.register(data).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 201){
+          const result = response.data[0];
+          this._saleDetailService.addObjectObserver(result);
+          // console.log(result);
+          this._sweetAlertService.showTopEnd({type: 'success', title: 'Registrado!', message: 'El Producto/Servicio se agrego con éxito.', timer: 1500});
+          this.resetSomeFieldSaleDetail();
+        } 
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+            // const {installation_errors, sale_detail_errors, sale_errors} = response.errors;
+            // let textErrors = '';
+
+            // if(installation_errors){
+            //   textErrors += this._apiErrorFormattingService.formatAsHtml(installation_errors);
+            // }
+
+            // if(sale_detail_errors){
+            //   textErrors += this._apiErrorFormattingService.formatAsHtml(sale_detail_errors);
+            // }
+
+            // if(sale_errors){
+            //   textErrors += this._apiErrorFormattingService.formatAsHtml(sale_errors);
+            // }
+
+            // if(textErrors != ''){
+            //   this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+            // }
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al registrar el detalle', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+  
+  // modificar detalle
+  private apiSaleDetailUpdate(data: SaleDetail, id: number){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._saleDetailService.update(data, id).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 200){
+          const result = response.data;
+          // console.log(result);
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al actualizar los datos del detalle', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - DETALLE TEMPORAL
    * ****************************************************************
    */
   // Registrar detalle
@@ -462,7 +559,28 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  // Buscar instalaciones
+  // Buscar instalaciones - REGISTROS FÍSICOS
+  public apiInstallationSearch(search: string) {
+    this._installationService.getSearch({search, ventas_id: this.saleId}).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.listInstallationOptions = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las instalación', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Buscar instalaciones - TEMPORALES
   public apiTempInstallationSearch(search: string) {
     this._tempInstallationService.getSearch({search, ventas_id: this.saleId}).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -668,7 +786,8 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       if(this.isNewData){
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el producto/servicio?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiTempSaleDetailRegister(values);
+            // this.apiTempSaleDetailRegister(values);
+            this.apiSaleDetailRegister(values);
           }
         });
       } else {

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { ResponseApi, SaleDocument, SaleDocumentList, TypeDocumentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SharedSaleService, SweetAlertService, TempSaleDocumentService, TypeDocumentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SaleDocumentService, SharedSaleService, SweetAlertService, TempSaleDocumentService, TypeDocumentService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
 
 @Component({
@@ -49,6 +49,7 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
     private _shareSaleService: SharedSaleService,
     private _typeDocumentService: TypeDocumentService,
     private _tmpSaleDocumentService: TempSaleDocumentService,
+    private _saleDocumentService: SaleDocumentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -93,6 +94,9 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
   onChangeData(){
     if(this.data){
       this.documentForm.setValue({...this.data, file: ''});
+      this.documentForm.get('file').clearValidators(); // Elimina todas las validaciones
+      this.documentForm.get('file').updateValueAndValidity(); // Actualiza el estado de la validación
+
       this.isNewData = false;
       setTimeout(() => {
         this.focusNombre.nativeElement.focus();
@@ -105,7 +109,87 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   /**
    * ****************************************************************
-   * OPERACIONES CON LA API
+   * OPERACIONES CON LA API -   TABLAS FÍSICAS
+   * ****************************************************************
+   */
+  private apiSaleDocumentSave(data: SaleDocument | FormData){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._saleDocumentService.registerComplete(data).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 201){
+          if(response.data[0]){
+            const data: SaleDocumentList = SaleDocumentList.cast(response.data[0]);
+            this._saleDocumentService.addObjectObserver(data);
+            this.submit.emit({saved: true, data});
+            this.onReset();
+
+            if(data.ventas_id){
+              this._shareSaleService.setSaleId(data.ventas_id);
+            }
+          }
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al registrar archivos', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+
+  private apiSaleDocumentUpdate(data: SaleDocument | FormData, id: number){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._saleDocumentService.update(data, id).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 200){
+          if(response.data[0]){
+            const data: SaleDocumentList = SaleDocumentList.cast(response.data[0]);
+            this._saleDocumentService.updateObjectObserver(data);
+            this.onReset();
+            this.submit.emit({saved: true});
+          }
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al actualizar archivos', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API -   TEMPORALES
    * ****************************************************************
    */
   private apiTempSaleDocumentSave(data: SaleDocument | FormData){
@@ -321,13 +405,13 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
       if(this.isNewData){
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el archivo?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiTempSaleDocumentSave(formData);
+            this.apiSaleDocumentSave(formData);
           }
         });
       } else {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar el archivo?').then((confirm) => {
           if(confirm.isConfirmed){
-            this.apiTempSaleDocumentUpdate(formData, values.id);
+            this.apiSaleDocumentUpdate(formData, values.id);
           }
         });
       }
@@ -344,8 +428,8 @@ export class FormSaleDocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onReset(){
+    this.clearFile()
     this.documentForm.reset();
-    this.documentForm.controls.is_active.setValue(1);
     this.fileInput.nativeElement.value = '';
     this.previewImage = '';
     this.submitted = false;

@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, filter } from 'rxjs';
+import { CurrencyUtil } from 'src/app/core/helpers/currency.util';
 import { BrandList, Installation, InstallationList, ResponseApi, SaleDetailList } from 'src/app/core/models';
-import { ApiErrorFormattingService, BrandService, SharedSaleService, SweetAlertService } from 'src/app/core/services';
+import { ApiErrorFormattingService, BrandService, SaleDetailService, SharedSaleService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-detail-full',
@@ -35,6 +36,9 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   // TIPO DE PRODUCTO
   typeProduct: any = '';
 
+  // ID VENTA
+  saleId: number;
+
   // ID MARCA
   brandId: any = '';
   
@@ -54,6 +58,7 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   constructor(
     private _brandService: BrandService,
     private _sharedSaleService: SharedSaleService,
+    private _saleDetailService: SaleDetailService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private formBuilder: FormBuilder
@@ -92,11 +97,34 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
           this.dataInstallation = data;
         })
     );
+
+    // ID VENTA
+    this.subscription.add(
+      this._sharedSaleService.getSaleId().pipe(filter((value) => value !== null)).subscribe((id: number) => {
+          this.saleId = id;
+          this.apiSaleDetailListBySale(id);
+        })
+    );
+
+    // DETALLE
+    this.subscription.add(
+      this._saleDetailService.listObserver$.subscribe((list: SaleDetailList[]) => {
+          this.listSaleDetail = list;
+          console.log("LISTA DE SERVICIOS/PRODUCTOS:", list)
+        })
+    );
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+
+
+  // CONVERTIDOR DE MONEDAS
+  public convertCurrencyFormat(amount: number, currency: string, format: string = 'en-US') {
+    return CurrencyUtil.convertCurrencyFormat(amount, currency, format);
+  }
+  
 
 
   /**
@@ -120,7 +148,30 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  // Listar marcas
+  // Listar marcas 
+  public apiSaleDetailListBySale(saleId: number = this.saleId) {
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleDetailService.getBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if (response.code == 200) {
+        // this.lists = response.data;
+        this._saleDetailService.addArrayObserver(response.data);
+      }
+
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar los productos/servicios', message: error.message, timer: 2500 });
+      }
+    });
+  }
+
+  // Listar marcas 
   public apiBrandList(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._brandService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
@@ -142,6 +193,30 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ELIMINAR DETALLE
+  public apiSaleDetailDelete(id: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleDetailService.delete(id).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        const data: SaleDetailList = SaleDetailList.cast(response.data[0]);
+        this._saleDetailService.removeObjectObserver(data.id);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al eliminar el producto/servicio', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+
   // CAMBIO DE MARCA
   onChangeBrand(brandId: any) {
     if (brandId) {
@@ -161,6 +236,25 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
     } else {
       this.title = 'Producto/servicio';
     }
+  }
+
+
+  
+  /**
+   * ****************************************************************
+   * OPERACIONES EN LA TABLA
+   * ****************************************************************
+   */
+  getDataRow(data: any){
+    this.toggleForm(false);
+  }
+
+  deleteRow(id: any){
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el producto/servicio?').then((confirm) => {
+      if(confirm.isConfirmed){
+        this.apiSaleDetailDelete(id);
+      }
+    });
   }
 
 

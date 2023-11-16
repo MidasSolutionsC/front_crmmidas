@@ -25,6 +25,7 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
   @Input() hiddenButtons: boolean = false;
   @Input() data: Person = null;
   @Input() submitted: boolean = false;
+  @Input() listCountries: CountryList[] = [];
   
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
@@ -46,7 +47,7 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
   listContact: Contact[] = [];
 
   // PAISES
-  listCountries: CountryList[] = [];
+  // listCountries: CountryList[] = [];
   nameCountrySelected: string = null;
 
   // UBIGEOS
@@ -68,10 +69,9 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit(): void {
     this.initForm();
-    this.onChangeData();
-
-    this.apiCountryList();
+    
     this.searchOptionUbigeo('');
+    this.onChangeData();
 
     // RESETEAR DATOS
     this.subscription.add(
@@ -85,26 +85,6 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
         }
       })
     )
-
-    // Países
-    this.subscription.add(
-      this._countryService.listObserver$
-      .pipe(distinctUntilChanged())
-      .subscribe((list: CountryList[]) => {
-        this.listCountries = list;
-      })
-    )
-
-
-    // SUMMIT - EMITIR DATOS HACIA AFUERA
-    // this.subscription.add(
-    //   this._sharedClientService.getSubmitData()
-    //   .subscribe((value: boolean) => {
-    //     if(value){
-    //       this.onSubmit();
-    //     }
-    //   })
-    // )
   }
 
   ngOnDestroy(): void {
@@ -142,33 +122,9 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
    * OPERACIONES CON LA API FORÁNEOS
    * ****************************************************************
    */
-
-  // OPERACIONES CON LA API - BUSCAR CLIENTE
-  public apiCountryList(forceRefresh: boolean = false){
-    this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._countryService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        // this.listCountries = response.data;
-      }
-
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los países', message: error.message, timer: 2500});
-      }
-    });
-  }
-
   // Buscar ubigeos
   public searchOptionUbigeo(search: string) {
     this._ubigeoService.getSearch({search}).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
       if(response.code == 200){
         this.listUbigeos = response.data;
       }
@@ -179,7 +135,6 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
     }, (error: any) => {
-      this._sweetAlertService.stop();
       console.log(error);
     });
   }
@@ -294,7 +249,4 @@ export class FormPersonComponent implements OnInit, OnDestroy, OnChanges {
     this.isNewData = true;
     this.personForm.reset(new Person());
   }
-
-
-
 }

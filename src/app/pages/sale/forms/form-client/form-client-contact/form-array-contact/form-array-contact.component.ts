@@ -57,17 +57,6 @@ export class FormArrayContactComponent implements OnInit, OnDestroy, OnChanges {
 
     this.onChangeData(); // CAMBIOS INICIALES
 
-    // SUMMIT - EMITIR DATOS HACIA AFUERA
-    // this.subscription.add(
-    //   this._sharedClientService.getSubmitData()
-    //     .pipe(filter(value => value !== null))
-    //     .subscribe((value: boolean) => {
-    //       if (value) {
-    //         this.onSubmit();
-    //       }
-    //     })
-    // )
-
     // RESETEAR DATOS
     this.subscription.add(
       this._sharedClientService.getClearData()

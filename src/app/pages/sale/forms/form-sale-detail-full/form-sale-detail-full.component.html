@@ -2,7 +2,7 @@
 <div class="card card-body border" *ngIf="showFormIndicationService">
   <!-- <h3 class="card-title mt-0">Servicios</h3> -->
   <div class="row g-2">
-    <div class="col-md-6 d-none" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
+    <!-- <div class="col-md-6 d-none" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
       <label for="" class="form-label">{{translatedLabel}} ({{'FORMS.FIELD_NAMES.bell.label' | translate}})</label>
       <ng-select [(ngModel)]="brandId"
         [notFoundText]="'No se encontraron elementos'"
@@ -18,7 +18,7 @@
           {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="col-md-6" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
       <label for="" class="form-label">{{translatedLabel}}</label>
       <div class="input-group">

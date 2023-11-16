@@ -23,6 +23,7 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
   @Input() hiddenButtons: boolean = false;
   @Input() data: Company = null;
   @Input() submitted: boolean = false;
+  @Input() listCountries: CountryList[] = [];
   
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
@@ -44,7 +45,7 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
 
 
   // PAISES
-  listCountries: CountryList[] = [];
+  // listCountries: CountryList[] = 
   nameCountrySelected: string = null;
 
   // UBIGEOS
@@ -66,10 +67,9 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit(): void {
     this.initForm();
-    this.onChangeData();
-
-    this.apiCountryList();
+    
     this.searchOptionUbigeo('');
+    this.onChangeData();
 
     // RESETEAR DATOS
     this.subscription.add(
@@ -82,15 +82,6 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
           this.onReset();
         }
       })
-    )
-
-    // Países
-    this.subscription.add(
-      this._countryService.listObserver$
-        .pipe(distinctUntilChanged())
-        .subscribe((list: CountryList[]) => {
-          this.listCountries = list;
-        })
     )
   }
 
@@ -129,32 +120,9 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
  * ****************************************************************
  */
 
-  // OPERACIONES CON LA API - BUSCAR CLIENTE
-  public apiCountryList(forceRefresh: boolean = false) {
-    this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._countryService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if (response.code == 200) {
-        // this.listCountries = response.data;
-      }
-
-      if (response.code == 500) {
-        if (response.errors) {
-          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      if (error.message) {
-        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los países', message: error.message, timer: 2500 });
-      }
-    });
-  }
-
   // Buscar ubigeos
   public searchOptionUbigeo(search: string) {
     this._ubigeoService.getSearch({ search }).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
       if (response.code == 200) {
         this.listUbigeos = response.data;
       }
@@ -165,7 +133,6 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
     }, (error: any) => {
-      this._sweetAlertService.stop();
       console.log(error);
     });
   }
@@ -233,6 +200,7 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
   */   
   // DATOS DEL FORM - IDENTIFICACIONES
   submitIdentification(){
+    this.submitted = true;
     if(this.formIdentification.formDataIdentification.invalid){
       // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para identificaciones', type: 'warning', timer: 1500});
       return false;
@@ -243,6 +211,7 @@ export class FormCompanyComponent implements OnInit, OnDestroy, OnChanges {
   
   // DATOS DEL FORM - CONTACTOS
   submitContact(){
+    this.submitted = true;
     if(this.formContact.formListContact.invalid){
       // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para contactos', type: 'warning', timer: 1500});
       return false;

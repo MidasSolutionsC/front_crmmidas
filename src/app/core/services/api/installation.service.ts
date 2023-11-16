@@ -63,6 +63,11 @@ export class InstallationService {
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
+  public getByAddress(addressId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/getByAddress/${addressId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
@@ -74,7 +79,7 @@ export class InstallationService {
   }
 
   public update(data: any, id: any): Observable<ResponseApi>{
-    const endpoint = `${this.baseUrl}/${id}`;
+    const endpoint = `${this.baseUrl}/update/${id}`;
     return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 

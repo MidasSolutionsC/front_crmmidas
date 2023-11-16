@@ -61,12 +61,12 @@
 
 <!-- PERSONA -->
 <div *ngIf="!legalPerson">
-  <app-form-person #formPerson [submitted]="submittedClient" [data]="dataPerson" [hiddenButtons]="true" (submit)="onDataPerson($event)"></app-form-person>
+  <app-form-person #formPerson [submitted]="submittedClient" [data]="dataPerson" [listCountries]="listCountries" [hiddenButtons]="true" (submit)="onDataPerson($event)"></app-form-person>
 </div>
 
 <!-- EMPRESA -->
 <div *ngIf="legalPerson">
-  <app-form-company #formCompany [submitted]="submittedClient" [data]="dataCompany" [hiddenButtons]="true" (submit)="onDataCompany($event)"></app-form-company>
+  <app-form-company #formCompany [submitted]="submittedClient" [data]="dataCompany" [listCountries]="listCountries" [hiddenButtons]="true" (submit)="onDataCompany($event)"></app-form-company>
 </div>
 
 

@@ -3,8 +3,8 @@ import Swal from 'sweetalert2'
 
 interface ISweetAlert {
   type?: 'warning' | 'error' | 'success' | 'info',
-  title?:string,
-  message?:string,
+  title?: string,
+  message?: string,
   timer?: number | undefined
 }
 
@@ -16,7 +16,7 @@ export class SweetAlertService {
 
   constructor() { }
 
-  timerLoading(){
+  timerLoading() {
     let timerInterval;
     Swal.fire({
       title: 'Auto close alert!',
@@ -45,7 +45,7 @@ export class SweetAlertService {
     let timerValue = 0;
     let timerInterval;
     let isStopped = false;
-  
+
     try {
       this.swalInstance = Swal.fire({
         title: title,
@@ -64,7 +64,7 @@ export class SweetAlertService {
           Swal.showLoading();
           const b: any = Swal.getHtmlContainer().querySelector('b');
           const stopButton: any = Swal.getHtmlContainer().querySelector('#stopButton');
-  
+
           if (stopButton) {
             stopButton.addEventListener('click', () => {
               isStopped = true;
@@ -73,7 +73,7 @@ export class SweetAlertService {
             });
             // stopButton.classList.remove('d-none'); // Mostrar el botón "Stop"
           }
-  
+
           const updateProgress = () => {
             if (!isStopped) {
               timerValue = (timerValue + 1) % 101; // Garantizar que timerValue esté en el rango 0-100
@@ -82,7 +82,7 @@ export class SweetAlertService {
               }
             }
           };
-  
+
           timerInterval = setInterval(updateProgress, 250);
           updateProgress(); // Inicia la actualización inmediatamente
         },
@@ -96,10 +96,23 @@ export class SweetAlertService {
     }
   }
 
+  loadingUp2(title: string = 'Enviando datos') {
+    Swal.fire({
+      title: title,
+      text: '...',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
+  }
+
   stop() {
     if (this.swalInstance) {
       this.swalInstance.close();
     }
+    Swal.close()
   }
 
   timer() {
@@ -132,6 +145,22 @@ export class SweetAlertService {
     });
   }
 
+  showLoader(title = 'Cargando...', text = 'Espera mientras procesamos tu solicitud') {
+    Swal.fire({
+      title,
+      text,
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  };
+
+  hileLoader() {
+    Swal.close()
+  }
+
   showTopEnd(data: ISweetAlert) {
     Swal.fire({
       position: 'top-end',
@@ -141,7 +170,7 @@ export class SweetAlertService {
       showConfirmButton: false,
       toast: true,
       timer: data.timer || undefined,
-      timerProgressBar: data.timer !== undefined? true: false
+      timerProgressBar: data.timer !== undefined ? true : false
     });
   }
 
@@ -154,10 +183,10 @@ export class SweetAlertService {
       showConfirmButton: false,
       toast: true,
       timer: data.timer || undefined,
-      timerProgressBar: data.timer !== undefined? true: false
+      timerProgressBar: data.timer !== undefined ? true : false
     });
   }
-  
+
   showSuccessAlert(message: string): void {
     Swal.fire('Éxito', message, 'success');
   }

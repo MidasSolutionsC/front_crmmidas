@@ -100,7 +100,7 @@ export class SharedClientService {
     return this.address.asObservable();
   }
 
-  setAddress(value: any) {
+  setAddress(value: Address[]) {
     this.address.next(value);
   }
 

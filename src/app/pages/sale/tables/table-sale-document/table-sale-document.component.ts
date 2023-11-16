@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { ResponseApi, SaleDocument, SaleDocumentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService, TempSaleDocumentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SaleDocumentService, SharedSaleService, SweetAlertService, TempSaleDocumentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-document',
@@ -20,11 +20,19 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
 
   // Lista de documentos
   listSaleDocuments: SaleDocumentList[] = [];
+
+  saleId: number;
+  clientId: number;
+  personId: number;
+  companyId: number;
+  legalPerson: boolean = false;
   
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private _shareSaleService: SharedSaleService,
+    private _saleDocumentService: SaleDocumentService,
     private _tmpSaleDocumentService: TempSaleDocumentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -33,17 +41,18 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
   ){}
 
   ngOnInit(): void {
-
-    // Ejecutar funciones
-    // this.apiSaleDocumentList();    
-    const ventaId = localStorage.getItem('ventas_id');
-    if(ventaId !== null && ventaId !== undefined){
-      this.apiSaleDocumentFilterBySale(parseInt(ventaId));
-    }
+    
+    // ID VENTA
+    this.subscription.add(
+      this._shareSaleService.getSaleId().pipe(filter(value => value !== null)).subscribe((value: number) =>  {
+        this.saleId = value
+        this.apiSaleDocumentFilterBySale(value);
+      })
+    )
 
     // Subscriptionciones
     this.subscription.add(
-      this._tmpSaleDocumentService.listObserver$
+      this._saleDocumentService.listObserver$
       .pipe(distinctUntilChanged())
       .subscribe((list: SaleDocumentList[]) => {
         this.listSaleDocuments = list;
@@ -52,7 +61,7 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    
+    this.subscription.unsubscribe()
   }
 
 
@@ -88,10 +97,81 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
   
   /**
    * ****************************************************************
-   * OPERACIONES CON LA API
+   * OPERACIONES CON LA API  - DOCUMENTOS VENTA TEMPORALES
    * ****************************************************************
    */
   public apiSaleDocumentList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this.lists = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar archivos', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  public apiSaleDocumentFilterBySale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this.lists = response.data;
+        this._saleDocumentService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar archivos', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  public apiSaleDocumentDelete(id: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleDocumentService.delete(id).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        const data: SaleDocumentList = SaleDocumentList.cast(response.data[0]);
+        this._saleDocumentService.removeObjectObserver(data.id);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al eliminar el archivo', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API  - DOCUMENTOS VENTA TEMPORALES
+   * ****************************************************************
+   */
+  public apiTempSaleDocumentList(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tmpSaleDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -112,7 +192,7 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
     });
   }
 
-  public apiSaleDocumentFilterBySale(saleId: number){
+  public apiTempSaleDocumentFilterBySale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tmpSaleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -134,7 +214,7 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
     });
   }
 
-  public apiSaleDocumentDelete(id: number){
+  public apiTempSaleDocumentDelete(id: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tmpSaleDocumentService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -167,9 +247,9 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
     if(event?.saved){
       this.toggleList(false);
 
-      const ventaId = localStorage.getItem('ventas_id');
-      if(ventaId !== null && ventaId !== undefined){
-        this.apiSaleDocumentFilterBySale(parseInt(ventaId));
+      const ventaId = this.saleId;
+      if(ventaId){
+        this.apiSaleDocumentFilterBySale(ventaId);
       } else {
         this.apiSaleDocumentFilterBySale(event?.data?.ventas_id);
       }

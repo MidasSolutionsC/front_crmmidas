@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged, filter, take } from 'rxjs';
 import { Company, CompanyList, CountryList, InstallationList, Person, PersonList, ResponseApi, SaleList, TypeDocumentList } from 'src/app/core/models';
@@ -11,7 +11,7 @@ import { ApiErrorFormattingService, ClientService, CompanyService, CountryServic
   templateUrl: './form-client-full.component.html',
   styleUrls: ['./form-client-full.component.scss']
 })
-export class FormClientFullComponent {
+export class FormClientFullComponent implements OnInit, OnDestroy {
   @ViewChild('países_id', { static: false }) paises_id: ElementRef<HTMLInputElement>;
 
   // DATOS EMITIR A LOS FORMULARIOS DETALLES
@@ -59,7 +59,7 @@ export class FormClientFullComponent {
     private _sweetAlertService: SweetAlertService,
     private _formService: FormService,
     private formBuilder: FormBuilder
-  ){}
+  ) { }
 
   ngOnInit(): void {
 
@@ -69,21 +69,47 @@ export class FormClientFullComponent {
     // Listar
     this.apiTypeDocumentList();
 
+    // Tipos de documentos
+    this.subscription.add(
+      this._typeDocumentService.typeDocuments$
+        .pipe(distinctUntilChanged())
+        .subscribe((list: TypeDocumentList[]) => {
+          this.listTypeDocuments = list;
+          let selectedTypeDocumentId = null;
+
+          if (list.length > 0) {
+            // SELECCIÓN POR DEFECTO DE TIPO DOCUMENTO
+            if (this.isClientPerson) {
+              this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
+              selectedTypeDocumentId = this.listTypeDocuments?.find((typeDocument) => typeDocument.abreviacion == 'DNI').id;
+            } else {
+              this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion == 'RUC');
+              selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'RUC').id;
+            }
+
+            if (this.searchClientForm && selectedTypeDocumentId) {
+              this.searchClientForm.get('tipo_documentos_id').setValue(selectedTypeDocumentId);
+            }
+          }
+
+        })
+    )
+
     // PERSONA LEGAL
     this.subscription.add(
       this._sharedClientService.getLegalPerson()
-      .pipe(
-        filter(value => value !== null)
-      )
-      .subscribe((value: boolean) => {
-        this.isClientPerson = !value;
-      })
+        .pipe(
+          filter(value => value !== null)
+        )
+        .subscribe((value: boolean) => {
+          this.isClientPerson = !value;
+        })
     )
 
     // ID CLIENTE
     this.subscription.add(
       this._sharedClientService.getClientId().subscribe((value: number) => {
-        if(value){
+        if (value) {
           this.alertMsg.show = false;
         }
       })
@@ -92,7 +118,7 @@ export class FormClientFullComponent {
     // DATOS PERSONA
     this.subscription.add(
       this._sharedClientService.getDataPerson().pipe(take(1)).subscribe((data: Person) => {
-        if(data){
+        if (data) {
           this.toggleFormClient(false);
         }
       })
@@ -101,48 +127,24 @@ export class FormClientFullComponent {
     // DATOS EMPRESA
     this.subscription.add(
       this._sharedClientService.getDataCompany().pipe(take(1)).subscribe((data: Company) => {
-        if(data){
+        if (data) {
           this.toggleFormClient(false);
         }
       })
     )
 
     // Ventas OBTENER CLIENTE
-      // this.subscription.add(
-      //   this._tempSaleService.dataObserver$
-      //   .pipe(distinctUntilChanged())
-      //   .subscribe((data: SaleList) => {
-      //     if(data?.clientes_id){
-      //       this.apiClientGetById(data.clientes_id);
-      //     }
-      //   })
-      // )
+    // this.subscription.add(
+    //   this._tempSaleService.dataObserver$
+    //   .pipe(distinctUntilChanged())
+    //   .subscribe((data: SaleList) => {
+    //     if(data?.clientes_id){
+    //       this.apiClientGetById(data.clientes_id);
+    //     }
+    //   })
+    // )
 
-    // Tipos de documentos
-    this.subscription.add(
-      this._typeDocumentService.typeDocuments$
-      .pipe(distinctUntilChanged())
-      .subscribe((list: TypeDocumentList[]) => {
-        this.listTypeDocuments = list;
-        let selectedTypeDocumentId = null;
 
-        if(list.length > 0){
-          // SELECCIÓN POR DEFECTO DE TIPO DOCUMENTO
-          if(this.isClientPerson){
-            this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
-            selectedTypeDocumentId = this.listTypeDocuments?.find((typeDocument) => typeDocument.abreviacion == 'DNI').id;
-          } else {
-            this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion == 'RUC');
-            selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'RUC').id;
-          }
-  
-          if(this.searchClientForm && selectedTypeDocumentId){
-            this.searchClientForm.get('tipo_documentos_id').setValue(selectedTypeDocumentId);
-          }
-        }
-
-      })
-    )
 
   }
 
@@ -152,8 +154,8 @@ export class FormClientFullComponent {
 
 
   // ALERT TEXT
-  private setAlertMsg(msg: string, type: string, show: boolean = true){
-    this.alertMsg = {...this.alertMsg, msg, type, show}
+  private setAlertMsg(msg: string, type: string, show: boolean = true) {
+    this.alertMsg = { ...this.alertMsg, msg, type, show }
   }
 
 
@@ -163,25 +165,25 @@ export class FormClientFullComponent {
    * ****************************************************************
    */
   // OPERACIONES CON LA API - BUSCAR POR PERSONA
-  public apiClientFilterByPerson(personId: number): Promise<any>{
+  public apiClientFilterByPerson(personId: number): Promise<any> {
     this._sweetAlertService.loadingUp('Obteniendo datos');
     return new Promise((resolve, reject) => {
       this._clientService.getByPersonId(personId).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 200){
+        if (response.code == 200) {
           resolve(response.data);
         }
-        
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
           reject(response.errors);
         }
       }, (error: any) => {
         this._sweetAlertService.stop();
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los clientes', message: error.message, timer: 2500});
+        if (error.message) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los clientes', message: error.message, timer: 2500 });
         }
         reject(error);
       });
@@ -189,25 +191,25 @@ export class FormClientFullComponent {
   }
 
   // OPERACIONES CON LA API - BUSCAR POR EMPRESA
-  public apiClientFilterByCompany(companyId: number): Promise<any>{
+  public apiClientFilterByCompany(companyId: number): Promise<any> {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     return new Promise((resolve, reject) => {
       this._clientService.getByCompanyId(companyId).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 200){
+        if (response.code == 200) {
           resolve(response.data);
         }
-  
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
           reject(response.errors);
         }
       }, (error: any) => {
         this._sweetAlertService.stop();
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los clientes', message: error.message, timer: 2500});
+        if (error.message) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los clientes', message: error.message, timer: 2500 });
         }
         reject(error);
       });
@@ -215,26 +217,26 @@ export class FormClientFullComponent {
   }
 
   // OPERACIONES CON LA API - OBTENER EL CLIENTE BUSCADO
-  public apiClientGetById(id: number): Promise<any>{
+  public apiClientGetById(id: number): Promise<any> {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     return new Promise((resolve, reject) => {
       this._clientService.getById(id).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 200){
+        if (response.code == 200) {
           const data = response.data[0];
           resolve(response.data[0]);
         }
-  
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
           reject(response.errors);
         }
       }, (error: any) => {
         this._sweetAlertService.stop();
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar datos del cliente', message: error.message, timer: 2500});
+        if (error.message) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar datos del cliente', message: error.message, timer: 2500 });
         }
         reject(error);
       });
@@ -249,50 +251,50 @@ export class FormClientFullComponent {
    * ****************************************************************
    */
   // OPERACIONES CON LA API - TIPO DE DOCUMENTOS
-  public apiTypeDocumentList(forceRefresh: boolean = false){
+  public apiTypeDocumentList(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         // this.listTypeServices = response.data; El servicio lo emite al observable
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tipos de documentos', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los tipos de documentos', message: error.message, timer: 2500 });
       }
     });
   }
 
 
   // OPERACIONES CON LA API - BUSCAR PERSONA 
-  public apiPersonGetByIdentification(params: any): Promise<any>{
+  public apiPersonGetByIdentification(params: any): Promise<any> {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     return new Promise((resolve, reject) => {
       this._personService.getByIdentification(params).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 200){
+        if (response.code == 200) {
           const result = response.data[0];
           resolve(result);
         }
-  
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
 
           reject(response.errors);
         }
       }, (error: any) => {
         this._sweetAlertService.stop();
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al buscar persona', message: error.message, timer: 2500});
+        if (error.message) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al buscar persona', message: error.message, timer: 2500 });
         }
         reject(error);
       });
@@ -301,26 +303,26 @@ export class FormClientFullComponent {
 
 
   // OPERACIONES CON LA API - BUSCAR EMPRESA 
-  public apiCompanyGetByIdentification(params: any): Promise<any>{
+  public apiCompanyGetByIdentification(params: any): Promise<any> {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     return new Promise((resolve, reject) => {
       this._companyService.getByIdentification(params).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 200){
+        if (response.code == 200) {
           const result = response.data[0];
           resolve(result);
         }
-  
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
           reject(response.errors);
         }
       }, (error: any) => {
         this._sweetAlertService.stop();
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al buscar empresa', message: error.message, timer: 2500});
+        if (error.message) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al buscar empresa', message: error.message, timer: 2500 });
         }
         reject(error);
       });
@@ -341,7 +343,7 @@ export class FormClientFullComponent {
    * INICIAR FORMULARTO CON LAS VALIDACIONES
    * @param model 
    */
-  private initFs(){
+  private initFs() {
     const formGroupData = this.getFormGroupDataSearchClient();
     this.searchClientForm = this.formBuilder.group(formGroupData);
   }
@@ -360,15 +362,12 @@ export class FormClientFullComponent {
   }
 
 
- 
-
 
   // Cambiar entre PERSONA O EMPRESA
-  onSwitchChangeTypeClient(isPerson: any) { 
+  onSwitchChangeTypeClient(isPerson: any) {
     let selectedTypeDocumentId = null;
-    this._sharedClientService.setLegalPerson(!isPerson);
     
-    if(isPerson){
+    if (isPerson) {
       this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
       selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'DNI').id;
     } else {
@@ -376,8 +375,9 @@ export class FormClientFullComponent {
       selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'RUC').id;
     }
     
-
-    this._sharedClientService.setClearData(true);
+    
+    // this._sharedClientService.setClearData(true);
+    this._sharedClientService.setLegalPerson(!isPerson);
     this.fs.tipo_documentos_id.setValue(selectedTypeDocumentId);
   }
 
@@ -388,9 +388,9 @@ export class FormClientFullComponent {
    * *******************************************************
    */
   // Mostrar/ocultar formulario de registro
-  toggleFormClient(collapse: boolean = null){
+  toggleFormClient(collapse: boolean = null) {
     this.isCollapseFormClient = collapse || !this.isCollapseFormClient;
-    if(!this.isCollapseFormClient){
+    if (!this.isCollapseFormClient) {
       this.isCollapseFormSearchClient = true;
       this.alertMsg.show = true;
       // this.isCollapseClientList = true;
@@ -402,11 +402,11 @@ export class FormClientFullComponent {
   }
 
 
-  // Buscar cliente
-  async searchClient(){
+  // Buscar cliente  - EMPRESA/PERSONA
+  async searchClient() {
     this.submittedSearchClient = true;
-    
-    if(this.searchClientForm.valid){
+
+    if (this.searchClientForm.valid) {
       const values = this.searchClientForm.value;
 
       const params = {
@@ -414,66 +414,56 @@ export class FormClientFullComponent {
         documento: values.documento,
         search: values.nombre,
       }
-  
-      if(this.isClientPerson){
+
+      if (this.isClientPerson) {
         // PERSONA
         const resPerson = await this.apiPersonGetByIdentification(params);
-        if(!resPerson){
-          this._sweetAlertService.showTopEnd({type: 'warning', title: 'No encontrado', message: 'La persona buscado no se encontró', timer: 2500});
+        if (!resPerson) {
+          this._sweetAlertService.showTopEnd({ type: 'warning', title: 'No encontrado', message: 'La persona buscado no se encontró', timer: 2500 });
         } else {
-          if(!resPerson?.client){
-            this._sweetAlertService.showTopEnd({type: 'warning', title: 'No encontrado', message: 'La persona no se encuentra registrado como cliente', timer: 2500});
+          if (!resPerson?.client) {
+            this._sweetAlertService.showTopEnd({ type: 'warning', title: 'No encontrado', message: 'La persona no se encuentra registrado como cliente', timer: 2500 });
             this.setAlertMsg('La persona no se encuentra registrado como cliente!', 'text-danger');
           } else {
-            this.shareDataClient = resPerson?.client;    
+            this.shareDataClient = resPerson?.client;
             this._sharedClientService.setDataClient(resPerson?.client);
             this._sharedClientService.setClientId(resPerson?.client?.id)
-          } 
-          
-          this.toggleFormClient(false);     
-          this.shareDataPerson = Person.cast(resPerson);    
+          }
+
+          this.toggleFormClient(false);
+          this.shareDataPerson = Person.cast(resPerson);
           this._sharedClientService.setDataPerson(Person.cast(resPerson));
           this._sharedClientService.setPersonId(resPerson?.id);
           this._sharedClientService.setAddress(resPerson?.addresses);
-          
-          const dataInstallation = InstallationList.cast(resPerson?.addresses[0]);
-          this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
-          // console.log("DIRECCIÓN PERSONA:",resPerson.addresses);
         }
-   
+
       } else {
         // EMPRESA
         const resCompany = await this.apiCompanyGetByIdentification(params);
-        if(!resCompany){
-          this._sweetAlertService.showTopEnd({type: 'warning', title: 'No encontrado', message: 'La empresa buscado no se encontró', timer: 2500});
+        if (!resCompany) {
+          this._sweetAlertService.showTopEnd({ type: 'warning', title: 'No encontrado', message: 'La empresa buscado no se encontró', timer: 2500 });
         } else {
-          if(!resCompany?.client){
-            this._sweetAlertService.showTopEnd({type: 'warning', title: 'No encontrado', message: 'La empresa no se encuentra registrado como cliente', timer: 2500});
+          if (!resCompany?.client) {
+            this._sweetAlertService.showTopEnd({ type: 'warning', title: 'No encontrado', message: 'La empresa no se encuentra registrado como cliente', timer: 2500 });
             this.setAlertMsg('La persona no se encuentra registrado como cliente!', 'text-danger');
           } else {
-            this.shareDataClient = resCompany?.client;    
+            this.shareDataClient = resCompany?.client;
             this._sharedClientService.setDataClient(resCompany?.client);
             this._sharedClientService.setClientId(resCompany?.client?.id)
           }
 
-          this.toggleFormClient(false);        
-          this.shareDataCompany = Company.cast(resCompany); 
+          this.toggleFormClient(false);
+          this.shareDataCompany = Company.cast(resCompany);
           this._sharedClientService.setDataCompany(Company.cast(resCompany));
           this._sharedClientService.setCompanyId(resCompany?.id);
           this._sharedClientService.setAddress(resCompany?.addresses);
-
-          const dataInstallation = InstallationList.cast(resCompany?.addresses[0]);
-          this._shareSaleService.setDataInstallation({...dataInstallation, id: null});
-          // console.log("DIRECCIÓN EMPRESA:", resCompany.addresses);
-
-          console.log("EMPRESA ENCONTRADA:", Company.cast(resCompany))
-        }   
+        }
       }
     }
   }
 
   // RESET FORM  SEARCH CLIENT
-  resetFormSearchClient(){
+  resetFormSearchClient() {
     this.searchClientForm.reset();
     // this.isCollapseFormSearchClient = true;
     this.isCollapseClientList = true;
@@ -482,10 +472,10 @@ export class FormClientFullComponent {
 
   /***
    * *****************************************
-   * RESPETAR FORMULARIOS
+   * RESET FORMULARIOS
    * *****************************************
    */
-  onResetForms(){
+  onResetForms() {
 
   }
 
@@ -495,8 +485,8 @@ export class FormClientFullComponent {
    * DATOS COMPARTIDOS - FORMULARIO CLIENTE
    * ************************************************************
    */
-  onCancelClient(event: any){
-    if(event){
+  onCancelClient(event: any) {
+    if (event) {
       // this.toggleFormClient(true);
     }
   }

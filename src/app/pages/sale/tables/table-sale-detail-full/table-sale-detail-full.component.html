@@ -74,7 +74,7 @@
   
   <!-- FORMULARIO DE SERVICIOS -->
   <div class="card-body border-bottom border-primary" [collapse]="isCollapseForm" [isAnimated]="true">
-    <app-form-sale-detail-full ></app-form-sale-detail-full>
+    <app-form-sale-detail-full [listBrand]="listBrand"></app-form-sale-detail-full>
   </div>
 
   <!-- LISTA DE SERVICIOS AÑADIDOS -->
@@ -84,28 +84,65 @@
         <thead>
           <tr>
             <th scope="col">N°</th>
+            <th scope="col">Tipo producto</th>
             <th scope="col">Producto</th>
             <th scope="col">Promoción</th>
+            <th scope="col">Cantidad</th>
             <th scope="col">Subtotal</th>
+            <th scope="col">Descuento</th>
             <th scope="col" style="width: 5%;">Operaciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of listSaleDetail; let i = index" >
             <th scope="row">{{i + 1}}</th>
-            <td>{{data.nombre}}</td>
-            <td>{{data.nombre}}</td>
-            <td>{{data.nombre}}</td>
-            <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
+            <td>
+              <span class="badge text-sm me-1" [ngClass]="{ 'bg-info': data?.product?.tipo_producto == 'S', 'bg-primary': data?.product?.tipo_producto == 'F'}">
+                {{data?.product?.tipo_producto == 'S'? 'Servicio' : 'Producto Físico'}}
+              </span>
+            </td>
+            <td>{{data?.product?.nombre}} 
+              <span class="text-primary fw-bold d-block">Precio: {{convertCurrencyFormat(data?.product?.latest_price?.precio, data?.product?.latest_price?.type_currency?.iso_code)}}</span>
+              <small class="d-block" *ngIf="data?.product?.type_service">Tipo servicio: {{data?.product?.type_service?.nombre}}</small>
+            </td>
+            <td>{{data?.promotion?.nombre || 'S/N'}} 
+              <ng-container [ngSwitch]="data?.promotion?.tipo_descuento">
+                <ng-container *ngSwitchCase="'C'">
+                  <span class="text-danger fw-bold d-block">Descuento: {{convertCurrencyFormat(data?.promotion?.descuento, data?.promotion?.type_currency?.iso_code)}}</span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'P'">
+                  <span class="text-danger fw-bold d-block">Descuento: {{data?.promotion?.descuento || 0}} %</span>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <span class="text-danger fw-bold d-block">Descuento: {{data?.promotion?.descuento || 0}} %</span>
+                </ng-container>
+              </ng-container>
+            </td>
+            <td>{{data?.cantidad || 'No especificado'}}</td>
+            <td>{{convertCurrencyFormat(data?.product?.latest_price?.precio * (data?.cantidad || 1), data?.product?.latest_price?.type_currency?.iso_code)}}</td>
+            <td>
+              <ng-container [ngSwitch]="data?.promotion?.tipo_descuento">
+                <ng-container *ngSwitchCase="'C'">
+                  <span class="text-danger fw-bold d-block">{{convertCurrencyFormat(data?.promotion?.descuento * (data?.cantidad || 1), data?.promotion?.type_currency?.iso_code)}}</span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'P'">
+                  <!-- <span class="text-danger fw-bold">{{data?.promotion?.descuento || 0}} %</span> -->
+                  <span class="text-danger fw-bold d-block">{{((data?.product?.latest_price?.precio * data?.promotion?.descuento ) / 100) || 0}} %</span>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <span class="text-danger fw-bold d-block">{{data?.promotion?.descuento || 0}} %</span>
+                </ng-container>
+              </ng-container>
+            </td>
             <td >
-              <!-- <ul class="list-unstyled hstack gap-1 mb-0">
+              <ul class="list-unstyled hstack gap-1 mb-0">
                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
                   <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getDataRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
                 </li>
                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
                   <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
                 </li>
-              </ul> -->
+              </ul>
             </td>
           </tr>
           <tr *ngIf="!listSaleDetail.length">

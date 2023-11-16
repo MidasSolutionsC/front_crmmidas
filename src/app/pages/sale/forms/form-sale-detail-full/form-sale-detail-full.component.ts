@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { BrandList, ResponseApi, TypeServiceList } from 'src/app/core/models';
@@ -10,6 +10,10 @@ import { ApiErrorFormattingService, BrandService, FormService, SharedSaleService
   styleUrls: ['./form-sale-detail-full.component.scss']
 })
 export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
+
+  // DATOS DE ENTRADA
+  // LISTA DE MARCAS (COMPAÑAS)
+  @Input() listBrand: BrandList[] = [];
 
   // Datos de la venta
   dataBasicPreview: any = {
@@ -40,8 +44,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
   // Lista de tipo de servicios
   listTypeService: TypeServiceList[] = [];
 
-  // LISTA DE MARCAS (COMPAÑAS)
-  listBrand: BrandList[] = [];
+
   
   private subscription: Subscription = new Subscription();
 
@@ -50,7 +53,6 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
     private _typeServiceService: TypeServiceService,
     private _brandService: BrandService,
     private _sharedSaleService: SharedSaleService,
-    private _tempSaleDetailService: TempSaleDetailService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -60,7 +62,6 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     
     this.apiTypeServiceList();
-    this.apiBrandList();
 
     // TIPO DE SERVICIOS
     this.subscription.add(
@@ -68,15 +69,6 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
       .pipe(distinctUntilChanged())
       .subscribe((list: TypeServiceList[]) => {
         this.listTypeService = list;
-      })
-    ); 
-
-    // MARCAS
-    this.subscription.add(
-      this._brandService.listObserver$
-      .pipe(distinctUntilChanged())
-      .subscribe((list: BrandList[]) => {
-        this.listBrand = list;
       })
     ); 
   }
@@ -113,28 +105,6 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
     });
   }
 
-  // Listar marcas
-  public apiBrandList(forceRefresh: boolean = false){
-    this._sweetAlertService.loadingUp('Obteniendo datos')
-    this._brandService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
-      this._sweetAlertService.stop();
-      if(response.code == 200){
-        // this.lists = response.data;
-      }
-
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
-        }
-      }
-    }, (error: any) => {
-      this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar las marcas', message: error.message, timer: 2500});
-      }
-    });
-  }
-
 
   /** 
    * ***********************************************************
@@ -144,8 +114,6 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
   onDataSaleDetail(data: any){
     // console.log("DATOS RECIBIDO EN DETAIL FULL:", data);
   }
-
-
 
   /**
    * ****************************************************************

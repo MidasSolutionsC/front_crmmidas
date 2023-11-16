@@ -1,4 +1,4 @@
-import { ProductList, PromotionList } from "./maintenance";
+import { InstallationList, ProductList, PromotionList, TypeStatusList } from "./maintenance";
 import { Model } from "./model";
 
 export class SaleDetail extends Model{
@@ -70,6 +70,8 @@ export class SaleDetailList extends Model{
   public is_active: boolean;
   public product?: ProductList;
   public promotion?: PromotionList;
+  public installation?: InstallationList;
+  public type_status?: TypeStatusList;
 
 
   constructor(data?: object){
@@ -89,9 +91,11 @@ export class SaleDetailList extends Model{
     this.observacion = this.observacion || '';
     this.fecha_cierre = this.fecha_cierre || '';
     this.datos_json = this.datos_json || null;
+    this.is_active = this.is_active || true;
     this.product = this.product || null;
     this.promotion = this.promotion || null;
-    this.is_active = this.is_active || true;
+    this.installation = this.installation || null;
+    this.type_status = this.type_status || null;
   }
 
   public static cast(data: object): SaleDetailList{
@@ -112,9 +116,11 @@ export class SaleDetailList extends Model{
       observacion: saleDetailList.observacion,
       fecha_cierre: saleDetailList.fecha_cierre,
       datos_json: saleDetailList.datos_json,
+      is_active: saleDetailList.is_active,
       product: saleDetailList.product,
       promotion: saleDetailList.promotion,
-      is_active: saleDetailList.is_active,
+      installation: saleDetailList.installation,
+      type_status: saleDetailList.type_status,
     }
   }
   public static casts(dataArray: object[]): SaleDetailList[]{

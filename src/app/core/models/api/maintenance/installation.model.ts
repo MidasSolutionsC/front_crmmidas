@@ -3,6 +3,7 @@ import { Model } from "../model";
 export class Installation extends Model{
   public id: number;
   public ventas_id: number;
+  public direcciones_id?: number; // DIRECCIÓN DEL CLIENTE
   public tipo: string;
   public direccion: string;
   public numero: string;
@@ -19,6 +20,7 @@ export class Installation extends Model{
     super(data);
     this.id = this.id || null;
     this.ventas_id = this.ventas_id || null;
+    this.direcciones_id = this.direcciones_id || null;
     this.tipo = this.tipo || '';
     this.direccion = this.direccion || '';
     this.numero = this.numero || '';
@@ -37,6 +39,7 @@ export class Installation extends Model{
     const {
       id,
       ventas_id,
+      direcciones_id,
       tipo,
       direccion,
       numero,
@@ -53,6 +56,7 @@ export class Installation extends Model{
     return {
       id,
       ventas_id,
+      direcciones_id,
       tipo,
       direccion,
       numero,
@@ -75,6 +79,7 @@ export class Installation extends Model{
 export class InstallationList extends Model{
   public id: number;
   public ventas_id: number;
+  public direcciones_id?: number;
   public tipo: string;
   public direccion: string;
   public numero: string;
@@ -93,8 +98,9 @@ export class InstallationList extends Model{
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || undefined;
-    this.ventas_id = this.ventas_id || undefined;
+    this.id = this.id || null;
+    this.ventas_id = this.ventas_id || null;
+    this.direcciones_id = this.direcciones_id || null;
     this.tipo = this.tipo || '';
     this.direccion = this.direccion || '';
     this.numero = this.numero || '';
@@ -117,6 +123,7 @@ export class InstallationList extends Model{
     const {
       id,
       ventas_id,
+      direcciones_id,
       tipo,
       direccion,
       numero,
@@ -137,6 +144,7 @@ export class InstallationList extends Model{
     return {
       id,
       ventas_id,
+      direcciones_id,
       tipo,
       direccion,
       numero,

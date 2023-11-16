@@ -18,14 +18,14 @@ import { FormArrayBankAccountComponent } from './form-client-bank-account/form-a
 export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   
   @ViewChild('focusTipoCliente') focusTipoCliente: ElementRef<HTMLInputElement>;
-  @ViewChild('formPerson') formPerson!: FormPersonComponent;
   @ViewChild('formCompany') formCompany!: FormCompanyComponent;
+  @ViewChild('formPerson') formPerson!: FormPersonComponent;
   @ViewChild('formBankAccount') formBankAccount!: FormArrayBankAccountComponent;
 
   // Datos de entrada
   @Input() data: Client = null;
-  @Input() dataPerson: Person = null;
   @Input() dataCompany: Company = null;
+  @Input() dataPerson: Person = null;
   @Input() dataReset: boolean = false;
 
   // Datos de salida
@@ -36,6 +36,9 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   // COMPARTIDO
   shareBankAccounts: BankAccount[] = [];
   
+
+  // PAISES
+  listCountries: CountryList[] = [];
 
   // Formulario para buscar cliente
   isClientPerson: boolean = true;
@@ -84,6 +87,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     private cdr: ChangeDetectorRef,
     private _sharedClientService: SharedClientService,
     private _sharedSaleService: SharedSaleService,
+    private _countryService: CountryService,
     private _clientService: ClientService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -94,8 +98,33 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   ngOnInit(): void {
+    this.apiCountryList();
     this.initFClient();
+
     this.onChangeData();
+
+    // Países
+    this.subscription.add(
+      this._countryService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: CountryList[]) => {
+        this.listCountries = list;
+      })
+    )
+    
+
+    // LIMPIAR DATOS
+    this.subscription.add(
+      this._sharedClientService.getClearData()
+      .pipe(
+        filter(value => value !== null)
+      )
+      .subscribe((value: boolean) =>  {
+        if(value){
+          this.onReset();
+        }
+      })
+    )
 
     // ID VENTA
     this.subscription.add(
@@ -120,6 +149,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       )
       .subscribe((value: boolean) =>  {
         this.legalPerson = value;
+        console.log("PERSONA LEGAL OBSERVADO:", value)
         
         if(value){
           this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'RE');
@@ -131,25 +161,11 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       })
     )
 
-    // LIMPIAR DATOS
-    this.subscription.add(
-      this._sharedClientService.getClearData()
-      .pipe(
-        filter(value => value !== null)
-      )
-      .subscribe((value: boolean) =>  {
-        if(value){
-          this.onReset();
-        }
-      })
-    )
-
     // DATOS PERSONA
     this.subscription.add(
       this._sharedClientService.getDataPerson().pipe(take(1)).subscribe((data: Person) => {
         if(data){
           this.dataPerson = data;
-          console.log("DATOS PERSONA:", this.dataPerson)
         }
       })
     )
@@ -159,7 +175,6 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       this._sharedClientService.getDataCompany().pipe(take(1)).subscribe((data: Company) => {
         if(data){
           this.dataCompany = data;
-          console.log("DATOS EMPRESA:", this.dataCompany)
         }
       })
     )
@@ -168,6 +183,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     this.subscription.add(
       this._sharedClientService.getDataClient().pipe(take(1)).subscribe((data: Client) => {
         if(data){
+          console.log("DATOS CLIENTE OBSERVADO:", this.data)
           this.data = data;
           this.shareBankAccounts = this.data.bank_accounts;
           this.clientForm.setValue(Client.cast(this.data));
@@ -219,7 +235,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   
   onChangeDataCompany(){
     if(this.dataCompany){
-      // console.log(this.dataPerson);
+      // console.log(this.dataCompany);
     } 
   }
 
@@ -243,6 +259,29 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
    * OPERACIONES CON LA API - CLIENT
    * ****************************************************************
    */
+  // OPERACIONES CON LA API - PAISES
+  public apiCountryList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._countryService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this.listCountries = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los países', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+
   // OPERACIONES CON LA API - BUSCAR POR PERSONA
   public apiClientFilterByPerson(personId: number): Promise<any>{
     this._sweetAlertService.loadingUp('Obteniendo datos');
@@ -354,6 +393,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
             this.dataPerson = Person.cast(person);
             this._sharedClientService.setPersonId(person.id);
             this._sharedClientService.setLegalPerson(false);
+            this._sharedClientService.setDataPerson(Person.cast(person));
             dataEmit.personas_id = person.id;
             dataEmit.persona_juridica = false;
           }
@@ -361,16 +401,18 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
           if(company){
             this.dataCompany = Company.cast(company);
             this._sharedClientService.setCompanyId(company.id);
+            this._sharedClientService.setDataCompany(Company.cast(company));
             this._sharedClientService.setLegalPerson(true);
             dataEmit.empresas_id = company.id;
             dataEmit.persona_juridica = true;
           }
-
+          
           if(client){
             this.data = client;
             this.clientForm.setValue(Client.cast(client));
             this.isNewDataClient = false;
             this._sharedClientService.setClientId(client.id);
+            this._sharedClientService.setDataClient(Client.cast(client));
             dataEmit.clientes_id = client.id;
           }
         }
@@ -429,18 +471,21 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
           if(person){
             this.dataPerson = Person.cast(person);
             this._sharedClientService.setPersonId(person.id);
+            this._sharedClientService.setDataPerson(Person.cast(person));
             this._sharedClientService.setLegalPerson(false);
           }
 
           if(company){
             this.dataCompany = Company.cast(company);
             this._sharedClientService.setCompanyId(company.id);
+            this._sharedClientService.setDataCompany(Company.cast(company));
             this._sharedClientService.setLegalPerson(true);
           }
 
           if(client){
             this.clientForm.setValue(Client.cast(client));
             this._sharedClientService.setClientId(client.id);
+            this._sharedClientService.setDataClient(Client.cast(client));
             this.isNewDataClient = false;
             this.shareBankAccounts = client.bank_accounts;
             this.data = client;
@@ -641,8 +686,6 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
   submitCompany(){
     const identifications = this.formCompany.submitIdentification();
     const contacts = this.formCompany.submitContact();
-    console.log("TEST:", identifications, contacts, this.formCompany.companyForm.invalid);
-    console.log("COMOPANY:", this.formCompany.companyForm.value)
     if(this.formCompany.companyForm.invalid || !identifications || !contacts){
       // this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos, para persona', type: 'warning', timer: 1500});
       return false;
