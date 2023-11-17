@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Subscription, filter } from 'rxjs';
+import { BehaviorSubject, Subscription, filter } from 'rxjs';
 import { CurrencyUtil } from 'src/app/core/helpers/currency.util';
-import { BrandList, Installation, InstallationList, ResponseApi, SaleDetailList } from 'src/app/core/models';
+import { BrandList, Installation, InstallationList, ResponseApi, Sale, SaleDetailList } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, SaleDetailService, SharedSaleService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
@@ -43,6 +43,21 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   brandId: any = '';
   
   // IDS ADICIONALES DE LA VENTA
+  // dataSale: Sale = {
+  //   retailx_id: null,
+  //   smart_id: null,
+  //   direccion_smart_id: null,
+  //   // Otros campos de Sale
+  // };
+
+  dataSale: BehaviorSubject<Sale> = new BehaviorSubject<Sale>({
+    retailx_id: null,
+    smart_id: null,
+    direccion_smart_id: null,
+    // Otros campos de Sale
+  });
+
+
   retailxId: any = '';
   smartId: any = '';
   smartAddressId: any = '';
@@ -67,6 +82,13 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.apiBrandList();
+
+    // DATOS VENTA DETECTADO
+    this.subscription.add(
+      this.dataSale.asObservable().subscribe((data: Sale) => {
+        this._sharedSaleService.setDataSale(data);
+      })
+    )
 
     // MARCAS
     this.subscription.add(
@@ -113,6 +135,16 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
           console.log("LISTA DE SERVICIOS/PRODUCTOS:", list)
         })
     );
+
+    
+    // LIMPIAR DATOS
+    this.subscription.add(
+      this._sharedSaleService.getClearData().subscribe((value: boolean) => {
+        if(value){
+          this.onReset()
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
@@ -238,6 +270,10 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
     }
   }
 
+  onReset(){
+    this.saleId = null;
+    this.listSaleDetail = [];
+  }
 
   
   /**

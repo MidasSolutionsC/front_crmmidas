@@ -9,12 +9,35 @@
             <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
             <div class="flex-shrink-0 d-flex gap-1">
               <a href="javascript:void(0);" class="btn btn-primary" routerLink="/sale/form">Agregar nuevo</a>
-              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+              <a href="javascript:void(0);" (click)="getPageRefresh();" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
             </div>
           </div>
         </div>
         <div class="card-body border-bottom">
-
+          <h4 class="card-title">Lista de ventas</h4>
+          <p class="card-sub-title">
+            Ventas registrados hasta el momento
+          </p>
+          <div class="row mb-md-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length" id="tickets-table_length"><label
+                class="d-inline-flex align-items-center">Mostrar
+                <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+                  [(ngModel)]="perPage" class="form-control form-control-sm mx-2" (change)="apiSaleListPagination()">
+                  <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
+                </select> registros</label>
+              </div>
+            </div>
+            <!-- Search -->
+            <div class="col-sm-12 col-md-6">
+              <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
+                  class="d-inline-flex align-items-center">Buscar:
+                  <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
+                    aria-controls="tickets-table" [(ngModel)]="search" (input)="apiSaleListPagination()"></label>
+              </div>
+            </div>
+            <!-- End search -->
+          </div>
         </div>
         <div class="card-body">
         <!-- End search -->
@@ -23,8 +46,7 @@
               <thead>
                 <tr>
                   <th scope="col">N°</th>
-                  <th scope="col">Tipo Doc.</th>
-                  <th scope="col">N° Doc.</th>
+                  <th scope="col">Doc. Identificación</th>
                   <th scope="col">Cliente</th>
                   <th scope="col">Estado</th>
                   <th scope="col">Fecha creado</th>
@@ -35,9 +57,22 @@
               <tbody>
                 <tr *ngFor="let data of lists; let i = index">
                   <th scope="row">{{i + 1}}</th>
-                  <td>{{data.clientes_tipo_documento}}</td>
-                  <td>{{data.clientes_documento}}</td>
-                  <td>{{data.clientes_nombre}}</td>
+                  <td>
+                    <ul class="list-group list-group-flush" *ngIf="data?.client?.persona_juridica">
+                      <li class="list-group-item p-1 font-size-11" *ngFor="let identificacion of data?.client?.company?.identifications" [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}} {{identificacion.documento}}</li>
+                    </ul>
+                    <ul class="list-group list-group-flush" *ngIf="!data?.client?.persona_juridica">
+                      <li class="list-group-item p-1 font-size-11" *ngFor="let identificacion of data?.client?.person?.identifications" [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}} {{identificacion.documento}}</li>
+                    </ul>
+                  </td>
+                  <td>
+                    <p *ngIf="data?.client?.persona_juridica">
+                      {{data?.client?.company?.razon_social}} {{data?.client?.company?.nombre_comercial}}
+                    </p>
+                    <p *ngIf="!data?.client?.persona_juridica">
+                      {{data?.client?.person?.nombres}} {{data?.client?.person?.apellido_paterno}} {{data?.client?.person?.apellido_materno}}
+                    </p>
+                  </td>
                   <td>{{data.is_active ? 'Activo': 'Inactivo'}}</td>
                   <td>{{data.created_at}}</td>
                   <td>{{data.updated_at}}</td>
@@ -59,6 +94,25 @@
             </table>
           </div>
 
+          
+          <!-- End table -->
+          <div class="row justify-content-md-between align-items-md-center mt-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
+                Mostrando de 
+                <b>{{pagination.from}}</b> al
+                <b>{{pagination.to}}</b> de <b>{{pagination.total}}</b>
+                registros
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="col-sm-12 col-md-6">
+              <div class="text-md-right float-md-end pagination-rounded">
+                <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="total" [(ngModel)]="page" [itemsPerPage]="perPage" (pageChanged)="getPage($event)"></pagination>
+              </div>
+            </div>
+            <!-- End Pagination -->
+          </div>
         </div>
       </div>
     </div>

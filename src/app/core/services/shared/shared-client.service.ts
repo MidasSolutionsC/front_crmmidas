@@ -15,13 +15,30 @@ export class SharedClientService {
   private typeClient: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   private legalPerson: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   private submitData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
-  private clearData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   private address: BehaviorSubject<Address[]> = new BehaviorSubject<Address[]>(null);
   private dataPerson: BehaviorSubject<Person> = new BehaviorSubject<Person>(null);
   private dataCompany: BehaviorSubject<Company> = new BehaviorSubject<Company>(null);
   private dataClient: BehaviorSubject<Client> = new BehaviorSubject<Client>(null);
+  private clearData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
 
-  constructor() { }
+  constructor() {
+    this.clearData.asObservable().subscribe((value: boolean) => {
+      if(value){
+        this.saleId.next(null);
+        this.personId.next(null);
+        this.companyId.next(null);
+        this.clientId.next(null);
+        this.typeClient.next(null);
+        this.legalPerson.next(null);
+        this.submitData.next(null);
+        this.address.next(null);
+        this.dataPerson.next(null);
+        this.dataCompany.next(null);
+        this.dataClient.next(null);
+        // this.clearData.next(null);
+      }
+    });
+   }
 
   // PERSONA
   getSaleId() {

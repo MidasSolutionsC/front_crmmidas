@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, TemplateRe
 import { Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { AddressList, BankAccountList, CompanyList, ContactList, InstallationList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { Client, ClientList } from 'src/app/core/models/api/client.model';
-import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, OperatorService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleCommentService, TempSaleDetailService, TempSaleDocumentService, TempSaleHistoryService, TempSaleService, TypeDocumentService } from 'src/app/core/services';
+import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, OperatorService, SaleCommentService, SaleDetailService, SaleDocumentService, SaleHistoryService, SaleService, SharedClientService, SharedSaleService, SweetAlertService, TempSaleCommentService, TempSaleDetailService, TempSaleDocumentService, TempSaleHistoryService, TempSaleService, TypeDocumentService } from 'src/app/core/services';
 
 import { CurrencyUtil } from 'src/app/core/helpers/currency.util';
 import { CalculateUtil } from 'src/app/core/helpers/calculate.util';
@@ -20,8 +20,15 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
 
   URL_FILES: string = '';
 
+  //IDs
+  saleId: number;
+  clientId: number;
+  personId: number;
+  companyId: number;
+  legalPerson: boolean = false;
+
   // VENTA ID
-  saleId: number = null;
+  // saleId: number = null;
 
   // DATOS CLIENTE
   dataClient: ClientList;
@@ -87,10 +94,15 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     private _operatorService: OperatorService,
     private _typeDocumentService: TypeDocumentService,
     private _tempSaleDetailService: TempSaleDetailService,
+    private _saleDetailService: SaleDetailService,
     private _tempSaleService: TempSaleService,
+    private _saleService: SaleService,
     private _tempSaleDocumentService: TempSaleDocumentService,
+    private _saleDocumentService: SaleDocumentService,
     private _tempSaleCommentService: TempSaleCommentService,
+    private _saleCommentService: SaleCommentService,
     private _tempSaleHistoryService: TempSaleHistoryService,
+    private _saleHistoryService: SaleHistoryService,
     private _sharedSaleService: SharedSaleService,
     private _sharedClientService: SharedClientService,
     private _clientService: ClientService,
@@ -125,24 +137,41 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
         this.listOperators = list;
       })
     )
-    
+
     // Ventas OBTENER CLIENTE
-    this.subscription.add(
-      this._tempSaleService.dataObserver$
-      .pipe(distinctUntilChanged())
-      .subscribe((data: SaleList) => {
-        if(data?.clientes_id){
-          this.apiClientGetById(data.clientes_id);
-        }
-      })
-    )
-    
+    // this.subscription.add(
+    //   this._saleService.dataObserver$
+    //   .pipe(distinctUntilChanged())
+    //   .subscribe((data: SaleList) => {
+    //     if(data?.clientes_id){
+    //       this.apiClientGetById(data.clientes_id);
+    //     }
+    //   })
+    // )
     
     // CLIENT ID
     this.subscription.add(
-      this._sharedClientService.getClientId().subscribe((value: number) => {
+      this._sharedClientService.getClientId().pipe(filter((id) => id !== null)).subscribe((value: number) => {
         if(value){
-          this.apiClientGetById(value);
+          this.clientId = value;
+        }
+      })
+    );
+    
+    // PERSONA ID
+    this.subscription.add(
+      this._sharedClientService.getPersonId().pipe(filter((id) => id !== null)).subscribe((value: number) => {
+        if(value){
+          this.personId = value;
+        }
+      })
+    );
+    
+    // EMPRESA ID
+    this.subscription.add(
+      this._sharedClientService.getCompanyId().pipe(filter((id) => id !== null)).subscribe((value: number) => {
+        if(value){
+          this.companyId = value;
         }
       })
     );
@@ -153,7 +182,6 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
         .pipe(filter((data) => data != null))
         .subscribe((data: ClientList) => {
           this.dataClient = data;
-          console.log("DATOS CLIENTE:", data)
         })
     )
 
@@ -166,7 +194,16 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
         })
     )
 
-    // DIRECCIÓN
+    // DATOS EMPRESA
+    this.subscription.add(
+      this._sharedClientService.getDataCompany()
+        .pipe(filter((data) => data != null))
+        .subscribe((data: CompanyList) => {
+          this.dataCompany = data;
+        })
+    )
+
+    // INSTALACIÓN - VENTA
     this.subscription.add(
       this._sharedSaleService.getDataInstallation()
         .pipe(filter((data) => data != null))
@@ -196,22 +233,6 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
         })
     );
             
-    // DIRECCIONES
-    // this.subscription.add(
-    //   this._addressService.listObserver$
-    //     .subscribe((list: AddressList[]) => {
-    //       this.listAddress = list;
-    //     })
-    // );
-            
-    // DIRECCIONES
-    this.subscription.add(
-      this._sharedSaleService.getDataInstallation()
-        .pipe(filter((data) => data != null))
-        .subscribe((data: InstallationList) => {
-          this.dataInstallation = data;
-        })
-    )
 
     // CUENTAS BANCARIAS
     this.subscription.add(
@@ -227,9 +248,9 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
       this._sharedSaleService.getSaleId().subscribe((value: number) => {
         if(value){
           this.saleId = value;
-          this.apiTempSaleGetById(value);
-          this.apiTempSaleDetailFilterSale(value);
-          this.apiTempSaleDocumentFilterSale(value);
+          this.apiSaleGetById(value);
+          this.apiSaleDetailFilterSale(value);
+          this.apiSaleDocumentFilterSale(value);
         }
       })
     );
@@ -237,7 +258,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
 
     // Detalle - observado
     this.subscription.add(
-      this._tempSaleDetailService.listObserver$
+      this._saleDetailService.listObserver$
         .subscribe((list: SaleDetailList[]) => {
           this.listSaleDetail = list;
           this.subTotal = CalculateUtil.calculateTotal(list, (item: SaleDetailList) => (item.product?.latest_price?.precio || 0) * (item?.cantidad || 1));
@@ -308,7 +329,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
                 
     // Documentos
     this.subscription.add(
-      this._tempSaleDocumentService.listObserver$
+      this._saleDocumentService.listObserver$
         .subscribe((list: SaleDocumentList[]) => {
           this.listSaleDocument = list;
         })
@@ -316,7 +337,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
             
     // Comentarios
     this.subscription.add(
-      this._tempSaleCommentService.listObserver$
+      this._saleCommentService.listObserver$
         .subscribe((list: SaleCommentList[]) => {
           this.listSaleComment = list.map((obj: any) => {
             obj.more = false;
@@ -327,7 +348,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
             
     // Historial
     this.subscription.add(
-      this._tempSaleHistoryService.listObserver$
+      this._saleHistoryService.listObserver$
         .subscribe((list: SaleHistoryList[]) => {
           this.listSaleHistory = list.map((obj: any) => {
             obj.more = false;
@@ -335,6 +356,28 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
           });
         })
     );
+
+            
+    // LIMAR DATOS VENTAS
+    this.subscription.add(
+      this._sharedSaleService.getClearData().subscribe((value: boolean) => {
+        if(value){
+          // RESET DATOS
+          this.onResetSale();
+        }
+      })
+    );
+    
+    // LIMPIAR DATOS CLIENTE
+    this.subscription.add(
+      this._sharedClientService.getClearData().subscribe((value: boolean) => {
+        if(value){
+          // RESET DATOS
+          this.onResetClient();
+        }
+      })
+    );
+    
   }
 
   ngOnDestroy(): void {
@@ -558,7 +601,128 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     });
   }
 
-  // VENTA
+  // VENTA TEMPORAL
+  public apiSaleGetById(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleService.getById(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this.dataSale = response.data[0];
+
+        // this._sharedSaleService.setDataSale(())
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al obtener datos de la venta actual ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar la VENTA DETALLE
+  public apiSaleDetailFilterSale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleDetailService.getBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this.tmpListInstallations = response.data;
+        this._saleDetailService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los detalles ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los DOCUMENTOS DE LA VENTA
+  public apiSaleDocumentFilterSale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._saleDocumentService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los documentos ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // cargar los COMENTARIOS DE LA VENTA
+  public apiSaleCommentFilterSale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleCommentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._saleCommentService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los comentarios ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  // Cargar los COMENTARIOS DE LA VENTA
+  public apiSaleHistoryFilterSale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._tempSaleHistoryService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        console.log("HISTORIAL:", response.data)
+        this._tempSaleHistoryService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar el historial ', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - TEMPORALES
+   * ****************************************************************
+   */
+
+  // VENTA TEMPORAL
   public apiTempSaleGetById(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tempSaleService.getById(saleId).subscribe((response: ResponseApi) => {
@@ -627,7 +791,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
   }
 
   // cargar los COMENTARIOS DE LA VENTA
-  public apiSaleCommentFilterSale(saleId: number){
+  public apiTempSaleCommentFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tempSaleCommentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -649,7 +813,7 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
   }
 
   // Cargar los COMENTARIOS DE LA VENTA
-  public apiSaleHistoryFilterSale(saleId: number){
+  public apiTempSaleHistoryFilterSale(saleId: number){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._tempSaleHistoryService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
@@ -712,4 +876,26 @@ export class InfoGeneralComponent implements OnInit, OnDestroy {
     windowPrint.close();
   }
 
+
+  private onResetClient(){
+    this.dataClient = null;
+    this.dataCompany = null;
+    this.dataPerson = null;
+    this.listAddress = [];
+    this.listContact = [];
+    this.listBankAccount = [];
+
+  }
+
+  private onResetSale(){
+    this.dataSale = null;
+    this.listSaleDocument = [];
+    this.listSaleComment = [];
+    this.listSaleDetail = [];
+    this.listSaleHistory = [];
+    this.dataInstallation = null;
+    this.subTotal = 0;
+    this.descuento = 0;
+    this.total = 0;
+  }
 }

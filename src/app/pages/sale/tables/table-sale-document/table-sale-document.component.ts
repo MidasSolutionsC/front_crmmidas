@@ -58,6 +58,16 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
         this.listSaleDocuments = list;
       })
     );    
+
+
+    // LIMPIAR DATOS
+    this.subscription.add(
+      this._shareSaleService.getClearData().subscribe((value: boolean) => {
+        if(value){
+          this.onReset()
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
@@ -258,6 +268,15 @@ export class TableSaleDocumentComponent implements OnInit, OnDestroy {
 
   onCancel(event: any){
     // console.log(data);
+  }
+
+  onReset(){
+    this.saleId = null;
+    this.clientId = null;
+    this.personId = null;
+    this.companyId = null;
+    this.legalPerson = null;
+    this.listSaleDocuments = [];
   }
 
 

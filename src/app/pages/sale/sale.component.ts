@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import { Breadcrumb, ResponseApi, TypeDocumentList } from 'src/app/core/models';
+import { Breadcrumb, Pagination, ResponseApi, ResponsePagination, TypeDocumentList } from 'src/app/core/models';
 import { Sale, SaleList} from 'src/app/core/models/api/sale.model';
 import {ApiErrorFormattingService, FormService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 import {SaleService } from 'src/app/core/services/api/sale.service';
@@ -42,6 +42,16 @@ export class SaleComponent {
   // Previsualizar foto subido
   previewImage: any;
 
+  // TABLE USUARIOS - SERVER SIDE
+  page: number = 1;
+  perPage: number = 5;
+  search: string = '';
+  column: string = '';
+  order: 'asc' | 'desc' = 'desc';
+  countElements: number[] = [5, 10, 25, 50, 100];
+  total: number = 0;
+  pagination: Pagination = new Pagination();
+
 
   // Table data
   // content?: any;
@@ -53,6 +63,7 @@ export class SaleComponent {
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private modalService: BsModalService,
     private _typeDocumentService: TypeDocumentService,
     private _saleService: SaleService,
@@ -70,7 +81,8 @@ export class SaleComponent {
     this.initFormUserSearch();
     this.apiTypeDocumentList();
     
-    this.listDataApi();
+    this.apiSaleListPagination()
+    // this.listDataApi();
     this.subscription.add(
       this._saleService.listObserver$
       // .pipe(distinctUntilChanged())
@@ -111,6 +123,58 @@ export class SaleComponent {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
+  public apiSaleListPagination(): void {
+    this.subscription.add(
+      this._saleService.getPagination({
+        page: this.page.toString(),
+        perPage: this.perPage.toString(),
+        search: this.search,
+        column: this.column,
+        order: this.order
+      })
+      .pipe(debounceTime(250))
+      .subscribe((response: ResponsePagination) => {
+        if(response.code == 200){
+          this.pagination = Pagination.cast(response.data);
+          this.lists = response.data.data;
+          this.page = response.data.current_page;
+          this.total = response.data.total;
+        }
+        
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error: any) => {
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar ventas', message: error.message, timer: 2500});
+        }
+      })
+    ); 
+  }
+
+  getPage(event: any){
+    const {page, itemsPerPage} = event;
+    this.page = page;
+    this.perPage = itemsPerPage;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiSaleListPagination();
+    }, 0);
+  }
+
+  getPageRefresh(){
+    this.page = 1;
+    this.perPage = 10;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiSaleListPagination();
+    }, 0);
+  }
+
   public listDataApi(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._saleService.getAll(forceRefresh).subscribe((response: ResponseApi) => {

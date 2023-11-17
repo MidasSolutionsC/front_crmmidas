@@ -13,6 +13,9 @@ export class SaleService {
   private listSubject: BehaviorSubject<SaleList[]> = new BehaviorSubject<SaleList[]>([]);
   public listObserver$: Observable<SaleList[]> = this.listSubject.asObservable();
 
+  private dataSubject: BehaviorSubject<SaleList> = new BehaviorSubject<SaleList>(null);
+  public dataObserver$: Observable<SaleList> = this.dataSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private configService: ConfigService
@@ -20,18 +23,18 @@ export class SaleService {
     this.listObserver$
       .pipe(distinctUntilChanged())
       .subscribe((list: SaleList[]) => {
-        if(this.cachedData){
+        if (this.cachedData) {
           this.cachedData.data = list;
         }
-    })
+      })
   }
 
 
-  private get baseUrl(){
+  private get baseUrl() {
     return this.configService.apiUrl + 'sale';
   }
 
-  private get requestOptions(){
+  private get requestOptions() {
     return this.configService.requestOptions;
   }
 
@@ -53,28 +56,46 @@ export class SaleService {
       );
     }
   }
+  
+  public getPagination(data: any): Observable<ResponseApi> {
+    const queryParams = new URLSearchParams();
+    queryParams.set('data', JSON.stringify(data));
+    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
 
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
-  public register(data: any): Observable<ResponseApi>{
+  public register(data: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
-  public update(data: any, id: any): Observable<ResponseApi>{
+  public update(data: any, id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/update/${id}`;
     return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
-  public delete(id: any): Observable<ResponseApi>{
+  public finalProcess(data: any, id: any): Observable<ResponseApi>{
+    const endpoint = `${this.baseUrl}/finalProcess/${id}`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
+  }
+
+  public cancelProcess(data: any, id: any): Observable<ResponseApi>{
+    const endpoint = `${this.baseUrl}/cancelProcess/${id}`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
+  }
+
+  public delete(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.delete(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
-  public restore(id: any): Observable<ResponseApi>{
+  public restore(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/restore/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
@@ -83,6 +104,12 @@ export class SaleService {
   /**
    * FUNCIONES PARA LOS OBSERVABLES
    */
+  // Método para agregar un nuevo valor al data observer
+  changeDataObserver(saleList: SaleList) {
+    this.dataSubject.next(saleList);
+  }
+
+
   // Método para agregar un nuevo objeto al array
   addObjectObserver(saleList: SaleList) {
     const currentData = this.listSubject.getValue();

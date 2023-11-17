@@ -210,19 +210,11 @@
                 {{data?.product?.type_service?.nombre}}
               </span>
               <p class="text-truncate-3">{{data?.product?.descripcion}}</p>
-              <small *ngIf="data?.promotion">Promo: {{data?.promotion?.nombre}}</small>
+              <small *ngIf="data?.promotion" class="text-italic">Promoción: {{data?.promotion?.nombre}}</small>
             </td>
-            <td>{{data?.cantidad}}</td>
+            <td>{{data?.cantidad || 'No especificado'}}</td>
             <td>
               {{convertCurrencyFormat(data?.product?.latest_price?.precio, data?.product?.latest_price?.type_currency?.iso_code)}}
-              <!-- <ng-container [ngSwitch]="data?.product?.latest_price?.type_currency?.iso_code">
-                <ng-container *ngSwitchCase="'EUR'">
-                  {{data?.product?.latest_price?.precio}} {{data?.product?.latest_price?.type_currency?.simbolo}}
-                </ng-container>
-                <ng-container *ngSwitchDefault>
-                  {{data?.product?.latest_price?.type_currency?.simbolo}} {{data?.product?.latest_price?.precio}} 
-                </ng-container>
-              </ng-container> -->
             </td>
             <td>
               <ng-container [ngSwitch]="data?.promotion?.tipo_descuento">
