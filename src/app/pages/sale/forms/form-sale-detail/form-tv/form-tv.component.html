@@ -1,0 +1,8 @@
+<form (keydown.enter)="$event.preventDefault()" [formGroup]="tvLineForm" autocomplete="off">
+  <div class="row g-2">
+    <div class="col-lg-2 mb-3" *ngIf="'FORMS.FIELD_NAMES.wear_deco.label' | translate as translatedLabel;">
+      <label for="deco" class="form-label w-100">¿{{translatedLabel}}?</label>
+      <ui-switch id="deco" name="deco" color="#556ee6" formControlName="deco" uncheckedLabel="No" checkedLabel="Si" size="small" class="me-1 w-100"></ui-switch>
+    </div>
+  </div>
+</form>

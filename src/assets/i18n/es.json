@@ -1,0 +1,902 @@
+{
+  "HEADER": {
+    "SEARCH": "Buscar...",
+    "MEGA_MENU": "Mega Menú",
+    "NOTIFICATIONS": {
+      "TITLE": "Notificaciones",
+      "VIEW_ALL": "Ver todo",
+      "LOAD_MORE": "Ver más..",
+      "FIRST": {
+        "TITLE": "Su pedido se ha realizado",
+        "TEXT": "Si varios idiomas fusionan la gramática",
+        "TIME": "hace 3 minutos"
+      },
+      "SECOND": {
+        "TITLE": "James Lemire",
+        "TEXT": "Parecerá un inglés simplificado",
+        "TIME": "hace 1 hora"
+      },
+      "THIRD": {
+        "TITLE": "Su artículo ha sido enviado",
+        "TEXT": "Si varios idiomas fusionan la gramática",
+        "TIME": "hace 3 minutos"
+      },
+      "FOUR": {
+        "TITLE": "Salena Layfield",
+        "TEXT": "Como un escéptico amigo de Cambridge occidental",
+        "TIME": "hace 1 hora"
+      }
+    },
+    "SETTINGS": "Configuración",
+    "UI": {
+      "TITLE": "Componentes de la interfaz de usuario",
+      "LIGHTBOX": "LightBox",
+      "RANGE_SLIDER": "Control deslizante de rango",
+      "SWEET_ALERT": "Alerta dulce",
+      "RATING": "Calificación",
+      "FORMS": "Formularios",
+      "TABLES": "Tablas",
+      "CHARTS": "Gráficos"
+    },
+    "APPLICATIONS": {
+      "TITLE": "Aplicaciones",
+      "ECOMMERCE": "Comercio electrónico",
+      "CALENDAR": "Calendario",
+      "EMAIL": "Correo electrónico",
+      "PROJECTS": "Proyectos",
+      "TASKS": "Tareas",
+      "CONTACTS": "Contactos"
+    },
+    "EXTRA_PAGES": {
+      "TITLE": "Páginas extra",
+      "LIGHT_SIDEBAR": "Barra lateral ligera",
+      "COMPACT_SIDEBAR": "Barra lateral compacta",
+      "HORIZONTAL_LAYOUT": "Diseño horizontal",
+      "MAINTENANCE": "Mantenimiento",
+      "COMING SOON": "Próximamente",
+      "TIMELINE": "Timeline",
+      "FAQ": "Preguntas frecuentes"
+    },
+    "LOGIN": {
+      "PROFILE": "Perfil",
+      "MY_WALLET": "Mi billetera",
+      "SETTINGS": "Configuración",
+      "LOCK_SCREEN": "Pantalla de bloqueo",
+      "LOGOUT": "Cerrar sesión"
+    }
+  },
+  "MENUITEMS": {
+    "MAIN": {
+      "TEXT": "Inicio"
+    },
+    "MENU": {
+      "TEXT": "Menú"
+    },
+    "DASHBOARDS": {
+      "TEXT": "Tableros",
+      "BADGE": "04",
+      "LIST": {
+        "DEFAULT": "Defecto",
+        "SAAS": "Saas",
+        "CRYPTO": "Cripto",
+        "BLOG": "Blog",
+        "JOBS": "Trabajos",
+        "ADVERTISEMENT": "Anuncios"
+      }
+    },
+    "APPS": {
+      "TEXT": "Aplicaciones"
+    },
+    "SALE": {
+      "TEXT": "Ventas",
+      "BADGE": "01"
+    },
+    "CALL": {
+      "TEXT": "Llamadas",
+      "BADGE": "01"
+    },
+    "CALENDAR": {
+      "TEXT": "Calendario",
+      "BADGE": "01"
+    },
+    "CHAT": {
+      "TEXT": "Chats",
+      "BADGE": "Nueva"
+    },
+    "FILEMANAGER": {
+      "TEXT": "Administradora de archivos",
+      "BADGE": "Nueva"
+    },
+    "EMAIL": {
+      "TEXT": "Email",
+      "LIST": {
+        "INBOX": "Bandeja de entrada",
+        "READEMAIL": "Leer el correo electrónico",
+        "TEMPLATE": {
+          "TEXT": "Modelo",
+          "BADGE": "Nueva",
+          "LIST": {
+            "BASIC": "Acción básica",
+            "ALERT": "Correo electrónico de alerta",
+            "BILLING": "Correo Electrónico de Facturas"
+          }
+        }
+      }
+    },
+    "INVOICES": {
+      "TEXT": "Facturas",
+      "LIST": {
+        "INVOICELIST": "Lista de facturas",
+        "INVOICEDETAIL": "Detalle de factura"
+      }
+    },
+    "TASKS": {
+      "TEXT": "Tareas",
+      "LIST": {
+        "TASKLIST": "Lista de tareas",
+        "KANBAN": "Kanban Board",
+        "CREATETASK": "Crear tarea"
+      }
+    },
+    "CONTACTS": {
+      "TEXT": "Contactos",
+      "LIST": {
+        "USERGRID": "Cuadrícula de usuario",
+        "USERLIST": "Lista de usuarios",
+        "PROFILE": "Perfil"
+      }
+    },
+    "AUTHENTICATION": {
+      "TEXT": "Autenticación",
+      "BADGE": "Nueva",
+      "LIST": {
+        "LOGIN": "Iniciar sesión",
+        "REGISTER": "Registrarse",
+        "RECOVERPWD": "Recuperar contraseña",
+        "LOCKSCREEN": "Bloquear pantalla",
+        "LOGIN2": "Iniciar sesión 2",
+        "REGISTER2": "Registrarse 2",
+        "RECOVERPWD2": "Recuperar contraseña 2",
+        "LOCKSCREEN2": "Bloquear pantalla 2",
+        "CONFIRMMAIL": "Confirmar correo",
+        "CONFIRMMAIL2": "Confirmar correo 2",
+        "EMAILVERIFICATION": "Verificacion de email",
+        "EMAILVERIFICATION2": "Verificacion de email 2",
+        "TWOSTEPVERIFICATION": "Verificación de dos pasos",
+        "TWOSTEPVERIFICATION2": "Verificación de dos pasos 2"
+      }
+    },
+    "UTILITY": {
+      "TEXT": "Utilidad",
+      "LIST": {
+        "STARTER": "Página de inicio",
+        "MAINTENANCE": "Mantenimiento",
+        "TIMELINE": "Cronograma",
+        "FAQS": "Preguntas frecuentes",
+        "PRICING": "Precios",
+        "ERROR404": "error 404",
+        "ERROR500": "Error 500"
+      }
+    },
+    "COMPONENTS": {
+      "TEXT": "Componentes"
+    },
+    "FORMS": {
+      "TEXT": "Formas",
+      "BADGE": "09",
+      "LIST": {
+        "ELEMENTS": "Elementos de formulario",
+        "VALIDATION": "Validación de formulario",
+        "ADVANCED": "Formulario avanzado",
+        "EDITOR": "Editora de formularios",
+        "FILEUPLOAD": "Subir archivo de formulario",
+        "REPEATER": "Repetidor de forma",
+        "WIZARD": "Asistente de formulario",
+        "MASK": "Máscara de forma",
+        "LAYOUTS": "Diseños de formulario"
+      }
+    },
+    "TABLES": {
+      "TEXT": "Tablas",
+      "LIST": {
+        "BASIC": "Tablas Básicas",
+        "DataTables": "Tablas de datos",
+        "EditTableTables": "Tabla editable"
+      }
+    },
+    "CHARTS": {
+      "TEXT": "Gráficos",
+      "LIST": {
+        "APEX": "Gráfico de Apex",
+        "CHARTJS": "Chartjs Chart",
+        "CHARTIST": "Chartist Chart",
+        "ECHART": "Gráfico E",
+        "ALL": "Todos",
+        "COMERCIAL": "Por comercial",
+        "COORDINATION": "Por coordinación"
+      }
+    },
+    "MULTILEVEL": {
+      "TEXT": "Multi nivel",
+      "LIST": {
+        "LEVEL1": {
+          "1": "Nivel 1.1",
+          "2": "Nivel 1.2",
+          "LEVEL2": {
+            "1": "Nivel 2.1",
+            "2": "Nivel 2.2"
+          }
+        }
+      }
+    },
+    "MAINTENANCE": {
+      "TEXT": "Mantenimiento",
+      "LIST": {
+        "COUNTRY": "País",
+        "TYPE_CURRENCY": "Tipo de monedas",
+        "CURRENCY": "Divisas",
+        "TYPES": {
+          "LABEL": "Mant. de tipos",
+          "LIST": {
+            "TYPE_BANK_ACCOUNT": "Tipo de cuenta bancarias",
+            "TYPE_USER": "Tipo de usuarios",
+            "TYPE_STATUS": "Tipo de estados",
+            "TYPE_DOCUMENT": "Tipo de documentos",
+            "TYPE_SERVICE": "Tipo de servicios",
+            "TYPE_CURRENCY": "Tipo de monedas"
+          }
+        },
+        "CALL": {
+          "LABEL": "Mant. de llamadas",
+          "LIST": {
+            "OPERATOR": "Operadores",
+            "TYPIFICATION": "Tipificaciones"
+          }
+        },
+        "PROMOTION": "Promociones",
+        "ADVERTISEMENT": "Anuncios",
+        "MANUAL": "Manuales",
+        "PERMISSION_ACCOUNT": "Permisos de usuario",
+        "USER": "Usuarios",
+        "COORDINATION": "Coordinaciones",
+        "GROUP": "Grupos",
+        "CAMPUS": "Sedes",
+        "CATEGORY": "Categorías",
+        "BRAND": "Marcas",
+        "BELL": "Campañas",
+        "PRODUCT": "Productos",
+        "SERVICE": "Servicios"
+      }
+    },
+    "SETTINGS": {
+      "TEXT": "Configuraciones",
+      "LIST": {
+        "ALLOWED_IPS": "IP permitidas",
+        "PERMISSION": "Permisos",
+        "PERMISSION_ACCOUNT": "Permisos de usuario"
+      }
+    }
+  },
+  "FORMS": {
+    "FIELD_NAMES": {
+      "ip": {
+        "label": "Dirección IP",
+        "placeholder": "Ingrese la dirección IP..."
+      },
+      "descripcion": {
+        "label": "Descripción",
+        "placeholder": "Ingrese descripción..."
+      },
+      "holder_name": {
+        "label": "Nombre del titular",
+        "placeholder": "Ingrese el nombre..."
+      },
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre..."
+      },
+      "names": {
+        "label": "Nombres",
+        "placeholder": "Ingrese sus nombres..."
+      },
+      "user_name": {
+        "label": "Nombre de usuario",
+        "placeholder": "Ingrese el nombre de usuario..."
+      },
+      "first_name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre..."
+      },
+      "last_name": {
+        "label": "Apellido",
+        "placeholder": "Ingrese el apellido..."
+      },
+      "father_last_name": {
+        "label": "Apellido paterno",
+        "placeholder": "Ingrese el apellido paterno..."
+      },
+      "mother_last_name": {
+        "label": "Apellido materno",
+        "placeholder": "Ingrese el apellido materno..."
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "Ingrese el correo electrónico..."
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Ingrese la contraseña..."
+      },
+      "password_confirmation": {
+        "label": "Contraseña de confirmación",
+        "placeholder": "Ingrese la contraseña de confirmación..."
+      },
+      "phone": {
+        "label": "Teléfono",
+        "placeholder": "Ingrese el número de teléfono..."
+      },
+      "contact": {
+        "label": "Contacto",
+        "placeholder": "Ingrese el contacto..."
+      },
+      "responsible": {
+        "label": "Responsable",
+        "placeholder": "Ingrese al responsable..."
+      },
+      "address": {
+        "label": "Dirección",
+        "placeholder": "Ingrese la dirección..."
+      },
+      "residence": {
+        "label": "Domicilio",
+        "placeholder": "Ingrese el domicilio..."
+      },
+      "category": {
+        "label": "Categoría",
+        "placeholder": "Ingrese la categoría...",
+        "default_option": "Seleccione una categoría..."
+      },
+      "brand": {
+        "label": "Marca",
+        "placeholder": "Ingrese la marca...",
+        "default_option": "Seleccione una marca...",
+        "default_option_all": "Todos"
+      },
+      "bell": {
+        "label": "Campaña",
+        "placeholder": "Ingrese la campaña...",
+        "default_option": "Seleccione una campaña..."
+      },
+      "campus": {
+        "label": "Sede",
+        "placeholder": "Ingrese la sede...",
+        "default_option": "Seleccione una sede..."
+      },
+      "country": {
+        "label": "País",
+        "placeholder": "Ingrese el país...",
+        "default_option": "Seleccione un país..."
+      },
+      "iso_code": {
+        "label": "Código ISO",
+        "placeholder": "Ingrese el código iso...",
+        "default_option": "Seleccione un país..."
+      },
+      "is_primary": {
+        "label": "Es Primario"
+      },
+      "is_private": {
+        "label": "Es Privado"
+      },
+      "is_contract": {
+        "label": "Es Contrato"
+      },
+      "is_main_line": {
+        "label": "Es Linea principal"
+      },
+      "new_service": {
+        "label": "Nuevo servicio"
+      },
+      "wear_deco": {
+        "label": "Lleva deco"
+      },
+      "symbol": {
+        "label": "Símbolo",
+        "placeholder": "Ingrese el símbolo...",
+        "default_option": "Seleccione un símbolo..."
+      },
+      "icon": {
+        "label": "Icono",
+        "placeholder": "Ingrese el icono...",
+        "default_option": "Seleccione un icono..."
+      },
+      "exchange_rate": {
+        "label": "Tipo de cambio",
+        "placeholder": "Ingrese el tipo de cambio...",
+        "default_option": "Seleccione un tipo de cambio..."
+      },
+      "currency": {
+        "label": "Divisa",
+        "placeholder": "Ingrese la divisa...",
+        "default_option": "Seleccione una divisa..."
+      },
+      "type_currency": {
+        "label": "Tipo de moneda",
+        "placeholder": "Ingrese el tipo de moneda...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "department": {
+        "label": "Departamento",
+        "placeholder": "Ingrese el departamento...",
+        "default_option": "Seleccione un departamento..."
+      },
+      "province": {
+        "label": "Provincia",
+        "placeholder": "Ingrese la provincia...",
+        "default_option": "Seleccione una provincia..."
+      },
+      "district": {
+        "label": "Distrito",
+        "placeholder": "Ingrese el distrito...",
+        "default_option": "Seleccione un distrito..."
+      },
+      "cif": {
+        "label": "CIF/NIF",
+        "placeholder": "Ingrese el CIF..."
+      },
+      "city": {
+        "label": "Ciudad",
+        "placeholder": "Ingrese la ciudad..."
+      },
+      "territorial": {
+        "label": "Territorial",
+        "placeholder": "Ingrese el territorial..."
+      },
+      "file": {
+        "label": "Archivo",
+        "placeholder": "Subir el archivo...",
+        "default_option": "Seleccione un archivo..."
+      },
+      "image": {
+        "label": "Imagen",
+        "placeholder": "Subir la imagen...",
+        "default_option": "Seleccione un imagen..."
+      },
+      "logo": {
+        "label": "Logo",
+        "placeholder": "Subir el logo...",
+        "default_option": "Seleccione un imagen..."
+      },
+      "type": {
+        "label": "Tipo",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "type_bank_account": {
+        "label": "Tipo de cuenta bancaria",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "type_user": {
+        "label": "Tipo de usuario",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "type_client": {
+        "label": "Tipo de cliente",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "type_discount": {
+        "label": "Tipo de descuento",
+        "placeholder": "Ingrese el tipo de descuento...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "type_document": {
+        "label": "Tipo de documento",
+        "placeholder": "Ingrese el tipo de documento...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "type_service": {
+        "label": "Tipo de servicio",
+        "placeholder": "Ingrese el tipo de servicio...",
+        "default_option": "Seleccione un tipo...",
+        "default_option_all": "Todos..."
+      },
+      "type_status": {
+        "label": "Tipo de estado",
+        "placeholder": "Ingrese el tipo de estado...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "product": {
+        "label": "Producto",
+        "placeholder": "Ingrese el producto...",
+        "default_option": "Seleccione un producto..."
+      },
+      "product_type": {
+        "label": "Tipo de Producto",
+        "placeholder": "Ingrese el tipo de producto...",
+        "default_option": "Seleccione un tipo de producto...",
+        "default_option_all": "Todos"
+      },
+      "promotion": {
+        "label": "Promoción",
+        "placeholder": "Ingrese la promoción...",
+        "default_option": "Seleccione una promoción..."
+      },
+      "document": {
+        "label": "Documento",
+        "placeholder": "Ingrese el documento..."
+      },
+      "document_number": {
+        "label": "N° Documento",
+        "placeholder": "Ingrese el numero de documento..."
+      },
+      "document_reverse": {
+        "label": "Reverso documento",
+        "placeholder": "Ingrese el reverso del documento..."
+      },
+      "discount": {
+        "label": "Descuento",
+        "placeholder": "Ingrese el descuento..."
+      },
+      "show_discount": {
+        "label": "Mostrar Descuento",
+        "placeholder": "Ingrese el descuento..."
+      },
+      "price": {
+        "label": "Precio",
+        "placeholder": "Ingrese el precio..."
+      },
+      "state": {
+        "label": "Estado",
+        "placeholder": "Ingrese el estado...",
+        "default_option": "Seleccione un estado..."
+      },
+      "date": {
+        "label": "Fecha",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "show_dates": {
+        "label": "Mostrar Fechas"
+      },
+      "time": {
+        "label": "Hora",
+        "placeholder": "Ingrese la hora...",
+        "default_option": "Seleccione una hora..."
+      },
+      "first_time": {
+        "label": "Hora inicio",
+        "placeholder": "Ingrese la hora...",
+        "default_option": "Seleccione una hora..."
+      },
+      "last_time": {
+        "label": "Hora final",
+        "placeholder": "Ingrese la hora...",
+        "default_option": "Seleccione una hora..."
+      },
+      "birth_date": {
+        "label": "Fecha de nacimiento",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "first_date": {
+        "label": "Fecha inicio",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "last_date": {
+        "label": "Fecha final",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "close_date": {
+        "label": "Fecha de cierre",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "date_updated": {
+        "label": "Fecha actualizado",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "opening_date": {
+        "label": "Fecha apertura",
+        "placeholder": "Ingrese la fecha...",
+        "default_option": "Seleccione una fecha..."
+      },
+      "count_min": {
+        "label": "Cantidad minima",
+        "placeholder": "Ingrese la cantidad..."
+      },
+      "count_max": {
+        "label": "Cantidad maxima",
+        "placeholder": "Ingrese la cantidad..."
+      },
+      "code": {
+        "label": "Código",
+        "placeholder": "Ingrese el código..."
+      },
+      "show_code_min_max": {
+        "label": "Mostrar Código - Min/Max",
+        "placeholder": "Ingrese el código..."
+      },
+      "code_ubigeo": {
+        "label": "Código de ubigeo",
+        "placeholder": "Ingrese el código..."
+      },
+      "code_postal": {
+        "label": "Código Postal",
+        "placeholder": "Ingrese el código postal..."
+      },
+      "code_loaded": {
+        "label": "Código carga",
+        "placeholder": "Ingrese el código carga..."
+      },
+      "vodafond_segment": {
+        "label": "Segmento vodafond",
+        "placeholder": "Ingrese el segmento vodafond..."
+      },
+      "type_company": {
+        "label": "Tipo empresa",
+        "placeholder": "Ingrese el tipo...",
+        "default_option": "Seleccione un tipo..."
+      },
+      "account": {
+        "label": "Cuenta",
+        "placeholder": "Ingrese la cuenta...",
+        "default_option": "Seleccione una cuenta..."
+      },
+      "company": {
+        "label": "Compañía",
+        "placeholder": "Ingrese el nombre de la compañía..."
+      },
+      "business_name": {
+        "label": "Razón social",
+        "placeholder": "Ingrese la razón social..."
+      },
+      "tradename": {
+        "label": "Nombre comercial",
+        "placeholder": "Ingrese el nombre comercial..."
+      },
+      "job_title": {
+        "label": "Puesto",
+        "placeholder": "Ingrese el puesto..."
+      },
+      "abbreviation": {
+        "label": "Abreviación",
+        "placeholder": "Ingrese la abreviación..."
+      },
+      "comment": {
+        "label": "Comentario",
+        "placeholder": "Ingrese el comentario..."
+      },
+      "search": {
+        "label": "Buscar",
+        "placeholder": "Escriba aquí..."
+      },
+      "title": {
+        "label": "Título",
+        "placeholder": "Ingrese el titulo..."
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Ingrese la descripción..."
+      },
+      "direction": {
+        "label": "Dirección",
+        "placeholder": "Ingrese la dirección..."
+      },
+      "color": {
+        "label": "Color",
+        "placeholder": "Ingrese el color...",
+        "default_option": "Seleccione el color..."
+      },
+      "notes": {
+        "label": "Notas",
+        "placeholder": "Ingrese notas adicionales...",
+        "default_option": "Seleccione una opción...",
+        "default_check": "Marque esta casilla si es necesario"
+      },
+      "number": {
+        "label": "Número",
+        "placeholder": "Ingrese el número..."
+      },
+      "number_port": {
+        "label": "Número portar",
+        "placeholder": "Ingrese el número..."
+      },
+      "ladder": {
+        "label": "Escalera",
+        "placeholder": "Ingrese la escalera..."
+      },
+      "portal": {
+        "label": "Portal",
+        "placeholder": "Ingrese el portal..."
+      },
+      "plant": {
+        "label": "Planta",
+        "placeholder": "Ingrese el planta..."
+      },
+      "door": {
+        "label": "Puerta",
+        "placeholder": "Ingrese la puerta..."
+      },
+      "location": {
+        "label": "Localidad",
+        "placeholder": "Ingrese la localidad..."
+      },
+      "operator": {
+        "label": "Operador",
+        "placeholder": "Ingrese el operador...",
+        "default_option": "Seleccione un operador..."
+      },
+      "operator_call": {
+        "label": "Operador al que llamó",
+        "placeholder": "Ingrese el operador...",
+        "default_option": "Seleccione un operador..."
+      },
+      "operator_donor": {
+        "label": "Operador donante",
+        "placeholder": "Ingrese el operador...",
+        "default_option": "Seleccione un operador..."
+      },
+      "observation": {
+        "label": "Observación",
+        "placeholder": "Ingrese la observación...",
+        "default_option": "Seleccione una observación..."
+      },
+      "typification": {
+        "label": "Tipificación",
+        "placeholder": "Ingrese la tipificación...",
+        "default_option": "Seleccione una tipificación..."
+      },
+      "permanence": {
+        "label": "Permanencia",
+        "placeholder": "Ingrese la permanencia...",
+        "default_option": "Seleccione la permanencia..."
+      },
+      "permanence_time": {
+        "label": "Tiempo de permanencia",
+        "placeholder": "Ingrese el tiempo...",
+        "default_option": "Seleccione el tiempo..."
+      },
+      "dni": {
+        "label": "DNI",
+        "placeholder": "Ingrese el DNI.."
+      },
+      "client": {
+        "label": "Cliente",
+        "placeholder": "Ingrese el cliente.."
+      },
+      "different_holder": {
+        "label": "Diferente titular",
+        "placeholder": "Ingrese el titular..."
+      },
+      "different_address": {
+        "label": "Diferente dirección",
+        "placeholder": "Ingrese la dirección..."
+      },
+      "aop": {
+        "label": "Aop",
+        "placeholder": "Ingrese el aop...",
+        "default_option": "Seleccione el aop..."
+      },
+      "high_or_portability": {
+        "label": "Alta o Portabilidad",
+        "placeholder": "Ingrese la alta o portabilidad...",
+        "default_option": "Seleccione..."
+      },
+      "icc": {
+        "label": "ICC",
+        "placeholder": "Ingrese el ICC...",
+        "default_option": "Seleccione el ICC..."
+      },
+      "terminal": {
+        "label": "Terminal",
+        "placeholder": "Ingrese la terminal...",
+        "default_option": "Seleccione la terminal..."
+      },
+      "model_terminal": {
+        "label": "Modelo del terminal",
+        "placeholder": "Ingrese el modelo terminal...",
+        "default_option": "Seleccione el modelo..."
+      },
+      "permission_id": {
+        "label": "Permisos Id",
+        "placeholder": "Ingrese id del permiso"
+      },
+      "type_user_id": {
+        "label": "Tipo de Usuario Id",
+        "placeholder": "Ingrese el id del tipo de Usuario "
+      },
+      "nationality": {
+        "label": "Nacionalidad",
+        "placeholder": "Ingrese la nacionalidad..."
+      }
+    },
+    "VALIDATION": {
+      "required": "El campo :attribute es obligatorio.",
+      "email": "El campo :attribute debe ser una dirección de correo electrónico válida.",
+      "minlength": "El campo :attribute debe tener al menos :minlength caracteres.",
+      "maxlength": "El campo :attribute no debe tener más de :maxlength caracteres.",
+      "pattern": "El campo :attribute no cumple con el patrón requerido.",
+      "min": "El campo :attribute debe ser mayor o igual a :min.",
+      "max": "El campo :attribute debe ser menor o igual a :max."
+    },
+    "BUTTONS": {
+      "FORM": "Formulario",
+      "LIST": "Lista",
+      "FILTER": "Filtrar",
+      "SEARCH": "Buscar",
+      "SEND": "Enviar",
+      "ADD": "Agregar",
+      "REGISTER": "Registrar",
+      "UPDATE": "Actualizar",
+      "SAVE": "Guardar",
+      "SAVE_CHANGE": "Guardar cambios",
+      "DELETE": "Eliminar",
+      "RESET": "Resetear",
+      "PREV": "Anterior",
+      "NEXT": "Siguiente",
+      "END": "Finalizar",
+      "CLOSE": "Cerrar",
+      "CANCEL": "Cancelar"
+    },
+    "FILES": {
+      "PREVIEW": {
+        "label": "Previsualización"
+      }
+    },
+    "NOT_FOUND": {
+      "ITEMS": "Elemento no encontrado"
+    }
+  },
+  "MODALS": {
+    "BUTTONS": {
+      "ADD": "Registrar",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "BACK": "Volver",
+      "PREV": "Anterior",
+      "NEXT": "Siguiente",
+      "CLOSE": "Cerrar",
+      "CANCEL": "Cancelar",
+      "ACCEPT": "Aceptar"
+    }
+  },
+  "PAGES": {
+    "MAINTENANCE": {
+      "TYPE_DOCUMENT": {
+        "TITLE": "Tipo de documentos",
+        "FORM": {
+          "nombre": {
+            "label": "Nombre del tipo de documento",
+            "placeholder": "Ingrese el nombre...",
+            "validation": {
+              "required": "El nombre es obligatorio.",
+              "invalid": "El nombre es invalido. Proporcione un nombre válido."
+            }
+          },
+          "abreviacion": {
+            "label": "Abreviación del tipo documento",
+            "placeholder": "Ingrese el nombre...",
+            "validation": {
+              "required": "El nombre es obligatorio.",
+              "invalid": "El nombre es invalido. Proporcione un nombre válido."
+            }
+          },
+          "is_active": {
+            "label": "Nombre del tipo de documento",
+            "placeholder": "Ingrese el nombre...",
+            "validation": {
+              "required": "El nombre es obligatorio.",
+              "invalid": "El nombre es invalido. Proporcione un nombre válido."
+            }
+          }
+        }
+      }
+    }
+  }
+}

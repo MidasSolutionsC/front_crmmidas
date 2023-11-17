@@ -1,0 +1,14 @@
+
+<div class="modal-container" [hidden]="!show">
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">{{title}}</h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body flex-fill">
+    <ng-content *ngIf="showContent"></ng-content>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+    <button class="btn btn-primary" (click)="confirmed()">Registrar</button>
+  </div>
+</div>

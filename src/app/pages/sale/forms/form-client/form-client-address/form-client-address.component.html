@@ -1,0 +1,235 @@
+<form (keydown.enter)="$event.preventDefault()" [formGroup]="addressForm" autocomplete="off" >
+  <div class="row g-2">
+    <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.residence.label' | translate as translatedLabel;">
+      <label for="domicilio" class="form-label">{{translatedLabel}}</label>
+      <textarea id="domicilio" cols="30" rows="1" autofocus #focusDomicilio class="form-control" formControlName="domicilio"  placeholder="{{'FORMS.FIELD_NAMES.residence.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.domicilio.errors && (f.domicilio.dirty || f.domicilio.touched || submitted) }"></textarea>
+      <div *ngIf="f.domicilio.errors && (f.domicilio.dirty || f.domicilio.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.domicilio.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.domicilio.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.domicilio.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.domicilio.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.domicilio.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.territorial.label' | translate as translatedLabel;">
+      <label for="territorial" class="form-label">{{translatedLabel}}</label>
+      <textarea id="territorial" cols="30" rows="1" class="form-control" formControlName="territorial"  placeholder="{{'FORMS.FIELD_NAMES.territorial.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.territorial.errors && (f.territorial.dirty || f.territorial.touched || submitted) }"></textarea>
+      <div *ngIf="f.territorial.errors && (f.territorial.dirty || f.territorial.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.territorial.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.territorial.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.territorial.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.territorial.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.territorial.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-2">
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+      <label for="tipo" class="form-label">{{translatedLabel}}</label>
+      <ng-select id="tipo" formControlName="tipo"
+        [notFoundText]="'No se encontraron elementos'"
+        [ngClass]="{ 'is-invalid': f.tipo.errors && (f.tipo.dirty || f.tipo.touched || submitted) }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</ng-option>
+        <ng-option value="Avenida">Avenida</ng-option>
+        <ng-option value="Calle">Calle</ng-option>
+        <ng-option value="Pasaje">Pasaje</ng-option>
+        <ng-option value="Urbanización">Urbanización</ng-option>
+      </ng-select>
+      <div *ngIf="f.tipo.errors && (f.tipo.dirty || f.tipo.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.tipo.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.direction.label' | translate as translatedLabel;">
+      <label for="direccion" class="form-label">{{translatedLabel}}</label>
+      <textarea 
+        name="direccion" id="direccion" cols="30" rows="1" class="form-control"    formControlName="direccion"  placeholder="{{'FORMS.FIELD_NAMES.direction.placeholder' | translate}}"
+        [ngClass]="{ 'is-invalid': f.direccion.errors && (f.direccion.dirty || f.direccion.touched || submitted) }" 
+      ></textarea>
+      <div *ngIf="f.direccion.errors && (f.direccion.dirty || f.direccion.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.direccion.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+        <div *ngIf="f.direccion.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.direccion.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.direccion.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.direccion.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-2">
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.number.label' | translate as translatedLabel;">
+      <label for="numero" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="numero" class="form-control" focus="true"
+        placeholder="{{'FORMS.FIELD_NAMES.number.placeholder' | translate}}"
+        formControlName="numero"
+        [ngClass]="{ 'is-invalid': f.numero.errors && (f.numero.dirty || f.numero.touched || submitted) }" />
+      <div *ngIf="f.numero.errors && (f.numero.dirty || f.numero.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.numero.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+        <div *ngIf="f.numero.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.numero.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.numero.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.numero.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.ladder.label' | translate as translatedLabel;">
+      <label for="escalera" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="escalera" class="form-control" focus="true"
+        placeholder="{{'FORMS.FIELD_NAMES.ladder.placeholder' | translate}}"
+        formControlName="escalera"
+        [ngClass]="{ 'is-invalid': f.escalera.errors && (f.escalera.dirty || f.escalera.touched || submitted) }" />
+      <div *ngIf="f.escalera.errors && (f.escalera.dirty || f.escalera.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.escalera.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+        <div *ngIf="f.escalera.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.escalera.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.escalera.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.escalera.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.portal.label' | translate as translatedLabel;">
+      <label for="portal" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="portal" class="form-control" focus="true"
+        placeholder="{{'FORMS.FIELD_NAMES.portal.placeholder' | translate}}"
+        formControlName="portal"
+        [ngClass]="{ 'is-invalid': f.portal.errors && (f.portal.dirty || f.portal.touched || submitted) }" />
+      <div *ngIf="f.portal.errors && (f.portal.dirty || f.portal.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.portal.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+        <div *ngIf="f.portal.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.portal.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.portal.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.portal.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-2">
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.plant.label' | translate as translatedLabel;">
+      <label for="planta" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="planta" class="form-control" focus="true"
+        placeholder="{{'FORMS.FIELD_NAMES.plant.placeholder' | translate}}"
+        formControlName="planta"
+        [ngClass]="{ 'is-invalid': f.planta.errors && (f.planta.dirty || f.planta.touched || submitted) }" />
+      <div *ngIf="f.planta.errors && (f.planta.dirty || f.planta.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.planta.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.door.label' | translate as translatedLabel;">
+      <label for="puerta" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="puerta" class="form-control" focus="true"
+        placeholder="{{'FORMS.FIELD_NAMES.door.placeholder' | translate}}"
+        formControlName="puerta"
+        [ngClass]="{ 'is-invalid': f.puerta.errors && (f.puerta.dirty || f.puerta.touched || submitted) }" />
+      <div *ngIf="f.puerta.errors && (f.puerta.dirty || f.puerta.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.puerta.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.code_postal.label' | translate as translatedLabel;">
+      <label for="codigo_postal" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="codigo_postal" class="form-control" focus="true"
+        placeholder="{{'FORMS.FIELD_NAMES.code_postal.placeholder' | translate}}"
+        formControlName="codigo_postal"
+        [ngClass]="{ 'is-invalid': f.codigo_postal.errors && (f.codigo_postal.dirty || f.codigo_postal.touched || submitted) }" />
+      <div
+        *ngIf="f.codigo_postal.errors && (f.codigo_postal.dirty || f.codigo_postal.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.codigo_postal.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-2">
+    <div class="col-md-6 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.location.label' | translate as translatedLabel;">
+      <label for="localidad" class="form-label">{{translatedLabel}}</label>
+      <textarea 
+        name="localidad" id="localidad" cols="30" rows="1" class="form-control"    formControlName="localidad"  placeholder="{{'FORMS.FIELD_NAMES.location.placeholder' | translate}}"
+        [ngClass]="{ 'is-invalid': f.localidad.errors && (f.localidad.dirty || f.localidad.touched || submitted) }" 
+      ></textarea>
+      <div
+        *ngIf="f.localidad.errors && (f.localidad.dirty || f.localidad.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.localidad.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.province.label' | translate as translatedLabel;">
+      <label for="provincia" class="form-label">{{translatedLabel}}</label>
+      <textarea 
+        name="provincia" id="provincia" cols="30" rows="1" class="form-control"    formControlName="provincia"  placeholder="{{'FORMS.FIELD_NAMES.province.placeholder' | translate}}"
+        [ngClass]="{ 'is-invalid': f.provincia.errors && (f.provincia.dirty || f.provincia.touched || submitted) }" 
+      ></textarea>
+      <div
+        *ngIf="f.provincia.errors && (f.provincia.dirty || f.provincia.touched || submitted)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.provincia.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+          translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3 d-flex align-items-center" *ngIf="'FORMS.FIELD_NAMES.is_primary.label' | translate as translatedLabel;">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="is_primary_address" formControlName="is_primary" [ngClass]="{ 'is-invalid': f.is_primary.errors && (f.is_primary.dirty || f.is_primary.touched || submitted) }">
+        <label class="form-check-label" for="is_primary_address">
+          {{translatedLabel}}
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
+    <button type="button" class="btn btn-light" (click)="onCancel()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+    <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.REGISTER' | translate}}</button>
+    <button type="button" class="btn btn-info"  *ngIf="!isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+  </div>
+</form>

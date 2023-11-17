@@ -1,0 +1,113 @@
+<div class="container-fluid">
+  <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="app-calendar">
+            <!-- calendar -->
+            <full-calendar [options]="calendarOptions" [events]="eventsPromise | async"></full-calendar>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL FORMULARIO -->
+<ng-template #modalContent let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+  </div>
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="calendarForm" autocomplete="off">
+    <div class="modal-body">
+      <input type="hidden" name="id" value="" formControlName="id" />
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.title.label' | translate as translatedLabel;">
+        <label for="titulo" class="form-label">{{translatedLabel}} *</label>
+        <input type="text" id="titulo" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.title.placeholder' | translate}}" formControlName="titulo" [ngClass]="{ 'is-invalid': f.titulo.errors && (f.titulo.dirty || f.titulo.touched || submitted) }" />
+        <div *ngIf="f.titulo.errors && (f.titulo.dirty || f.titulo.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="f.titulo.errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">
+        <label for="descripcion" class="form-label">{{translatedLabel}}</label>
+        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion" [ngClass]="{ 'is-invalid': f.descripcion.errors && (f.descripcion.dirty || f.descripcion.touched || submitted)}"></textarea>
+        <div *ngIf="f.descripcion.errors && (f.descripcion.dirty || f.descripcion.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="f.descripcion.errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.color.label' | translate as translatedLabel;">
+        <label for="color" class="form-label">{{translatedLabel}}</label>
+        <select class="form-select custom-select" id="color" formControlName="color" [ngClass]="{ 'is-invalid': f.color.errors && (f.color.dirty || f.color.touched || submitted) }">
+          <option value="">{{'FORMS.FIELD_NAMES.color.default_option' | translate}}</option>
+          <option *ngFor="let category of categories" [value]="category.value">{{category.name}}</option>
+        </select>
+        <div *ngIf="f.color.errors && (f.color.dirty || f.color.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="f.color.errors.required">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.first_date.label' | translate as translatedLabel;">
+          <label for="fecha_inicio" class="form-label">{{translatedLabel}} *</label>
+          <input type="date" id="fecha_inicio" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.first_date.placeholder' | translate}}" formControlName="fecha_inicio" [ngClass]="{ 'is-invalid': f.fecha_inicio.errors && (f.fecha_inicio.dirty || f.fecha_inicio.touched || submitted) }" />
+          <div *ngIf="f.fecha_inicio.errors && (f.fecha_inicio.dirty || f.fecha_inicio.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="f.fecha_inicio.errors.required">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.first_time.label' | translate as translatedLabel;">
+          <label for="hora_inicio" class="form-label">{{translatedLabel}} *</label>
+          <input type="time" id="hora_inicio" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.first_time.placeholder' | translate}}" formControlName="hora_inicio" [ngClass]="{ 'is-invalid': f.hora_inicio.errors && (f.hora_inicio.dirty || f.hora_inicio.touched || submitted) }" />
+          <div *ngIf="f.hora_inicio.errors && (f.hora_inicio.dirty || f.hora_inicio.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="f.hora_inicio.errors.required">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.last_date.label' | translate as translatedLabel;">
+          <label for="fecha_final" class="form-label">{{translatedLabel}} *</label>
+          <input type="date" id="fecha_final" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.last_date.placeholder' | translate}}" formControlName="fecha_final" [ngClass]="{ 'is-invalid': f.fecha_final.errors && (f.fecha_final.dirty || f.fecha_final.touched || submitted) }" />
+          <div *ngIf="f.fecha_final.errors && (f.fecha_final.dirty || f.fecha_final.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="f.fecha_final.errors.required">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.last_time.label' | translate as translatedLabel;">
+          <label for="hora_final" class="form-label">{{translatedLabel}} *</label>
+          <input type="time" id="hora_final" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.last_time.placeholder' | translate}}" formControlName="hora_final" [ngClass]="{ 'is-invalid': f.hora_final.errors && (f.hora_final.dirty || f.hora_final.touched || submitted) }" />
+          <div *ngIf="f.hora_final.errors && (f.hora_final.dirty || f.hora_final.touched || submitted)" class="invalid-feedback" align="left">
+            <div *ngIf="f.hora_final.errors.required">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <div class=""></div>
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!--End Modal -->

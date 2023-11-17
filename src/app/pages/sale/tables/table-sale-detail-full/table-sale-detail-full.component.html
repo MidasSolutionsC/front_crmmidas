@@ -1,0 +1,155 @@
+
+<accordion [isAnimated]="true" [closeOthers]="true">
+  <accordion-panel heading="Información de la venta" [isOpen]="true" class="border rounded">
+    <div class="row gy-2">
+      <div class="col-lg-6">
+        <div class="w-100 mb-3" *ngIf="'FORMS.FIELD_NAMES.product_type.label' | translate as translatedLabel;">
+          <label for="is_info_producto" class="form-label fw-bold text-primary w-100">{{translatedLabel}}</label>
+          <ng-select id="is_info_producto" class="is-valid"
+            [(ngModel)]="typeProduct"
+            (change)="onChangeTypeProduct($event)"
+            [notFoundText]="'No se encontraron elementos'">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.product_type.default_option_all' | translate}}</ng-option>
+            <ng-option value="S">Servicios</ng-option>
+            <ng-option value="P">Productos</ng-option>
+          </ng-select>
+        </div>
+        <div class="w-100 mb-3" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
+          <label for="" class="form-label fw-bold text-primary">{{translatedLabel}} ({{'FORMS.FIELD_NAMES.bell.label' | translate}})</label>
+          <ng-select [(ngModel)]="brandId" (change)="onChangeBrand($event)"
+            [notFoundText]="'No se encontraron elementos'">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.brand.default_option_all' | translate}}</ng-option>
+            <ng-option *ngFor="let brand of listBrand"
+              [value]="brand.id">{{brand.nombre}}</ng-option>
+          </ng-select>
+        </div>
+      </div>
+      <div class="col-lg-6">
+       
+        <!-- <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID RETAIL X:</strong> <input type="text" class="form-control w-auto"></div>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <input type="text" class="form-control w-auto"></div>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <input type="text" class="form-control w-auto"></div> -->
+        <!-- <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID SMART:</strong> <span>{{dataBasicPreview?.smart_id}}</span></div>
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>ID DIRECCIÓN SMART:</strong> <span>{{dataBasicPreview?.smart_address_id}}</span></div> -->
+   
+        <div class="row g-2" *ngIf="typeProduct !== 'P'">
+          <div class="col-lg-6 mb-2">
+            <label for="retailx_id" class="form-label">ID RETAIL X:</label>
+            <input type="text" class="form-control" id="retailx_id" [(ngModel)]="retailxId" placeholder="ID RETAIL X" value="">
+          </div>
+          <div class="col-lg-6 mb-2">
+            <label for="smart_id" class="form-label">ID SMART:</label>
+            <input type="text" class="form-control" id="smart_id" [(ngModel)]="smartId" placeholder="ID SMART" value="">
+          </div>
+          <div class="col-lg-6 mb-2">
+            <label for="smart_address_id" class="form-label">ID DIRECCIÓN SMART:</label>
+            <input type="text" class="form-control" id="smart_address_id"  [(ngModel)]="smartAddressId"  placeholder="ID DIRECCIÓN SMART" value="">
+          </div>
+        </div>
+
+      </div>      
+      <div class="col-12">
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>FECHA:</strong> <span>{{dataBasicPreview?.fecha}}</span></div>
+        <div class="d-flex justify-content-start gap-2 flex-wrap mb-2"><strong>DIRECCIÓN:</strong> <span>{{dataBasicPreview?.address}}</span></div>
+      </div>
+    </div>
+  </accordion-panel>
+</accordion>
+
+
+<div class="card shadow-sm border border-primary mt-2">
+  <div class="card-body border-bottom">
+    <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+      <div class="">
+        <h4 class="card-title text-primary">{{title}}</h4>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-md btn-primary" (click)="toggleForm()" [ngClass]="{'btn-success': isCollapseForm, 'btn-primary': !isCollapseForm}">
+          <i class="mdi" [ngClass]="{'mdi-clipboard-edit': isCollapseForm, 'mdi-format-list-bulleted-square': !isCollapseForm}"></i>
+          {{isCollapseForm? ('FORMS.BUTTONS.FORM' | translate): 'FORMS.BUTTONS.LIST' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- FORMULARIO DE SERVICIOS -->
+  <div class="card-body border-bottom border-primary" [collapse]="isCollapseForm" [isAnimated]="true">
+    <app-form-sale-detail-full [listBrand]="listBrand"></app-form-sale-detail-full>
+  </div>
+
+  <!-- LISTA DE SERVICIOS AÑADIDOS -->
+  <div class="card-body"  [collapse]="isCollapseList" [isAnimated]="true">
+    <div class="table-responsive">
+      <table class="table align-middle dt-responsive nowrap w-100 table-check">
+        <thead>
+          <tr>
+            <th scope="col">N°</th>
+            <th scope="col">Tipo producto</th>
+            <th scope="col">Producto</th>
+            <th scope="col">Promoción</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Descuento</th>
+            <th scope="col" style="width: 5%;">Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of listSaleDetail; let i = index" >
+            <th scope="row">{{i + 1}}</th>
+            <td>
+              <span class="badge text-sm me-1" [ngClass]="{ 'bg-info': data?.product?.tipo_producto == 'S', 'bg-primary': data?.product?.tipo_producto == 'F'}">
+                {{data?.product?.tipo_producto == 'S'? 'Servicio' : 'Producto Físico'}}
+              </span>
+            </td>
+            <td>{{data?.product?.nombre}} 
+              <span class="text-primary fw-bold d-block">Precio: {{convertCurrencyFormat(data?.product?.latest_price?.precio, data?.product?.latest_price?.type_currency?.iso_code)}}</span>
+              <small class="d-block" *ngIf="data?.product?.type_service">Tipo servicio: {{data?.product?.type_service?.nombre}}</small>
+            </td>
+            <td>{{data?.promotion?.nombre || 'S/N'}} 
+              <ng-container [ngSwitch]="data?.promotion?.tipo_descuento">
+                <ng-container *ngSwitchCase="'C'">
+                  <span class="text-danger fw-bold d-block">Descuento: {{convertCurrencyFormat(data?.promotion?.descuento, data?.promotion?.type_currency?.iso_code)}}</span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'P'">
+                  <span class="text-danger fw-bold d-block">Descuento: {{data?.promotion?.descuento || 0}} %</span>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <span class="text-danger fw-bold d-block">Descuento: {{data?.promotion?.descuento || 0}} %</span>
+                </ng-container>
+              </ng-container>
+            </td>
+            <td>{{data?.cantidad || 'No especificado'}}</td>
+            <td>{{convertCurrencyFormat(data?.product?.latest_price?.precio * (data?.cantidad || 1), data?.product?.latest_price?.type_currency?.iso_code)}}</td>
+            <td>
+              <ng-container [ngSwitch]="data?.promotion?.tipo_descuento">
+                <ng-container *ngSwitchCase="'C'">
+                  <span class="text-danger fw-bold d-block">{{convertCurrencyFormat(data?.promotion?.descuento * (data?.cantidad || 1), data?.promotion?.type_currency?.iso_code)}}</span>
+                </ng-container>
+                <ng-container *ngSwitchCase="'P'">
+                  <!-- <span class="text-danger fw-bold">{{data?.promotion?.descuento || 0}} %</span> -->
+                  <span class="text-danger fw-bold d-block">{{((data?.product?.latest_price?.precio * data?.promotion?.descuento ) / 100) || 0}} %</span>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <span class="text-danger fw-bold d-block">{{data?.promotion?.descuento || 0}} %</span>
+                </ng-container>
+              </ng-container>
+            </td>
+            <td >
+              <ul class="list-unstyled hstack gap-1 mb-0">
+                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                  <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getDataRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
+                </li>
+                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                  <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                </li>
+              </ul>
+            </td>
+          </tr>
+          <tr *ngIf="!listSaleDetail.length">
+            <td colspan="7" class="text-center">Sin registros.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

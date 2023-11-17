@@ -1,0 +1,120 @@
+<div class="card shadow-sm border border-primary">
+  <div class="card-body border-bottom">
+    <div class="w-100 d-flex justify-content-between flex-wrap gap-2">
+      <div class="d-flex flex-wrap gap-2">
+        <ui-switch disabled="false" defaultBgColor="#f2f2f2" color="#556ee6" (change)="onSwitchChangeTypeClient($event)"
+          [(ngModel)]="isClientPerson" uncheckedLabel="Empresa" checkedLabel="Persona" uncheckedTextColor="black"
+          checkedTextColor="white" size="small" class="me-1 w-auto">
+        </ui-switch>
+        <div class="d-flex flex-wrap align-items-start">
+          <strong *ngIf="alertMsg.show" class="font-size-12" [ngClass]="alertMsg?.type">{{alertMsg.msg}}</strong>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button type="button" class="btn btn-md btn-sucess" *ngIf="!isCollapseFormClient" (click)="toggleFormClient()" [ngClass]="{'btn-success': isCollapseFormClient, 'btn-warning': !isCollapseFormClient}">
+          <i class="mdi" [ngClass]="{'mdi-clipboard-edit': isCollapseFormClient, 'mdi-account-search': !isCollapseFormClient}"></i>
+          {{isCollapseFormClient? ('FORMS.BUTTONS.FORM' | translate): 'FORMS.BUTTONS.SEARCH' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- FORMULARIO PATA BUSCAR PERSONA/EMPRESA -->
+  <div class="card-body border-bottom" [collapse]="isCollapseFormSearchClient" [isAnimated]="true">
+    <form (keydown.enter)="$event.preventDefault()" [formGroup]="searchClientForm" autocomplete="off">
+      <div class="row g-1">
+        <div class="col-lg-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
+          <label for="tipo_documentos_id" class="form-label">{{translatedLabel}}</label>
+          <ng-select id="tipo_documentos_id" formControlName="tipo_documentos_id"
+            [notFoundText]="'No se encontraron elementos'"
+            [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submittedSearchClient) }">
+            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</ng-option>
+            <ng-option *ngFor="let typeDocument of listTypeDocumentFilters"
+              [value]="typeDocument.id">{{typeDocument.abreviacion}}</ng-option>
+          </ng-select>
+          <div
+            *ngIf="fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submittedSearchClient)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fs.tipo_documentos_id.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.document_number.label' | translate as translatedLabel;">
+          <label for="documento" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="documento" class="form-control"
+            (keyup.enter)="searchClient()"
+            placeholder="{{'FORMS.FIELD_NAMES.document_number.placeholder' | translate}}" formControlName="documento"
+            [ngClass]="{ 'is-invalid': fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submittedSearchClient) }" />
+          <div *ngIf="fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submittedSearchClient)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fs.documento.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+            <div *ngIf="fs.documento.errors.minlength">
+              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+              replaceAttribute: ':minlength': fs.documento.errors.minlength.requiredLength}}
+            </div>
+            <div *ngIf="fs.documento.errors.maxlength">
+              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+              replaceAttribute: ':maxlength': fs.documento.errors.maxlength.requiredLength}}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 mb-3 d-none" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
+          <label for="nombre" class="form-label">{{translatedLabel}}</label>
+          <input type="text" id="nombre" class="form-control"
+            placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre"
+            [ngClass]="{ 'is-invalid': fs.nombre.errors && (fs.nombre.dirty || fs.nombre.touched || submittedSearchClient) }" />
+          <div *ngIf="fs.nombre.errors && (fs.nombre.dirty || fs.nombre.touched || submittedSearchClient)"
+            class="invalid-feedback" align="left">
+            <div *ngIf="fs.nombre.errors['required']">
+              {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+              translatedLabel}}
+            </div>
+            <div *ngIf="fs.nombre.errors.minlength">
+              {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+              replaceAttribute: ':minlength': fs.nombre.errors.minlength.requiredLength}}
+            </div>
+            <div *ngIf="fs.nombre.errors.maxlength">
+              {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+              replaceAttribute: ':maxlength': fs.nombre.errors.maxlength.requiredLength}}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 mb-3">
+          <label for="" class="form-label w-100">&nbsp;</label>
+          <div class="input-group">
+            <button type="button" class="btn btn-warning" (click)="searchClient()">
+              <i class="mdi mdi-magnify"></i>
+              {{'FORMS.BUTTONS.SEARCH' | translate}}
+            </button>
+            <button type="button" class="btn btn-success" (click)="toggleFormClient(false)">
+              <i class="mdi mdi-plus"></i>
+              {{'FORMS.BUTTONS.ADD' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- FORMULARIOS CLIENTE -->
+  <div class="card-body" [collapse]="isCollapseFormClient" [isAnimated]="true">
+    <app-form-client [data]="shareDataClient" [dataPerson]="shareDataPerson" [dataCompany]="shareDataCompany" (cancel)="onCancelClient($event)"></app-form-client>
+  </div>
+  <div class="card-footer" [collapse]="isCollapseFormClient" [isAnimated]="true">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" (click)="toggleFormClient()">
+        <i class="mdi mdi-close me-1"></i>{{'FORMS.BUTTONS.CLOSE' |translate}}
+      </button>
+      <!-- <button type="button" class="btn btn-secondary" (click)="onResetForms()">
+        <i class="mdi mdi-book-refresh-outline me-1"></i>{{'FORMS.BUTTONS.RESET' | translate}}
+      </button> -->
+      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewDataClient" (click)="saveClient()">{{'FORMS.BUTTONS.SAVE' | translate}}</button> -->
+      <!-- <button type="button" class="btn btn-success" (click)="saveClient()">{{'FORMS.BUTTONS.SAVE_CHANGE' |
+        translate}}</button> -->
+    </div>
+  </div>
+</div>

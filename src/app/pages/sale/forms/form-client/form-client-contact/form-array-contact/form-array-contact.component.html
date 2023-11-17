@@ -1,0 +1,63 @@
+<form [formGroup]="contactForm" autocomplete="off">
+  <div formArrayName="formList" class="bg-light px-2 py-2 rounded position-relative">
+
+    <div *ngIf="showList">
+      <div *ngFor="let fi of formListContact.controls; let i=index;">
+        <div [formGroupName]="i" class="row g-2 bg-transparent border-top border-info mb-3">
+          <div class="col-12" style="z-index: 1500;">
+            <span class="badge rounded-pill badge-soft-info bg-info text-white position-absolute bottom-0 start-0">{{i + 1}}</span>
+            <button type="button" class="btn btn-outline-danger btn-sm rounded-circle position-absolute top-0 end-0"
+              *ngIf="visibleCloseBtn" 
+              (click)="removeFieldContact(i)"> <i class="fas fa-times" ></i></button>
+          </div>
+          <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+            <label for="tipo" class="form-label">{{translatedLabel}} (*)</label>
+            <select class="form-select custom-select" id="tipo" formControlName="tipo" [ngClass]="{ 'is-invalid': fi.get('tipo').errors && (fi.get('tipo').dirty || fi.get('tipo').touched || submitted) }">
+              <option value="">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</option>
+              <option *ngFor="let contact of listTypeContact" [value]="contact.id">{{contact.name}}</option>
+            </select>
+            <div *ngIf="fi.get('tipo').errors && (fi.get('tipo').dirty || fi.get('tipo').touched || submitted)" class="invalid-feedback" align="left">
+              <div *ngIf="fi.get('tipo').errors.required">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.contact.label' | translate as translatedLabel;">
+            <label for="contacto" class="form-label">{{translatedLabel}} (*)</label>
+            <input type="text" maxlength="250" id="contacto" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.contact.placeholder' | translate}}" formControlName="contacto" [ngClass]="{ 'is-invalid': fi.get('contacto').errors && (fi.get('contacto').dirty || fi.get('contacto').touched || submitted)}" />
+            <div *ngIf="fi.get('contacto').errors && (fi.get('contacto').dirty || fi.get('contacto').touched || submitted)" class="invalid-feedback" align="left">
+              <div *ngIf="fi.get('contacto').errors.required">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+              <div *ngIf="fi.get('contacto').errors.maxlength">
+                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.get('contacto').errors.maxlength.requiredLength}}
+              </div>
+              <div *ngIf="fi.get('contacto').errors.minlength">
+                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.get('contacto').errors.minlength.requiredLength}}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3 d-flex align-items-center" *ngIf="'FORMS.FIELD_NAMES.is_primary.label' | translate as translatedLabel;">
+            <!-- <label for="fi.get('is_primary')" class="form-label">{{translatedLabel}}</label> -->
+            <div class="form-check form-check-info">
+              <input class="form-check-input" type="checkbox" id="is_primary{{i}}_contact" formControlName="is_primary" [ngClass]="{ 'is-invalid': fi.get('is_primary').errors && (fi.get('is_primary').dirty || fi.get('is_primary').touched || submitted) }">
+              <label class="form-check-label" for="is_primary{{i}}_contact">
+                {{translatedLabel}}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-relative">
+      <strong type="button" (click)="showList = !showList" class="text-info"><i class="mdi mdi-arrow-up-thick me-1" [ngClass]="{'mdi-eye-off': showList, 'mdi-eye': !showList}"></i> Contacto</strong>
+      <button type="button" (click)="addFieldContact()" class="btn btn-outline-info rounded-pill position-absolute bottom-0 end-0" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+        <i class="fas fa-plus me-1 font-size-10" ></i> {{'FORMS.BUTTONS.ADD' | translate}}
+      </button>
+      <!-- <button type="button" class="btn btn-sm btn-success rounded-pill position-absolute bottom-0 end-0" (click)="addFieldIdentification()"><i class="fas fa-plus"></i></button> -->
+    </div>
+  </div>
+</form>
+

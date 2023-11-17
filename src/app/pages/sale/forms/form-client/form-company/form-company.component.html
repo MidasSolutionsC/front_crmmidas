@@ -1,0 +1,124 @@
+<form (keydown.enter)="$event.preventDefault()" [formGroup]="companyForm" autocomplete="off">
+  <h5 class="card-title fw-semibold">Datos personales</h5>
+  <div class="row g-2">
+    <div class="col-lg-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.country.label' | translate as translatedLabel;">
+      <label for="paises_id" class="form-label">{{translatedLabel}}</label>
+      <ng-select id="paises_id" formControlName="paises_id" autofocus
+        (change)="onChangeCountry($event)"
+        [notFoundText]="'No se encontraron elementos'"
+        [ngClass]="{ 'is-invalid': f.paises_id.errors && (f.paises_id.dirty || f.paises_id.touched || submittedCompany) }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.country.default_option' | translate}}</ng-option>
+        <ng-option *ngFor="let country of listCountries" [value]="country.id">{{country.nombre}}</ng-option>
+      </ng-select>
+      <div *ngIf="f.paises_id.errors && (f.paises_id.dirty || f.paises_id.touched || submittedCompany)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.paises_id.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-3" *ngIf="nameCountrySelected ==  'PERÚ' && 'FORMS.FIELD_NAMES.district.label' | translate as translatedLabel;">
+      <label for="codigo_ubigeo" class="form-label">{{translatedLabel}}</label>
+      <ng-select 
+                id="codigo_ubigeo" [ngClass]="{ 'is-invalid': f.codigo_ubigeo.errors && (f.codigo_ubigeo.dirty || f.codigo_ubigeo.touched || submittedCompany) }"
+                [items]="listUbigeos"
+                [bindValue]="'ubigeo'"
+                [bindLabel]="'ciudad'"
+                [multiple]="false"
+                formControlName="codigo_ubigeo"
+                (search)="searchOptionUbigeo($event.term)">
+      </ng-select>
+      <div *ngIf="f.codigo_ubigeo.errors && (f.codigo_ubigeo.dirty || f.codigo_ubigeo.touched || submittedCompany)" class="invalid-feedback" align="left">
+        <div *ngIf="f.codigo_ubigeo.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.type_company.label' | translate as translatedLabel;">
+      <label for="tipo_empresa" class="form-label">{{translatedLabel}}</label>
+      <ng-select id="tipo_empresa" formControlName="tipo_empresa"
+        [notFoundText]="'No se encontraron elementos'"
+        [ngClass]="{ 'is-invalid': f.tipo_empresa.errors && (f.tipo_empresa.dirty || f.tipo_empresa.touched || submittedCompany) }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_company.default_option' | translate}}</ng-option>
+        <ng-option value="Sociedad Anónima">Sociedad Anónima (S.A.)</ng-option>
+        <ng-option value="Sociedad de Responsabilidad Limitada">Sociedad de Responsabilidad Limitada (S.R.L.)</ng-option>
+        <ng-option value="Sociedad Anónima Simplificada">Sociedad Anónima Simplificada (S.A.S.)</ng-option>
+        <ng-option value="Empresa Individual de Responsabilidad Limitada">Empresa Individual de Responsabilidad Limitada (E.I.R.L.)</ng-option>
+        <ng-option value="Cooperativa">Cooperativa</ng-option>
+        <ng-option value="Asociación">Asociación</ng-option>
+        <ng-option value="Empresa Conjunta">Empresa Conjunta (Joint Venture)</ng-option>
+        <ng-option value="Emprendimiento Individual">Emprendimiento Individual</ng-option>
+        <ng-option value="Empresa Pública:">Empresa Pública:</ng-option>
+        <ng-option value="Empresa Privada:">Empresa Privada:</ng-option>
+        <ng-option value="Empresa Mixta:">Empresa Mixta:</ng-option>
+      </ng-select>
+      <div *ngIf="f.tipo_empresa.errors && (f.tipo_empresa.dirty || f.tipo_empresa.touched || submittedCompany)" class="invalid-feedback" align="left">
+        <div *ngIf="f.tipo_empresa.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
+        <div *ngIf="f.tipo_empresa.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.tipo_empresa.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.tipo_empresa.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.tipo_empresa.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-2">
+    <div class="col-md-6 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.business_name.label' | translate as translatedLabel;">
+      <label for="razon_social" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="razon_social" class="form-control"
+        formControlName="razon_social"
+        placeholder="{{'FORMS.FIELD_NAMES.business_name.placeholder' | translate}}"
+        [ngClass]="{ 'is-invalid': f.razon_social.errors && (f.razon_social.dirty || f.razon_social.touched || submittedCompany) }" />
+      <div *ngIf="f.razon_social.errors && (f.razon_social.dirty || f.razon_social.touched || submittedCompany)" class="invalid-feedback" align="left">
+        <div *ngIf="f.razon_social.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.razon_social.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.razon_social.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.razon_social.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.razon_social.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3"
+      *ngIf="'FORMS.FIELD_NAMES.tradename.label' | translate as translatedLabel;">
+      <label for="nombre_comercial" class="form-label">{{translatedLabel}}</label>
+      <input type="text" id="nombre_comercial" class="form-control"
+        formControlName="nombre_comercial"
+        placeholder="{{'FORMS.FIELD_NAMES.tradename.placeholder' | translate}}"
+        [ngClass]="{ 'is-invalid': f.nombre_comercial.errors && (f.nombre_comercial.dirty || f.nombre_comercial.touched || submittedCompany) }" />
+      <div *ngIf="f.nombre_comercial.errors && (f.nombre_comercial.dirty || f.nombre_comercial.touched || submittedCompany)"
+        class="invalid-feedback" align="left">
+        <div *ngIf="f.nombre_comercial.errors['required']">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
+        <div *ngIf="f.nombre_comercial.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.nombre_comercial.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.nombre_comercial.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.nombre_comercial.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <app-form-identification #formIdentification [submitted]="submitted" [data]="shareIdentifications"></app-form-identification>
+  </div>
+  <div class="mb-3">
+    <app-form-array-contact #formContact [submitted]="submitted" [data]="shareContacts"></app-form-array-contact>
+  </div>
+
+  <div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
+    <button type="button" class="btn btn-light" (click)="onCancel()" [hidden]="hiddenButtons">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+    <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="onSubmit()" [hidden]="hiddenButtons">{{'FORMS.BUTTONS.REGISTER' | translate}}</button>
+    <button type="button" class="btn btn-info"  *ngIf="!isNewData" (click)="onSubmit()" [hidden]="hiddenButtons">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+  </div>
+</form>

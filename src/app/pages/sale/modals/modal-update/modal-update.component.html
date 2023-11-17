@@ -1,0 +1,131 @@
+<div class="modal-content" role="document">
+  <div class="modal-header">
+    <h5 class="modal-title font-bold" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body modal-body-fullscreen-responsive">
+    <ng-stepper #cdkStepper [linear]="true" class="wizard">
+      <cdk-step [optional]="false">
+        <ng-template cdkStepLabel>
+          <span class="number">1</span>
+          <span>Servicios e instalaciones</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 0">
+          <accordion [isAnimated]="true" [closeOthers]="true">
+            <accordion-group heading="Seleccionar servicio y registrar las instalaciones" [isOpen]="true">
+              ...
+            </accordion-group>
+
+            <accordion-group heading="Detalle de la venta, servicios añadidos">
+              <div class="row g-2">
+                ..
+              </div>
+            </accordion-group>
+          </accordion>
+
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">2</span>
+          <span>Cliente</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 1">
+          <div>
+            <app-form-client></app-form-client>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">3</span>
+          <span>Venta</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 2">
+          <div>
+            <accordion [isAnimated]="true" [closeOthers]="true">
+              <accordion-group heading="Archivos" [isOpen]="true">
+                <!-- <app-form-sale-document></app-form-sale-document> -->
+                <app-table-sale-document></app-table-sale-document>
+              </accordion-group>
+              <accordion-group heading="Comentarios" [isOpen]="false">
+                <!-- <app-form-sale-comment></app-form-sale-comment> -->
+                <app-table-sale-comment></app-table-sale-comment>
+              </accordion-group>
+              <accordion-group heading="Historial" [isOpen]="false">
+                <!-- <app-form-sale-history></app-form-sale-history> -->
+                <app-table-sale-history></app-table-sale-history>
+              </accordion-group>
+            </accordion>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">4</span>
+          <span>Confirmar proceso</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 3">
+          <div>
+            <accordion [isAnimated]="true" [closeOthers]="true">
+              <accordion-panel heading="Vista previa" [isOpen]="true" >
+                <app-info-general></app-info-general>
+              </accordion-panel>
+            </accordion>
+            <div class="row justify-content-center">
+              <div class="col-lg-6">
+                <div class="text-center">
+                  <div class="mb-4">
+                    <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                  </div>
+                  <div>
+                    <h5>Confirmar registro de la venta</h5>
+                    <p class="text-muted">Para confirmar el registro de la venta, hacer clic en Finalizar</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext
+                (click)="saveSaleFinal()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+    </ng-stepper>
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
+    </div>
+  </div>
+
+</div>
+

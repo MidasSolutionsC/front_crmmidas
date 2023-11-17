@@ -1,0 +1,24 @@
+<form (keydown.enter)="$event.preventDefault()" [formGroup]="commentForm" autocomplete="off" >
+  <div class="row g-2">
+    <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.comment.label' | translate as translatedLabel;">
+      <label for="comentario" class="form-label">{{translatedLabel}} *</label>
+      <textarea id="comentario" cols="30" rows="3" #focusComentario class="form-control" formControlName="comentario"  placeholder="{{'FORMS.FIELD_NAMES.comment.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.comentario.errors && (f.comentario.dirty || f.comentario.touched || submitted) }"></textarea>
+      <div *ngIf="f.comentario.errors && (f.comentario.dirty || f.comentario.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.comentario.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.comentario.errors.minlength">
+          {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.comentario.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.comentario.errors.maxlength">
+          {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.comentario.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
+    <button type="button" class="btn btn-light" (click)="onCancel()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+    <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.REGISTER' | translate}}</button>
+    <button type="button" class="btn btn-info"  *ngIf="!isNewData" (click)="onSubmit()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+  </div>
+</form>

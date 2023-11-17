@@ -1,0 +1,176 @@
+<div class="container-fluid">
+  <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body border-bottom">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
+            <div class="flex-shrink-0 d-flex gap-1">
+              <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
+              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body border-bottom">
+          <h4 class="card-title">Lista de anuncios</h4>
+          <p class="card-sub-title">
+            Anuncios registrados hasta el momento
+          </p>
+          <div class="row mb-md-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length" id="tickets-table_length"><label
+                class="d-inline-flex align-items-center">Mostrar
+                <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+                  [(ngModel)]="perPage" class="form-control form-control-sm mx-2" (change)="apiAdvertisementListPagination()">
+                  <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
+                </select> registros</label>
+              </div>
+            </div>
+            <!-- Search -->
+            <div class="col-sm-12 col-md-6">
+              <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
+                  class="d-inline-flex align-items-center">Buscar:
+                  <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
+                    aria-controls="tickets-table" [(ngModel)]="search" (input)="apiAdvertisementListPagination()"></label>
+              </div>
+            </div>
+            <!-- End search -->
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+              <thead>
+                <tr>
+                  <th scope="col">N°</th>
+                  <th scope="col">Titulo</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">tipo</th>
+                  <th scope="col">Imagen</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Fecha creado</th>
+                  <th scope="col">Fecha modificado</th>
+                  <th scope="col">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of lists; let i = index">
+                  <th scope="row">{{i + 1}}</th>
+                  <td>{{data.titulo}}</td>
+                  <td>{{data.descripcion}}</td>
+                  <td><span class="badge text-md" [ngClass]="{ 'bg-info': data.tipo == 'I', 'bg-primary': data.tipo == 'E'}">{{data.tipo_text}}</span></td>
+                  <td><img *ngIf="data.imagen" [src]="URL_FILES + data.imagen" alt="render" style="max-height: 140px;"></td>
+                  <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
+                  <td>{{data.created_at}}</td>
+                  <td>{{data.updated_at}}</td>
+                  <td>
+                    <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
+                      </li>
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr *ngIf="!lists.length"><td colspan="9" class="text-center">Sin registros.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- End table -->
+          <div class="row justify-content-md-between align-items-md-center mt-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
+                Mostrando de 
+                <b>{{pagination.from}}</b> al
+                <b>{{pagination.to}}</b> de <b>{{pagination.total}}</b>
+                registros
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="col-sm-12 col-md-6">
+              <div class="text-md-right float-md-end pagination-rounded">
+                <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="total" [(ngModel)]="page" [itemsPerPage]="perPage" (pageChanged)="getPage($event)"></pagination>
+              </div>
+            </div>
+            <!-- End Pagination -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FORMULARIO -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+  </div>
+  <form (keydown.enter)="$event.preventDefault()" [formGroup]="advertisementForm" autocomplete="off">
+    <div class="modal-body">
+      <input type="hidden" name="id" value="" formControlName="id" />
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.title.label' | translate as translatedLabel;">
+        <label for="titulo" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="titulo" class="form-control" focus="true" placeholder="{{'FORMS.FIELD_NAMES.title.placeholder' | translate}}" formControlName="titulo" [ngClass]="{ 'is-invalid': form['titulo'].errors && (form.titulo.dirty || form.titulo.touched || submitted) }" />
+        <div *ngIf="form['titulo'].errors && (form.titulo.dirty || form.titulo.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['titulo'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">
+        <label for="descripcion" class="form-label">{{translatedLabel}}</label>
+        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion" [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
+        <div *ngIf="form.descripcion.errors && (form.descripcion.dirty || form.descripcion.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['descripcion'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+        <label class="col-md-2 col-form-label" for="tipo">{{translatedLabel}}</label>
+        <select class="form-select custom-select" id="tipo" formControlName="tipo" [ngClass]="{ 'is-invalid': form.tipo.errors && (form.tipo.dirty || form.tipo.touched || submitted) }">
+            <option value="">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</option>
+            <option value="I">Interno</option>
+            <option value="E">Externo</option>
+        </select>
+        <div *ngIf="form.tipo.errors && (form.tipo.dirty || form.tipo.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form['tipo'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.file.label' | translate as translatedLabel;">
+        <label for="file" class="form-label">{{translatedLabel}}</label>
+        <input class="form-control" type="file" id="file" #fileInput (change)="onFileSelected(fileInput)" [ngClass]="{'is-invalid': form.file && form.file.errors && (form.file.dirty || form.file.touched || submitted)}">
+        <div *ngIf="form.file && form.file.errors && (form.file.dirty || form.file.touched || submitted)" class="invalid-feedback" align="left">
+          <div *ngIf="form.file.errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="form.imagen.value">
+        <img [src]="'http://localhost:8000/files/advertisement/' + form.imagen.value" alt="preview" style="max-height: 140px;">
+      </div>
+      <div *ngIf="previewImage">
+        <img [src]="previewImage" alt="preview" style="max-width: 180px;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!--End Modal -->

@@ -1,0 +1,172 @@
+
+<form (keydown.enter)="$event.preventDefault()" [formGroup]="saleDetailForm" autocomplete="off">
+  <div class="row g-2">
+    <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.product.label' | translate as translatedLabel;">
+      <label for="productos_id" class="form-label">{{translatedLabel}} (*) 
+        <strong *ngIf="selectedProduct" class="ms-2 text-primary">Precio: 
+          <span *ngIf="selectedProduct?.tipo_monedas_iso_code != 'EUR'">{{selectedProduct?.tipo_monedas_simbolo}}</span>
+          {{selectedProduct?.precio}}
+          <span *ngIf="selectedProduct?.tipo_monedas_iso_code == 'EUR'">{{selectedProduct?.tipo_monedas_simbolo}}</span>
+        </strong>
+      </label>
+      <ng-select 
+          id="productos_id" [ngClass]="{ 'is-invalid': f.productos_id.errors && (f.productos_id.dirty || f.productos_id.touched || submitted) }"
+          [notFoundText]="'No se encontraron elementos'"
+          [items]="listProducts"
+          [bindValue]="'id'"
+          [bindLabel]="'nombre'"
+          [multiple]="false"
+          (change)="onChangeSelectedProduct($event)"
+          (search)="apiProductGetSearch($event.term)"
+          formControlName="productos_id">
+          <ng-template ng-option-tmp let-item="item">
+            <span>{{ item.nombre }}</span>
+            <!-- <span class="fw-semibold"> -{{ item.descuento }}</span> -->
+            <strong *ngIf="item" class="ms-2 text-primary">
+              <span *ngIf="item?.tipo_monedas_iso_code != 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+              {{item?.precio}}
+              <span *ngIf="item?.tipo_monedas_iso_code == 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+            </strong>
+          </ng-template>
+      </ng-select>
+      <div *ngIf="f.productos_id.errors && (f.productos_id.dirty || f.productos_id.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.productos_id.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.promotion.label' | translate as translatedLabel;">
+      <label for="promociones_id" class="form-label">{{translatedLabel}}
+        <span class="badge text-md ms-2" *ngIf="selectedPromotion" [ngClass]="{ 'bg-info': selectedPromotion.is_private == 1, 'bg-primary': selectedPromotion.is_private == 0}">{{selectedPromotion.is_private? 'Privado': 'Publico'}}</span>
+
+        <strong *ngIf="selectedPromotion" class="ms-2 text-danger">Descuento: 
+          <!-- {{selectedPromotion?.tipo_descuento == 'P'? '': selectedPromotion?.tipo_monedas_simbolo}} -->
+          <span *ngIf="selectedPromotion?.tipo_descuento == 'C' && selectedPromotion?.tipo_monedas_iso_code != 'EUR'">{{selectedPromotion?.tipo_monedas_simbolo}}</span>
+          {{selectedPromotion?.descuento}}
+          <span *ngIf="selectedPromotion?.tipo_descuento == 'C' && selectedPromotion?.tipo_monedas_iso_code == 'EUR'">{{selectedPromotion?.tipo_monedas_simbolo}}</span>
+          <span *ngIf="selectedPromotion?.tipo_descuento == 'P'">%</span>
+        </strong>
+      </label>
+      <ng-select 
+          id="promociones_id" [ngClass]="{ 'is-invalid': f.promociones_id.errors && (f.promociones_id.dirty || f.promociones_id.touched || submitted) }"
+          [notFoundText]="'No se encontraron elementos'"
+          [items]="listPromotions"
+          [bindValue]="'id'"
+          [bindLabel]="'nombre'"
+          [multiple]="false"
+          (change)="onChangeSelectedPromotion($event)"
+          (search)="apiPromotionGetSearch($event.term)"
+          formControlName="promociones_id">
+          <ng-template ng-option-tmp let-item="item">
+            <span>{{ item.nombre }}</span>
+            <span class="badge text-md ms-2" [ngClass]="{ 'bg-info': item.is_private == 1, 'bg-primary': item.is_private == 0}">{{item.is_private? 'Privado': 'Publico'}}</span>
+
+            <strong *ngIf="item" class="ms-2 text-danger"> -
+              <span *ngIf="item?.tipo_descuento == 'C' && item?.tipo_monedas_iso_code != 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+              {{item?.descuento}}
+              <span *ngIf="item?.tipo_descuento == 'C' && item?.tipo_monedas_iso_code == 'EUR'">{{item?.tipo_monedas_simbolo}}</span>
+              <span *ngIf="item?.tipo_descuento == 'P'">%</span>
+            </strong>
+          </ng-template>
+      </ng-select>
+      <div *ngIf="f.promociones_id.errors && (f.promociones_id.dirty || f.promociones_id.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.promociones_id.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATOS DETALLE SERVICIO -->
+  <div *ngIf="typeService?.includes('mobile')">
+    <app-form-mobile #mobileForm [submitted]="submitted" [listOperators]="listOperators" [listTypeDocuments]="listTypeDocuments"></app-form-mobile>
+  </div>
+  
+  <div *ngIf="typeService?.includes('fixed')">
+    <app-form-fixed #fixedForm [submitted]="submitted" [listOperators]="listOperators" [listTypeDocuments]="listTypeDocuments"></app-form-fixed>
+  </div>
+  
+  <div *ngIf="typeService?.includes('tv')">
+    <app-form-tv #tvForm [submitted]="submitted"></app-form-tv>
+  </div>
+  
+  <!-- <div class="row g-2">
+    <div class="col-md-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_status.label' | translate as translatedLabel;">
+      <label for="tipo_estados_id" class="form-label">{{translatedLabel}}</label>  
+      <ng-select id="tipo_estados_id" formControlName="tipo_estados_id" [ngClass]="{ 'is-invalid': f.tipo_estados_id.errors && (f.tipo_estados_id.dirty || f.tipo_estados_id.touched || submitted) }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.operator_donor.default_option' | translate}}</ng-option>
+        <ng-option *ngFor="let typeStatus of listTypeStatus" [value]="typeStatus.id">{{typeStatus.nombre}}</ng-option>
+      </ng-select>      
+      <div *ngIf="f.tipo_estados_id.errors && (f.tipo_estados_id.dirty || f.tipo_estados_id.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.tipo_estados_id.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.tipo_estados_id.errors.minlength">
+          {{ 'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.tipo_estados_id.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.tipo_estados_id.errors.maxlength">
+          {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.tipo_estados_id.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.close_date.label' | translate as translatedLabel;">
+      <label for="fecha_cierre" class="form-label">{{translatedLabel}}</label>
+      <input type="date" id="fecha_cierre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.close_date.placeholder' | translate}}" formControlName="fecha_cierre" [ngClass]="{ 'is-invalid': f.fecha_cierre.errors && (f.fecha_cierre.dirty || f.fecha_cierre.touched || submitted) }" />
+      <div *ngIf="f.fecha_cierre.errors && (f.fecha_cierre.dirty || f.fecha_cierre.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.fecha_cierre.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.fecha_cierre.errors.minlength">
+          {{ 'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.fecha_cierre.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.fecha_cierre.errors.maxlength">
+          {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.fecha_cierre.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>   
+  </div>   -->
+  <div class="row g-2">
+    <div class="col-lg-2 mb-3" *ngIf="'FORMS.FIELD_NAMES.different_address.label' | translate as translatedLabel;">
+      <label for="is_other_address" class="form-label w-100">¿{{translatedLabel}}?</label>
+      <ui-switch id="is_other_address" name="is_other_address" color="#556ee6" formControlName="is_other_address" uncheckedLabel="No" checkedLabel="Si" size="small" class="me-1 w-100"></ui-switch>
+    </div>
+    <div class="col-lg-10 mb-3" *ngIf="saleDetailForm.get('is_other_address').value && 'FORMS.FIELD_NAMES.direction.label' | translate as translatedLabel;">
+      <label for="instalaciones_id" class="form-label">{{translatedLabel}}</label>
+      <div class="input-group">
+        <ng-select 
+          class="w-auto flex-grow-1"
+          [items]="tmpListInstallationOptions"
+          [bindValue]="'id'"
+          [bindLabel]="'direccion_completo'"
+          [multiple]="false"
+          [notFoundText]="'No se encontraron elementos'"
+          formControlName="instalaciones_id"
+          (search)="apiTempInstallationSearch($event.term)">
+        </ng-select>
+        <button type="button" class="btn btn-primary"><i class="mdi mdi-plus me-1"></i> {{'FORMS.BUTTONS.ADD' | translate}}</button>
+      </div>
+      
+    </div>
+    <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.observation.label' | translate as translatedLabel;">
+      <label for="observacion" class="form-label">{{translatedLabel}}</label>
+      <textarea  id="observacion" cols="30" rows="1" formControlName="observacion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.observation.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.observacion.errors && (f.observacion.dirty || f.observacion.touched || submitted) }" ></textarea>
+      <div *ngIf="f.observacion.errors && (f.observacion.dirty || f.observacion.touched || submitted)" class="invalid-feedback" align="left">
+        <div *ngIf="f.observacion.errors.required">
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+        </div>
+        <div *ngIf="f.observacion.errors.minlength">
+          {{ 'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.observacion.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.observacion.errors.maxlength">
+          {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.observacion.errors.maxlength.requiredLength}}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="d-flex flex-row flex-wrap gap-2 justify-content-end">
+  <button type="button" class="btn btn-light" (click)="onCancel()"><i class="mdi mdi-cancel me-1"></i>{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+  <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="onSubmit()"><i class="mdi mdi-content-save me-1"></i> {{'FORMS.BUTTONS.SAVE' | translate}}</button>
+  <button type="button" class="btn btn-info"  *ngIf="!isNewData" (click)="onSubmit()"><i class="mdi mdi-content-save me-1"></i> {{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+</div>

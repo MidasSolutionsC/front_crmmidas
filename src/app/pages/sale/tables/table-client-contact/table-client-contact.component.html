@@ -1,0 +1,61 @@
+<div class="card shadow-sm border border-primary">
+  <div class="card-body border-bottom">
+    <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+      <div class="">
+        <h4 class="card-title text-primary">Contactos</h4>
+        <p class="card-sub-title">
+          Conatos del cliente
+        </p>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-primary" (click)="toggleForm()">
+          <i class="mdi" [ngClass]="{'mdi-plus': isCollapseForm, 'mdi-minus': !isCollapseForm}"></i>
+          Formulario
+        </button>
+        <button type="button" class="btn btn-secondary " (click)="toggleList()">
+          <i class="mdi" [ngClass]="{'mdi-arrow-collapse-down': isCollapseList, 'mdi-arrow-collapse-up': !isCollapseList}"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card-body border-bottom border-primary" [collapse]="isCollapseForm" [isAnimated]="true">
+    <app-form-client-contact [data]="dataForm" (submit)="onSubmit($event)" (cancel)="onCancel($event)"></app-form-client-contact>
+  </div>
+  <div class="card-body"  [collapse]="isCollapseList" [isAnimated]="true">
+    <div class="table-responsive">
+      <table class="table align-middle dt-responsive nowrap w-100 table-check">
+        <thead>
+          <tr>
+            <th scope="col">N°</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Contacto</th>
+            <th scope="col">Es primario</th>
+            <th scope="col" style="width: 5%;">Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of listContact; let i = index" >
+            <th scope="row">{{i + 1}}</th>
+            <td>{{data.tipo_text}}</td>
+            <td>{{data.contacto}}</td>
+            <td>{{data.is_primary? 'SI': 'NO'}}</td>
+            <td >
+              <ul class="list-unstyled hstack gap-1 mb-0">
+                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                  <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getDataRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
+                </li>
+                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                  <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                </li>
+              </ul>
+            </td>
+          </tr>
+          <tr *ngIf="!listContact.length">
+            <td colspan="7" class="text-center">Sin registros.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

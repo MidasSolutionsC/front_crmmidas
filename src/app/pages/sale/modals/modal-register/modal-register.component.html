@@ -1,0 +1,640 @@
+<div class="modal-content" role="document">
+  <div class="modal-header">
+    <h5 class="modal-title font-bold" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body modal-body-fullscreen-responsive">
+    <ng-stepper #cdkStepper [linear]="true" class="wizard">
+      <cdk-step [optional]="false">
+        <ng-template cdkStepLabel>
+          <span class="number">1</span>
+          <span>Servicios e instalaciones</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 0">
+          <accordion [isAnimated]="true" [closeOthers]="true">
+            <accordion-group heading="Seleccionar servicio y registrar las instalaciones" [isOpen]="true">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="card shadow-sm border border-primary">
+                    <div class="card-body border-bottom">
+                      <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+                        <div class="">
+                          <h4 class="card-title text-primary">1. Ubicaciones de las instalaciones</h4>
+                          <p class="card-sub-title">
+                            Direcciones donde se realizaran las instalaciones 
+                          </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <button type="button" class="btn btn-primary" (click)="toggleFormInstallation()">
+                            <i class="mdi" [ngClass]="{'mdi-plus': isCollapsedFormInstallation, 'mdi-minus': !isCollapsedFormInstallation}"></i>
+                            Formulario
+                          </button>
+                          <button type="button" class="btn btn-secondary " (click)="toggleListInstallation()">
+                            <i class="mdi" [ngClass]="{'mdi-arrow-collapse-down': isCollapsedInstallation, 'mdi-arrow-collapse-up': !isCollapsedInstallation}"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="card-body border-bottom border-primary" [collapse]="isCollapsedFormInstallation" [isAnimated]="true">
+                      <form (keydown.enter)="$event.preventDefault()" [formGroup]="installationForm" autocomplete="off">
+                        <div class="row g-2">
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
+                            <label for="tipo" class="form-label">{{translatedLabel}}</label>
+                            <ng-select id="tipo" formControlName="tipo" autofocus
+                              [notFoundText]="'No se encontraron elementos'"
+                              [ngClass]="{ 'is-invalid': fi.tipo.errors && (fi.tipo.dirty || fi.tipo.touched || submittedInstallation) }">
+                              <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</ng-option>
+                              <ng-option value="Avenida">Avenida</ng-option>
+                              <ng-option value="Calle">Calle</ng-option>
+                              <ng-option value="Pasaje">Pasaje</ng-option>
+                              <ng-option value="Urbanización">Urbanización</ng-option>
+                            </ng-select>
+                            <div *ngIf="fi['tipo'].errors && (fi.tipo.dirty || fi.tipo.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi['tipo'].errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-8 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.direction.label' | translate as translatedLabel;">
+                            <label for="direccion" class="form-label">{{translatedLabel}}</label>
+                            <textarea 
+                              name="direccion" id="direccion" cols="30" rows="1" class="form-control"    formControlName="direccion"  placeholder="{{'FORMS.FIELD_NAMES.direction.placeholder' | translate}}"
+                              [ngClass]="{ 'is-invalid': fi['direccion'].errors && (fi.direccion.dirty || fi.direccion.touched || submittedInstallation) }" 
+                            ></textarea>
+                            <div *ngIf="fi['direccion'].errors && (fi.direccion.dirty || fi.direccion.touched || submittedInstallation)" class="invalid-feedback" align="left">
+                              <div *ngIf="fi['direccion'].errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.direccion.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.direccion.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.direccion.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.direccion.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-2">
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.number.label' | translate as translatedLabel;">
+                            <label for="numero" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="numero" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.number.placeholder' | translate}}"
+                              formControlName="numero"
+                              [ngClass]="{ 'is-invalid': fi.numero.errors && (fi.numero.dirty || fi.numero.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.numero.errors && (fi.numero.dirty || fi.numero.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.numero.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.numero.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.numero.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.numero.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.numero.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.ladder.label' | translate as translatedLabel;">
+                            <label for="escalera" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="escalera" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.ladder.placeholder' | translate}}"
+                              formControlName="escalera"
+                              [ngClass]="{ 'is-invalid': fi.escalera.errors && (fi.escalera.dirty || fi.escalera.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.escalera.errors && (fi.escalera.dirty || fi.escalera.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.escalera.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.escalera.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.escalera.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.escalera.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.escalera.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.portal.label' | translate as translatedLabel;">
+                            <label for="portal" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="portal" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.portal.placeholder' | translate}}"
+                              formControlName="portal"
+                              [ngClass]="{ 'is-invalid': fi.portal.errors && (fi.portal.dirty || fi.portal.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.portal.errors && (fi.portal.dirty || fi.portal.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.portal.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                              <div *ngIf="fi.portal.errors.minlength">
+                                {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fi.portal.errors.minlength.requiredLength}}
+                              </div>
+                              <div *ngIf="fi.portal.errors.maxlength">
+                                {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fi.portal.errors.maxlength.requiredLength}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-2">
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.plant.label' | translate as translatedLabel;">
+                            <label for="planta" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="planta" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.plant.placeholder' | translate}}"
+                              formControlName="planta"
+                              [ngClass]="{ 'is-invalid': fi.planta.errors && (fi.planta.dirty || fi.planta.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.planta.errors && (fi.planta.dirty || fi.planta.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.planta.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.door.label' | translate as translatedLabel;">
+                            <label for="puerta" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="puerta" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.door.placeholder' | translate}}"
+                              formControlName="puerta"
+                              [ngClass]="{ 'is-invalid': fi.puerta.errors && (fi.puerta.dirty || fi.puerta.touched || submittedInstallation) }" />
+                            <div *ngIf="fi.puerta.errors && (fi.puerta.dirty || fi.puerta.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.puerta.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.code_postal.label' | translate as translatedLabel;">
+                            <label for="codigo_postal" class="form-label">{{translatedLabel}}</label>
+                            <input type="text" id="codigo_postal" class="form-control" focus="true"
+                              placeholder="{{'FORMS.FIELD_NAMES.code_postal.placeholder' | translate}}"
+                              formControlName="codigo_postal"
+                              [ngClass]="{ 'is-invalid': fi.codigo_postal.errors && (fi.codigo_postal.dirty || fi.codigo_postal.touched || submittedInstallation) }" />
+                            <div
+                              *ngIf="fi.codigo_postal.errors && (fi.codigo_postal.dirty || fi.codigo_postal.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.codigo_postal.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-2">
+                          <div class="col-md-6 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.location.label' | translate as translatedLabel;">
+                            <label for="localidad" class="form-label">{{translatedLabel}}</label>
+                            <textarea 
+                              name="localidad" id="localidad" cols="30" rows="1" class="form-control"    formControlName="localidad"  placeholder="{{'FORMS.FIELD_NAMES.location.placeholder' | translate}}"
+                              [ngClass]="{ 'is-invalid': fi['localidad'].errors && (fi.localidad.dirty || fi.localidad.touched || submittedInstallation) }" 
+                            ></textarea>
+                            <div
+                              *ngIf="fi.localidad.errors && (fi.localidad.dirty || fi.localidad.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.localidad.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6 mb-3"
+                            *ngIf="'FORMS.FIELD_NAMES.province.label' | translate as translatedLabel;">
+                            <label for="provincia" class="form-label">{{translatedLabel}}</label>
+                            <textarea 
+                              name="provincia" id="provincia" cols="30" rows="1" class="form-control"    formControlName="provincia"  placeholder="{{'FORMS.FIELD_NAMES.province.placeholder' | translate}}"
+                              [ngClass]="{ 'is-invalid': fi['provincia'].errors && (fi.provincia.dirty || fi.provincia.touched || submittedInstallation) }" 
+                            ></textarea>
+                            <div
+                              *ngIf="fi.provincia.errors && (fi.provincia.dirty || fi.provincia.touched || submittedInstallation)"
+                              class="invalid-feedback" align="left">
+                              <div *ngIf="fi.provincia.errors['required']">
+                                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
+                                translatedLabel}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" (click)="closeFormInstallation()">{{'FORMS.BUTTONS.CANCEL' | translate}}</button>
+                        <button type="button" class="btn btn-success" *ngIf="isNewDataInstallation" (click)="saveDataInstallation()">{{'FORMS.BUTTONS.ADD' | translate}}</button>
+                        <button type="button" class="btn btn-info" *ngIf="!isNewDataInstallation" (click)="saveDataInstallation()">{{'FORMS.BUTTONS.UPDATE' | translate}}</button>
+                      </div>
+                    </div>
+                    <div class="card-body"  [collapse]="isCollapsedInstallation" [isAnimated]="true">
+                      <div class="table-responsive">
+                        <table class="table align-middle dt-responsive nowrap w-100 table-check">
+                          <thead>
+                            <tr>
+                              <th scope="col">N°</th>
+                              <th scope="col">Dirección</th>
+                              <th scope="col">C. Postal</th>
+                              <th scope="col">Provincia</th>
+                              <th scope="col">Localidad</th>
+                              <th scope="col" style="width: 5%;">Operaciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let data of tmpListInstallations; let i = index" >
+                              <th scope="row">{{i + 1}}</th>
+                              <td>{{data.direccion_completo}}</td>
+                              <td>{{data.codigo_postal}}</td>
+                              <td>{{data.provincia}}</td>
+                              <td>{{data.localidad}}</td>
+                              <td >
+                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                  <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataInstallationGet(data.id)"><i class="mdi mdi-pencil-outline"></i></a>
+                                  </li>
+                                  <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                                    <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRowInstallation(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                                  </li>
+                                </ul>
+                              </td>
+                            </tr>
+                            <tr *ngIf="!tmpListInstallations.length">
+                              <td colspan="7" class="text-center">Sin registros.</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="card shadow-sm border border-info">
+                    <div class="card-body border-bottom">
+                      <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+                        <div class="">
+                          <h4 class="card-title text-primary">2. Lista de servicios</h4>
+                          <p class="card-sub-title">
+                            Seleccione los servicios que desea añadir a la venta
+                          </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <button type="button" class="btn btn-primary" (click)="confirmServiceSelected()" [disabled]="!listServiceSelected.length">
+                            <i class="mdi mdi-plus"></i>{{'FORMS.BUTTONS.ADD' | translate}}</button>
+                          <button type="button" class="btn btn-secondary " (click)="isCollapsedService = !isCollapsedService">
+                            <i class="mdi" [ngClass]="{'mdi-arrow-collapse-down': isCollapsedService, 'mdi-arrow-collapse-up': !isCollapsedService}"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body border-bottom border-primary" [collapse]="isCollapsedFormSearchInstallation" [isAnimated]="true">
+                      <div class="row">
+                        <div class="col-12 mb-3"
+                          *ngIf="'FORMS.FIELD_NAMES.direction.label' | translate as translatedLabel;">
+                          <h4 class="card-title mb-3">Indique la dirección de la instalación del servicio(opcional)</h4>
+                          <label for="tipo" class="form-label">{{translatedLabel}}</label>
+                          <div class="d-flex flex-row flex-wrap justify-content-between align-items-center gap-2">
+                            <div class="flex-grow-1" style="max-width: 100% !important;">
+                              <ng-select 
+                                class="w-100"
+                                [items]="tmpListInstallationOptions"
+                                [bindValue]="'id'"
+                                [bindLabel]="'direccion_completo'"
+                                [multiple]="false"
+                                [notFoundText]="'No se encontraron elementos'"
+                                [(ngModel)]="optionSearchInstallation"
+                                (change)="onSelectOptionInstallation($event)"
+                                (remove)="onRemoveOptionInstallation($event)"
+                                (search)="apiTempInstallationSearch($event.term)">
+                                
+                              </ng-select>
+                            </div>
+                            <div class="flex-auto">
+                              <div class="hstack gap-2 justify-content-md-start justify-content-end">
+                                <button type="button" class="btn btn-secondary" (click)="onRemoveOptionInstallation()">{{'FORMS.BUTTONS.CANCEL' | translate}}</button>    
+                                <div class="vr"></div>
+                                <button type="button" class="btn btn-success" (click)="saveDataSaleDetail()">{{'FORMS.BUTTONS.REGISTER' | translate}}</button>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- <div class="input-group">
+                          </div> -->
+                    
+                        </div>
+                        <div class="col-12 mb-3" *ngIf="tmpInstallationSelected">
+                          <strong class="text-primary mb-3">Elemento seleccionado</strong>
+                          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                            <strong>Dirección:</strong><span>{{tmpInstallationSelected.direccion_completo}}</span>
+                          </div>
+                          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                            <strong>Código postal:</strong><span>{{tmpInstallationSelected.codigo_postal}}</span>
+                          </div>
+                          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                            <strong>Provincia:</strong><span>{{tmpInstallationSelected.provincia}}</span>
+                          </div>
+                          <div class="d-flex flex-wrap column-gap-2 justify-content-start align-items-start mb-1">
+                            <strong>Localidad:</strong><span>{{tmpInstallationSelected.localidad}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body border-bottom"  [collapse]="isCollapsedService" [isAnimated]="true">
+                      <div class="row">
+                        <div class="col-sm-12 col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
+                          <label for="tipo_servicios_id" class="form-label">{{translatedLabel}}</label>
+                          <ng-select id="tipo_servicios_id"  [(ngModel)]="selectTypeService"  (change)="apiServiceListPagination()">
+                            <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_service.default_option_all' | translate}}</ng-option>
+                            <ng-option *ngFor="let typeService of listTypeServices" [value]="typeService.id">{{typeService.nombre}}</ng-option>
+                          </ng-select>
+                        </div>
+                      </div>
+                      <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                          <div class="dataTables_length" id="tickets-table_length"><label
+                              class="d-inline-flex align-items-center">Mostrar
+                              <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+                                [(ngModel)]="servicePerPage" class="form-control form-control-sm mx-2"
+                                (change)="apiServiceListPagination()">
+                                <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
+                              </select> registros</label>
+                          </div>
+                        </div>
+                        <!-- Search -->
+                        <div class="col-sm-12 col-md-6">
+                          <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
+                              class="d-inline-flex align-items-center">Buscar:
+                              <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
+                                aria-controls="tickets-table" [(ngModel)]="serviceSearch"
+                                (input)="apiServiceListPagination()"></label>
+                          </div>
+                        </div>
+                        <!-- End search -->
+                      </div>
+                    </div>
+                    <div class="card-body"  [collapse]="isCollapsedService" [isAnimated]="true">
+                      <div class="table-responsive">
+                        <table class="table align-middle dt-responsive nowrap w-100 table-check">
+                          <thead>
+                            <tr>
+                              <th style="width: 20px;">
+                                <div class="form-check font-size-16 align-middle">
+                                  <input class="form-check-input" type="checkbox" id="checkServiceAll"
+                                    [(ngModel)]="selectAllService" (change)="toggleAllSelectionService()">
+                                  <label class="form-check-label" for="checkServiceAll"></label>
+                                </div>
+                              </th>
+                              <th scope="col">N°</th>
+                              <th scope="col">Nombre</th>
+                              <th scope="col">Promoción</th>
+                              <th scope="col">Estado</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let data of listServices; let i = index" [ngClass]="{'table-success': getRowServiceIsRegistered(data.id), 'table-active': getCheckedRowService(data.id)}">
+                              <td>
+                                <div class="form-check font-size-16">
+                                  <input class="form-check-input" type="checkbox" id="checkService{{data.id}}"
+                                    value="{{data.id}}" [checked]="getCheckedRowService(data.id)"
+                                    [disabled]="getRowServiceIsRegistered(data.id)"
+                                    (change)="toggleSelectionService(data)">
+                                  <label class="form-check-label" for="checkService{{data.id}}"></label>
+                                </div>
+                              </td>
+                              <th scope="row">{{i + 1}}</th>
+                              <td>{{data.nombre}}</td>
+                              <td>{{data.promociones_nombre}}</td>
+                              <td><span class="badge text-md"
+                                  [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active?
+                                  'Activo': 'Inactivo'}}</span></td>
+                            </tr>
+                            <tr *ngIf="!listServices.length">
+                              <td colspan="7" class="text-center">Sin registros.</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <!-- End table -->
+                      <div class="row justify-content-md-between align-items-md-center mt-2">
+                        <div class="col-sm-12 col-md-6">
+                          <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
+                            Mostrando de
+                            <b>{{servicePagination.from}}</b> al
+                            <b>{{servicePagination.to}}</b> de <b>{{servicePagination.total}}</b>
+                            registros
+                          </div>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="col-sm-12 col-md-6">
+                          <div class="text-md-right float-md-end pagination-rounded">
+                            <pagination previousText="Anterior" nextText="Siguiente" [totalItems]="serviceTotal"
+                              [(ngModel)]="servicePage" [itemsPerPage]="servicePerPage"
+                              (pageChanged)="getPageService($event)"></pagination>
+                          </div>
+                        </div>
+                        <!-- End Pagination -->
+                      </div>
+                    </div>
+                  </div>
+                </div> 
+              </div>
+            </accordion-group>
+
+            <accordion-group heading="Detalle de la venta, servicios añadidos">
+              <div class="row g-2">
+                <div class="col-md-12 mb-3">
+                  <div class="card shadow-sm">
+                    <div class="card-body border-bottom">
+                      <div class="d-flex flex-row flex-wrap justify-content-between align-items-start">
+                        <div>
+                          <h4 class="card-title text-primary">3. Servicios añadidos a la lista</h4>
+                          <p class="card-sub-title">
+                            Servicios y direcciones del cliente
+                          </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <button type="button" class="btn btn-primary" (click)="toggleFormSaleDetail()" [disabled]="!saleDetailActive">
+                            <i class="mdi" [ngClass]="{'mdi-plus': isCollapseFormSaleDetail, 'mdi-minus': !isCollapseFormSaleDetail}"></i>
+                            Formulario
+                          </button>
+                          <button type="button" class="btn btn-secondary " (click)="toggleListSaleDetail()">
+                            <i class="mdi" [ngClass]="{'mdi-arrow-collapse-down': isCollapseSaleDetail, 'mdi-arrow-collapse-up': !isCollapseSaleDetail}"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body border-bottom border-primary" [collapse]="isCollapseFormSaleDetail" [isAnimated]="true">
+                      <h5 class="text-md">Campos del detalle de la venta</h5>
+                      <span class="badge bagde-info bg-info text-uppercase text-lg mb-3 font-size-14">{{titleFormSaleDetail}}</span>
+                      <app-form-sale-detail [typeService]="typeServiceFormSaleDetail" [data]="saleDetailActive" (cancel)="closeFormSaleDetail()" (formSubmit)="handleFormSaleDetail($event)"></app-form-sale-detail>
+                    </div>
+                    <div class="card-body" [collapse]="isCollapseSaleDetail" [isAnimated]="true">
+                      <div class="table-responsive">
+                        <table class="table align-middle dt-responsive nowrap w-100 table-check">
+                          <thead>
+                            <tr>
+                              <th scope="col">N°</th>
+                              <th scope="col">Servicio</th>
+                              <th scope="col">Instalación</th>
+                              <th scope="col">Observación</th>
+                              <th scope="col">Operaciones</th>
+                            </tr>
+                          </thead>
+                          <tbody *ngFor="let data of tmpListSaleDetails; let i = index">
+                            <tr [ngClass]="{'table-warning': getRowDetailIsNullJson(data)}">
+                              <th scope="row">{{i + 1}}</th>
+                              <td>{{data.servicios_nombre}}</td>
+                              <td>{{data.instalaciones_direccion_completo}}</td>
+                              <td>{{data.observacion}}</td>
+                              <td>
+                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                  <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalle">
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary" (click)="changeValueHideSubTable(i)"><i class="bx bx-detail"></i></a>
+                                  </li>
+                                  <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editSaleDetailGet(data.id)"><i class="mdi mdi-pencil-outline"></i></a>
+                                  </li>
+                                  <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-soft-danger" (click)="deleteRowSaleDetail(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                                  </li>
+                                </ul>
+                              </td>
+                            </tr>
+
+                            <!-- Detalle del servicio -->
+                            <tr *ngIf="subTableDetails[i].visible" class="sub-table no-bg">
+                              <td colspan="5" class="p-1">
+                                <app-table-sale-detail 
+                                  [typeService]="subTableDetails[i].typeService" 
+                                  [index]="i" 
+                                  [data]="subTableDetails[i].data" 
+                                  (cancel)="changeValueHideSubTable(i)"
+                                ></app-table-sale-detail>
+                              </td>
+                            </tr>
+                          </tbody>
+
+                          <tbody *ngIf="!tmpListSaleDetails.length">
+                            <tr>
+                              <td colspan="5" class="text-center">Sin registros.</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </accordion-group>
+          </accordion>
+
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">2</span>
+          <span>Cliente</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 1">
+          <div>
+            <app-form-client></app-form-client>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">3</span>
+          <span>Venta</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 2">
+          <div>
+            <accordion [isAnimated]="true" [closeOthers]="true">
+              <accordion-group heading="Archivos" [isOpen]="true">
+                <!-- <app-form-sale-document></app-form-sale-document> -->
+                <app-table-sale-document></app-table-sale-document>
+              </accordion-group>
+              <accordion-group heading="Comentarios" [isOpen]="false">
+                <!-- <app-form-sale-comment></app-form-sale-comment> -->
+                <app-table-sale-comment></app-table-sale-comment>
+              </accordion-group>
+              <accordion-group heading="Historial" [isOpen]="false">
+                <!-- <app-form-sale-history></app-form-sale-history> -->
+                <app-table-sale-history></app-table-sale-history>
+              </accordion-group>
+            </accordion>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0 mt-2">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+
+      <cdk-step [optional]="true">
+        <ng-template cdkStepLabel>
+          <span class="number">4</span>
+          <span>Confirmar proceso</span>
+        </ng-template>
+        <section *ngIf="cdkStepper.selectedIndex === 3">
+          <div>
+            <accordion [isAnimated]="true" [closeOthers]="true">
+              <accordion-panel heading="Vista previa" [isOpen]="true" >
+                <app-info-general></app-info-general>
+              </accordion-panel>
+            </accordion>
+            <div class="row justify-content-center">
+              <div class="col-lg-6">
+                <div class="text-center">
+                  <div class="mb-4">
+                    <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                  </div>
+                  <div>
+                    <h5>Confirmar registro de la venta</h5>
+                    <p class="text-muted">Para confirmar el registro de la venta, hacer clic en Finalizar</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="list-inline wizard d-flex justify-content-end mb-0">
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext
+                (click)="saveSaleFinal()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
+          </ul>
+        </section>
+      </cdk-step>
+    </ng-stepper>
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
+    </div>
+  </div>
+</div>
+

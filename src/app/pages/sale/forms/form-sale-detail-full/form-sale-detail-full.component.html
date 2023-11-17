@@ -1,0 +1,62 @@
+
+<div class="card card-body border" *ngIf="showFormIndicationService">
+  <!-- <h3 class="card-title mt-0">Servicios</h3> -->
+  <div class="row g-2">
+    <!-- <div class="col-md-6 d-none" *ngIf="'FORMS.FIELD_NAMES.brand.label' | translate as translatedLabel;">
+      <label for="" class="form-label">{{translatedLabel}} ({{'FORMS.FIELD_NAMES.bell.label' | translate}})</label>
+      <ng-select [(ngModel)]="brandId"
+        [notFoundText]="'No se encontraron elementos'"
+        [ngClass]="{ 'is-invalid': !brandId  }">
+        <ng-option [value]="''">{{'FORMS.FIELD_NAMES.brand.default_option' | translate}}</ng-option>
+        <ng-option *ngFor="let brand of listBrand"
+          [value]="brand.id">{{brand.nombre}}</ng-option>
+      </ng-select>
+      <div
+        *ngIf="!brandId"
+        class="invalid-feedback" align="left">
+        <div>
+          {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+        </div>
+      </div>
+    </div> -->
+    <div class="col-md-6" *ngIf="'FORMS.FIELD_NAMES.type_service.label' | translate as translatedLabel;">
+      <label for="" class="form-label">{{translatedLabel}}</label>
+      <div class="input-group">
+        <ng-select [(ngModel)]="typeServiceId"
+          class="flex-grow-1"
+          [notFoundText]="'No se encontraron elementos'"
+          [ngClass]="{ 'is-invalid': !typeServiceId }">
+          <ng-option [value]="''">{{'FORMS.FIELD_NAMES.type_service.default_option' | translate}}</ng-option>
+          <ng-option *ngFor="let typeService of listTypeService"
+            [value]="typeService.id"> 
+            <div class="d-flex flex-row align-items-center">
+              <div [innerHTML]="typeService.icono" class="font-size-16 text-info me-1"></div>
+              {{typeService.nombre}}
+            </div>
+          </ng-option>
+        </ng-select>
+        <button type="button" (click)="openFormService()" class="btn btn-success"><i class="mdi mdi-plus me-1"></i> {{'FORMS.BUTTONS.ADD' | translate}}</button>
+        <div
+          *ngIf="!typeServiceId"
+          class="invalid-feedback" align="left">
+          <div>
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':translatedLabel}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-body border border-success" *ngIf="showFormService">
+  <div class="">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <strong class="text-success text-uppercase font-size-16 d-flex flex-row align-items-center flex-wrap"> 
+        <div [innerHTML]="typeServiceIcon" class="font-size-22 text-success me-1"></div>
+         Formulario - {{typeServiceNombre}}
+        </strong>
+      <button type="button" (click)="onCancel()" class="btn btn-success"><i class="mdi mdi-plus me-1"></i> {{'FORMS.FIELD_NAMES.new_service.label' | translate}}</button>
+    </div>
+    <app-form-sale-detail (cancel)="onCancel($event)" (submit)="onDataSaleDetail($event)" [typeService]="shareTypeService"></app-form-sale-detail>
+  </div>
+</div>
