@@ -1,15 +1,15 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { ResponseApi, SaleComment, SaleCommentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SharedSaleService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SaleCommentService, SharedSaleService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-comment',
   templateUrl: './table-sale-comment.component.html',
   styleUrls: ['./table-sale-comment.component.scss']
 })
-export class TableSaleCommentComponent implements OnInit, OnDestroy {
+export class TableSaleCommentComponent implements OnInit, OnDestroy {  
   // Collapse
   isCollapseForm: boolean = true;
   isCollapseList: boolean = false;
@@ -29,6 +29,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
   constructor(
     private cdr: ChangeDetectorRef,
     private _sharedSaleService: SharedSaleService,
+    private _saleCommentService: SaleCommentService,
     private _tmpSaleCommentService: TempSaleCommentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -44,7 +45,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
       .pipe(filter((value) => value != null))
       .subscribe((value: number) => {
         this.saleId = value;
-        this.apiTmpSaleCommentFilterBySale(value);
+        this.apiSaleCommentFilterBySale(value);
         })
     )
 
@@ -91,9 +92,60 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
     }
   }
 
+
+
   /**
  * ****************************************************************
  * OPERACIONES CON LA API
+ * ****************************************************************
+ */
+  public apiSaleCommentFilterBySale(saleId: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleCommentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        this._saleCommentService.addArrayObserver(response.data);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar comentarios', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+  public apiSaleCommentDelete(id: number){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._saleCommentService.delete(id).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        const data: SaleCommentList = SaleCommentList.cast(response.data[0]);
+        this._saleCommentService.removeObjectObserver(data.id);
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al eliminar el comentario', message: error.message, timer: 2500});
+      }
+    });
+  }
+
+
+  /**
+ * ****************************************************************
+ * OPERACIONES CON LA API - TEMPORAL
  * ****************************************************************
  */
   public apiTmpSaleCommentFilterBySale(saleId: number){
@@ -165,7 +217,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
     
     
     // if(this.saleId){
-    //   this.apiTmpSaleCommentFilterBySale(this.saleId);
+    //   this.apiSaleCommentFilterBySale(this.saleId);
     // }
   }
 
@@ -187,7 +239,7 @@ export class TableSaleCommentComponent implements OnInit, OnDestroy {
   deleteRow(id: any){
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el comentario?').then((confirm) => {
       if(confirm.isConfirmed){
-        this.apiTmpSaleCommentFilterBySale(id);
+        this.apiSaleCommentFilterBySale(id);
       }
     });
   }

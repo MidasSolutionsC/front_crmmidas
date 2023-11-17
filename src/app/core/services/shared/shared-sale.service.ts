@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Installation, InstallationList, SaleDetailList } from '../../models';
+import { Installation, InstallationList, Sale, SaleDetailList } from '../../models';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +12,25 @@ export class SharedSaleService {
   private typeServiceId: BehaviorSubject<number | string> = new BehaviorSubject<number | string>(null);
   private installationId: BehaviorSubject<number | string> = new BehaviorSubject<number | string>(null);
   private dataInstallation: BehaviorSubject<InstallationList> = new BehaviorSubject<InstallationList>(null);
+  private dataSale: BehaviorSubject<Sale> = new BehaviorSubject<Sale>(null);
   private saleDetail: BehaviorSubject<SaleDetailList> = new BehaviorSubject<SaleDetailList>(null);
-  private clearSale: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+  private clearData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
 
-  constructor() { }
+  constructor() {
+    this.clearData.asObservable().subscribe((value: boolean) => {
+      if(value){
+        this.saleId.next(null);
+        this.brandId.next(null);
+        this.typeProduct.next(null);
+        this.typeServiceId.next(null);
+        this.installationId.next(null);
+        this.dataInstallation.next(null);
+        this.dataSale.next(null);
+        this.saleDetail.next(null);
+        // this.clearData.next(null);
+      }
+    })
+   }
 
   // VENTA
   getSaleId() {
@@ -24,6 +39,14 @@ export class SharedSaleService {
 
   setSaleId(value: number) {
     this.saleId.next(value);
+  }
+
+  getDataSale() {
+    return this.dataSale.asObservable();
+  }
+
+  setDataSale(data: Sale) {
+    this.dataSale.next(data);
   }
 
   // MARCA
@@ -81,11 +104,11 @@ export class SharedSaleService {
   }
 
   // LIMPIAR DATOS Y VARIABLES DE LA VENTA
-  getClear() {
-    return this.clearSale.asObservable();
+  getClearData() {
+    return this.clearData.asObservable();
   }
 
-  setClear(value: boolean) {
-    this.clearSale.next(value);
+  setClearData(value: boolean) {
+    this.clearData.next(value);
   }
 }

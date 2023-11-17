@@ -91,6 +91,8 @@
             <ul class="list-inline wizard d-flex justify-content-end mb-0">
               <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
                   cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+              <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-dark"
+                  (click)="cancelSaleFinal()">{{'FORMS.BUTTONS.CANCEL' | translate}}</button></li>
               <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext
                   (click)="saveSaleFinal()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
             </ul>

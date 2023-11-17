@@ -35,15 +35,15 @@
         <div class="row g-2" *ngIf="typeProduct !== 'P'">
           <div class="col-lg-6 mb-2">
             <label for="retailx_id" class="form-label">ID RETAIL X:</label>
-            <input type="text" class="form-control" id="retailx_id" [(ngModel)]="retailxId" placeholder="ID RETAIL X" value="">
+            <input type="text" class="form-control" id="retailx_id" [(ngModel)]="dataSale.value.retailx_id" placeholder="ID RETAIL X" value="">
           </div>
           <div class="col-lg-6 mb-2">
             <label for="smart_id" class="form-label">ID SMART:</label>
-            <input type="text" class="form-control" id="smart_id" [(ngModel)]="smartId" placeholder="ID SMART" value="">
+            <input type="text" class="form-control" id="smart_id" [(ngModel)]="dataSale.value.smart_id" placeholder="ID SMART" value="">
           </div>
           <div class="col-lg-6 mb-2">
             <label for="smart_address_id" class="form-label">ID DIRECCIÓN SMART:</label>
-            <input type="text" class="form-control" id="smart_address_id"  [(ngModel)]="smartAddressId"  placeholder="ID DIRECCIÓN SMART" value="">
+            <input type="text" class="form-control" id="smart_address_id"  [(ngModel)]="dataSale.value.direccion_smart_id"  placeholder="ID DIRECCIÓN SMART" value="">
           </div>
         </div>
 

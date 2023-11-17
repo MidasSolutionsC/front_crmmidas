@@ -117,6 +117,15 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
         }
       })
     )
+
+    // LIMPIAR DATOS
+    this.subscription.add(
+      this._sharedClientService.getClearData().subscribe((value: boolean) => {
+        if(value){
+          this.onReset()
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
@@ -713,5 +722,16 @@ export class FormSaleInstallationComponent implements OnInit, OnDestroy, OnChang
     this.submitted = false;
     this.isNewData = true;
     this.installationForm.reset(new Installation());
+    this.data = null;
+    this.listAddress = [];
+    this.listInstallation = [];
+    this.isOtherDirection = false;
+    this.isNewData = true;
+    this.submitted = false;
+
+    this.saleId = null;
+    this.companyId = null;
+    this.personId = null;
+    this.clientId = null;
   }
 }

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, filter } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { ResponseApi, SaleComment, SaleCommentList } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SharedSaleService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, SaleCommentService, SharedSaleService, SweetAlertService, TempSaleCommentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-form-sale-comment',
@@ -36,6 +36,7 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
     private cdr: ChangeDetectorRef,
     private _sharedSaleService: SharedSaleService,
     private _tmpSaleCommentService: TempSaleCommentService,
+    private _saleCommentService: SaleCommentService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
@@ -90,6 +91,82 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
   private apiSaleCommentSave(data: SaleComment | FormData){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
+      this._saleCommentService.register(data).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 201){
+          if(response.data[0]){
+            const data: SaleCommentList = SaleCommentList.cast(response.data[0]);
+            this._saleCommentService.addObjectObserver(data);
+            this.submit.emit({process: 'saved', data});
+            this.onReset();
+          }
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al registrar el comentario', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+
+  private apiSaleCommentUpdate(data: SaleComment | FormData, id: number){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
+      this._saleCommentService.update(data, id).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if(response.code == 200){
+          if(response.data[0]){
+            const data: SaleCommentList = SaleCommentList.cast(response.data[0]);
+            this._saleCommentService.updateObjectObserver(data);
+            this.onReset();
+            this.submit.emit({process: 'updated', data});
+          }
+        }
+
+        if(response.code == 422){
+          if(response.errors){
+            const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          }
+        }
+
+        if(response.code == 500){
+          if(response.errors){
+            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+          }
+        }
+      }, (error) => {
+        this._sweetAlertService.stop();
+        if(error.message){
+          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al actualizar el comentario', message: error.message, timer: 2500});
+        }
+      })
+    )
+  }
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - TEMPORAL
+   * ****************************************************************
+   */
+  private apiTempSaleCommentSave(data: SaleComment | FormData){
+    this._sweetAlertService.loadingUp()
+    this.subscription.add(
       this._tmpSaleCommentService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 201){
@@ -122,7 +199,7 @@ export class FormSaleCommentComponent implements OnInit, OnDestroy, OnChanges  {
     )
   }
 
-  private apiSaleCommentUpdate(data: SaleComment | FormData, id: number){
+  private apiTempSaleCommentUpdate(data: SaleComment | FormData, id: number){
     this._sweetAlertService.loadingUp()
     this.subscription.add(
       this._tmpSaleCommentService.update(data, id).subscribe((response: ResponseApi) => {
