@@ -1,40 +1,60 @@
 <div class="container-fluid">
-  <app-page-title title="Inicio" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 
   <div class="row">
+
     <div class="col-6">
       <div class="card">
-        <div class="card-title">
-          <br>
-          <h1>   Anuncios Internos</h1>
-        </div>
-
-        <div class="card-body">
-
-          <app-advertisement> </app-advertisement>
-
-
-
-
-
-        </div>
+            <h1 class="card-title">Anuncios Internos</h1>
+            <div class="card-body">
+              <div *ngFor="let anuncio of lists">
+                <!-- Carousel with caption -->
+                <carousel>
+                  <slide>
+                      <div *ngIf="anuncio.tipo === 'I'" class="card_anuncio" >
+                        <img *ngIf="anuncio.imagen" [src]="URL_FILES + anuncio.imagen" alt="first slide" class="d-block img-fluid" style="max-height: 600px">
+                        <center> <h5 class="title">{{ anuncio.titulo }} </h5> </center>
+                        <center> <p class="descripcion">{{ anuncio.descripcion }}</p> </center>
+                      </div>
+                  </slide>
+                </carousel>
+                <!-- End carousel -->
+              </div>
+            </div>
       </div>
     </div>
-
-
-   <div class="col-6">
-    <div class="card">
-      <div class="card-title">
-        <br>
-        <h1>    Anuncios Externos</h1>
+    <div class="col-6">
+      <div class="card">
+             <h1 class="card-title">Anuncios Externos</h1>
+             <div class="card-body">
+               <div *ngFor="let anuncio of lists">
+                 <!-- Carousel with caption -->
+                 <carousel>
+                   <slide>
+                     <div *ngIf="anuncio.tipo === 'E'" class="card_anuncio" >
+                      <img *ngIf="anuncio.imagen" [src]="URL_FILES + anuncio.imagen" alt="first slide" class="d-block img-fluid" style="max-height: 600px">
+                      <center> <h5 class="title">{{ anuncio.titulo }} </h5> </center>
+                      <center> <p class="descripcion">{{ anuncio.descripcion }}</p> </center>     
+                     </div>
+                   </slide>
+                 </carousel>
+                 <!-- End carousel -->
+               </div>
+             </div>
       </div>
-      <div class="card-body">
+     </div>
 
 
-      </div>
-    </div>
-    </div>
 
+    <!-- <div class="col-6">
+       <h2>Anuncios Externos</h2>
+       <div *ngFor="let anuncio of lists">
+        <div *ngIf="anuncio.tipo === 'E'" class="card_anuncio" >
+           <h3 class="titulo">{{ anuncio.titulo }}</h3>
+           <p class="descripcion">{{ anuncio.descripcion }}</p>
+           <img *ngIf="anuncio.imagen" [src]="URL_FILES + anuncio.imagen" alt="render" style="max-height: 500px;">
+         </div>
+       </div>
+    </div> -->
   </div>
 </div>
-

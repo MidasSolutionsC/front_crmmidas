@@ -1,0 +1,44 @@
+.card_anuncio {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin: 16px;
+    width: 550px;
+  
+    img {
+  
+      display: block;
+      width: 90%;
+      margin: auto;
+      height: auto;
+    }
+  
+    .titulo {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+  
+    .descripcion {
+      font-size: 14px;
+      margin-top: 8px;
+    }
+  }
+  
+  .card-container {
+  
+    max-width: 100%;
+  
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  
+  img {
+  
+    display: block;
+    width: 70%;
+    margin: auto;
+    height: auto;
+  }
