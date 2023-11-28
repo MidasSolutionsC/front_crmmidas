@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -12,6 +12,7 @@ import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormSer
   styleUrls: ['./advertisement.component.scss']
 })
 export class AdvertisementComponent {
+  
   modalRef?: BsModalRef;
 
   dataModal = {

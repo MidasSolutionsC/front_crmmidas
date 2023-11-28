@@ -25,6 +25,9 @@ import { JwtAuthInterceptor } from './core/helpers';
 
 import { DataTablesModule} from 'angular-datatables'
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { CarouselComponent } from 'ngx-bootstrap/carousel';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 // if (environment.defaultauth === 'firebase') {
 //   initFirebaseBackend(environment.firebaseConfig);
@@ -39,13 +42,14 @@ export function createTranslateLoader(http: HttpClient): any {
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent, 
   ],
   imports: [
     CoreModule,
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
+    HttpClientModule, 
+    NgbCarouselModule,  
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -64,7 +68,7 @@ export function createTranslateLoader(http: HttpClient): any {
     ToastrModule.forRoot(),
     DataTablesModule,
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent, CarouselComponent],
   providers: [
     // Authentication
     { provide: HTTP_INTERCEPTORS, useClass: JwtAuthInterceptor, multi: true },

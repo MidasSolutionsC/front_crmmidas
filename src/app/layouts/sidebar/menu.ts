@@ -270,34 +270,34 @@ let aMenu: MenuItem[] = [
 
     {
         id: 34,
-        label: 'MENUITEMS.CHARTS.TEXT',
+        label: 'MENUITEMS.REPORTS.TEXT',
         isTitle: true,
         roles: ['ADMINISTRADOR']
     },
     {
         id: 35,
         icon: 'bxs-bar-chart-alt-2',
-        label: 'MENUITEMS.CHARTS.TEXT',
+        label: 'MENUITEMS.REPORTS.TEXT',
         roles: ['ADMINISTRADOR'],
         subItems: [
             {
                 id: 36,
-                label: 'MENUITEMS.CHARTS.LIST.ALL',
-                link: '/',
+                label: 'MENUITEMS.REPORTS.LIST.ALL',
+                link: '/reports/all',
                 parentId: 35,
                 roles: ['ADMINISTRADOR']
             },
             {
                 id: 37,
-                label: 'MENUITEMS.CHARTS.LIST.COMERCIAL',
-                link: '/',
+                label: 'MENUITEMS.REPORTS.LIST.COMMERCIAL',
+                link: '/reports/by_commercial',
                 parentId: 35,
                 roles: ['ADMINISTRADOR']
             },
             {
                 id: 38,
-                label: 'MENUITEMS.CHARTS.LIST.COORDINATION',
-                link: '/',
+                label: 'MENUITEMS.REPORTS.LIST.COORDINATION',
+                link: '/reports/by_coordinator',
                 parentId: 35,
                 roles: ['ADMINISTRADOR']
             }

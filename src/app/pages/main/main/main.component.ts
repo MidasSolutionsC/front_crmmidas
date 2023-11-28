@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, Output, EventEmitter} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -6,6 +6,7 @@ import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { Advertisement, AdvertisementList, Breadcrumb, Pagination, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
+import { CarouselComponent } from 'ngx-bootstrap/carousel';
 
 @Component({
   selector: 'app-main',
@@ -13,6 +14,13 @@ import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormSer
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent {
+  @Input() currentIndex: number;
+ @Output() currentIndexChange = new EventEmitter<number>();
+
+ selectSlide(index: number) {
+    this.currentIndexChange.emit(index);
+ }
+
 
   modalRef?: BsModalRef;
   dataModal = {
@@ -40,6 +48,7 @@ export class MainComponent {
 
   // Archivos subidos
   uploadFiles: File[];
+
 
   // Previsualizar foto subido
   previewImage: any;

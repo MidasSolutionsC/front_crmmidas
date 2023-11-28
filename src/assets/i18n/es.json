@@ -36,7 +36,7 @@
       "RATING": "Calificación",
       "FORMS": "Formularios",
       "TABLES": "Tablas",
-      "CHARTS": "Gráficos"
+      "REPORTS": "Reports"
     },
     "APPLICATIONS": {
       "TITLE": "Aplicaciones",
@@ -204,15 +204,15 @@
         "EditTableTables": "Tabla editable"
       }
     },
-    "CHARTS": {
-      "TEXT": "Gráficos",
+    "REPORTS": {
+      "TEXT": "Reportes",
       "LIST": {
-        "APEX": "Gráfico de Apex",
-        "CHARTJS": "Chartjs Chart",
-        "CHARTIST": "Chartist Chart",
-        "ECHART": "Gráfico E",
+        "APEX": "Apex Reports",
+        "REPORTS": "Reportsjs Reports",
+        "REPORTSIST": "Reportsist Reports",
+        "EREPORTS": "E Reports",
         "ALL": "Todos",
-        "COMERCIAL": "Por comercial",
+        "COMMERCIAL": "Por comercial",
         "COORDINATION": "Por coordinación"
       }
     },

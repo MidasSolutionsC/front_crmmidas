@@ -29,6 +29,7 @@ const routes: Routes = [
   // { path: 'sale', component: FormComponent, canActivate: [hasRoleGuard] },
   { path: 'allowed-ip', component: AllowedIpComponent, canActivate: [hasRoleGuard] },
   { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule), canActivate: [hasRoleGuard] },
+  { path: 'reports', loadChildren: () => import('./reports/reports.module').then(m => m.ReportsModule), canActivate: [hasRoleGuard] },
 ];
 
 @NgModule({

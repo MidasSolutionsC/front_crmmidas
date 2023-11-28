@@ -5,22 +5,23 @@
 
     <div class="col-6">
       <div class="card">
-            <h1 class="card-title">Anuncios Internos</h1>
-            <div class="card-body">
-              <div *ngFor="let anuncio of lists">
-                <!-- Carousel with caption -->
-                <carousel>
-                  <slide>
-                      <div *ngIf="anuncio.tipo === 'I'" class="card_anuncio" >
-                        <img *ngIf="anuncio.imagen" [src]="URL_FILES + anuncio.imagen" alt="first slide" class="d-block img-fluid" style="max-height: 600px">
-                        <center> <h5 class="title">{{ anuncio.titulo }} </h5> </center>
-                        <center> <p class="descripcion">{{ anuncio.descripcion }}</p> </center>
-                      </div>
-                  </slide>
-                </carousel>
-                <!-- End carousel -->
-              </div>
-            </div>
+        <h1 class="card-title">Anuncios Internos</h1>
+        <div class="card-body">
+          <div *ngFor="let anuncio of lists">
+            <!-- Carousel with caption -->
+            <mdb-carousel class="carousel slide carousel-fade" [animation]="'fade'">
+             <mdb-carousel-item>                             
+                <div *ngIf="anuncio.tipo === 'I'" class="card_anuncio" >
+                 <img *ngIf="anuncio.imagen" [src]="URL_FILES + anuncio.imagen" alt="first slide" class="d-block img-fluid" style="max-height: 800px">
+                 <center> <h5 class="title">{{ anuncio.titulo }} </h5> </center>
+                 <center> <p class="descripcion">{{ anuncio.descripcion }}</p> </center>     
+                </div>
+              </mdb-carousel-item>
+             </mdb-carousel>
+           
+            <!-- End carousel -->
+          </div>
+        </div>
       </div>
     </div>
     <div class="col-6">
@@ -29,15 +30,16 @@
              <div class="card-body">
                <div *ngFor="let anuncio of lists">
                  <!-- Carousel with caption -->
-                 <carousel>
-                   <slide>
+                 <mdb-carousel class="carousel slide carousel-fade" [animation]="'fade'">
+                  <mdb-carousel-item>                             
                      <div *ngIf="anuncio.tipo === 'E'" class="card_anuncio" >
-                      <img *ngIf="anuncio.imagen" [src]="URL_FILES + anuncio.imagen" alt="first slide" class="d-block img-fluid" style="max-height: 600px">
+                      <img *ngIf="anuncio.imagen" [src]="URL_FILES + anuncio.imagen" alt="first slide" class="d-block img-fluid" style="max-height: 1000px">
                       <center> <h5 class="title">{{ anuncio.titulo }} </h5> </center>
                       <center> <p class="descripcion">{{ anuncio.descripcion }}</p> </center>     
                      </div>
-                   </slide>
-                 </carousel>
+                   </mdb-carousel-item>
+                  </mdb-carousel>
+                
                  <!-- End carousel -->
                </div>
              </div>

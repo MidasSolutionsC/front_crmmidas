@@ -36,7 +36,7 @@
       "RATING": "Rating",
       "FORMS": "Forms",
       "TABLES": "Tables",
-      "CHARTS": "Charts"
+      "REPORTS": "Reports"
     },
     "APPLICATIONS": {
       "TITLE": "Applications",
@@ -298,13 +298,13 @@
         "EditTableTables": "Editable Table"
       }
     },
-    "CHARTS": {
-      "TEXT": "Charts",
+    "REPORTS": {
+      "TEXT": "Reports",
       "LIST": {
-        "APEX": "Apex Chart",
-        "CHARTJS": "Chartjs Chart",
-        "CHARTIST": "Chartist Chart",
-        "ECHART": "E Chart"
+        "APEX": "Apex Reports",
+        "REPORTS": "Reportsjs Reports",
+        "REPORTSIST": "Reportsist Reports",
+        "EREPORTS": "E Reports"
       }
     },
     "ICONS": {
