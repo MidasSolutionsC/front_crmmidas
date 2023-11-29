@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, Renderer2, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { AddressList, BankAccountList, CompanyList, ContactList, InstallationList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { AddressList, BankAccountList, CompanyList, ContactList, InstallationList, OperatorList, PersonList, ResponseApi, SaleComment, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { ClientList } from 'src/app/core/models/api/client.model';
 import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, InstallationService, OperatorService, SaleCommentService, SaleDetailService, SaleDocumentService, SaleHistoryService, SaleService, SharedClientService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 
@@ -67,6 +67,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
   // DATOS COMENTARIOS
   dataSaleComment: SaleCommentList;
   listSaleComment: SaleCommentList[] = [];
+  listDetailSaleComment: SaleCommentList[] = [];
 
   // DATOS HISTORIAL
   dataSaleHistory: SaleHistoryList;
@@ -90,6 +91,20 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   // Operadores
   listOperators: OperatorList[] = [];
+
+  // ITEMS OPTIONS
+  items: string[];
+
+
+  // CAMPOS ´PARA REGISTRAR EL COMENTARIO DEL SERVICIO
+  dataMsgComment: SaleComment = {
+    ventas_id: null,
+    ventas_detalles_id: null,
+    comentario: ''
+  }
+
+  lazyLoadingComment: boolean = false;
+  loadLazyTimeout: any;
 
   private subscription: Subscription = new Subscription();
 
@@ -121,6 +136,8 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
     this.apiTypeDocumentList();
     this.apiOperatorList();
     this.onChanges();
+
+    this.items = Array.from({ length: 1000 }).map((_, i) => `Item #${i}`);
 
     // Tipos de documentos
     this.subscription.add(
@@ -172,7 +189,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
               ${item.planta != '' ? ', ' + item.planta : ''} 
               ${item.puerta != '' ? ', ' + item.puerta : ''}
             `;
-  
+
             // this.dataBasicPreview.fecha = new Date().toLocaleString();
             item.direccion_completo = direccion_completo;
             return item
@@ -220,7 +237,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
           this.groupSaleDetail = list.reduce((acc, detail) => {
             const typeDocument = this.listTypeDocuments.find(obj => obj.id === detail?.datos_json?.tipo_documentos_id);
             const operator = this.listOperators.find((obj: any) => obj.id === detail?.datos_json?.operador_donante_id);
-          
+
             if (typeDocument !== undefined) {
               detail.datos_json.tipo_documento_nombre = typeDocument.nombre;
               detail.datos_json.tipo_documento_abreviacion = typeDocument.abreviacion;
@@ -228,13 +245,16 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
             if (operator !== undefined) {
               detail.datos_json.operador_donante_nombre = operator.nombre;
             }
-          
+
             let typeService = detail.product?.type_service?.nombre;
             detail['visible'] = false;
-          
+            if(!detail.comments){
+              detail['comments'] = [];
+            }
+
             // Busca un elemento en el array con el mismo typeService
             const existingGroup = acc.find(group => group.typeService === typeService);
-          
+
             if (existingGroup) {
               // Si existe, agrega el detalle al grupo existente
               existingGroup.details.push(detail);
@@ -242,11 +262,11 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
               // Si no existe, crea un nuevo grupo
               acc.push({ typeService: typeService, details: [detail] });
             }
-          
+
             return acc;
           }, []);
-          
-          
+
+
 
           console.log("DETALLE AGRUPADO:", this.groupSaleDetail)
         })
@@ -309,7 +329,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
       if (this.dataSale.client) {
         this.dataClient = this.dataSale.client;
 
-        if(this.dataClient?.persona_juridica){
+        if (this.dataClient?.persona_juridica) {
           this.dataCompany = this.dataClient?.company;
           this.listAddress = this.dataCompany?.addresses?.map((item) => {
             const direccion_completo = `
@@ -321,10 +341,10 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
               ${item.planta != '' ? ', ' + item.planta : ''} 
               ${item.puerta != '' ? ', ' + item.puerta : ''}
             `;
-  
+
             // this.dataBasicPreview.fecha = new Date().toLocaleString();
             item.direccion_completo = direccion_completo;
-  
+
             return item
           });
 
@@ -340,10 +360,10 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
               ${item.planta != '' ? ', ' + item.planta : ''} 
               ${item.puerta != '' ? ', ' + item.puerta : ''}
             `;
-  
+
             // this.dataBasicPreview.fecha = new Date().toLocaleString();
             item.direccion_completo = direccion_completo;
-  
+
             return item
           });
         }
@@ -365,7 +385,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
         // });
       }
 
-      if(this.dataSale.id){
+      if (this.dataSale.id) {
         this.apiSaleDetailFilterSale(this.dataSale.id);
         this.apiSaleDocumentFilterSale(this.dataSale.id);
         this.apiSaleCommentFilterSale(this.dataSale.id);
@@ -612,6 +632,46 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  private apiSaleCommentSave(data: SaleComment) {
+    return new Promise((resolve, reject) => {
+      this._sweetAlertService.loadingUp()
+      this.subscription.add(
+        this._saleCommentService.register(data).subscribe((response: ResponseApi) => {
+          this._sweetAlertService.stop();
+          if (response.code == 201) {
+            if (response.data[0]) {
+              const data: SaleCommentList = SaleCommentList.cast(response.data[0]);
+              resolve(data)
+              // this._saleCommentService.addObjectObserver(data);
+            }
+          }
+
+          if (response.code == 422) {
+            if (response.errors) {
+              const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
+            }
+            reject(response.errors)
+          }
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+            reject(response.errors)
+          }
+        }, (error) => {
+          this._sweetAlertService.stop();
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al registrar el comentario', message: error.message, timer: 2500 });
+          }
+
+          reject(error)
+        })
+      )
+    })
+  }
+
   // Cargar DOCUMENTOS DE LA VENTA
   public apiSaleDocumentFilterSale(saleId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
@@ -701,14 +761,74 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
+  /**
+   * ****************************************************************
+   * DETALLE VENTA
+   * ****************************************************************
+   */
+  // CARGAR COMENTARIOS DEL SERVICIO
+  public apiSaleCommentFilterDetailId(saleDetailId: number) {
+    return new Promise((resolve, reject) => {
+      this._sweetAlertService.loadingUp('Obteniendo datos')
+      this._saleCommentService.getFilterBySaleDetail(saleDetailId).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if (response.code == 200) {
+          resolve(response.data);
+        }
+
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+          }
+
+          reject(response.errors)
+        }
+      }, (error: any) => {
+        this._sweetAlertService.stop();
+        if (error.message) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los detalles ', message: error.message, timer: 2500 });
+        }
+
+        reject(error)
+      });
+    })
+  }
+
+
+  // REGISTRAR COMENTARIO EN EL SERVICIO
+  public async registerCommentInSaleDetail(saleId: number, saleDetailId: number) {
+    this.dataMsgComment.ventas_id = saleId;
+    this.dataMsgComment.ventas_detalles_id = saleDetailId;
+    // console.log("DETALLE ID:", saleDetailId, this.dataMsgComment)
+
+    const resComment = await this.apiSaleCommentSave(this.dataMsgComment);
+    if (resComment) {
+      // console.log("RES COMENTARIO:", resComment)
+      this.dataMsgComment = new SaleComment();
+    }
+  }
+
+  onLazyLoadComment(event: any) {
+    this.lazyLoadingComment = true;
+    const { first, last } = event;
+    console.log(event)
+  }
+
+
 
   /**
    * ****************************************************************
    * MOSTRAR DETALLE
    * ****************************************************************
    */
-  toggleVisibility(item: any) {
+  async toggleVisibility(item: any) {
     item.visible = !item.visible;
+    console.log("ELEMENTO SELECCIONADO:", item)
+
+    const comments = await this.apiSaleCommentFilterDetailId(item.id);
+    if (comments) {
+      item.comments = comments;
+    }
   }
 
   /**

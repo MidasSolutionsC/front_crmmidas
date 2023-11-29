@@ -187,7 +187,6 @@
         </accordion-group>
       </accordion>
 
-
       <!-- CONTACTOS -->
       <ng-template #templateContainerContact>
         <div class="card card-body  mb-0">
@@ -274,7 +273,7 @@
         </li>
       </ng-template>
 
-      <!-- DIRECCIONES -->
+      <!-- INSTALACIONES -->
       <ng-template #templateContainerInstallation>
         <div class="card card-body mb-0">
           <h5 class="card-title font-size-13 mb-3">Instalaciones</h5>
@@ -434,11 +433,57 @@
                       <ng-container *ngTemplateOutlet="templateTv; context: { $implicit: item }"></ng-container>
                     </div>
                     <!-- <ng-container *ngTemplateOutlet="templateInstallation; context: { $implicit: item }"></ng-container> -->
-                    <div class="d-flex justify-content-md-between justify-content-start flex-wrap">
-                      <button type="button" class="btn btn-sm btn-info">Comentarios</button>
-                      <button type="button" class="btn btn-sm btn-primary">Documentos</button>
-                      <button type="button" class="btn btn-sm btn-warning">Historial</button>
-                    </div>
+   
+                    <tabset [justified]="true" class="nav-tabs nav-tabs-custom nav-justified">
+                      <tab heading="Comentarios">
+                        <ng-template *ngTemplateOutlet="templateContainerCommentMsg; context: {comments: item.comments, saleId: item.ventas_id, saleDetailId: item.id}"></ng-template>
+                      </tab>
+                      <tab heading="Documentos">
+                        <!-- <ng-template [ngTemplateOutlet]="templateContainerDocument"></ng-template> -->
+                      </tab>
+                      <tab heading="Historial">
+                        <!-- <ng-template [ngTemplateOutlet]="templateContainerHistory"></ng-template> -->
+                      </tab>
+                    </tabset>
+
+
+                    <!-- <div class="card">
+                      <p-tabView styleClass="tabview-custom"  [scrollable]="true" >
+                          <p-tabPanel>
+                              <ng-template pTemplate="header">
+                                <div class="d-flex flex-row justify-content-between align-items-center flex-nowrap" style="width: 120px;">
+                                  <i class='bx bx-mobile-alt'></i>
+                                  <span>Header I</span>
+                                </div>
+                              </ng-template>
+                              <p>
+                                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                              </p>
+                          </p-tabPanel>
+                          <p-tabPanel header="Header II">
+                              <ng-template pTemplate="header">
+                                  <i class="pi pi-user"></i>
+                                  <span>Header II</span>
+                              </ng-template>
+                              <p>
+                                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                                  ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                              </p>
+                          </p-tabPanel>
+                          <p-tabPanel header="Header III">
+                              <ng-template pTemplate="header">
+                                  <i class="pi pi-search"></i>
+                                  <span>Header III</span>
+                                  <i class="pi pi-cog"></i>
+                              </ng-template>
+                              <p>
+                                  At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                                  qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                              </p>
+                          </p-tabPanel>
+                      </p-tabView>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -675,6 +720,221 @@
         </div>
       </ng-template>
 
+      <!-- COMENTARIOS MSG -->
+      <ng-template #templateContainerCommentMsg let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
+        <!-- <p-scrollPanel></p-scrollPanel> -->
+        <!-- [loading]="lazyLoadingComment" 
+        [lazy]="true" 
+        (onLazyLoad)="onLazyLoadComment($event)" -->
+        <div class="">
+          <div class="py-2">
+            <p-scroller class="custom-loading list-unstyled" 
+              [items]="comments" 
+              [itemSize]="25 * 7" 
+              [showLoader]="true" 
+              [delay]="250" 
+             
+              styleClass="border-1 surface-border" [style]="{'width': '100%', 'height': '450px', 'max-height': '450px', 'position': 'relative'}">
+              <ng-template pTemplate="item" let-item let-options="options">
+                <div [ngClass]="{'right': true}">
+                  <div class="d-flex flex-row align-items-strech flex-wrap mb-2 border border-primary" [ngClass]="{'surface-ground': options.odd}">
+                    <div class="flex align-items-center px-2" style="height: 25px">Item: {{item.id}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Index: {{options.index}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Count: {{options.count}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">First: {{options.first}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Last: {{options.last}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Even: {{options.even}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Odd: {{options.odd}}</div>
+                  </div>
+
+                  <div class="conversation-list">
+                    <div class="dropdown" dropdown>
+  
+                      <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                      </a>
+                      <div class="dropdown-menu" *dropdownMenu>
+                        <a class="dropdown-item" href="javascript: void(0);">Copy</a>
+                        <a class="dropdown-item" href="javascript: void(0);">Delete</a>
+                      </div>
+                    </div>
+                    <div class="ctext-wrap">
+                      <div class="conversation-name">{{ item?.user_create?.person?.nombres }}</div>
+                      <p>
+                        {{ item?.comentario }}
+                      </p>
+                      <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> {{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</p>
+                    </div>
+  
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template pTemplate="loader" let-options="options">
+                  <div class="flex flex-column align-items-strech" [ngClass]="{'surface-ground': options.odd}">
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                  </div>
+              </ng-template>
+            </p-scroller>
+          </div>
+          <div class="w-100">
+            <div class="input-group-relative position-relative border border-primary" style="border-radius: 3rem;">
+              <textarea [(ngModel)]="dataMsgComment.comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
+              <button type="button" (click)="registerCommentInSaleDetail(saleId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #templateContainerCommentMsgTest2 let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
+        <!-- <p-scrollPanel></p-scrollPanel> -->
+        <div class="">
+          <div class="py-2">
+            <p-scroller class="custom-loading list-unstyled" 
+              [items]="comments" 
+              [itemSize]="25 * 7" 
+              [showLoader]="true" 
+              [delay]="250" 
+              [loading]="lazyLoadingComment" 
+              [lazy]="true" 
+              (onLazyLoad)="onLazyLoadComment($event)"
+              styleClass="border-1 surface-border" [style]="{'width': '100%', 'height': '450px', 'max-height': '450px', 'position': 'relative'}">
+              <ng-template pTemplate="item" let-item let-options="options">
+                <div [ngClass]="{'right': true}">
+                  <div class="d-flex flex-row align-items-strech flex-wrap mb-2 border border-primary" [ngClass]="{'surface-ground': options.odd}">
+                    <div class="flex align-items-center px-2" style="height: 25px">Item: {{item.id}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Index: {{options.index}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Count: {{options.count}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">First: {{options.first}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Last: {{options.last}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Even: {{options.even}}</div>
+                    <div class="flex align-items-center px-2" style="height: 25px">Odd: {{options.odd}}</div>
+                  </div>
+
+                  <div class="conversation-list">
+                    <div class="dropdown" dropdown>
+  
+                      <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                      </a>
+                      <div class="dropdown-menu" *dropdownMenu>
+                        <a class="dropdown-item" href="javascript: void(0);">Copy</a>
+                        <a class="dropdown-item" href="javascript: void(0);">Delete</a>
+                      </div>
+                    </div>
+                    <div class="ctext-wrap">
+                      <div class="conversation-name">{{ item?.user_create?.person?.nombres }}</div>
+                      <p>
+                        {{ item?.comentario }}
+                      </p>
+                      <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> {{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</p>
+                    </div>
+  
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template pTemplate="loader" let-options="options">
+                  <div class="flex flex-column align-items-strech" [ngClass]="{'surface-ground': options.odd}">
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                    <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                  </div>
+              </ng-template>
+            </p-scroller>
+          </div>
+          <div class="w-100">
+            <div class="input-group-relative position-relative border border-primary" style="border-radius: 3rem;">
+              <textarea [(ngModel)]="dataMsgComment.comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
+              <button type="button" (click)="registerCommentInSaleDetail(saleId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #templateContainerCommentMsgTest let-saleDetailId="saleDetailId" let-ventasId="ventasId">
+        <!-- <p-scrollPanel></p-scrollPanel> -->
+        <div class="">
+          <div class="py-2 h-100">
+            <ul class="list-unstyled">
+              <!-- <li>
+                <div class="chat-day-title">
+                  <span class="title">Today</span>
+                </div>
+              </li> -->
+              <li *ngFor="let data of chatMessagesData" [ngClass]="{'right': data.align === 'right'}">
+                <div class="conversation-list">
+                  <div class="dropdown" dropdown>
+
+                    <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
+                      <i class="bx bx-dots-vertical-rounded"></i>
+                    </a>
+                    <div class="dropdown-menu" *dropdownMenu>
+                      <a class="dropdown-item" href="javascript: void(0);">Copy</a>
+                      <a class="dropdown-item" href="javascript: void(0);">Save</a>
+                      <a class="dropdown-item" href="javascript: void(0);">Forward</a>
+                      <a class="dropdown-item" href="javascript: void(0);">Delete</a>
+                    </div>
+                  </div>
+                  <div class="ctext-wrap">
+                    <div class="conversation-name">{{ data?.name }}</div>
+                    <p>
+                      {{ data?.message }}
+                    </p>
+                    <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> {{ data?.time }}</p>
+                  </div>
+
+                </div>
+              </li>
+            </ul>
+            <p-scroller class="custom-loading" [items]="items" [itemSize]="25" [showLoader]="true" [delay]="250" styleClass="border-1 surface-border" [style]="{'width': '100%', 'height': '450px', 'max-height': '450px', 'position': 'relative'}">
+              <ng-template pTemplate="item" let-item let-options="options">
+                <div [ngClass]="{'right': true}">
+                  <div class="d-flex flex-column align-items-strech mb-2 border border-primary" [ngClass]="{'surface-ground': options.odd}">
+                      <div class="flex align-items-center px-2" style="height: 25px">Item: {{item}}</div>
+                      <div class="flex align-items-center px-2" style="height: 25px">Index: {{options.index}}</div>
+                      <div class="flex align-items-center px-2" style="height: 25px">Count: {{options.count}}</div>
+                      <div class="flex align-items-center px-2" style="height: 25px">First: {{options.first}}</div>
+                      <div class="flex align-items-center px-2" style="height: 25px">Last: {{options.last}}</div>
+                      <div class="flex align-items-center px-2" style="height: 25px">Even: {{options.even}}</div>
+                      <div class="flex align-items-center px-2" style="height: 25px">Odd: {{options.odd}}</div>
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template pTemplate="loader" let-options="options">
+                  <div class="flex flex-column align-items-strech" [ngClass]="{'surface-ground': options.odd}">
+                      <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                      <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                      <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                      <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                      <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                      <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                      <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                  </div>
+              </ng-template>
+            </p-scroller>
+          </div>
+          <div class="w-100">
+            <div class="input-group-relative position-relative border border-primary" style="border-radius: 3rem;">
+              <textarea [(ngModel)]="dataMsgComment.comentario" (keyup.enter)="registerCommentInSaleDetail(ventasId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
+              <button type="button" (click)="registerCommentInSaleDetail(ventasId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      
+
 
       <!-- DOCUMENTOS -->
       <ng-template #templateContainerDocument>
@@ -755,6 +1015,7 @@
           <span class="blockquote-footer">{{item.created_at}}</span>
         </div>
       </ng-template>
+
 
       <!-- HISTORIAL -->
       <ng-template #templateContainerHistory>

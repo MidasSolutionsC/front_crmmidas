@@ -2,3 +2,13 @@
 .modal-opacity-in{
   background: #4d47473d;
 }
+
+/* Puedes ajustar este selector según la clase generada por PrimeNG */
+.tabview-custom .p-tabview-title {
+  font-size: 12px; /* Ajusta el tamaño de la fuente según tus preferencias */
+}
+
+/* Puedes aplicar estilos adicionales según tus necesidades */
+.tabview-custom .p-tabview-panel {
+  font-size: 12px;
+}
