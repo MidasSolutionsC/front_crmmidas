@@ -1,4 +1,4 @@
- import { Address } from "./address.model";
+ import { Address, AddressList } from "./address.model";
 import { Contact } from "./contact.model";
 import { IdentificationDocument, IdentificationDocumentList } from "./identification-document.model";
 import { Model } from "./model";
@@ -65,7 +65,7 @@ export class PersonList extends Model{
   public fecha_nacimiento: string;
   public identifications?: IdentificationDocument[];
   public contacts?: Contact[];
-  public addresses?: Address[];
+  public addresses?: AddressList[];
 
   constructor(data?: object){
     super(data);

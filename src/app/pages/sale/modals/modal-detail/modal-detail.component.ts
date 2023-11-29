@@ -1,22 +1,22 @@
 import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, Renderer2, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { AddressList, BankAccountList, CompanyList, ContactList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
+import { AddressList, BankAccountList, CompanyList, ContactList, InstallationList, OperatorList, PersonList, ResponseApi, SaleCommentList, SaleDetailList, SaleDocumentList, SaleHistoryList, SaleList, TypeDocumentList } from 'src/app/core/models';
 import { ClientList } from 'src/app/core/models/api/client.model';
-import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, OperatorService, SaleCommentService, SaleDetailService, SaleDocumentService, SaleHistoryService, SaleService, SharedClientService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
+import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, InstallationService, OperatorService, SaleCommentService, SaleDetailService, SaleDocumentService, SaleHistoryService, SaleService, SharedClientService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-modal-detail',
   templateUrl: './modal-detail.component.html',
   styleUrls: ['./modal-detail.component.scss']
 })
-export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
+export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   @ViewChild('content') contentModal: TemplateRef<any>;
   @ViewChild('first') modalForm: any;
-  
+
   // DATOS DE ENTRADAS
-  @Input() dataInput: SaleList = null; 
+  @Input() dataSale: SaleList = null;
 
   // MODO DE LA VISTA
   modeView: 'view' | 'edit' = 'view';
@@ -40,7 +40,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   dataModalEdit: any = {
     title: 'Formulario'
   }
-  
+
   URL_FILES: string = '';
 
 
@@ -55,7 +55,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
 
   // DATOS DETALLE
   dataSaleDetail: SaleDetailList;
-  
+
 
   // DATOS TIPO DE DOCUMENTOS
   dataTypeDocument: TypeDocumentList;
@@ -77,6 +77,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
 
   // DIRECCIONES
   listAddress: AddressList[] = [];
+  listInstallations: InstallationList[] = []
 
   // CUENTAS BANCARIAS
   listBankAccount: BankAccountList[] = [];
@@ -91,7 +92,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   listOperators: OperatorList[] = [];
 
   private subscription: Subscription = new Subscription();
-  
+
   constructor(
     public modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -103,6 +104,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     private _clientService: ClientService,
     private _contactService: ContactService,
     private _addressService: AddressService,
+    private _installationService: InstallationService,
     private _bankAccountService: BankAccountService,
     private _saleService: SaleService,
     private _saleDetailService: SaleDetailService,
@@ -111,7 +113,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     private _saleHistoryService: SaleHistoryService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
-  ){
+  ) {
     this.URL_FILES = this._configService.urlFiles + 'sale/';
   }
 
@@ -123,22 +125,21 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
     // Tipos de documentos
     this.subscription.add(
       this._typeDocumentService.typeDocuments$
-      .pipe(distinctUntilChanged())
-      .subscribe((list: TypeDocumentList[]) => {
-        this.listTypeDocuments = list;
-      })
+        .pipe(distinctUntilChanged())
+        .subscribe((list: TypeDocumentList[]) => {
+          this.listTypeDocuments = list;
+        })
     )
 
     // Tipos operadores
     this.subscription.add(
       this._operatorService.listObserver$
-      .pipe(distinctUntilChanged())
-      .subscribe((list: OperatorList[]) => {
-        this.listOperators = list;
-      })
+        .pipe(distinctUntilChanged())
+        .subscribe((list: OperatorList[]) => {
+          this.listOperators = list;
+        })
     )
 
-                
     // CONTACTOS
     this.subscription.add(
       this._contactService.listObserver$
@@ -146,12 +147,36 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
           this.listContact = list;
         })
     );
-            
+
     // DIRECCIONES
+    // this.subscription.add(
+    //   this._addressService.listObserver$
+    //     .subscribe((list: AddressList[]) => {
+    //       this.listAddress = list;
+    //     })
+    // );
+
+    // INSTALACIONES
     this.subscription.add(
-      this._addressService.listObserver$
-        .subscribe((list: AddressList[]) => {
-          this.listAddress = list;
+      this._installationService.listObserver$
+        .subscribe((list: InstallationList[]) => {
+          // this.listInstallations = list;
+
+          this.listInstallations = list?.map((item) => {
+            const direccion_completo = `
+              ${item.tipo} 
+              ${item.direccion} 
+              ${item.numero != '' ? ', ' + item.numero : ''} 
+              ${item.escalera != '' ? ', ' + item.escalera : ''} 
+              ${item.portal != '' ? ', ' + item.portal : ''} 
+              ${item.planta != '' ? ', ' + item.planta : ''} 
+              ${item.puerta != '' ? ', ' + item.puerta : ''}
+            `;
+  
+            // this.dataBasicPreview.fecha = new Date().toLocaleString();
+            item.direccion_completo = direccion_completo;
+            return item
+          });
         })
     );
 
@@ -163,52 +188,70 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
         })
     );
 
-            
+
     // Detalle de la venta
     this.subscription.add(
       this._saleDetailService.listObserver$
         .subscribe((list: SaleDetailList[]) => {
-          this.groupSaleDetail = list.reduce(function (acc, detail) {
-            try{
-              detail.datos_json = JSON.parse(detail.datos_json);
-              const typeDocument = this.listTypeDocuments.find((obj) => obj.id === detail?.datos_json?.tipo_documento_id);
-              const operator = this.listOperators.find((obj: any) => obj.id === detail?.datos_json?.operador_donante_id);
-              
-              if (typeDocument !== undefined) {
-                detail.datos_json.tipo_documento_nombre = typeDocument.nombre;
-                detail.datos_json.tipo_documento_abreviacion = typeDocument.abreviacion;
-              }
-              if (operator !== undefined) {
-                detail.datos_json.operador_donante_nombre = operator.nombre;
-              }
-            }catch(error){
 
+          // this.groupSaleDetail = list.reduce((acc, detail) => {
+          //   const typeDocument = this.listTypeDocuments.find((obj) => obj.id === detail?.datos_json?.tipo_documentos_id);
+          //   const operator = this.listOperators.find((obj: any) => obj.id === detail?.datos_json?.operador_donante_id);
+
+          //   if (typeDocument !== undefined) {
+          //     detail.datos_json.tipo_documento_nombre = typeDocument.nombre;
+          //     detail.datos_json.tipo_documento_abreviacion = typeDocument.abreviacion;
+          //   }
+          //   if (operator !== undefined) {
+          //     detail.datos_json.operador_donante_nombre = operator.nombre;
+          //   }
+
+          //   let typeService = detail.product?.type_service?.nombre;
+          //   detail['visible'] = false;
+
+          //   var key = typeService;
+          //   if (!acc[key]) {
+          //     acc[key] = [];
+          //   }
+          //   acc[key].push(detail);
+          //   return acc;
+          // }, {});
+
+          this.groupSaleDetail = list.reduce((acc, detail) => {
+            const typeDocument = this.listTypeDocuments.find(obj => obj.id === detail?.datos_json?.tipo_documentos_id);
+            const operator = this.listOperators.find((obj: any) => obj.id === detail?.datos_json?.operador_donante_id);
+          
+            if (typeDocument !== undefined) {
+              detail.datos_json.tipo_documento_nombre = typeDocument.nombre;
+              detail.datos_json.tipo_documento_abreviacion = typeDocument.abreviacion;
             }
-            
-            let typeService = null;
-
-            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('movil')){
-            //   typeService = 'mobile';
-            // }
-            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('fija')){
-            //   typeService = 'fixed';
-            // }
-            // if(detail.tipo_servicios_nombre.toLocaleLowerCase().includes('tv')){
-            //   typeService = 'tv';
-            // }
-
+            if (operator !== undefined) {
+              detail.datos_json.operador_donante_nombre = operator.nombre;
+            }
+          
+            let typeService = detail.product?.type_service?.nombre;
             detail['visible'] = false;
-
-            var key = typeService;
-            if (!acc[key]) {
-                acc[key] = [];
+          
+            // Busca un elemento en el array con el mismo typeService
+            const existingGroup = acc.find(group => group.typeService === typeService);
+          
+            if (existingGroup) {
+              // Si existe, agrega el detalle al grupo existente
+              existingGroup.details.push(detail);
+            } else {
+              // Si no existe, crea un nuevo grupo
+              acc.push({ typeService: typeService, details: [detail] });
             }
-            acc[key].push(detail);
+          
             return acc;
-          }, {});
+          }, []);
+          
+          
+
+          console.log("DETALLE AGRUPADO:", this.groupSaleDetail)
         })
     );
-            
+
     // Documentos
     this.subscription.add(
       this._saleDocumentService.listObserver$
@@ -216,7 +259,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
           this.listSaleDocument = list;
         })
     );
-            
+
     // Comentarios
     this.subscription.add(
       this._saleCommentService.listObserver$
@@ -227,7 +270,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
           });
         })
     );
-            
+
     // Historial
     this.subscription.add(
       this._saleHistoryService.listObserver$
@@ -247,7 +290,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.dataInput && !changes.dataInput.firstChange){
+    if (changes.dataSale && !changes.dataSale.firstChange) {
       this.onChanges();
     }
   }
@@ -258,17 +301,77 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    * DETECTAR CAMBIOS EN LA VARIABLE DE ENTRADA
    * ***************************************************************
    */
-  onChanges(){
-    if(this.dataInput){
-      // console.log("DATOS DE LA VENTA:",this.dataInput);
-      // const {id, clientes_id, clientes_persona_juridica} = this.dataInput;
+  onChanges() {
+    if (this.dataSale) {
+      // console.log("DATOS DE LA VENTA:",this.dataSale);
+      // const {id, clientes_id, clientes_persona_juridica} = this.dataSale;
 
-      // if(id){
-      //   this.apiSaleDetailFilterSale(id);
-      //   this.apiSaleDocumentFilterSale(id);
-      //   this.apiSaleCommentFilterSale(id);
-      //   this.apiSaleHistoryFilterSale(id);
-      // }
+      if (this.dataSale.client) {
+        this.dataClient = this.dataSale.client;
+
+        if(this.dataClient?.persona_juridica){
+          this.dataCompany = this.dataClient?.company;
+          this.listAddress = this.dataCompany?.addresses?.map((item) => {
+            const direccion_completo = `
+              ${item.tipo} 
+              ${item.direccion} 
+              ${item.numero != '' ? ', ' + item.numero : ''} 
+              ${item.escalera != '' ? ', ' + item.escalera : ''} 
+              ${item.portal != '' ? ', ' + item.portal : ''} 
+              ${item.planta != '' ? ', ' + item.planta : ''} 
+              ${item.puerta != '' ? ', ' + item.puerta : ''}
+            `;
+  
+            // this.dataBasicPreview.fecha = new Date().toLocaleString();
+            item.direccion_completo = direccion_completo;
+  
+            return item
+          });
+
+        } else {
+          this.dataPerson = this.dataClient?.person;
+          this.listAddress = this.dataPerson?.addresses?.map((item) => {
+            const direccion_completo = `
+              ${item.tipo} 
+              ${item.direccion} 
+              ${item.numero != '' ? ', ' + item.numero : ''} 
+              ${item.escalera != '' ? ', ' + item.escalera : ''} 
+              ${item.portal != '' ? ', ' + item.portal : ''} 
+              ${item.planta != '' ? ', ' + item.planta : ''} 
+              ${item.puerta != '' ? ', ' + item.puerta : ''}
+            `;
+  
+            // this.dataBasicPreview.fecha = new Date().toLocaleString();
+            item.direccion_completo = direccion_completo;
+  
+            return item
+          });
+        }
+
+        // this.listInstallations = this.dataSale?.installations?.map((item) => {
+        //   const direccion_completo = `
+        //     ${item.tipo} 
+        //     ${item.direccion} 
+        //     ${item.numero != '' ? ', ' + item.numero : ''} 
+        //     ${item.escalera != '' ? ', ' + item.escalera : ''} 
+        //     ${item.portal != '' ? ', ' + item.portal : ''} 
+        //     ${item.planta != '' ? ', ' + item.planta : ''} 
+        //     ${item.puerta != '' ? ', ' + item.puerta : ''}
+        //   `;
+
+        //   // this.dataBasicPreview.fecha = new Date().toLocaleString();
+        //   item.direccion_completo = direccion_completo;
+        //   return item
+        // });
+      }
+
+      if(this.dataSale.id){
+        this.apiSaleDetailFilterSale(this.dataSale.id);
+        this.apiSaleDocumentFilterSale(this.dataSale.id);
+        this.apiSaleCommentFilterSale(this.dataSale.id);
+        this.apiSaleHistoryFilterSale(this.dataSale.id);
+        this.apiInstallationFilterSale(this.dataSale.id);
+      }
 
       // if(clientes_id){
       //   this.apiClientGetById(clientes_id);
@@ -283,94 +386,94 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    * ****************************************************************
    */
   // Cargar TIPO DE DOCUMENTOS
-  public apiTypeDocumentList(forceRefresh: boolean = false){
+  public apiTypeDocumentList(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._typeDocumentService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         // this._typeDocumentService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tipos de documentos ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los tipos de documentos ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar OPERADORES
-  public apiOperatorList(forceRefresh: boolean = false){
+  public apiOperatorList(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._operatorService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         // this._operatorService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los operadores ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los operadores ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // OPERACIONES CON LA API - OBTENER DATOS DEL CLIENTE
-  public apiClientGetById(id: number): Promise<any>{
+  public apiClientGetById(id: number): Promise<any> {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     return new Promise((resolve, reject) => {
       this._clientService.getById(id).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 200){
+        if (response.code == 200) {
           const data = response.data[0];
-          if(data){
-            if(data.person !== null){
-              if(data.person.type_document){
+          if (data) {
+            if (data.person !== null) {
+              if (data.person.type_document) {
                 this.dataTypeDocument = TypeDocumentList.cast(data.person.type_document);
               }
-              this.dataPerson = PersonList.cast(data.person);  
-              
+              this.dataPerson = PersonList.cast(data.person);
+
               this.apiContactFilterByPerson(this.dataPerson.id);
               this.apiAddressFilterByPerson(this.dataPerson.id);
-            } 
-            
-            if(data.company !== null){
-              if(data.company.type_document){
+            }
+
+            if (data.company !== null) {
+              if (data.company.type_document) {
                 this.dataTypeDocument = TypeDocumentList.cast(data.company.type_document);
               }
               this.dataCompany = CompanyList.cast(data.company);
               this.apiContactFilterByCompany(this.dataCompany.id);
               this.apiAddressFilterByCompany(this.dataCompany.id);
-            } 
-  
+            }
+
             this.dataClient = ClientList.cast(data);
             this.apiBankAccountFilterByClient(this.dataClient.id);
           }
 
           resolve(response.data[0]);
         }
-  
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
           reject(response.errors);
         }
       }, (error: any) => {
         this._sweetAlertService.stop();
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar datos del cliente', message: error.message, timer: 2500});
+        if (error.message) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar datos del cliente', message: error.message, timer: 2500 });
         }
         reject(error);
       });
@@ -378,199 +481,221 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   // Cargar los contactos del cliente -  PERSONA
-  public apiContactFilterByPerson(personId: number){
+  public apiContactFilterByPerson(personId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._contactService.getFilterPersonId(personId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._contactService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar los contactos del cliente -   EMPRESA
-  public apiContactFilterByCompany(companyId: number){
+  public apiContactFilterByCompany(companyId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._contactService.getFilterCompanyId(companyId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._contactService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los contactos ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar los direcciones del cliente -   PERSONA
-  public apiAddressFilterByPerson(personId: number){
+  public apiAddressFilterByPerson(personId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._addressService.getFilterPersonId(personId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._addressService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar los direcciones del cliente -   EMPRESA
-  public apiAddressFilterByCompany(companyId: number){
+  public apiAddressFilterByCompany(companyId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._addressService.getFilterCompanyId(companyId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._addressService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar las direcciones ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar las cuentas bancarias del cliente -  CLIENTE
-  public apiBankAccountFilterByClient(clientId: number){
+  public apiBankAccountFilterByClient(clientId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._bankAccountService.getFilterClientId(clientId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._bankAccountService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar las cuentas bancarias ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar las cuentas bancarias ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar VENTA DETALLE
-  public apiSaleDetailFilterSale(saleId: number){
+  public apiSaleDetailFilterSale(saleId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._saleDetailService.getBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._saleDetailService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los detalles ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los detalles ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar DOCUMENTOS DE LA VENTA
-  public apiSaleDocumentFilterSale(saleId: number){
+  public apiSaleDocumentFilterSale(saleId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._saleDocumentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._saleDocumentService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los documentos ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los documentos ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar COMENTARIOS DE LA VENTA
-  public apiSaleCommentFilterSale(saleId: number){
+  public apiSaleCommentFilterSale(saleId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._saleCommentService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._saleCommentService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los comentarios ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar los comentarios ', message: error.message, timer: 2500 });
       }
     });
   }
 
   // Cargar COMENTARIOS DE LA VENTA
-  public apiSaleHistoryFilterSale(saleId: number){
+  public apiSaleHistoryFilterSale(saleId: number) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._saleHistoryService.getFilterBySale(saleId).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this._saleHistoryService.addArrayObserver(response.data);
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
       this._sweetAlertService.stop();
-      if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar el historial ', message: error.message, timer: 2500});
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar el historial ', message: error.message, timer: 2500 });
+      }
+    });
+  }
+
+  // Cargar DIRECCIÓN DE LA INSTALACION
+  public apiInstallationFilterSale(saleId: number) {
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._installationService.getBySale(saleId).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if (response.code == 200) {
+        this._installationService.addArrayObserver(response.data);
+      }
+
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if (error.message) {
+        this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al listar las instalaciones de la venta ', message: error.message, timer: 2500 });
       }
     });
   }
@@ -585,17 +710,17 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   toggleVisibility(item: any) {
     item.visible = !item.visible;
   }
-  
+
   /**
    * ****************************************************************
    * VALIDAR DATOS JSON
    * ****************************************************************
    */
-  getRowDetailIsNullJson(data: any){
-    if(data?.tipo_servicios_nombre?.toLowerCase().includes('tv')){
+  getRowDetailIsNullJson(data: any) {
+    if (data?.tipo_servicios_nombre?.toLowerCase().includes('tv')) {
       return false;
     }
-    return data.datos_json !== null? false: true
+    return data.datos_json !== null ? false : true
 
   }
 
@@ -604,7 +729,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    * MOSTRAR COMENTARIO
    * ****************************************************************
    */
-  toggleCommentMore(item: any){
+  toggleCommentMore(item: any) {
     item.more = !item.more;
   }
 
@@ -615,20 +740,20 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    * EDITAR EL REGISTRO - ITEM SELECCIONADO
    * ****************************************************************
    */
-  onEditItem(process: any, data: any = null){
+  onEditItem(process: any, data: any = null) {
     console.log("EDIT:", process, data);
-    
+
     this.formEditLabel = process;
     this.shareDataForm = data;
     this.changeModalView('edit');
 
 
-    if(process == 'client' || process == 'contact' || process == 'address'){
+    if (process == 'client' || process == 'contact' || process == 'address') {
       this._sharedClientService.setClientId(this.dataClient.id);
       this._sharedClientService.setClientId(this.dataClient.id);
       this._sharedClientService.setLegalPerson(this.dataClient.persona_juridica);
-  
-      if(this.dataClient.persona_juridica){
+
+      if (this.dataClient.persona_juridica) {
         // EMPRESA
         this._sharedClientService.setCompanyId(this.dataCompany.id);
       } else {
@@ -637,37 +762,37 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
       }
     }
 
-    switch(process){
+    switch (process) {
       case 'client':
         this.dataModal.title = 'Edición de cliente';
-      break;
+        break;
       case 'contact':
-        this.dataModal.title = 'Edición de contacto';      
-      break;
+        this.dataModal.title = 'Edición de contacto';
+        break;
       case 'address':
         this.dataModal.title = 'Edición de dirección';
-      break;
+        break;
       case 'bankAccount':
         this.dataModal.title = 'Edición de cuenta bancaria';
         this._sharedClientService.setClientId(this.dataClient.id);
-      break;
+        break;
       case 'saleDetail':
         this.dataModal.title = 'Edición de servicio';
         // this.shareDataTypeService = 'mobile';
-      break;
+        break;
       default:
         this.dataModal.title = 'Detalle de la venta';
-      break;
+        break;
     }
   }
 
 
   // OBTENER LOS DATOS MODIFICADOS DE CONTACTOS
-  getDataFormContact(event: any){
-    const {updated, data} = event;
-    if(updated){
+  getDataFormContact(event: any) {
+    const { updated, data } = event;
+    if (updated) {
       this.listContact = this.listContact.map((item) => {
-        if(item.id == data.id){
+        if (item.id == data.id) {
           return ContactList.cast(data);
         }
 
@@ -679,11 +804,11 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   // OBTENER LOS DATOS MODIFICADOS DE DIRECCIÓN
-  getDataFormAddress(event: any){
-    const {updated, data} = event;
-    if(updated){
+  getDataFormAddress(event: any) {
+    const { updated, data } = event;
+    if (updated) {
       this.listAddress = this.listAddress.map((item) => {
-        if(item.id == data.id){
+        if (item.id == data.id) {
           return AddressList.cast(data);
         }
 
@@ -695,9 +820,9 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   // OBTENER LOS DATOS MODIFICADOS DE SERVICIOS
-  getDataFormService(event: any){
-    const {updated, data} = event;
-    if(updated){
+  getDataFormService(event: any) {
+    const { updated, data } = event;
+    if (updated) {
       // this.listAddress = this.listAddress.map((item) => {
       //   if(item.id == data.id){
       //     return AddressList.cast(data);
@@ -717,14 +842,14 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    * CAMBIOS DE MODO VISUAL - (EDIT/VIEW)
    * ****************************************************************
    */
-  changeModalView(mode: 'view' | 'edit' = 'view'){
+  changeModalView(mode: 'view' | 'edit' = 'view') {
     this.modeView = mode;
 
-    if(mode == 'view'){
+    if (mode == 'view') {
       this.dataModal.title = 'Detalle de la venta';
       this.shareDataForm = null;
       // this.modalRef.setClass('modal-sm modal-dialog-centered modal-dialog-scrollable');
-    } 
+    }
   }
 
 
@@ -733,11 +858,11 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges{
    * MOSTRAR MODAL - INTERNO
    * ****************************************************************
    */
-  openModal(){
-    this.modalRefCurrent = this.modalService.show(this.contentModal, { 
+  openModal() {
+    this.modalRefCurrent = this.modalService.show(this.contentModal, {
       class: 'modal-md modal-dialog-centered modal-dialog-scrollable',
     });
-    this.modalRefCurrent.onHide.subscribe(() => {});
+    this.modalRefCurrent.onHide.subscribe(() => { });
     // this.modalForm.show();
   }
 }

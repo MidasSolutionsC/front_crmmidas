@@ -3,7 +3,7 @@ import { Form, FormArray, FormBuilder, FormGroup, UntypedFormGroup, Validators }
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ExportAsConfig, ExportAsService, SupportedExtensions } from 'ngx-export-as';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, CountryList, IdentificationDocument, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPerson, UserPersonList } from 'src/app/core/models';
+import { Breadcrumb, CountryList, IdentificationDocument, Pagination, PaginationResult, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPerson, UserPersonList } from 'src/app/core/models';
 import { ApiErrorFormattingService, CountryService, FormService, SweetAlertService, TypeDocumentService, TypeUserService, UserService } from 'src/app/core/services';
 import { CleanObject } from 'src/app/core/helpers/clean-object.util';
 
@@ -42,7 +42,7 @@ export class UserComponent implements OnInit, OnDestroy {
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination = new Pagination();
+  pagination: PaginationResult = new PaginationResult();
 
 
   // Table data
@@ -375,7 +375,7 @@ export class UserComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;

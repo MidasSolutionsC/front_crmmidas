@@ -23,7 +23,7 @@
               <div class="dataTables_length" id="tickets-table_length"><label
                 class="d-inline-flex align-items-center">Mostrar
                 <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
-                  [(ngModel)]="perPage" class="form-control form-control-sm mx-2" (change)="apiSaleListPagination()">
+                  [(ngModel)]="pagination.value.perPage" class="form-control form-control-sm mx-2" (change)="apiSaleListPagination()">
                   <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
                 </select> registros</label>
               </div>
@@ -33,7 +33,7 @@
               <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
                   class="d-inline-flex align-items-center">Buscar:
                   <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
-                    aria-controls="tickets-table" [(ngModel)]="search" (input)="apiSaleListPagination()"></label>
+                    aria-controls="tickets-table" [(ngModel)]="pagination.value.search" (input)="apiSaleListPagination()"></label>
               </div>
             </div>
             <!-- End search -->
@@ -55,7 +55,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of lists; let i = index">
+                <tr *ngFor="let data of paginationResult.data; let i = index">
                   <th scope="row">{{i + 1}}</th>
                   <td>
                     <ul class="list-group list-group-flush" *ngIf="data?.client?.persona_juridica">
@@ -81,12 +81,12 @@
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Detalle">
                         <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary" (click)="openModalDetail(data)"><i class="bx bx-detail"></i></a>
                       </li>
-                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                      <!-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
                         <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getEditRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
                       </li>
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
                         <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
-                      </li>
+                      </li> -->
                     </ul>
                   </td>
                 </tr>
@@ -100,15 +100,30 @@
             <div class="col-sm-12 col-md-6">
               <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
                 Mostrando de 
-                <b>{{pagination.from}}</b> al
-                <b>{{pagination.to}}</b> de <b>{{pagination.total}}</b>
+                <b>{{paginationResult.from}}</b> al
+                <b>{{paginationResult.to}}</b> de <b>{{paginationResult.total}}</b>
                 registros
               </div>
             </div>
             <!-- Pagination -->
             <div class="col-sm-12 col-md-6">
               <div class="text-md-right float-md-end pagination-rounded">
-                <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="total" [(ngModel)]="page" [itemsPerPage]="perPage" (pageChanged)="getPage($event)"></pagination>
+                <!-- <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="total" [(ngModel)]="page" [itemsPerPage]="perPage" (pageChanged)="getPage($event)"></pagination> -->
+                <pagination 
+                  previousText="Anterior" 
+                  nextText="Siguiente"   
+                  firstText="Primero"
+                  lastText="Ultimo"
+                  [boundaryLinks]="false" 
+                  [directionLinks]="true"  
+                  [totalItems]="paginationResult.total"
+                  [(ngModel)]="pagination.value.page" 
+                  [itemsPerPage]="pagination.value.perPage" 
+                  (pageChanged)="getPage($event)" 
+                  [maxSize]="7" 
+                  [rotate]="false"
+                  />
+                  
               </div>
             </div>
             <!-- End Pagination -->

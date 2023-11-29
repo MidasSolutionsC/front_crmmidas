@@ -369,10 +369,10 @@ export class FormClientFullComponent implements OnInit, OnDestroy {
     
     if (isPerson) {
       this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
-      selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'DNI').id;
+      selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'DNI')?.id;
     } else {
       this.listTypeDocumentFilters = this.listTypeDocuments.filter((typeDocument) => typeDocument.abreviacion == 'RUC');
-      selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'RUC').id;
+      selectedTypeDocumentId = this.listTypeDocuments.find((typeDocument) => typeDocument.abreviacion == 'RUC')?.id;
     }
     
     

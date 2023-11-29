@@ -64,9 +64,13 @@ export class SaleService {
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
-
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
+  public getByIdWithAllReference(id: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/getWithAllReference/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 

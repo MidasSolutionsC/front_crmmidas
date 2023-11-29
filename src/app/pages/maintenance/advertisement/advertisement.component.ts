@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import { Advertisement, AdvertisementList, Breadcrumb, Pagination, ResponseApi, ResponsePagination } from 'src/app/core/models';
+import { Advertisement, AdvertisementList, Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
@@ -36,7 +36,7 @@ export class AdvertisementComponent {
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination = new Pagination();
+  pagination: PaginationResult = new PaginationResult();
 
   // Archivos subidos
   uploadFiles: File[];
@@ -229,7 +229,7 @@ export class AdvertisementComponent {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;
