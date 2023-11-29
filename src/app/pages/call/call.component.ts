@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import {  Breadcrumb, OperatorList, Pagination, ResponseApi, ResponsePagination, TypeStatusList, TypificationCallList } from 'src/app/core/models';
+import {  Breadcrumb, OperatorList, Pagination, PaginationResult, ResponseApi, ResponsePagination, TypeStatusList, TypificationCallList } from 'src/app/core/models';
 import { Call, CallList } from 'src/app/core/models/api/call.model';
 import { ApiErrorFormattingService, FormService, OperatorService, SweetAlertService, TypeStatusService, TypificationCallService } from 'src/app/core/services';
 import { CallService} from 'src/app/core/services/api/call.service';
@@ -38,7 +38,7 @@ export class CallComponent {
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination = new Pagination();
+  pagination: PaginationResult = new PaginationResult();
 
   // Table data
   // content?: any;
@@ -260,7 +260,7 @@ export class CallComponent {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { BrandList, Breadcrumb, CategoryList, TypeCurrencyList, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList } from 'src/app/core/models';
+import { BrandList, Breadcrumb, CategoryList, TypeCurrencyList, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList, PaginationResult } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, CategoryService, TypeCurrencyService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 import { CleanObject } from 'src/app/core/helpers/clean-object.util';
 
@@ -35,7 +35,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination = new Pagination();
+  pagination: PaginationResult = new PaginationResult();
 
   // VALIDAR SI ES PRODUCTO FÍSICO O SERVICIO
   isInfoProduct: boolean = true;
@@ -308,7 +308,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;

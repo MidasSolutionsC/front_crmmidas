@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Observable, Subscription, debounceTime, distinctUntilChanged, of } from 'rxjs';
-import { Breadcrumb, CampusList, CountryList, Group, GroupList, MemberList, Pagination, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPersonList } from 'src/app/core/models';
+import { Breadcrumb, CampusList, CountryList, Group, GroupList, MemberList, Pagination, PaginationResult, ResponseApi, ResponsePagination, TypeDocumentList, TypeUserList, UserPersonList } from 'src/app/core/models';
 import { ApiErrorFormattingService, CampusService, CountryService, FormService, GroupService, MemberService, SweetAlertService, TypeDocumentService, TypeUserService, UserService } from 'src/app/core/services';
 import { ModalDetailComponent } from './modals/modal-detail/modal-detail.component';
 import { ExportAsService, ExportAsConfig, SupportedExtensions } from 'ngx-export-as';
@@ -69,7 +69,7 @@ export class GroupComponent {
   groupOrder: 'asc' | 'desc' = 'desc';
   groupCountElements: number[] = [2, 5, 10, 25, 50, 100];
   groupTotal: number = 0;
-  groupPagination: Pagination = new Pagination();
+  groupPagination: PaginationResult = new PaginationResult();
 
   // Integrantes
   listMembers: MemberList[] = [];
@@ -113,7 +113,7 @@ export class GroupComponent {
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [2, 5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination;
+  pagination: PaginationResult;
 
   // CHECKED USERS - SELECCIÓN DE USUARIOS EN LA TABLA
   selectAll: boolean = false;
@@ -463,7 +463,7 @@ export class GroupComponent {
         order: this.groupOrder
       }).pipe(debounceTime(250)).subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.groupPagination = Pagination.cast(response.data);
+          this.groupPagination = PaginationResult.cast(response.data);
           this.groupPage = response.data.current_page;
           this.groupTotal = response.data.total;
           this.lists = this.groupPagination.data;
@@ -584,7 +584,7 @@ export class GroupComponent {
         order: this.order
       }).pipe(debounceTime(250)).subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.asyncUsers = of(this.pagination.data);
           this.page = response.data.current_page;
           this.total = response.data.total;

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Installation, InstallationList, OperatorList, Pagination, ResponseApi, ResponsePagination, SaleDetail, SaleDetailList, SaleList, ServiceList, TypeDocumentList, TypeServiceList } from 'src/app/core/models';
+import { Installation, InstallationList, OperatorList, Pagination, PaginationResult, ResponseApi, ResponsePagination, SaleDetail, SaleDetailList, SaleList, ServiceList, TypeDocumentList, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, OperatorService, ServiceService, SharedClientService, SweetAlertService, TempInstallationService, TempSaleDetailService, TempSaleService, TypeDocumentService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
@@ -53,7 +53,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
   serviceColumn: string = 'id';
   serviceOrder: 'asc' | 'desc' = 'desc';
   serviceTotal: number = 0;
-  servicePagination: Pagination = new Pagination();
+  servicePagination: PaginationResult = new PaginationResult();
 
   // TABLE SERVER SIDE - DETALLE
   // countElements: number[] = [5, 10, 25, 50, 100];
@@ -927,7 +927,7 @@ export class ModalRegisterComponent implements OnInit, OnDestroy{
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.servicePagination = Pagination.cast(response.data);
+          this.servicePagination = PaginationResult.cast(response.data);
           this.listServices = response.data.data;
           this.servicePage = response.data.current_page;
           this.serviceTotal = response.data.total;
