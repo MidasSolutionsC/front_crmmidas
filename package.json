@@ -83,6 +83,7 @@
     "ngx-toastr": "^17.0.2",
     "ngx-ui-switch": "^14.0.3",
     "ngx-youtube-player": "^12.0.2",
+    "primeng": "^16.9.1",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "^7.8.1",
     "sass-loader": "^13.3.2",

@@ -89,6 +89,13 @@ import { FormArrayBankAccountComponent } from './sale/forms/form-client/form-cli
 
 import {ScrollingModule} from '@angular/cdk/scrolling';
 
+// PRIME NG
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import {VirtualScrollerModule} from 'primeng/virtualscroller'
+import { SkeletonModule } from 'primeng/skeleton';
+import {TabViewModule} from 'primeng/tabview'
+import {PanelModule} from 'primeng/panel'
+
 @NgModule({
   declarations: [
     CalendarComponent,
@@ -176,6 +183,12 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
     // ExportAsModule,
     // DataTablesModule
     AccordionModule,
+
+    // PRIME NG
+    ScrollPanelModule,
+    VirtualScrollerModule,
+    SkeletonModule,
+    TabViewModule
   ],
   providers: [BsDropdownConfig, provideNgxMask()]
 })
