@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import { Breadcrumb, Pagination, ResponseApi, ResponsePagination, TypeDocumentList } from 'src/app/core/models';
+import { Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination, TypeDocumentList } from 'src/app/core/models';
 import { Sale, SaleList} from 'src/app/core/models/api/sale.model';
 import {ApiErrorFormattingService, FormService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 import {SaleService } from 'src/app/core/services/api/sale.service';
@@ -48,9 +48,21 @@ export class SaleComponent {
   search: string = '';
   column: string = '';
   order: 'asc' | 'desc' = 'desc';
-  countElements: number[] = [5, 10, 25, 50, 100];
+  // countElements: number[] = [5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination = new Pagination();
+  // pagination: PaginationResult = new PaginationResult();
+
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 10,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
 
 
   // Table data
@@ -110,6 +122,15 @@ export class SaleComponent {
         this.listTypeDocuments = list;
       })
     );
+
+    // PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        // .pipe(distinctUntilChanged())
+        .subscribe((pagination: Pagination) => {
+          this.apiSaleListPagination()
+        })
+    );
   }
 
   ngOnDestroy(): void {
@@ -118,9 +139,11 @@ export class SaleComponent {
 
 
 
+
+
   /**
    * ****************************************************************
-   * OPERACIONES CON LA API
+   * OPERACIONES CON LA API - CARGA ASINCRONÍA
    * ****************************************************************
    */
   public apiSaleListPagination(): void {
@@ -135,7 +158,7 @@ export class SaleComponent {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.paginationResult = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;
@@ -154,27 +177,23 @@ export class SaleComponent {
     ); 
   }
 
-  getPage(event: any){
-    const {page, itemsPerPage} = event;
-    this.page = page;
-    this.perPage = itemsPerPage;
-    this.cdr.detectChanges();
-
-    setTimeout(() => {
-      this.apiSaleListPagination();
-    }, 0);
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
   }
 
-  getPageRefresh(){
-    this.page = 1;
-    this.perPage = 10;
-    this.cdr.detectChanges();
-
-    setTimeout(() => {
-      this.apiSaleListPagination();
-    }, 0);
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
   }
 
+
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API
+   * ****************************************************************
+   */
   public listDataApi(forceRefresh: boolean = false){
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._saleService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
@@ -191,6 +210,28 @@ export class SaleComponent {
     }, (error: any) => {
       this._sweetAlertService.stop();
       console.log(error);
+    });
+  }
+
+  public getByIdWithAllReference(id: number): Promise<any> {
+    this._sweetAlertService.loadingUp('Obteniendo datos');
+    return new Promise((resolve, reject) => {
+      this._saleService.getByIdWithAllReference(id).subscribe((response: ResponseApi) => {
+        this._sweetAlertService.stop();
+        if (response.code == 200) {
+          resolve(response.data); // Resuelve la promesa con los datos
+        }
+  
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+          }
+          reject(response.errors); // Rechaza la promesa con los errores
+        }
+      }, (error: any) => {
+        this._sweetAlertService.stop();
+        reject(error); // Rechaza la promesa con el error
+      });
     });
   }
 
@@ -515,11 +556,13 @@ export class SaleComponent {
   }
 
   // DETALLE DE LA VENTA
-  openModalDetail(data: any){
+  async openModalDetail(data: any){
+    const [sale] = await this.getByIdWithAllReference(data.id);
+    // console.log(sale)
     const initialState = {
-      dataInput: data
+      dataSale: sale
     };
-    this.modalRef = this.modalService.show(ModalDetailComponent, {initialState, class: 'modal-xl modal-dialog-centered modal-dialog-scrollable'});
+    this.modalRef = this.modalService.show(ModalDetailComponent, {initialState, class: 'modal-fullscreen modal-dialog-centered modal-dialog-scrollable'});
     this.modalRef.onHide.subscribe((next) => {
       // console.log(next);
     });

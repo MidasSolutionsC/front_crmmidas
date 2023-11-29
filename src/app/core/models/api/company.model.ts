@@ -1,5 +1,5 @@
-import { Address } from "./address.model";
-import { Contact } from "./contact.model";
+import { Address, AddressList } from "./address.model";
+import { Contact, ContactList } from "./contact.model";
 import { IdentificationDocument } from "./identification-document.model";
 import { Model } from "./model";
 
@@ -54,49 +54,31 @@ export class Company extends Model{
 }
 
 export class CompanyList extends Model{
-  public id: number;
-  public paises_id: number;
-  public paises_nombre: string;
-  public codigo_ubigeo: string;
-  public razon_social: string;
-  public nombre_comercial: string;
-  public descripcion: string;
-  public tipo_documentos_id: number;
-  public tipo_documentos_nombre: string;
-  public tipo_documentos_abreviacion: string;
-  public documento: string;
-  public tipo_empresa: string;
-  public direccion: string;
-  public ciudad: string;
-  public telefono: string;
-  public correo: string;
-  public is_active: boolean;
-  public created_at: string;
-  public updated_at: string;
-  public deleted_at: string;
+  public id?: number;
+  public paises_id?: number;
+  public codigo_ubigeo?: string;
+  public tipo_empresa?: string;
+  public razon_social?: string;
+  public nombre_comercial?: string;
+  public descripcion?: string;
+  public is_active?: boolean | number;
+  public identifications?: IdentificationDocument[];
+  public contacts?: ContactList[];
+  public addresses?: AddressList[];
 
   constructor(data?: object){
     super(data);
-    this.id = this.id || 0;
-    this.paises_id = this.paises_id || 0;
-    this.paises_nombre = this.paises_nombre || '';
+    this.id = this.id || null;
+    this.paises_id = this.paises_id || null;
     this.codigo_ubigeo = this.codigo_ubigeo || '';
     this.razon_social = this.razon_social || '';
     this.nombre_comercial = this.nombre_comercial || '';
     this.descripcion = this.descripcion || '';
-    this.tipo_documentos_id = this.tipo_documentos_id || 0;
-    this.tipo_documentos_nombre = this.tipo_documentos_nombre || '';
-    this.tipo_documentos_abreviacion = this.tipo_documentos_abreviacion || '';
-    this.documento = this.documento || '';
     this.tipo_empresa = this.tipo_empresa || '';
-    this.direccion = this.direccion || '';
-    this.ciudad = this.ciudad || '';
-    this.telefono = this.telefono || '';
-    this.correo = this.correo || '';
-    this.is_active = this.is_active || true;
-    this.created_at = this.created_at || '';
-    this.updated_at = this.updated_at || '';
-    this.deleted_at = this.deleted_at || '';
+    this.is_active = this.is_active || 1;
+    this.identifications = this.identifications || [];
+    this.contacts = this.contacts || [];
+    this.addresses = this.addresses || [];
   }
 
   public static cast(data: object): CompanyList{
@@ -104,24 +86,15 @@ export class CompanyList extends Model{
     return {
       id: obj.id, 
       paises_id: obj.paises_id,
-      paises_nombre: obj.paises_nombre,
       codigo_ubigeo: obj.codigo_ubigeo,
       razon_social: obj.razon_social,
       nombre_comercial: obj.nombre_comercial,
       descripcion: obj.descripcion,
-      tipo_documentos_id: obj.tipo_documentos_id,
-      tipo_documentos_nombre: obj.tipo_documentos_nombre,
-      tipo_documentos_abreviacion: obj.tipo_documentos_abreviacion,
-      documento: obj.documento,
       tipo_empresa: obj.tipo_empresa,
-      direccion: obj.direccion,
-      ciudad: obj.direccion,
-      telefono: obj.telefono,
-      correo: obj.correo,
       is_active: obj.is_active,
-      created_at: obj.created_at,
-      updated_at: obj.updated_at,
-      deleted_at: obj.deleted_at
+      identifications: obj.identifications,
+      contacts: obj.contacts,
+      addresses: obj.addresses,
     };
   }
 

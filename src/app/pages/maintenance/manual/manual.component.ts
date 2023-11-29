@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Manual, ManualList, Pagination, ResponseApi, ResponsePagination } from 'src/app/core/models';
+import { Breadcrumb, Manual, ManualList, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
 import { ManualService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
@@ -36,7 +36,7 @@ export class ManualComponent {
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination = new Pagination();
+  pagination: PaginationResult = new PaginationResult();
 
   // Archivos subidos
   uploadFiles: File[];
@@ -217,7 +217,7 @@ export class ManualComponent {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;

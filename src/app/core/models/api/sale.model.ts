@@ -1,4 +1,5 @@
 import { ClientList } from "./client.model";
+import { InstallationList } from "./maintenance";
 import { Model } from "./model";
 import { SaleDetailList } from "./sale-detail.model";
 import { UserPersonList } from "./user.model";
@@ -62,6 +63,7 @@ export class SaleList extends Model{
   public user_create?: any;
   public user_update?: any;
   public sale_details?: SaleDetailList[];
+  public installations?: InstallationList[];
 
   constructor(data?: object){
     super(data);
@@ -82,6 +84,7 @@ export class SaleList extends Model{
     this.user_create = this.user_create || null;
     this.user_update = this.user_update || null;
     this.sale_details = this.sale_details || [];
+    this.installations = this.installations || [];
   }
 
   public static cast(data: object): SaleList{
@@ -104,6 +107,7 @@ export class SaleList extends Model{
       user_create: obj.user_create,
       user_update: obj.user_update,
       sale_details: obj.sale_details,
+      installations: obj.installations,
     }
   }
   public static casts(dataArray: object[]): SaleList[]{

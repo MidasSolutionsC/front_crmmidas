@@ -1,7 +1,7 @@
 import { BankAccount } from "./bank-account.model";
-import { Company } from "./company.model";
+import { Company, CompanyList } from "./company.model";
 import { Model } from "./model";
-import { Person } from "./person.model";
+import { Person, PersonList } from "./person.model";
 
 export class Client extends Model{
   public id?: number;
@@ -61,6 +61,8 @@ export class Client extends Model{
 export class ClientList extends Model{
   public id: number;
   public personas_id: number;
+  public person?: PersonList;
+  public company?: CompanyList;
   public empresas_id: number;
   public nacionalidad: string;
   public tipo_cliente: string;
@@ -76,6 +78,8 @@ export class ClientList extends Model{
     super(data);
     this.id = this.id || 0;
     this.personas_id = this.personas_id || 0;
+    this.person = this.person || null;
+    this.company = this.company || null;
     this.empresas_id = this.empresas_id || 0;
     this.nacionalidad = this.nacionalidad || null;
     this.tipo_cliente = this.tipo_cliente || null;
@@ -94,6 +98,8 @@ export class ClientList extends Model{
     return {
       id: obj.id,
       personas_id: obj.personas_id,
+      person: obj.person,
+      company: obj.company,
       empresas_id: obj.empresas_id,
       nacionalidad: obj.nacionalidad,
       tipo_cliente: obj.tipo_cliente,

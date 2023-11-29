@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Pagination, ProductList, PromotionList, ResponseApi, ResponsePagination, Service, ServiceList, TypeServiceList } from 'src/app/core/models';
+import { Breadcrumb, Pagination, PaginationResult, ProductList, PromotionList, ResponseApi, ResponsePagination, Service, ServiceList, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, ProductService, PromotionService, ServiceService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 @Component({
   selector: 'app-service',
@@ -33,7 +33,7 @@ export class ServiceComponent {
   order: 'asc' | 'desc' = 'desc';
   countElements: number[] = [5, 10, 25, 50, 100];
   total: number = 0;
-  pagination: Pagination = new Pagination();
+  pagination: PaginationResult = new PaginationResult();
 
 
   // Table data
@@ -275,7 +275,7 @@ export class ServiceComponent {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = Pagination.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;
