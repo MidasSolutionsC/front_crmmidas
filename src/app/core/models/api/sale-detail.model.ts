@@ -1,5 +1,8 @@
 import { InstallationList, ProductList, PromotionList, TypeStatusList } from "./maintenance";
 import { Model } from "./model";
+import { SaleCommentList } from "./sale-comment.model";
+import { SaleDocumentList } from "./sale-document.model";
+import { SaleHistoryList } from "./sale-history.model";
 
 export class SaleDetail extends Model{
   public id: number;
@@ -13,6 +16,7 @@ export class SaleDetail extends Model{
   public fecha_cierre: string;
   public datos_json: object;
   public is_active: boolean;
+
 
   constructor(data?: object){
     super(data);
@@ -42,7 +46,7 @@ export class SaleDetail extends Model{
       observacion: saleDetail.observacion,
       fecha_cierre: saleDetail.fecha_cierre,
       datos_json: saleDetail.datos_json,
-      is_active: saleDetail.is_active
+      is_active: saleDetail.is_active,
     }
   }
 
@@ -72,6 +76,9 @@ export class SaleDetailList extends Model{
   public promotion?: PromotionList;
   public installation?: InstallationList;
   public type_status?: TypeStatusList;
+  public comments?: SaleCommentList[];
+  public documents?: SaleDocumentList[];
+  public histories?: SaleHistoryList[];
 
 
   constructor(data?: object){
@@ -96,6 +103,9 @@ export class SaleDetailList extends Model{
     this.promotion = this.promotion || null;
     this.installation = this.installation || null;
     this.type_status = this.type_status || null;
+    this.comments = this.comments || [];
+    this.documents = this.documents || [];
+    this.histories = this.histories || [];
   }
 
   public static cast(data: object): SaleDetailList{
@@ -121,6 +131,9 @@ export class SaleDetailList extends Model{
       promotion: saleDetailList.promotion,
       installation: saleDetailList.installation,
       type_status: saleDetailList.type_status,
+      comments: saleDetailList.comments,
+      documents: saleDetailList.documents,
+      histories: saleDetailList.histories,
     }
   }
   public static casts(dataArray: object[]): SaleDetailList[]{

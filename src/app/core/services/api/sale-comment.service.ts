@@ -58,6 +58,11 @@ export class SaleCommentService {
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
+  public getFilterBySaleDetail(saleDetailId: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/filterSaleDetail/${saleDetailId}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
   public getById(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
