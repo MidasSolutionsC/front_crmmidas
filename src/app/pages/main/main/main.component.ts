@@ -6,7 +6,6 @@ import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { Advertisement, AdvertisementList, Breadcrumb, Pagination, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
-import { CarouselComponent } from 'ngx-bootstrap/carousel';
 
 @Component({
   selector: 'app-main',
@@ -14,12 +13,7 @@ import { CarouselComponent } from 'ngx-bootstrap/carousel';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent {
-  @Input() currentIndex: number;
- @Output() currentIndexChange = new EventEmitter<number>();
-
- selectSlide(index: number) {
-    this.currentIndexChange.emit(index);
- }
+  
 
 
   modalRef?: BsModalRef;
