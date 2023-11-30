@@ -10,7 +10,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BsDropdownModule,BsDropdownConfig} from 'ngx-bootstrap/dropdown';
-import { CarouselModule } from 'ngx-bootstrap/carousel';
+
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
@@ -29,7 +29,7 @@ import { DefaultComponent } from './default/default.component';
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
     TabsModule.forRoot(),
-    CarouselModule.forRoot(),
+   
     WidgetModule,
     NgApexchartsModule,
     SimplebarAngularModule,

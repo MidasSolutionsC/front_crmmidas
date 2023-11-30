@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AlertModule } from 'ngx-bootstrap/alert';
-import { CarouselModule } from 'ngx-owl-carousel-o';
-
 import { UIModule } from '../../shared/ui/ui.module';
 import { LoginComponent } from './login/login.component';
 
@@ -25,7 +23,6 @@ import { CoreModule } from 'src/app/core/core.module';
     AlertModule.forRoot(),
     UIModule,
     AuthRoutingModule,
-    CarouselModule,
     CoreModule
   ]
 })

@@ -9,7 +9,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 
-import { CarouselModule } from 'ngx-owl-carousel-o';
+
 import { ScrollToModule } from '@nicky-lenaers/ngx-scroll-to';
 
 import { LayoutsModule } from './layouts/layouts.module';
@@ -25,8 +25,6 @@ import { JwtAuthInterceptor } from './core/helpers';
 
 import { DataTablesModule} from 'angular-datatables'
 import { CollapseModule } from 'ngx-bootstrap/collapse';
-import { CarouselComponent } from 'ngx-bootstrap/carousel';
-import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 // if (environment.defaultauth === 'firebase') {
@@ -48,8 +46,7 @@ export function createTranslateLoader(http: HttpClient): any {
     CoreModule,
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule, 
-    NgbCarouselModule,  
+    HttpClientModule,     
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -59,7 +56,7 @@ export function createTranslateLoader(http: HttpClient): any {
     }),
     LayoutsModule,
     AppRoutingModule,
-    CarouselModule,
+   
     AccordionModule.forRoot(),
     CollapseModule.forRoot(),
     TabsModule.forRoot(),
@@ -68,7 +65,7 @@ export function createTranslateLoader(http: HttpClient): any {
     ToastrModule.forRoot(),
     DataTablesModule,
   ],
-  bootstrap: [AppComponent, CarouselComponent],
+  bootstrap: [AppComponent, ],
   providers: [
     // Authentication
     { provide: HTTP_INTERCEPTORS, useClass: JwtAuthInterceptor, multi: true },
