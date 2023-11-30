@@ -408,7 +408,7 @@
                       </span>
                     </a>
                   </div>
-                  <div class="card-body border border-info rounded" *ngIf="item.visible">
+                  <div class="card-body border border-info rounded" style="overflow-x: visible;" *ngIf="item.visible">
                     <div class="dropdown float-end" dropdown>
                       <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
                         <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
@@ -440,9 +440,11 @@
                       </tab>
                       <tab heading="Documentos">
                         <!-- <ng-template [ngTemplateOutlet]="templateContainerDocument"></ng-template> -->
+                        <p class="text-center">Sin registros</p>
                       </tab>
                       <tab heading="Historial">
                         <!-- <ng-template [ngTemplateOutlet]="templateContainerHistory"></ng-template> -->
+                        <p class="text-center">Sin registros</p>
                       </tab>
                     </tabset>
 
@@ -722,18 +724,137 @@
 
       <!-- COMENTARIOS MSG -->
       <ng-template #templateContainerCommentMsg let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
-        <!-- <p-scrollPanel></p-scrollPanel> -->
+        <div
+          class="chat-conversation search-results-comments py-2"
+          infiniteScroll
+          [infiniteScrollDistance]="2"
+          [infiniteScrollUpDistance]="2"
+          [infiniteScrollThrottle]="50"
+          (scrolledUp)="onScrollUpComment($event, saleId, saleDetailId)"
+          (scrolled)="onScrollDownComment($event, saleId, saleDetailId)"
+          [scrollWindow]="false"
+        >
+          <ng-container *ngIf="comments.length > 0 else commentsEmpty">
+            <div class="conversation-list" style="overflow: visible;" *ngFor="let item of comments">
+              <div class="dropdown" dropdown>
+
+                <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </a>
+                <div class="dropdown-menu" *dropdownMenu>
+                  <a class="dropdown-item" href="javascript: void(0);" (click)="copyMessage($event)">Copiar mensaje</a>
+                  <a class="dropdown-item" href="javascript: void(0);">Eliminar</a>
+                </div>
+              </div>
+              <div class="ctext-wrap">
+                <div class="conversation-name">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
+                <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
+                <p [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
+                <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
+                <div class="text-end">
+                  <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
+                </div>
+              </div>
+
+            </div>
+          </ng-container>
+          <ng-template #commentsEmpty>
+            <p>Sin registros</p>
+          </ng-template>
+        </div>
+        <div class="w-100 pt-2">
+          <div class="input-group-relative position-relative border border-primary" style="border-radius: 3rem;">
+            <form [formGroup]="comentariosForm[saleDetailId]">
+              <textarea formControlName="comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
+              <button type="button" (click)="registerCommentInSaleDetail(saleId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
+            </form>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #templateContainerCommentMsg3 let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
+
+        <p-virtualScroller 
+          (onLazyLoad)="onLazyLoadComment($event)" 
+          [lazy]="true" 
+          [value]="comments" class="border-1 surface-border border-round" 
+          [style]="{ width: '100%', 'font-size': '14px', 'max-height': '400px' }" 
+          scrollHeight="400px"
+          >
+          <ng-template pTemplate="item" let-item let-options="options">
+            <div [ngClass]="{'right': true}" class="h-100">
+              <div class="d-flex flex-row align-items-strech flex-wrap mb-2 border border-primary" [ngClass]="{'surface-ground': options.odd}">
+                <div class="flex align-items-center px-2" style="height: 25px">Item: {{item.id}}</div>
+                <div class="flex align-items-center px-2" style="height: 25px">Index: {{options.index}}</div>
+                <div class="flex align-items-center px-2" style="height: 25px">Count: {{options.count}}</div>
+                <div class="flex align-items-center px-2" style="height: 25px">First: {{options.first}}</div>
+                <div class="flex align-items-center px-2" style="height: 25px">Last: {{options.last}}</div>
+                <div class="flex align-items-center px-2" style="height: 25px">Even: {{options.even}}</div>
+                <div class="flex align-items-center px-2" style="height: 25px">Odd: {{options.odd}}</div>
+              </div>
+
+              <div class="conversation-list">
+                <div class="dropdown" dropdown>
+
+                  <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
+                    <i class="bx bx-dots-vertical-rounded"></i>
+                  </a>
+                  <div class="dropdown-menu" *dropdownMenu>
+                    <a class="dropdown-item" href="javascript: void(0);">Copy</a>
+                    <a class="dropdown-item" href="javascript: void(0);">Delete</a>
+                  </div>
+                </div>
+                <div class="ctext-wrap">
+                  <div class="conversation-name">{{ item?.user_create?.person?.nombres }}</div>
+                  <p>
+                    {{ item?.comentario }}
+                  </p>
+                  <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> {{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</p>
+                </div>
+
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="loader" let-options="options">
+              <div class="flex flex-column align-items-strech" [ngClass]="{'surface-ground': options.odd}">
+                <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+                <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="50%" height="1.2rem"></p-skeleton></div>
+                <div class="flex align-items-center px-2" style="height: 25px"><p-skeleton width="60%" height="1.2rem"></p-skeleton></div>
+              </div>
+          </ng-template>
+          <div class="h-100 d-flex flex-column">
+            <div class="py-2 flex-1">
+            </div>
+
+            <div class="w-100">
+              <div class="input-group-relative position-relative border border-primary" style="border-radius: 3rem;">
+                <form [formGroup]="comentariosForm[saleDetailId]">
+                  <textarea formControlName="comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
+                  <button type="button" (click)="registerCommentInSaleDetail(saleId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </p-virtualScroller>
+
         <!-- [loading]="lazyLoadingComment" 
         [lazy]="true" 
         (onLazyLoad)="onLazyLoadComment($event)" -->
-        <div class="">
+        <!-- <div class="">
           <div class="py-2">
             <p-scroller class="custom-loading list-unstyled" 
               [items]="comments" 
               [itemSize]="25 * 7" 
               [showLoader]="true" 
               [delay]="250" 
-             
+              [loading]="lazyLoadingComment" 
+              [lazy]="true" 
+              (onLazyLoad)="onLazyLoadComment($event)"
               styleClass="border-1 surface-border" [style]="{'width': '100%', 'height': '450px', 'max-height': '450px', 'position': 'relative'}">
               <ng-template pTemplate="item" let-item let-options="options">
                 <div [ngClass]="{'right': true}">
@@ -785,11 +906,14 @@
           </div>
           <div class="w-100">
             <div class="input-group-relative position-relative border border-primary" style="border-radius: 3rem;">
-              <textarea [(ngModel)]="dataMsgComment.comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
-              <button type="button" (click)="registerCommentInSaleDetail(saleId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
+              <form [formGroup]="comentariosForm[saleDetailId]">
+                <textarea formControlName="comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
+                <button type="button" (click)="registerCommentInSaleDetail(saleId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
+              </form>
             </div>
           </div>
-        </div>
+        </div> -->
+
       </ng-template>
 
       <ng-template #templateContainerCommentMsgTest2 let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
@@ -985,7 +1109,7 @@
       <!-- COMENTARIOS -->
       <ng-template #templateContainerComment>
         <div class="row g-2 mt-2">
-          <div class="col-md-12" *ngFor="let item of listSaleComment">
+          <!-- <div class="col-md-12" *ngFor="let item of listSaleComment">
             <div class="card-body border border-info rounded p-2">
               <div class="dropdown float-end" dropdown>
                 <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
@@ -997,9 +1121,34 @@
                   <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i>
                     Eliminar</a>
                 </div>
-              </div> <!-- end dropdown -->
+              </div>
               <ng-container *ngTemplateOutlet="templateComment; context: { $implicit: item }"></ng-container>
             </div>
+          </div> -->
+          <div class="chat-conversation">
+            <div class="conversation-list" *ngFor="let item of listSaleComment">
+              <div class="dropdown float-end" dropdown>
+                <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                  <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                  <a class="dropdown-item text-info" href="javascript: void(0);"><i class="mdi mdi-pencil-outline"></i>
+                    Editar</a>
+                  <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i>
+                    Eliminar</a>
+                </div>
+              </div> <!-- end dropdown -->
+              <div class="ctext-wrap">
+                <div class="conversation-name">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
+                <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
+                <p [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
+                <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
+                <div class="text-end">
+                  <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
+                </div>
+              </div>
+            </div>
+
           </div>
           <div *ngIf="!listSaleComment?.length">
             <p class="text-start">Sin registros</p>

@@ -53,6 +53,13 @@ export class SaleCommentService {
     }
   }
 
+  public getPagination(data: any): Observable<ResponseApi> {
+    const queryParams = new URLSearchParams();
+    queryParams.set('data', JSON.stringify(data));
+    const endpoint = `${this.baseUrl}/index?${queryParams.toString()}`;
+    return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
   public getFilterBySale(saleId: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/filterSale/${saleId}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))

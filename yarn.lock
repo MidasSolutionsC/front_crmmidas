@@ -6481,6 +6481,13 @@
   dependencies:
     "tslib" "^2.3.0"
 
+"ngx-infinite-scroll@^17.0.0":
+  "integrity" "sha512-pQXLuRiuhRuDKD3nmgyW1V08JVNBepmk6nb8qjHc5hgsWNts01+R/p33rYcRDzcut6/PWqGyrZ9o9i8swzMYMA=="
+  "resolved" "https://registry.npmjs.org/ngx-infinite-scroll/-/ngx-infinite-scroll-17.0.0.tgz"
+  "version" "17.0.0"
+  dependencies:
+    "tslib" "^2.3.0"
+
 "ngx-lightbox@^3.0.0":
   "integrity" "sha512-gKLy0R3SbbzHkDnAINtT3HFC71XVd86+dkP3LBeKrvjngxB6wMABfY73fF5IGsu9HfKQUN2Ni2Nx6s12xNwXow=="
   "resolved" "https://registry.npmjs.org/ngx-lightbox/-/ngx-lightbox-3.0.0.tgz"
