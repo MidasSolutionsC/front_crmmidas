@@ -224,34 +224,19 @@ export class DetailMobileLineList extends Model{
 
   public static cast(data: object): DetailMobileLineList{
     const detailMobileList = new DetailMobileLineList(data);
-    const {
-      tipo_documentos_id,
-      tipo_documentos_nombre,
-      tipo_documentos_abreviacion,
-      documento_titular,
-      titular,
-      operador_donante_id,
-      operador_donante_nombre,
-      num_portar,
-      icc,
-      terminal,
-      modelo_terminal,
-      aop
-    }= detailMobileList;
-    
     return {
-      tipo_documentos_id,
-      tipo_documentos_nombre,
-      tipo_documentos_abreviacion,
-      documento_titular,
-      titular,
-      operador_donante_id,
-      operador_donante_nombre,
-      num_portar,
-      icc,
-      terminal,
-      modelo_terminal,
-      aop
+      tipo_documentos_id: detailMobileList.tipo_documentos_id,
+      tipo_documentos_nombre: detailMobileList.tipo_documentos_nombre,
+      tipo_documentos_abreviacion: detailMobileList.tipo_documentos_abreviacion,
+      documento_titular: detailMobileList.documento_titular,
+      titular: detailMobileList.titular,
+      operador_donante_id: detailMobileList.operador_donante_id,
+      operador_donante_nombre: detailMobileList.operador_donante_nombre,
+      num_portar: detailMobileList.num_portar,
+      icc: detailMobileList.icc,
+      terminal: detailMobileList.terminal,
+      modelo_terminal: detailMobileList.modelo_terminal,
+      aop: detailMobileList.aop
     };
   }
   public static casts(dataArray: object[]): DetailMobileLineList[]{
