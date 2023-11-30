@@ -96,6 +96,9 @@ import { SkeletonModule } from 'primeng/skeleton';
 import {TabViewModule} from 'primeng/tabview'
 import {PanelModule} from 'primeng/panel'
 
+// INFINITE SCROLL
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
+
 @NgModule({
   declarations: [
     CalendarComponent,
@@ -188,7 +191,10 @@ import {PanelModule} from 'primeng/panel'
     ScrollPanelModule,
     VirtualScrollerModule,
     SkeletonModule,
-    TabViewModule
+    TabViewModule,
+
+    // INFINITE SCROLL
+    InfiniteScrollModule
   ],
   providers: [BsDropdownConfig, provideNgxMask()]
 })
