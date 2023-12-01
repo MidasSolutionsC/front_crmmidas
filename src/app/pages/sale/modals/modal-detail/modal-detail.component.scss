@@ -12,3 +12,29 @@
 .tabview-custom .p-tabview-panel {
   font-size: 12px;
 }
+
+
+.custom-virtual-scroller-header {
+  font-size: 14px; /* or any other font size you prefer */
+  /* Add other styles as needed */
+  background-color: aquamarine;
+  padding: 2px;
+}
+
+.custom-virtual-scroller-footer {
+  font-size: 14px; /* or any other font size you prefer */
+  /* Add other styles as needed */
+}
+
+.custom-virtual-scroller {
+  font-size: 14px; /* or any other font size you prefer */
+  /* Add other styles as needed */
+}
+
+
+.search-results-comments {
+  max-height: 450px;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: visible;
+}
