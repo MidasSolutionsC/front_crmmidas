@@ -17,7 +17,7 @@ export class CampusComponent {
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
 
   dataModal = {
-    title: 'Crear sedes',
+    title: 'Crear Sedes',
   }
 
   // bread crumb items
@@ -62,7 +62,7 @@ export class CampusComponent {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de servicios', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Sedes'}]);
     this.initForm();
 
     this.listDataApi();
@@ -343,7 +343,7 @@ export class CampusComponent {
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Crear sede';
+    this.dataModal.title = 'Crear Nueva Sede';
     this.submitted = false;
     this.previewImage = null;
     this.uploadFiles = [];

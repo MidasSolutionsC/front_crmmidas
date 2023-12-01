@@ -8,8 +8,9 @@
       <div class="container">
           <div class="row">
 
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6">
               <div class="card bg-primary">
+                 <br>
                   <div class="card-title d flex text-white text-center"> Usuarios <i class="	fas fa-user-tie"></i></div>
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <a href="http://localhost:4200/maintenances/user" class="text-white">Ver Detalle</a>
@@ -18,8 +19,9 @@
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6">
               <div class="card bg-secondary">
+                <br>
                   <div class="card-title d flex text-white text-center"> Productos <i class="fas fa-sun"></i></div>
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <a href="http://localhost:4200/maintenances/product" class="text-white">Ver Detalle</a>
@@ -28,28 +30,84 @@
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6">
               <div class="card bg-success">
+                <br>
                   <div class="card-title d flex text-white text-center"> Total Ventas <i class="fas fa-euro-sign"></i></div>
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <a href="http://localhost:4200/sale" class="text-white">Ver Detalle</a>
                     
-                    <span class="text-white">35</span>
+                    <span class="text-white">180</span>
                 </div>
               </div>
             </div>
 
        </div>
+       <div class="row my-3">
+        <div class="col-md-6 text-center">
+          <h2>Reporte de Ventas por Campaña</h2>
+          <canvas id="chart" class="centrar-div" height="2400"> {{chart}}</canvas>
+        </div>
+        <div class="col-md-6 text-center">
+          <h2>Tabla de Ventas por Campaña</h2>
+          <div id="idContTabla"> </div>
+          <br><br><br>
+          <div class="table-responsive">
+            <table class="table table-success table-striped-columns">
+              <thead>
+                <tr class="table-secondary">
+                  <th>Campaña</th>
+                  <th>N° Ventas</th>
+                  <th>Coordinador</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="table-light">
+                  <td>Vodafone</td>
+                  <td>100</td>
+                  <td>Tifani</td>
+                </tr>
+                <tr class="table-light">
+                  <td>Finetwork</td>
+                  <td>50</td>
+                  <td>Maria</td>
+                </tr>
+                <tr class="table-light">
+                  <td>Lowi</td>
+                  <td>30</td>
+                  <td>Greisy</td>
+                </tr>
+                <tr class="table-light">
+                  <td>MásMóvil</td>
+                  <td>10</td>
+                  <td>Judith</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+           
+        </div>
+      </div>
+       
           <div class="row my-3">
-            <div class="col-md-12 text-center">
-              <h2>Reporte de Ventas</h2>
+            <div class="col-md-6 text-center">
+              <h2>Reporte de Ventas por Comercial</h2>
               <canvas id="chart"> {{chart}}</canvas>
+            </div>
+            <div class="col-md-6 text-center">
+              <h2>Tabla de Ventas por Comercial</h2>
+              <div id="idContTabla"> </div>
             </div>
           </div>
 
           <div class="row my-3">
-            <div class="col-md-12 text-center">
-              <h2>Tabla de Ventas</h2>
+            <div class="col-md-6 text-center">
+              <h2>Reporte de Ventas por Coordinador</h2>
+              <canvas id="chart"> {{chart}}</canvas>
+            </div>
+            <div class="col-md-6 text-center">
+              <h2>Tabla de Ventas por Coordinador</h2>
               <div id="idContTabla"> </div>
             </div>
           </div>

@@ -14,11 +14,11 @@ export class TypeStatusComponent implements OnInit, OnDestroy{
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Crear tipo de estados',
+    title: 'Crear Tipo de Estados',
   }
 
   // bread crumb items
-  titleBreadCrumb: string = 'Tipo de servicios';
+  titleBreadCrumb: string = 'Tipo de Estados';
   breadCrumbItems: Array<{}>;
   
   // Form 
@@ -44,7 +44,7 @@ export class TypeStatusComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de servicios', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de Estados', active: true }]);
 
     this.initForm();
     this.listDataApi();
@@ -221,7 +221,7 @@ export class TypeStatusComponent implements OnInit, OnDestroy{
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Crear tipo de estado';
+    this.dataModal.title = 'Crear Tipo de Estado';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});
@@ -263,7 +263,7 @@ export class TypeStatusComponent implements OnInit, OnDestroy{
  */
   editDataGet(id: any, content: any) {
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.dataModal.title = 'Editar tipo de servicio';
+    this.dataModal.title = 'Editar Tipo de Estado';
     this.isNewData = false;
     this.submitted = false;
     // Cargando datos al formulario 
@@ -278,7 +278,7 @@ export class TypeStatusComponent implements OnInit, OnDestroy{
    * @param id id del registro a eliminar
    */
   deleteRow(id: any){
-    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de estado?').then((confirm) => {
+    this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el Tipo de Estado?').then((confirm) => {
       if(confirm.isConfirmed){
         this.deleteDataApi(id);
       }

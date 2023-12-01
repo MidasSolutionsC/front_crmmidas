@@ -45,7 +45,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de documentos', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de Documentos', active: true }]);
 
     this.initForm();
     this.listDataApi();
@@ -221,7 +221,7 @@ export class TypeDocumentComponent implements OnInit, OnDestroy {
    */
   openModal(content: any) {
     this.initForm();
-    this.dataModal.title = 'Crear tipo de documento';
+    this.dataModal.title = 'Crear Tipo de Documento';
     this.submitted = false;
     this.isNewData = true;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });

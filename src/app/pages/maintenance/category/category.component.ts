@@ -14,7 +14,7 @@ export class CategoryComponent {
   modalRef?: BsModalRef;
 
   dataModal = {
-    title: 'Crear categorías',
+    title: 'Crear Categorías',
   }
 
   // bread crumb items
@@ -220,7 +220,7 @@ export class CategoryComponent {
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Crear categoría';
+    this.dataModal.title = 'Crear Categoría';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});

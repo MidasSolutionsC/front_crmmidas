@@ -46,7 +46,7 @@ export class TypeCurrencyComponent {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Tipo de monedas', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'},{ label: 'Tipo de Monedas', active: true }]);
 
     this.initForm();
     this.listDataApi();
@@ -267,7 +267,7 @@ export class TypeCurrencyComponent {
   openModal(content: any) {
     this.initForm();
     this.isNewData = true;
-    this.dataModal.title = 'Crear divisa';
+    this.dataModal.title = 'Crear Divisa';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});

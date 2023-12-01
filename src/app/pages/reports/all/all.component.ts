@@ -13,11 +13,11 @@ export class AllComponent {
 
   ngOnInit(): void {
   const data = {
-     labels: [ 'Red', 'Blue','Yellow'],
+     labels: [ 'Vodafone', 'Finetwork','Lowi','MásMóvil'],
     datasets:[{
-     label: 'Mis datos',
-           data: [300, 50, 100],
-     backgroundColor: ['rgba(255, 99, 132)', 'rgba(54, 162, 235)', 'rgba(54, 205, 86)'],
+     label: 'Campaña',
+           data: [100, 50, 30, 10],
+     backgroundColor: ['rgba(255, 99, 132)', 'rgba(54, 162, 235)', 'rgba(54, 205, 86)', 'rgba(54, 105, 86)'],
      hoverOffset:4
     } ]
     };
