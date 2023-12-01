@@ -2,7 +2,7 @@
 <div class="container">
   <div class="card" >
     <div class="card-header">
-      <h2>Reporte General</h2>
+      <h2>Reporte General Sobre las Ventas Registradas en el CRM</h2>
     </div>
    <div class="card-body">
       <div class="container">
@@ -37,10 +37,30 @@
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <a href="http://localhost:4200/sale" class="text-white">Ver Detalle</a>
                     
-                    <span class="text-white">180</span>
+                    <span class="text-white">190</span>
                 </div>
               </div>
             </div>
+            <div class="col-12 py-6 ">
+              
+                <form action="http://localhost:4200/sale">
+                  <label>
+                    Desde:
+                    <input type="date" name="bday" />
+                  </label>
+                  <label>
+                    Hasta:
+                    <input type="date" name="bday" />
+                  </label>
+                  <button class="search-btn" type="submit">   <span>Buscar</span>     </button> 
+                
+                  <!-- <p><button>Buscar Reporte</button></p> -->
+                </form>
+                
+            </div>
+            
+                             
+          
 
        </div>
        <div class="row my-3">
@@ -98,9 +118,42 @@
             <div class="col-md-6 text-center">
               <h2>Tabla de Ventas por Comercial</h2>
               <div id="idContTabla"> </div>
-            </div>
-          </div>
-
+              <div class="table-responsive">
+                      <table class="table table-success">
+                        <thead>
+                          <tr class="table-secondary">                                       
+                            <th>Comercial</th>
+                            <th>N° Ventas</th>
+                            <th>Servicio</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td> Liz</td>
+                            <td> 3</td>
+                            <td> Línea Fija</td>
+                          </tr>
+                          <tr>
+                            <td> Zumi</td>
+                            <td> 4</td>
+                            <td> Línea Fija</td>
+                          </tr>
+                          <tr>
+                            <td> Saira</td>
+                            <td> 2</td>
+                            <td> Línea Móbil</td>
+                          </tr>
+                          <tr>
+                            <td> Maroki</td>
+                            <td> 4</td>
+                            <td> Línea Fija</td>
+                          </tr>
+          
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  
           <div class="row my-3">
             <div class="col-md-6 text-center">
               <h2>Reporte de Ventas por Coordinador</h2>
@@ -109,8 +162,54 @@
             <div class="col-md-6 text-center">
               <h2>Tabla de Ventas por Coordinador</h2>
               <div id="idContTabla"> </div>
-            </div>
-          </div>
+              
+                <div class="table-responsive">
+                  <table class="table table-success ">
+                    <thead>
+                      <tr class="table-secondary">
+                        <th>Coordinador</th>            
+                        <th>Comercial</th>                      
+                        <th>N° Ventas</th>
+                        <th>Servicio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                      <td rowspan="3">Tifani </td>
+                      <td> Maroki</td>
+                      <td> 2</td>
+                      <td> Línea Móvil</td>
+                    </tr>
+                    <tr>
+                      <td> Liz</td>
+                      <td> 3</td>
+                      <td> Línea Fija</td>
+                    </tr>
+                    <tr>
+                      <td> Zumi</td>
+                      <td> 4</td>
+                      <td> Línea Fija</td>
+                    </tr>
+                    <tr>
+                      <td rowspan="3">Greisy</td>
+                      <td> Maroki</td>
+                      <td> 2</td>
+                      <td> Línea Móvil</td>
+                    </tr>
+                    <tr>
+                      <td> Rosendo</td>
+                      <td> 3</td>
+                      <td> Línea Fija</td>
+                    </tr>
+                    <tr>
+                      <td> Mario</td>
+                      <td> 4</td>
+                      <td> Línea Fija</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+            
 
 
 

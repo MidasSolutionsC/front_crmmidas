@@ -3,14 +3,64 @@
       <div class="card-header">
         <h2>Reporte Por Comercial</h2>
       </div>
+      <div class="col-12 py-6 ">
+              
+        <form action="http://localhost:4200/sale">
+          <label>
+            Desde:
+            <input type="date" name="bday" />
+          </label>
+          <label>
+            Hasta:
+            <input type="date" name="bday" />
+          </label>
+          <button class="search-btn" type="submit">   <span>Buscar</span>     </button> 
+        
+        </form>
+        
+    </div>
       <div class="row my-3">
         <div class="col-md-6 text-center">
-          <h2>Gráfico</h2>
+          <h2>Gráfico de Comercial</h2>
           <canvas id="chart"> {{chart}}</canvas>
         </div>
         <div class="col-md-6 text-center">
-          <h2>Tabla de Ventas por Vendedor</h2>
+          <h2>Tabla de Ventas por Comercial</h2>
           <div id="idContTabla"> </div>
+          <div class="table-responsive">
+            <table class="table table-success">
+              <thead>
+                <tr class="table-secondary">                                       
+                  <th>Comercial</th>
+                  <th>N° Ventas</th>
+                  <th>Servicio</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td> Liz</td>
+                  <td> 3</td>
+                  <td> Línea Fija</td>
+                </tr>
+                <tr>
+                  <td> Zumi</td>
+                  <td> 4</td>
+                  <td> Línea Fija</td>
+                </tr>
+                <tr>
+                  <td> Liz</td>
+                  <td> 3</td>
+                  <td> Línea Fija</td>
+                </tr>
+                <tr>
+                  <td> Zumi</td>
+                  <td> 4</td>
+                  <td> Línea Fija</td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
