@@ -13,12 +13,79 @@ import { TypeUserPermissionService } from 'src/app/core/services/api/settings/ty
   templateUrl: './type-user-permission.component.html',
   styleUrls: ['./type-user-permission.component.scss']
 })
-export class TypeUserPermissionComponent
- {
-  modalRef?: BsModalRef;
 
+export class TypeUserPermissionComponent {
+  modalRef?: BsModalRef;
+  public permissions: Array<{name: string, description: string, read: boolean, create: boolean, write: boolean, delete: boolean}> = [
+    {
+      name: 'Inicio',
+      description: 'Muestra los anuncios internos  y externos',
+      read: true,
+      create:true,
+      write: true,
+      delete: true
+    },
+    {
+       name: 'Ventas',
+       description: 'Muestra Lista de Ventas y crear venta',
+       read: true,
+       create:true,
+       write: true,
+       delete: true
+    },
+    {
+       name: 'Calendario',
+       description: 'Muestra Calendario',
+       read: true,
+       create:true,
+       write: true,
+       delete: true
+    },
+    {
+       name: 'Mantenimiento',
+       description: 'Modules Dashboards Opportunities',
+       read: true,
+       create:true,
+       write: true,
+       delete: true
+    },
+    {
+       name: 'Configuraciones',
+       description: 'Modules Dashboards Opportunities',
+       read: true,
+       create:true,
+       write: true,
+       delete: true
+    },
+    {
+       name: 'Reportes',
+       description: 'Modules Dashboards Opportunities',
+       read: true,
+       create:true,
+       write: true,
+       delete: true
+    },
+  ];
+
+ public canRead(permission: {read: boolean}): boolean {
+    return permission.read;
+ }
+ public canCreate(permission: {create: boolean}): boolean {
+  return permission.create;
+ }
+
+
+ public canWrite(permission: {write: boolean}): boolean {
+    return permission.write;
+ }
+
+ public canDelete(permission: {delete: boolean}): boolean {
+    return permission.delete;
+ }
+
+ 
   dataModal = {
-    title: 'Crear Permisos de usuarios',
+    title: 'Crear Permisos de Usuarios',
   }
 
   // bread crumb items
@@ -288,3 +355,33 @@ export class TypeUserPermissionComponent
     });
   }
 }
+export interface Permiso {
+  ver: boolean;
+  editar: boolean;
+ }
+
+ const permisosUsuario = {
+  administrador: {
+     // ...Todos los permisos en los módulos
+  },
+  coordinador: {
+     inicio: { ver: true },
+     ventas: { ver: true, editar: false },
+     calendario: { ver: true, editar: true },
+     promociones: { ver: true, editar: true },
+     anuncios: { ver: true, editar: true },
+     manuales: { ver: true, editar: true },
+     reportes : { ver: true, editar: true }, //por vendedor a su cargo
+  },
+  backofice: {
+    inicio: { ver: true },
+    ventas: { ver: true, editar: true },//por vendedor a su cargo
+    calendario: { ver: true, editar: true },
+   },
+   comercial: {
+    inicio: { ver: true},
+    ventas: { ver: true, editar: true },//solo ver sus ventas
+    calendario: { ver: true, editar: true },
+   },
+  
+ };

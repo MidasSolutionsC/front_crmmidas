@@ -1,6 +1,31 @@
 <div class="container-fluid">
   <app-page-title [title]="titleBreadCrumb" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 
+  <div class="module-container">
+    <table class="table">
+      <thead>
+         <tr>
+           <th>Componente</th>
+           <th>Descripcion</th>
+           <th>Ver</th>
+           <th>Crear</th>
+           <th>Editar</th>
+           <th>Eliminar</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr *ngFor="let permission of permissions">
+           <td>{{permission.name}}</td>
+           <td>{{permission.description}}</td>
+           <td *ngIf="canRead(permission)">  <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-1" value="option1" aria-label="..."></td>
+           <td *ngIf="canCreate(permission)"> <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-2" value="option2" aria-label="..."></td>
+           <td *ngIf="canWrite(permission)"> <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-3" value="option3" aria-label="..."></td>
+           <td *ngIf="canDelete(permission)"> <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-4" value="option4" aria-label="..."></td>
+         </tr>
+      </tbody>
+     </table>
+   </div>
+
   <div class="row">
     <div class="col-12">
       <div class="card">

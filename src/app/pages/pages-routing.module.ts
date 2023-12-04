@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
 import { DefaultComponent } from './dashboards/default/default.component';
 import { MainComponent } from './main/main/main.component';
 import { jwtAuthGuard, hasRoleGuard } from '../core/guards';
@@ -8,7 +7,6 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { CallComponent } from './call/call.component';
 import { SaleComponent } from './sale/sale.component';
 import { AllowedIpComponent } from './allowed-ip/allowed-ip.component';
-
 import {FormComponent } from './sale/form/form.component';
 
 
