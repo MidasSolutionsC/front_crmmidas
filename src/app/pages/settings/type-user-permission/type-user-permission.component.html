@@ -17,10 +17,10 @@
          <tr *ngFor="let permission of permissions">
            <td>{{permission.name}}</td>
            <td>{{permission.description}}</td>
-           <td *ngIf="canRead(permission)">  <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-1" value="option1" aria-label="..."></td>
-           <td *ngIf="canCreate(permission)"> <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-2" value="option2" aria-label="..."></td>
-           <td *ngIf="canWrite(permission)"> <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-3" value="option3" aria-label="..."></td>
-           <td *ngIf="canDelete(permission)"> <input class="form-check-input position-static" type="checkbox" id="blankCheckbox-4" value="option4" aria-label="..."></td>
+           <td *ngIf="canRead(permission)">  <input class="form-check-input position-static" type="checkbox"  value="option1" aria-label="..."></td>
+           <td *ngIf="canCreate(permission)"> <input class="form-check-input position-static" type="checkbox"  value="option1" aria-label="..."></td>
+           <td *ngIf="canWrite(permission)"> <input class="form-check-input position-static" type="checkbox"  value="option1" aria-label="..."></td>
+           <td *ngIf="canDelete(permission)"> <input class="form-check-input position-static" type="checkbox"  value="option1" aria-label="..."></td>
          </tr>
       </tbody>
      </table>

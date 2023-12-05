@@ -43,7 +43,7 @@ export class TypeUserPermissionComponent {
     },
     {
        name: 'Mantenimiento',
-       description: 'Modules Dashboards Opportunities',
+       description: 'Muestra Los modulos dentro de Mantenimiento',
        read: true,
        create:true,
        write: true,
@@ -51,7 +51,7 @@ export class TypeUserPermissionComponent {
     },
     {
        name: 'Configuraciones',
-       description: 'Modules Dashboards Opportunities',
+       description: 'Muestra Los modulos dentro de Configuraciones',
        read: true,
        create:true,
        write: true,
@@ -59,7 +59,7 @@ export class TypeUserPermissionComponent {
     },
     {
        name: 'Reportes',
-       description: 'Modules Dashboards Opportunities',
+       description: 'Muestra los Reportes',
        read: true,
        create:true,
        write: true,
@@ -296,7 +296,7 @@ export class TypeUserPermissionComponent {
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
     this.modalRef.onHide.subscribe(() => {});
   }
-
+openModales(){}
 
   /**
     * Save
@@ -360,7 +360,7 @@ export interface Permiso {
   editar: boolean;
  }
 
- const permisosUsuario = {
+ const rolesRoutes = {
   administrador: {
      // ...Todos los permisos en los módulos
   },

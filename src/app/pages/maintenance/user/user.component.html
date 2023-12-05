@@ -311,7 +311,7 @@
         </div>
         <div class="col-md-6 mb-3" *ngIf="'FORMS.FIELD_NAMES.password_confirmation.label' | translate as translatedLabel;">
           <label for="clave_confirmation" class="form-label">{{translatedLabel}} *</label>
-          <input type="password" id="clave" maxlength="16" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.password_confirmation.placeholder' | translate}}" formControlName="clave_confirmation" [ngClass]="{ 'is-invalid': f.clave_confirmation.errors && (f.clave_confirmation.dirty || f.clave_confirmation.touched || submitted) }" />
+          <input type="password" id="clave_confirmation" maxlength="16" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.password_confirmation.placeholder' | translate}}" formControlName="clave_confirmation" [ngClass]="{ 'is-invalid': f.clave_confirmation.errors && (f.clave_confirmation.dirty || f.clave_confirmation.touched || submitted) }" />
           <div *ngIf="f.clave_confirmation.errors && (f.clave_confirmation.dirty || f.clave_confirmation.touched || submitted)" class="invalid-feedback" align="left">
             <div *ngIf="f.clave_confirmation.errors.required">
               {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
