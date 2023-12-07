@@ -4,11 +4,13 @@ import { BehaviorSubject, Observable, distinctUntilChanged, map, of } from 'rxjs
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '../config';
 import { SaleList } from '../../models/api/sale.model';
+import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SaleService {
+  
   private cachedData: ResponseApi; // Almacena los datos en caché
   private listSubject: BehaviorSubject<SaleList[]> = new BehaviorSubject<SaleList[]>([]);
   public listObserver$: Observable<SaleList[]> = this.listSubject.asObservable();
@@ -28,7 +30,6 @@ export class SaleService {
         }
       })
   }
-
 
   private get baseUrl() {
     return this.configService.apiUrl + 'sale';
@@ -104,7 +105,6 @@ export class SaleService {
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
-
   /**
    * FUNCIONES PARA LOS OBSERVABLES
    */
@@ -142,4 +142,6 @@ export class SaleService {
     const updatedData = currentData.filter(item => item.id !== id);
     this.listSubject.next(updatedData);
   }
+ 
 }
+ 

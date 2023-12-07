@@ -5,7 +5,7 @@ import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { Advertisement, AdvertisementList, Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
-
+import { DndDropEvent } from 'ngx-drag-drop';
 @Component({
   selector: 'app-advertisement',
   templateUrl: './advertisement.component.html',
@@ -13,10 +13,35 @@ import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormSer
 })
 export class AdvertisementComponent {
   
+  
   modalRef?: BsModalRef;
 
   dataModal = {
     title: 'Crear anuncio',
+  }
+  /**
+   * on dragging task
+   * @param item item dragged
+   * @param list list from item dragged
+   */
+  onDragged(item: any, list: any[]) {
+    const index = list.indexOf(item);
+    list.splice(index, 1);
+  }
+
+  /**
+   * On task drop event
+   */
+  onDrop(event: DndDropEvent, filteredList?: any[], targetStatus?: string) {
+    if (filteredList && event.dropEffect === 'move') {
+      let index = event.index;
+
+      if (typeof index === 'undefined') {
+        index = filteredList.length;
+      }
+
+      filteredList.splice(index, 0, event.data);
+    }
   }
 
 

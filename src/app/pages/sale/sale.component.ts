@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -16,8 +16,9 @@ import { ModalFormComponent } from './modals/modal-form/modal-form.component';
   templateUrl: './sale.component.html',
   styleUrls: ['./sale.component.scss']
 })
-export class SaleComponent {
-
+export class SaleComponent implements OnInit {
+  ventas: any[] = [];
+ 
   modalRef?: BsModalRef;
 
   dataModal = {
@@ -131,6 +132,7 @@ export class SaleComponent {
           this.apiSaleListPagination()
         })
     );
+
   }
 
   ngOnDestroy(): void {
