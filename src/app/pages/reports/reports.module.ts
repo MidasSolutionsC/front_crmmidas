@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { ReportsRoutingModule } from './reports-routing.module';
 import { AllComponent } from './all/all.component';
@@ -15,7 +16,9 @@ import { ByCoordinatorComponent } from './by-coordinator/by-coordinator.componen
   ],
   imports: [
     CommonModule,
-    ReportsRoutingModule
+    ReportsRoutingModule,
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class ReportsModule { }

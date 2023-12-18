@@ -17,3 +17,5 @@ export * from './bank-account.service'
 export * from './ipAllowed.service'
 export * from './installation.service'
 export * from './sale-detail.service'
+export * from './report.service'
+
