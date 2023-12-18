@@ -351,7 +351,7 @@ export class AdvertisementComponent {
    * @param fileInput elemento input
    */
   async onFileSelected(fileInput: HTMLInputElement){
-    const { files, error } = await FileUploadUtil.handleFileUploadBase64(fileInput, ['jpg', 'jpeg', 'png'], 0);
+    const { files, error } = await FileUploadUtil.handleFileUploadBase64(fileInput, ['jpg', 'jpeg', 'png', 'gif'], 0);
 
     if (files.length > 0) {
       this.form.file.setValue('file_upload');

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Report, BrandList, Breadcrumb, ResponseApi } from 'src/app/core/models';
+import { Report, BrandList, Breadcrumb, ResponseApi, SaleList } from 'src/app/core/models';
 import { ApiErrorFormattingService, ReportService, FormService, SweetAlertService } from 'src/app/core/services';
 import { Chart, ChartType } from 'chart.js/auto';
 
@@ -28,7 +28,7 @@ export class AllComponent {
   titleBreadCrumb: string = 'marcas';
   breadCrumbItems: Array<{}>;
 
-  // Form 
+  // Form
   isNewData: boolean = true;
   submitted: boolean = false;
   reportForm: UntypedFormGroup;
@@ -39,6 +39,7 @@ export class AllComponent {
   listsByBrand?: [];
   listsBySeller?: [];
   listsByCoordinator?: [];
+  listsSale?:[];
 
 
 
@@ -161,7 +162,7 @@ export class AllComponent {
             let data = {
               labels: labels,
               datasets: [{
-                label: 'Campaña',
+                label: 'Ventas',
                 data: count,
                 backgroundColor: ['rgba(255, 99, 132)', 'rgba(54, 162, 235)', 'rgba(54, 205, 86)', 'rgba(54, 105, 86)'],
                 hoverOffset: 4
@@ -211,11 +212,12 @@ export class AllComponent {
             let data = {
               labels: labels,
               datasets: [{
-                label: 'Campaña',
-                data: count,
+                 label: 'Coordinador',
+                 data: count,
                 backgroundColor: ['rgba(255, 99, 132)', 'rgba(54, 162, 235)', 'rgba(54, 205, 86)', 'rgba(54, 105, 86)'],
                 hoverOffset: 4
               }]
+              
             };
             this.chartByCoordinator = new Chart("chartByCoordinator", { type: 'pie' as ChartType, data })
 
@@ -258,7 +260,7 @@ export class AllComponent {
 
   /**
    * INICIAR FORMULARTO CON LAS VALIDACIONES
-   * @param model 
+   * @param model
    */
   private initForm() {
 
@@ -269,8 +271,8 @@ export class AllComponent {
 
   /**
    * CREAR VALIDACIONES DEL FORMGROUP
-   * @param model 
-   * @returns 
+   * @param model
+   * @returns
    */
 
   formatDate(date: Date): string {
@@ -341,7 +343,7 @@ export class AllComponent {
   //   this.dataModal.title = 'Editar marca';
   //   this.isNewData = false;
   //   this.submitted = false;
-  //   // Cargando datos al formulario 
+  //   // Cargando datos al formulario
   //   var data = this.lists.find((data: { id: any; }) => data.id === id);
   //   const brand = Brand.cast(data);
   //   this.reportForm = this.formBuilder.group({ ...this._formService.modelToFormGroupData(brand), id: [data.id] });

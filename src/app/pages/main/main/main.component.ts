@@ -32,7 +32,7 @@ export class MainComponent {
 
   // TABLE SERVER SIDE
   page: number = 1;
-  perPage: number = 5;
+  perPage: number = 25;
   search: string = '';
   column: string = '';
   order: 'asc' | 'desc' = 'desc';

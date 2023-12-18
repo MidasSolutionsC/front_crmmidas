@@ -5,75 +5,76 @@
       </div>
       <div class="col-12 py-6 ">
               
-        <form action="http://localhost:4200/sale">
+        <form (keydown.enter)="$event.preventDefault()" [formGroup]="reportForm" autocomplete="off">
+
           <label>
             Desde:
-            <input type="date" name="bday" />
-          </label>&nbsp; 
+            <input type="date" id="fecha_inicio" class="form-control" focus="true"
+              placeholder="{{'FORMS.FIELD_NAMES.fecha_inicio.placeholder' }}" formControlName="fecha_inicio"
+              [ngClass]="{ 'is-invalid': form['fecha_inicio'].errors && (form.fecha_inicio.dirty || form.fecha_inicio.touched || submitted) }" />
+
+            <div
+              *ngIf="form['fecha_inicio'].errors && (form.fecha_inicio.dirty || form.fecha_inicio.touched || submitted)"
+              class="invalid-feedback" align="left">
+              <div *ngIf="form['fecha_inicio'].errors['required']">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+            </div>
+          </label>&nbsp;
           <label>
             Hasta:
-            <input type="date" name="bday" />
-          </label>&nbsp; 
-          <button class="search-btn" type="submit">   <span>Buscar</span>     </button> 
-        
+            <input type="date" id="fecha_fin" class="form-control" focus="true"
+              placeholder="{{'FORMS.FIELD_NAMES.fecha_fin.placeholder' }}" formControlName="fecha_fin"
+              [ngClass]="{ 'is-invalid': form['fecha_fin'].errors && (form.fecha_fin.dirty || form.fecha_fin.touched || submitted) }" />
+            <div *ngIf="form['fecha_fin'].errors && (form.fecha_fin.dirty || form.fecha_fin.touched || submitted)"
+              class="invalid-feedback" align="left">
+              <div *ngIf="form['fecha_fin'].errors['required']">
+                {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+              </div>
+            </div>
+          </label> &nbsp;
+          <button class="btn btn-primary" (click)="listData()"> <span>Buscar</span> </button>
+
           <!-- <p><button>Buscar Reporte</button></p> -->
         </form>
         
     </div>
-      <div class="row my-3">
-        <div class="col-md-6 text-center">
-          <h2>Gráfico de Coordinador</h2>
-          <canvas id="chart"> {{chart}}</canvas>
+    <div class="row my-3">
+      <div class="col-md-6 text-center">
+        <h2>Reporte de Ventas por Coordinador</h2>
+        <canvas id="chartByCoordinator" class="centrar-div" height="250"> {{chartByCoordinator}}</canvas>
+
+      </div>
+      <div class="col-md-6 text-center">
+        <h2>Tabla de Ventas por Coordinador</h2>
+        <div id="idContTabla"> </div>
+
+        <div class="table-responsive">
+          <table class="table table-success ">
+            <thead>
+              <tr class="table-secondary">
+                <th>Coordinador</th>
+                <th>Comercial</th>
+                <th>N° Ventas</th>
+                <!-- <th>Servicio</th> -->
+              </tr>
+            </thead>
+            <tbody *ngFor="let dato of listsByCoordinator">
+              <ng-container *ngFor="let dato2 of dato.vendedores; let i = index">
+                <tr *ngIf="i === 0">
+                  <td [attr.rowspan]="dato.vendedores.length + 1">{{ dato.coordinacion }} </td>
+                </tr>
+                <tr>
+                  <td>{{ dato2.vendedor }} </td>
+                  <td>{{ dato2.total_ventas }}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+
+
+          </table>
         </div>
-        <div class="col-md-6 text-center">
-          <h2>Tabla de Ventas por Coordinador</h2>
-          <div id="idContTabla"> </div>          
-            <div class="table-responsive">
-                  <table class="table table-success ">
-                    <thead>
-                      <tr class="table-secondary">
-                        <th>Coordinador</th>            
-                        <th>Comercial</th>                      
-                        <th>N° Ventas</th>
-                        <th>Servicio</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                      <td rowspan="3">Tifani </td>
-                      <td> Maroki</td>
-                      <td> 2</td>
-                      <td> Línea Móvil</td>
-                    </tr>
-                    <tr>
-                      <td> Liz</td>
-                      <td> 3</td>
-                      <td> Línea Fija</td>
-                    </tr>
-                    <tr>
-                      <td> Zumi</td>
-                      <td> 4</td>
-                      <td> Línea Fija</td>
-                    </tr>
-                    <tr>
-                      <td rowspan="3">Greisy</td>
-                      <td> Maroki</td>
-                      <td> 2</td>
-                      <td> Línea Móvil</td>
-                    </tr>
-                    <tr>
-                      <td> Rosa</td>
-                      <td> 3</td>
-                      <td> Línea Fija</td>
-                    </tr>
-                    <tr>
-                      <td> Maria</td>
-                      <td> 4</td>
-                      <td> Línea Móvil</td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
+
              
         </div>
       </div>
