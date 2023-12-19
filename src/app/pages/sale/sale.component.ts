@@ -45,7 +45,7 @@ export class SaleComponent implements OnInit {
 
   // TABLE USUARIOS - SERVER SIDE
   page: number = 1;
-  perPage: number = 5;
+  perPage: number = 10;
   search: string = '';
   column: string = '';
   order: 'asc' | 'desc' = 'desc';

@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
-
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { environment } from '../environments/environment';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
@@ -64,6 +64,7 @@ export function createTranslateLoader(http: HttpClient): any {
     ScrollToModule.forRoot(),
     ToastrModule.forRoot(),
     DataTablesModule,
+    DragDropModule,
   ],
   bootstrap: [AppComponent, ],
   providers: [

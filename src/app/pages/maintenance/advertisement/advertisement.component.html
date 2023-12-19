@@ -18,6 +18,7 @@
           <p class="card-sub-title">
             Anuncios registrados hasta el momento
           </p>
+      
           <div class="row mb-md-2">
             <div class="col-sm-12 col-md-6">
               <div class="dataTables_length" id="tickets-table_length"><label
@@ -40,6 +41,8 @@
           </div>
         </div>
         <div class="card-body">
+          <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+            <div class="example-box" *ngFor="let data of lists; let i = index" cdkDrag>
           <div class="table-responsive">
             <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
               <thead>
@@ -56,11 +59,11 @@
                 </tr>
               </thead>
               <tbody>
+                <tr>
                 
-                <tr *ngFor="let data of lists; let i = index">
-                  <th scope="row">{{i + 1}}</th>
+                  <th scope="row">{{i + 1}}</th>              
                   <td>{{data.titulo}}</td>
-                  <td>{{data.descripcion}}</td>
+                  <td>{{data.descripcion}}</td>                 
                   <td><span class="badge text-md" [ngClass]="{ 'bg-info': data.tipo == 'I', 'bg-primary': data.tipo == 'E'}">{{data.tipo_text}}</span></td>
                   <td><img *ngIf="data.imagen" [src]="URL_FILES + data.imagen" alt="render" style="max-height: 140px;"></td>
                   <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
@@ -76,11 +79,15 @@
                       </li>
                     </ul>
                   </td>
+
                 </tr>
                 <tr *ngIf="!lists.length"><td colspan="9" class="text-center">Sin registros.</td></tr>
-             
+            
               </tbody>
+           
             </table>
+          </div>
+        </div>
           </div>
 
           <!-- End table -->
