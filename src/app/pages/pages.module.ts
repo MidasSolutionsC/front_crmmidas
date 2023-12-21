@@ -20,7 +20,7 @@ import { UIModule } from '../shared/ui/ui.module';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 import { PagesRoutingModule } from './pages-routing.module';
-
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { DashboardsModule } from './dashboards/dashboards.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
@@ -179,6 +179,7 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
     // dropzone
     NgxDropzoneModule,
     BsDatepickerModule,
+    DragDropModule,
 
     // Flakpicjer
     FlatpickrModule,

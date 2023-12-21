@@ -41,10 +41,11 @@
           </div>
         </div>
         <div class="card-body">
-          <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-            <div class="example-box" *ngFor="let data of lists; let i = index" cdkDrag>
+        
           <div class="table-responsive">
+           
             <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
+              
               <thead>
                 <tr>
                   <th scope="col">N°</th>
@@ -58,9 +59,10 @@
                   <th scope="col">Opciones</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                
+              <tbody>     
+                <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                  <div class="example-list" *ngFor="let data of lists; let i = index" cdkDrag>    
+                <tr>                
                   <th scope="row">{{i + 1}}</th>              
                   <td>{{data.titulo}}</td>
                   <td>{{data.descripcion}}</td>                 
@@ -82,13 +84,11 @@
 
                 </tr>
                 <tr *ngIf="!lists.length"><td colspan="9" class="text-center">Sin registros.</td></tr>
-            
-              </tbody>
-           
-            </table>
-          </div>
-        </div>
-          </div>
+              </div>
+            </div>
+            </tbody>
+          </table>
+         </div>
 
           <!-- End table -->
           <div class="row justify-content-md-between align-items-md-center mt-2">

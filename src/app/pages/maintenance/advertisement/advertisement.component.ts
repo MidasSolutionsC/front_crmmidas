@@ -6,7 +6,7 @@ import { FileUploadUtil } from 'src/app/core/helpers';
 import { Advertisement, AdvertisementList, Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDropList} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-advertisement',
   templateUrl: './advertisement.component.html',
@@ -29,7 +29,11 @@ export class AdvertisementComponent {
   
   
   drop (event: CdkDragDrop<string[]>){
-     moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
+    if (event.previousContainer== event.container) {
+      moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
   }
 
 
