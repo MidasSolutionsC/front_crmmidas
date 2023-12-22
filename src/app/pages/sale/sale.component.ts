@@ -45,7 +45,7 @@ export class SaleComponent implements OnInit {
 
   // TABLE USUARIOS - SERVER SIDE
   page: number = 1;
-  perPage: number = 10;
+  perPage: number = 5;
   search: string = '';
   column: string = '';
   order: 'asc' | 'desc' = 'desc';
@@ -57,7 +57,7 @@ export class SaleComponent implements OnInit {
   countElements: number[] = [2, 5, 10, 25, 50, 100];
   pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
     page: 1,
-    perPage: 10,
+    perPage: 5,
     search: '',
     column: '',
     order: 'desc',
@@ -180,12 +180,27 @@ export class SaleComponent implements OnInit {
   }
 
   getPage(event: any) {
-    const { page, itemsPerPage: perPage } = event;
-    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+    // const { page, itemsPerPage: perPage } = event;
+    // this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+    const {page, itemsPerPage} = event;
+    this.page = page;
+    this.perPage = itemsPerPage;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiSaleListPagination();
+    }, 0);
   }
 
   getPageRefresh() {
-    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
+    // this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
+    this.page = 1;
+    this.perPage = 10;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.apiSaleListPagination();
+    }, 0);
   }
 
 
