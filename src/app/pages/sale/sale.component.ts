@@ -55,7 +55,7 @@ export class SaleComponent implements OnInit {
 
   // PAGINACIÓN
   countElements: number[] = [2, 5, 10, 25, 50, 100];
-  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+  paginationResult: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
     page: 1,
     perPage: 5,
     search: '',
@@ -63,7 +63,7 @@ export class SaleComponent implements OnInit {
     order: 'desc',
   });
 
-  paginationResult: PaginationResult = new PaginationResult();
+  pagination: PaginationResult = new PaginationResult();
 
 
   // Table data
@@ -126,7 +126,7 @@ export class SaleComponent implements OnInit {
 
     // PAGINACIÓN
     this.subscription.add(
-      this.pagination.asObservable()
+      this.paginationResult.asObservable()
         // .pipe(distinctUntilChanged())
         .subscribe((pagination: Pagination) => {
           this.apiSaleListPagination()
@@ -160,7 +160,7 @@ export class SaleComponent implements OnInit {
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.paginationResult = PaginationResult.cast(response.data);
+          this.pagination = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;
@@ -324,9 +324,10 @@ export class SaleComponent implements OnInit {
       if(response.code == 200){
         const data: SaleList = SaleList.cast(response.data[0]);
         this._saleService.removeObjectObserver(data.id);
+        this.apiSaleListPagination();
       }
 
-      if(response.code == 422){
+        if(response.code == 422){
         if(response.errors){
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
           this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
@@ -368,7 +369,7 @@ export class SaleComponent implements OnInit {
     }, (error: any) => {
       this._sweetAlertService.stop();
       if(error.message){
-        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tips de documentos', message: error.message, timer: 2500});
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al listar los tipos de documentos', message: error.message, timer: 2500});
       }
     });
   }
