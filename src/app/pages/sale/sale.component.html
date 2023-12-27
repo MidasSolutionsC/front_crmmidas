@@ -9,7 +9,8 @@
             <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
             <div class="flex-shrink-0 d-flex gap-1">
               <a href="javascript:void(0);" class="btn btn-primary" routerLink="/sale/form">Agregar nuevo</a>
-              <a href="javascript:void(0);" (click)="getPageRefresh();" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+              <a href="javascript:void(0);" (click)="getPageRefresh();" class="btn btn-light"><i
+                  class="mdi mdi-refresh"></i></a>
             </div>
           </div>
         </div>
@@ -18,11 +19,12 @@
           <p class="card-sub-title">
             Ventas registrados hasta el momento
           </p>
-          <div class="row mb-md-2">          
+          <div class="row mb-md-2">
+            <div class="col-sm-12 col-md-6">
               <div class="dataTables_length" id="tickets-table_length"><label
                 class="d-inline-flex align-items-center">Mostrar
                 <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
-                  [(ngModel)]="paginationResult.value.perPage" class="form-control form-control-sm mx-2" (change)="apiSaleListPagination()">
+                  [(ngModel)]="pagination.value.perPage" class="form-control form-control-sm mx-2" (change)="apiSaleListPagination()">
                   <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
                 </select> registros</label>
               </div>
@@ -32,14 +34,14 @@
               <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
                   class="d-inline-flex align-items-center">Buscar:
                   <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
-                    aria-controls="tickets-table" [(ngModel)]="paginationResult.value.search" (input)="apiSaleListPagination()"></label>
+                    aria-controls="tickets-table" [(ngModel)]="pagination.value.search" (input)="apiSaleListPagination()"></label>
               </div>
             </div>
             <!-- End search -->
           </div>
         </div>
         <div class="card-body">
-        <!-- End search -->
+          <!-- End search -->
           <div class="table-responsive">
             <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
               <thead>
@@ -56,13 +58,19 @@
               <tbody>
                 <!-- *ngFor="let data of pagination.data; let i = index"  -->
                 <tr *ngFor="let data of lists; let i = index">
-                  <th scope="row">{{i + 1}}</th>
+                  <th scope="row">{{data.index}}</th>
                   <td>
                     <ul class="list-group list-group-flush" *ngIf="data?.client?.persona_juridica">
-                      <li class="list-group-item p-1 font-size-11" *ngFor="let identificacion of data?.client?.company?.identifications" [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}} {{identificacion.documento}}</li>
+                      <li class="list-group-item p-1 font-size-11"
+                        *ngFor="let identificacion of data?.client?.company?.identifications"
+                        [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}}
+                        {{identificacion.documento}}</li>
                     </ul>
                     <ul class="list-group list-group-flush" *ngIf="!data?.client?.persona_juridica">
-                      <li class="list-group-item p-1 font-size-11" *ngFor="let identificacion of data?.client?.person?.identifications" [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}} {{identificacion.documento}}</li>
+                      <li class="list-group-item p-1 font-size-11"
+                        *ngFor="let identificacion of data?.client?.person?.identifications"
+                        [ngClass]="{'fw-bold': identificacion.is_primary}">{{identificacion.tipo_documentos_abreviacion}}
+                        {{identificacion.documento}}</li>
                     </ul>
                   </td>
                   <td>
@@ -70,7 +78,8 @@
                       {{data?.client?.company?.razon_social}} {{data?.client?.company?.nombre_comercial}}
                     </p>
                     <p *ngIf="!data?.client?.persona_juridica">
-                      {{data?.client?.person?.nombres}} {{data?.client?.person?.apellido_paterno}} {{data?.client?.person?.apellido_materno}}
+                      {{data?.client?.person?.nombres}} {{data?.client?.person?.apellido_paterno}}
+                      {{data?.client?.person?.apellido_materno}}
                     </p>
                   </td>
                   <td>{{data.is_active ? 'Activo': 'Inactivo'}}</td>
@@ -79,37 +88,38 @@
                   <td>
                     <ul class="list-unstyled hstack gap-1 mb-0">
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Detalle">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary" (click)="openModalDetail(data)"><i class="bx bx-detail"></i></a>
-                      </li> 
-
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary"
+                          (click)="openModalDetail(data)"><i class="bx bx-detail"></i></a>
+                      </li>
+  
                       <!-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getEditRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
-                      </li> -->
+                          <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getEditRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
+                        </li> -->
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
-                      </li> 
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger"
+                          (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                      </li>
                     </ul>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-
-          
+  
+  
           <!-- End table -->
           <div class="row justify-content-md-between align-items-md-center mt-2">
             <div class="col-sm-12 col-md-6">
               <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
-                Mostrando de 
-                <b>{{pagination.from}}</b> al
-                <b>{{pagination.to}}</b> de <b>{{pagination.total}}</b>
+                Mostrando de
+                <b>{{paginationResult.from}}</b> al
+                <b>{{paginationResult.to}}</b> de <b>{{paginationResult.total}}</b>
                 registros
-              </div> 
+              </div>
             </div>
             <!-- Pagination -->
             <div class="col-sm-12 col-md-6">
               <div class="text-md-right float-md-end pagination-rounded">
-                <!-- <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="total" [(ngModel)]="page" [itemsPerPage]="perPage" (pageChanged)="getPage($event)"></pagination> -->
                 <pagination 
                   previousText="Anterior" 
                   nextText="Siguiente"   
@@ -117,14 +127,13 @@
                   lastText="Ultimo"
                   [boundaryLinks]="false" 
                   [directionLinks]="true"  
-                  [totalItems]="pagination.total"
-                  [(ngModel)]="paginationResult.value.page" 
-                  [itemsPerPage]="paginationResult.value.perPage" 
+                  [totalItems]="paginationResult.total"
+                  [(ngModel)]="pagination.value.page" 
+                  [itemsPerPage]="pagination.value.perPage" 
                   (pageChanged)="getPage($event)" 
                   [maxSize]="7" 
                   [rotate]="false"
-                  />
-                  
+                  ></pagination>
               </div>
             </div>
             <!-- End Pagination -->
@@ -132,17 +141,19 @@
         </div>
       </div>
     </div>
- </div> 
+  </div>
+</div>
 
 
 <!-- MODAL FORMULARIO -->
 <ng-template #content role="document" let-modal>
   <div class="modal-header">
     <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
   </div>
   <div class="modal-body">
-    <ng-stepper #cdkStepper [linear]="true" class="wizard" >  
+    <ng-stepper #cdkStepper [linear]="true" class="wizard">
       <cdk-step [optional]="false">
         <ng-template cdkStepLabel>
           <span class="number">1.</span>
@@ -151,15 +162,20 @@
         <section *ngIf="cdkStepper.selectedIndex === 0">
           <form (keydown.enter)="$event.preventDefault()" [formGroup]="userSearchForm" autocomplete="off">
             <div class="row g-2">
-              <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
+              <div class="col-md-4 mb-3"
+                *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
                 <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} *</label>
-                <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted) }">
+                <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id"
+                  [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted) }">
                   <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
-                  <option *ngFor="let typeDocument of listTypeDocuments" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
+                  <option *ngFor="let typeDocument of listTypeDocuments" [value]="typeDocument.id">
+                    {{typeDocument.abreviacion}}</option>
                 </select>
-      
+
                 <!-- <input type="text" id="apellido_materno" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.type_document.placeholder' | translate}}" formControlName="apellido_materno" [ngClass]="{ 'is-invalid': f.apellido_materno.errors && (f.apellido_materno.dirty || f.apellido_materno.touched || submitted) }" /> -->
-                <div *ngIf="fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted)" class="invalid-feedback" align="left">
+                <div
+                  *ngIf="fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submitted)"
+                  class="invalid-feedback" align="left">
                   <div *ngIf="fs.tipo_documentos_id.errors.required">
                     {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
                   </div>
@@ -167,46 +183,59 @@
               </div>
               <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.document.label' | translate as translatedLabel;">
                 <label for="documento" class="form-label">{{translatedLabel}} *</label>
-                <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted) }" />
-                <div *ngIf="fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted)" class="invalid-feedback" align="left">
+                <input type="text" maxlength="11" id="documento" class="form-control"
+                  placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="documento"
+                  [ngClass]="{ 'is-invalid': fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted) }" />
+                <div *ngIf="fs.documento.errors && (fs.documento.dirty || fs.documento.touched || submitted)"
+                  class="invalid-feedback" align="left">
                   <div *ngIf="fs.documento.errors.required">
                     {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
                   </div>
                   <div *ngIf="fs.documento.errors.maxlength">
-                    {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.documento.errors.maxlength.requiredLength}}
+                    {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+                    replaceAttribute: ':maxlength': fs.documento.errors.maxlength.requiredLength}}
                   </div>
                   <div *ngIf="fs.documento.errors.minlength">
-                    {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.documento.errors.minlength.requiredLength}}
+                    {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+                    replaceAttribute: ':minlength': fs.documento.errors.minlength.requiredLength}}
                   </div>
                 </div>
               </div>
               <div class="col-md-4 mb-3" *ngIf="'FORMS.FIELD_NAMES.search.label' | translate as translatedLabel;">
                 <label for="search" class="form-label">{{translatedLabel}} *</label>
                 <div class="input-group">
-                  <input type="text" maxlength="11" id="search" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.search.placeholder' | translate}}" formControlName="search" [ngClass]="{ 'is-invalid': fs.search.errors && (fs.search.dirty || fs.search.touched || submitted) }" />
-                  <button class="btn btn-primary"  [disabled]="userSearchForm.invalid">{{'FORMS.BUTTONS.SEARCH' | translate}}</button>
+                  <input type="text" maxlength="11" id="search" class="form-control"
+                    placeholder="{{'FORMS.FIELD_NAMES.search.placeholder' | translate}}" formControlName="search"
+                    [ngClass]="{ 'is-invalid': fs.search.errors && (fs.search.dirty || fs.search.touched || submitted) }" />
+                  <button class="btn btn-primary" [disabled]="userSearchForm.invalid">{{'FORMS.BUTTONS.SEARCH' |
+                    translate}}</button>
                 </div>
-                <div *ngIf="fs.search.errors && (fs.search.dirty || fs.search.touched || submitted)" class="invalid-feedback" align="left">
+                <div *ngIf="fs.search.errors && (fs.search.dirty || fs.search.touched || submitted)"
+                  class="invalid-feedback" align="left">
                   <div *ngIf="fs.documento.errors.required">
                     {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
                   </div>
                   <div *ngIf="fs.search.errors.maxlength">
-                    {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': fs.search.errors.maxlength.requiredLength}}
+                    {{'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+                    replaceAttribute: ':maxlength': fs.search.errors.maxlength.requiredLength}}
                   </div>
                   <div *ngIf="fs.search.errors.minlength">
-                    {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': fs.search.errors.minlength.requiredLength}}
+                    {{'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+                    replaceAttribute: ':minlength': fs.search.errors.minlength.requiredLength}}
                   </div>
                 </div>
               </div>
             </div>
           </form>
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
-            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
           </ul>
         </section>
       </cdk-step>
-  
+
       <cdk-step [optional]="true">
         <ng-template cdkStepLabel>
           <span class="number">2.</span>
@@ -215,26 +244,30 @@
         <section *ngIf="cdkStepper.selectedIndex === 1">
           <div>Texto</div>
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
-            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
           </ul>
         </section>
       </cdk-step>
-  
+
       <cdk-step [optional]="true">
         <ng-template cdkStepLabel>
           <span class="number">3.</span>
           <span>Venta</span>
         </ng-template>
         <section *ngIf="cdkStepper.selectedIndex === 2">
-          <div>Texto</div>  
+          <div>Texto</div>
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
-            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
           </ul>
         </section>
       </cdk-step>
-  
+
       <cdk-step [optional]="true">
         <ng-template cdkStepLabel>
           <span class="number">4.</span>
@@ -243,12 +276,14 @@
         <section *ngIf="cdkStepper.selectedIndex === 3">
           <div>Texto</div>
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
-            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                cdkStepperNext>{{'FORMS.BUTTONS.NEXT' | translate}}</button></li>
           </ul>
         </section>
       </cdk-step>
-  
+
       <cdk-step [optional]="true">
         <ng-template cdkStepLabel>
           <span class="number">5.</span>
@@ -257,16 +292,19 @@
         <section *ngIf="cdkStepper.selectedIndex === 4">
           <div>Texto</div>
           <ul class="list-inline wizard d-flex justify-content-end mb-0">
-            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
-            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext (click)="saveData()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
+            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                cdkStepperPrevious>{{'FORMS.BUTTONS.PREV' | translate}}</button></li>
+            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-success" cdkStepperNext
+                (click)="saveData()">{{'FORMS.BUTTONS.END' | translate}}</button></li>
           </ul>
         </section>
-      </cdk-step>  
-    </ng-stepper> 
+      </cdk-step>
+    </ng-stepper>
   </div>
   <div class="modal-footer">
     <div class="hstack gap-2 justify-content-end">
-      <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
       <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
       <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
     </div>
