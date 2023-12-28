@@ -54,6 +54,15 @@ export class AuthService {
           this.cookieService.delete('token_auth');
           localStorage.removeItem('dataUser');
           localStorage.removeItem('ventas_id');
+
+          if (this.cookieService.check('token_auth')) {
+            console.log('La cookie aún existe.');
+            this.cookieService.delete('token_auth');
+
+          } else {
+            console.log('La cookie se ha eliminado correctamente.');
+          }
+
         }
       }
       return res;
