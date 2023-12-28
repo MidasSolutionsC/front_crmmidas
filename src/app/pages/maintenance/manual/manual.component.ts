@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Breadcrumb, Manual, ManualList, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
 import { ManualService } from 'src/app/core/services';
@@ -29,14 +29,27 @@ export class ManualComponent {
   manualForm: FormGroup;
 
   // TABLE SERVER SIDE
-  page: number = 1;
-  perPage: number = 5;
-  search: string = '';
-  column: string = '';
-  order: 'asc' | 'desc' = 'desc';
-  countElements: number[] = [5, 10, 25, 50, 100];
-  total: number = 0;
-  pagination: PaginationResult = new PaginationResult();
+  // page: number = 1;
+  // perPage: number = 5;
+  // search: string = '';
+  // column: string = '';
+  // order: 'asc' | 'desc' = 'desc';
+  // countElements: number[] = [2, 5, 10, 25, 50, 100];
+  // total: number = 0;
+  // pagination: PaginationResult = new PaginationResult();
+
+  
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
 
   // Archivos subidos
   uploadFiles: File[];
@@ -78,6 +91,16 @@ export class ManualComponent {
     //     this.lists = list;
     //   })
     // );
+
+
+    
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        .subscribe((pagination: Pagination) => {
+          this.apiManualListPagination()
+        })
+    );
   }
   
   ngOnDestroy(): void {
@@ -202,61 +225,41 @@ export class ManualComponent {
 
   /**
  * ***************************************************************
- * SERVER SIDE - USERS
+ * SERVER SIDE - 
  * ***************************************************************
  */
-  apiManualListPagination(): void {
+  public apiManualListPagination(): void {
     this.subscription.add(
-      this._manualService.getPagination({
-        page: this.page.toString(),
-        perPage: this.perPage.toString(),
-        search: this.search,
-        column: this.column,
-        order: this.order
-      })
-      .pipe(debounceTime(250))
-      .subscribe((response: ResponsePagination) => {
-        if(response.code == 200){
-          this.pagination = PaginationResult.cast(response.data);
-          this.lists = response.data.data;
-          this.page = response.data.current_page;
-          this.total = response.data.total;
-        }
-        
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      this._manualService.getPagination(this.pagination.getValue())
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponsePagination) => {
+          if (response.code == 200) {
+            this.paginationResult = PaginationResult.cast(response.data);
+            this.lists = response.data.data;
           }
-        }
-      }, (error: any) => {
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar manuales', message: error.message, timer: 2500});
-        }
-      })
-    ); 
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+          }
+        }, (error: any) => {
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar países', message: error.message, timer: 2500 });
+          }
+        })
+    );
   }
 
-  getPage(event: any){
-    const {page, itemsPerPage} = event;
-    this.page = page;
-    this.perPage = itemsPerPage;
-    this.cdr.detectChanges();
-
-    setTimeout(() => {
-      this.apiManualListPagination();
-    }, 0);
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
   }
 
-  getPageRefresh(){
-    this.page = 1;
-    this.perPage = 10;
-    this.cdr.detectChanges();
-
-    setTimeout(() => {
-      this.apiManualListPagination();
-    }, 0);
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
   }
-  
+
 
 
   /**

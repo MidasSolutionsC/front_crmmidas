@@ -1,8 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Campus, CampusList, CountryList, ResponseApi } from 'src/app/core/models';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, Campus, CampusList, CountryList, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { UbigeoList } from 'src/app/core/models/api/maintenance/ubigeo.model';
 import { ApiErrorFormattingService, CampusService, CountryService, FormService, SweetAlertService, UbigeoService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
@@ -29,6 +29,19 @@ export class CampusComponent {
   submitted: boolean = false;
   campusForm: FormGroup;
 
+
+  
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
 
   // Table data
   // content?: any;
@@ -95,6 +108,16 @@ export class CampusComponent {
           .subscribe((list: CountryList[]) => {
             this.listCountries = list;
       })
+    );
+
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        // .pipe(distinctUntilChanged())
+        .subscribe((pagination: Pagination) => {
+          this.apiCampusListPagination()
+        })
     );
   }
   
@@ -213,6 +236,47 @@ export class CampusComponent {
       console.log(error);
     });
   }
+
+
+    /** 
+   * ****************************************************************
+   * OPERACIONES CON LA API - CARGA ASINCRONÍA
+   * ****************************************************************
+   */
+    public apiCampusListPagination(): void {
+      this.subscription.add(
+        this._campusService.getPagination(this.pagination.getValue())
+          .pipe(debounceTime(250))
+          .subscribe((response: ResponsePagination) => {
+            if (response.code == 200) {
+              this.paginationResult = PaginationResult.cast(response.data);
+              this.lists = response.data.data;
+            }
+  
+            if (response.code == 500) {
+              if (response.errors) {
+                this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+              }
+            }
+          }, (error: any) => {
+            if (error.message) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar sedes', message: error.message, timer: 2500 });
+            }
+          })
+      );
+    }
+  
+  
+    getPage(event: any) {
+      const { page, itemsPerPage: perPage } = event;
+      this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+    }
+  
+    getPageRefresh() {
+      this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
+    }
+
+
 
   /**
    * OPERACIONES DE TABLAS FORÁNEAS

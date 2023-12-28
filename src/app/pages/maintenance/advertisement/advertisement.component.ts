@@ -1,35 +1,35 @@
-import { ChangeDetectorRef, Component} from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
 import { Advertisement, AdvertisementList, Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDropList} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDropList } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-advertisement',
   templateUrl: './advertisement.component.html',
   styleUrls: ['./advertisement.component.scss']
 })
 export class AdvertisementComponent {
-  
-  
+
+
   modalRef?: BsModalRef;
 
   dataModal = {
     title: 'Crear anuncio',
   }
 
-    /**
-   * on dragging task
-   * @param item item dragged
-   * @param list list from item dragged
-   */
-  
-  
-  drop (event: CdkDragDrop<string[]>){
-    if (event.previousContainer== event.container) {
+  /**
+ * on dragging task
+ * @param item item dragged
+ * @param list list from item dragged
+ */
+
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer == event.container) {
       moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
@@ -40,21 +40,24 @@ export class AdvertisementComponent {
   // bread crumb items
   titleBreadCrumb: string = 'Anuncios';
   breadCrumbItems: Array<{}>;
-  
+
   // Form 
   isNewData: boolean = true;
   submitted: boolean = false;
   advertisementForm: FormGroup;
 
   // TABLE SERVER SIDE
-  page: number = 1;
-  perPage: number = 5;
-  search: string = '';
-  column: string = '';
-  order: 'asc' | 'desc' = 'desc';
-  countElements: number[] = [5, 10, 25, 50, 100];
-  total: number = 0;
-  pagination: PaginationResult = new PaginationResult();
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
 
   // Archivos subidos
   uploadFiles: File[];
@@ -73,19 +76,19 @@ export class AdvertisementComponent {
   constructor(
     private _configService: ConfigService,
     private cdr: ChangeDetectorRef,
-    private modalService: BsModalService, 
+    private modalService: BsModalService,
     private _advertisementService: AdvertisementService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private formBuilder: FormBuilder) {
 
-      this.URL_FILES = this._configService.urlFiles + 'advertisement/';
+    this.URL_FILES = this._configService.urlFiles + 'advertisement/';
 
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Anuncios', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento' }, { label: 'Anuncios', active: true }]);
 
     this.initForm();
     this.listDataApi();
@@ -104,8 +107,17 @@ export class AdvertisementComponent {
     //     this.lists = list;
     //   })
     // );
+
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        .subscribe((pagination: Pagination) => {
+          this.apiAdvertisementListPagination()
+        })
+    );
   }
-  
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
@@ -115,17 +127,17 @@ export class AdvertisementComponent {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  public listDataApi(forceRefresh: boolean = false){
+  public listDataApi(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._advertisementService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this.lists = response.data;
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
@@ -134,13 +146,13 @@ export class AdvertisementComponent {
     });
   }
 
-  private saveDataApi(data: Advertisement | FormData){
+  private saveDataApi(data: Advertisement | FormData) {
     this._sweetAlertService.loadingUp()
     this.subscription.add(
       this._advertisementService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 201){
-          if(response.data[0]){
+        if (response.code == 201) {
+          if (response.data[0]) {
             const data: AdvertisementList = AdvertisementList.cast(response.data[0]);
             this._advertisementService.addObjectObserver(data);
           }
@@ -151,16 +163,16 @@ export class AdvertisementComponent {
           this.modalRef?.hide();
         }
 
-        if(response.code == 422){
-          if(response.errors){
+        if (response.code == 422) {
+          if (response.errors) {
             const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
           }
         }
 
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
         }
       }, (error) => {
@@ -170,11 +182,11 @@ export class AdvertisementComponent {
     )
   }
 
-  private updateDataApi(data: Advertisement | FormData, id: number){
+  private updateDataApi(data: Advertisement | FormData, id: number) {
     this._sweetAlertService.loadingUp()
     this._advertisementService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: AdvertisementList = AdvertisementList.cast(response.data[0]);
         this._advertisementService.updateObjectObserver(data);
         this.uploadFiles = [];
@@ -183,16 +195,16 @@ export class AdvertisementComponent {
         this.modalRef?.hide();
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -201,26 +213,26 @@ export class AdvertisementComponent {
     });
   }
 
-  private deleteDataApi(id: number){
+  private deleteDataApi(id: number) {
     this._sweetAlertService.loadingUp()
     this._advertisementService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: AdvertisementList = AdvertisementList.cast(response.data[0]);
         this._advertisementService.removeObjectObserver(data.id);
         this.apiAdvertisementListPagination();
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -235,58 +247,40 @@ export class AdvertisementComponent {
  * SERVER SIDE - USERS
  * ***************************************************************
  */
-  apiAdvertisementListPagination(): void {
+  public apiAdvertisementListPagination(): void {
     this.subscription.add(
-      this._advertisementService.getPagination({
-        page: this.page.toString(),
-        perPage: this.perPage.toString(),
-        search: this.search,
-        column: this.column,
-        order: this.order
-      })
-      .pipe(debounceTime(250))
-      .subscribe((response: ResponsePagination) => {
-        if(response.code == 200){
-          this.pagination = PaginationResult.cast(response.data);
-          this.lists = response.data.data;
-          this.page = response.data.current_page;
-          this.total = response.data.total;
-        }
-        
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      this._advertisementService.getPagination(this.pagination.getValue())
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponsePagination) => {
+          if (response.code == 200) {
+            this.paginationResult = PaginationResult.cast(response.data);
+            this.lists = response.data.data;
           }
-        }
-      }, (error: any) => {
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar anuncios', message: error.message, timer: 2500});
-        }
-      })
-    ); 
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+          }
+        }, (error: any) => {
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar anuncios', message: error.message, timer: 2500 });
+          }
+        })
+    );
   }
 
-  getPage(event: any){
-    const {page, itemsPerPage} = event;
-    this.page = page;
-    this.perPage = itemsPerPage;
-    this.cdr.detectChanges();
 
-    setTimeout(() => {
-      this.apiAdvertisementListPagination();
-    }, 0);
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
   }
 
-  getPageRefresh(){
-    this.page = 1;
-    this.perPage = 10;
-    this.cdr.detectChanges();
-
-    setTimeout(() => {
-      this.apiAdvertisementListPagination();
-    }, 0);
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
   }
-  
+
+
 
 
   /**
@@ -300,7 +294,7 @@ export class AdvertisementComponent {
    * INICIAR FORMULARTO CON LAS VALIDACIONES
    * @param model 
    */
-  private initForm(){
+  private initForm() {
     const advertisement = new Advertisement();
     const formGroupData = this.getFormGroupData(advertisement);
     this.advertisementForm = this.formBuilder.group(formGroupData);
@@ -321,7 +315,7 @@ export class AdvertisementComponent {
       is_active: [1, [Validators.nullValidator]],
     }
   }
-  
+
   /**
    * Open modal
    * @param content modal content
@@ -334,7 +328,7 @@ export class AdvertisementComponent {
     this.previewImage = null;
     this.uploadFiles = [];
     this.modalRef = this.modalService.show(content, { class: 'modal-md modal-dialog-centered' });
-    this.modalRef.onHide.subscribe(() => {});
+    this.modalRef.onHide.subscribe(() => { });
   }
 
 
@@ -342,7 +336,7 @@ export class AdvertisementComponent {
    * Subir archivo
    * @param fileInput elemento input
    */
-  async onFileSelected(fileInput: HTMLInputElement){
+  async onFileSelected(fileInput: HTMLInputElement) {
     const { files, error } = await FileUploadUtil.handleFileUploadBase64(fileInput, ['jpg', 'jpeg', 'png', 'gif'], 0);
 
     if (files.length > 0) {
@@ -354,7 +348,7 @@ export class AdvertisementComponent {
     } else {
       // Maneja el error, por ejemplo, muestra un mensaje de error al usuario
       // console.error(error);
-      this._sweetAlertService.showTopEnd({title: 'Archivo seleccionado', message: error, type: 'error', timer: 2500});
+      this._sweetAlertService.showTopEnd({ title: 'Archivo seleccionado', message: error, type: 'error', timer: 2500 });
     }
   }
 
@@ -363,8 +357,8 @@ export class AdvertisementComponent {
     * Save
   */
   saveData() {
-    if(!this.advertisementForm.valid){
-      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    if (!this.advertisementForm.valid) {
+      this._sweetAlertService.showTopEnd({ title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500 });
     } else {
       const values: Advertisement = this.advertisementForm.value;
       const formData = new FormData();
@@ -374,7 +368,7 @@ export class AdvertisementComponent {
         formData.append(key, values[key]);
       }
 
-      if(this.uploadFiles && this.uploadFiles.length > 0){
+      if (this.uploadFiles && this.uploadFiles.length > 0) {
         this.uploadFiles.forEach((file) => {
           formData.append('file', file);
         });
@@ -382,17 +376,17 @@ export class AdvertisementComponent {
         formData.delete('file');
       }
 
-      if(this.isNewData){
+      if (this.isNewData) {
         // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el anuncio?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.saveDataApi(formData);
           }
         });
       } else {
         // Actualizar datos
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el anuncio?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.updateDataApi(formData, values.id);
           }
         });
@@ -415,7 +409,7 @@ export class AdvertisementComponent {
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const advertisement = Advertisement.cast(data);
-    this.advertisementForm = this.formBuilder.group({...this._formService.modelToFormGroupData(advertisement), id: [data.id], file: [null, []]});
+    this.advertisementForm = this.formBuilder.group({ ...this._formService.modelToFormGroupData(advertisement), id: [data.id], file: [null, []] });
   }
 
 
@@ -423,9 +417,9 @@ export class AdvertisementComponent {
    * Eliminar un registro
    * @param id id del registro a eliminar
    */
-  deleteRow(id: any){
+  deleteRow(id: any) {
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de documento?').then((confirm) => {
-      if(confirm.isConfirmed){
+      if (confirm.isConfirmed) {
         this.deleteDataApi(id);
       }
     });

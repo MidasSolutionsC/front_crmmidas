@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, ResponseApi, TypeService, TypeServiceList } from 'src/app/core/models';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination, TypeService, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
 import { TypeServiceService } from 'src/app/core/services';
 
@@ -21,21 +21,35 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
   // bread crumb items
   titleBreadCrumb: string = 'Tipo de servicios';
   breadCrumbItems: Array<{}>;
-  
+
   // Form 
   isNewData: boolean = true;
   submitted: boolean = false;
   typeServiceForm: FormGroup;
 
 
+
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
+
+
   // Table data
   // content?: any;
   lists?: TypeServiceList[];
-  
+
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private modalService: BsModalService, 
+    private modalService: BsModalService,
     private _typeServiceService: TypeServiceService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -45,25 +59,33 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Man. de tipos'}, { label: 'Tipos de servicios', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento' }, { label: 'Man. de tipos' }, { label: 'Tipos de servicios', active: true }]);
 
     this.initForm();
     this.listDataApi();
     this.subscription.add(
       this._typeServiceService.listObserver$
-      // .pipe(distinctUntilChanged())
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+        // .pipe(distinctUntilChanged())
+        .pipe(
+          distinctUntilChanged(
+            (prevList, currentList) =>
+              prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+          )
         )
-      )
-      .subscribe((list: TypeServiceList[]) => {
-        this.lists = list;
-      })
+        .subscribe((list: TypeServiceList[]) => {
+          this.lists = list;
+        })
+    );
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        .subscribe((pagination: Pagination) => {
+          this.apiTypeServiceListPagination()
+        })
     );
   }
-  
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
@@ -73,17 +95,17 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  public listDataApi(forceRefresh: boolean = false){
+  public listDataApi(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._typeServiceService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this.lists = response.data;
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
@@ -92,30 +114,31 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
     });
   }
 
-  private saveDataApi(data: TypeService){
+  private saveDataApi(data: TypeService) {
     this._sweetAlertService.loadingUp()
     this.subscription.add(
       this._typeServiceService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 201){
-          if(response.data[0]){
+        if (response.code == 201) {
+          if (response.data[0]) {
             const data: TypeServiceList = TypeServiceList.cast(response.data[0]);
             this._typeServiceService.addObjectObserver(data);
           }
 
+          this.apiTypeServiceListPagination()
           this.modalRef?.hide();
         }
 
-        if(response.code == 422){
-          if(response.errors){
+        if (response.code == 422) {
+          if (response.errors) {
             const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
           }
         }
 
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
         }
       }, (error) => {
@@ -125,26 +148,28 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
     )
   }
 
-  private updateDataApi(data: TypeService, id: number){
+  private updateDataApi(data: TypeService, id: number) {
     this._sweetAlertService.loadingUp()
     this._typeServiceService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: TypeServiceList = TypeServiceList.cast(response.data[0]);
         this._typeServiceService.updateObjectObserver(data);
         this.modalRef?.hide();
+        this.apiTypeServiceListPagination()
+
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -153,31 +178,72 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
     });
   }
 
-  private deleteDataApi(id: number){
+  private deleteDataApi(id: number) {
     this._sweetAlertService.loadingUp()
     this._typeServiceService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: TypeServiceList = TypeServiceList.cast(response.data[0]);
         this._typeServiceService.removeObjectObserver(data.id);
+        this.apiTypeServiceListPagination()
+
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
       this._sweetAlertService.stop();
       console.log(error);
     });
+  }
+
+
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - CARGA ASINCRONÍA
+   * ****************************************************************
+   */
+  public apiTypeServiceListPagination(): void {
+    this.subscription.add(
+      this._typeServiceService.getPagination(this.pagination.getValue())
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponsePagination) => {
+          if (response.code == 200) {
+            this.paginationResult = PaginationResult.cast(response.data);
+            this.lists = response.data.data;
+          }
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+          }
+        }, (error: any) => {
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar tipo de servicios', message: error.message, timer: 2500 });
+          }
+        })
+    );
+  }
+
+
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+  }
+
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
   }
 
 
@@ -193,7 +259,7 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
    * INICIAR FORMULARTO CON LAS VALIDACIONES
    * @param model 
    */
-  private initForm(){
+  private initForm() {
     const typeService = new TypeService();
     const formGroupData = this.getFormGroupData(typeService);
     this.typeServiceForm = this.formBuilder.group(formGroupData);
@@ -215,7 +281,7 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
   }
 
 
-  
+
   /**
    * Open modal
    * @param content modal content
@@ -226,7 +292,7 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
     this.dataModal.title = 'Crear tipo de servicio';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.modalRef.onHide.subscribe(() => {});
+    this.modalRef.onHide.subscribe(() => { });
   }
 
 
@@ -234,22 +300,22 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
     * Save
   */
   saveData() {
-    if(!this.typeServiceForm.valid){
-      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    if (!this.typeServiceForm.valid) {
+      this._sweetAlertService.showTopEnd({ title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500 });
     } else {
       const values: TypeService = this.typeServiceForm.value;
 
-      if(this.isNewData){
+      if (this.isNewData) {
         // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar el tipo de servicio?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar el tipo de servicio?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.updateDataApi(values, values.id);
           }
         });
@@ -271,7 +337,7 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const typeService = TypeService.cast(data);
-    this.typeServiceForm = this.formBuilder.group({...this._formService.modelToFormGroupData(typeService), id: [data.id]});
+    this.typeServiceForm = this.formBuilder.group({ ...this._formService.modelToFormGroupData(typeService), id: [data.id] });
   }
 
 
@@ -279,9 +345,9 @@ export class TypeServiceComponent implements OnInit, OnDestroy {
    * Eliminar un registro
    * @param id id del registro a eliminar
    */
-  deleteRow(id: any){
+  deleteRow(id: any) {
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar el tipo de servicio?').then((confirm) => {
-      if(confirm.isConfirmed){
+      if (confirm.isConfirmed) {
         this.deleteDataApi(id);
       }
     });

@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CoreModule } from 'src/app/core/core.module';
 import { TranslateModule } from '@ngx-translate/core';
 
+
 @NgModule({
   declarations: [
     ListComponent,

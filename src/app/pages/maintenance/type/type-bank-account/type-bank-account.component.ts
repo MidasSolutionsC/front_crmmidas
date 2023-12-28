@@ -1,8 +1,8 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, ResponseApi, TypeBankAccount, TypeBankAccountList } from 'src/app/core/models';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination, TypeBankAccount, TypeBankAccountList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
 import { TypeBankAccountService } from 'src/app/core/services';
 
@@ -27,6 +27,17 @@ export class TypeBankAccountComponent implements OnInit, AfterViewInit{
   submitted: boolean = false;
   typeBankAccountForm: FormGroup;
 
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
 
   // Table data
   // content?: any;
@@ -61,6 +72,15 @@ export class TypeBankAccountComponent implements OnInit, AfterViewInit{
       .subscribe((list: TypeBankAccountList[]) => {
         this.lists = list;
       })
+    );
+
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        .subscribe((pagination: Pagination) => {
+          this.apiTypeBankAccountListPagination()
+        })
     );
   }
   
@@ -184,6 +204,43 @@ export class TypeBankAccountComponent implements OnInit, AfterViewInit{
     });
   }
 
+    /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - CARGA ASINCRONÍA
+   * ****************************************************************
+   */
+    public apiTypeBankAccountListPagination(): void {
+      this.subscription.add(
+        this._typeBankAccountService.getPagination(this.pagination.getValue())
+          .pipe(debounceTime(250))
+          .subscribe((response: ResponsePagination) => {
+            if (response.code == 200) {
+              this.paginationResult = PaginationResult.cast(response.data);
+              this.lists = response.data.data;
+            }
+  
+            if (response.code == 500) {
+              if (response.errors) {
+                this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+              }
+            }
+          }, (error: any) => {
+            if (error.message) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar tipo de cuentas bancarias', message: error.message, timer: 2500 });
+            }
+          })
+      );
+    }
+  
+  
+    getPage(event: any) {
+      const { page, itemsPerPage: perPage } = event;
+      this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+    }
+  
+    getPageRefresh() {
+      this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
+    }
 
 
   /**

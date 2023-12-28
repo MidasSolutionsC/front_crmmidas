@@ -1,0 +1,60 @@
+<div class="modal-content" role="document">
+  <div class="modal-header">
+    <h5 class="modal-title font-bold" id="exampleModalLabel">{{dataModal.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <form (keydown.enter)="$event.preventDefault()" [formGroup]="saleForm" autocomplete="off">
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.retailx_id.label' | translate as translatedLabel;">
+        <label for="retailx_id" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="retailx_id" class="form-control" focus="true"
+          placeholder="{{'FORMS.FIELD_NAMES.retailx_id.placeholder' | translate}}" formControlName="retailx_id"
+          [ngClass]="{ 'is-invalid': form['retailx_id'].errors && (form.retailx_id.dirty || form.retailx_id.touched || submitted) }" />
+        <div *ngIf="form['retailx_id'].errors && (form.retailx_id.dirty || form.retailx_id.touched || submitted)"
+          class="invalid-feedback" align="left">
+          <div *ngIf="form['retailx_id'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.smart_id.label' | translate as translatedLabel;">
+        <label for="smart_id" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="smart_id" class="form-control" focus="true"
+          placeholder="{{'FORMS.FIELD_NAMES.smart_id.placeholder' | translate}}" formControlName="smart_id"
+          [ngClass]="{ 'is-invalid': form['smart_id'].errors && (form.smart_id.dirty || form.smart_id.touched || submitted) }" />
+        <div *ngIf="form['smart_id'].errors && (form.smart_id.dirty || form.smart_id.touched || submitted)"
+          class="invalid-feedback" align="left">
+          <div *ngIf="form['smart_id'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+      <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.smart_address_id.label' | translate as translatedLabel;">
+        <label for="direccion_smart_id" class="form-label">{{translatedLabel}}</label>
+        <input type="text" id="direccion_smart_id" class="form-control" focus="true"
+          placeholder="{{'FORMS.FIELD_NAMES.smart_address_id.placeholder' | translate}}" formControlName="direccion_smart_id"
+          [ngClass]="{ 'is-invalid': form['direccion_smart_id'].errors && (form.direccion_smart_id.dirty || form.direccion_smart_id.touched || submitted) }" />
+        <div *ngIf="form['direccion_smart_id'].errors && (form.direccion_smart_id.dirty || form.direccion_smart_id.touched || submitted)"
+          class="invalid-feedback" align="left">
+          <div *ngIf="form['direccion_smart_id'].errors['required']">
+            {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+      <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' |
+        translate}}</button>
+      <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' |
+        translate}}</button>
+    </div>
+  </div>
+
+</div>
+

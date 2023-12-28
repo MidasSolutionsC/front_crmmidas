@@ -279,9 +279,21 @@
   },
   "FORMS": {
     "FIELD_NAMES": {
+      "retailx_id": {
+        "label": "ID RETAIL X",
+        "placeholder": "Ingrese la ID RETAIL X..."
+      },
+      "smart_id": {
+        "label": "ID SMART",
+        "placeholder": "Ingrese la ID SMART..."
+      },
+      "smart_address_id": {
+        "label": "ID DIRECCIÓN SMART",
+        "placeholder": "Ingrese la ID DIRECCIÓN SMART..."
+      },
       "ip": {
         "label": "Dirección IP",
-        "placeholder": "Ingrese la dirección IP..."
+        "placeholder": "Ingrese la dirección..."
       },
       "descripcion": {
         "label": "Descripción",

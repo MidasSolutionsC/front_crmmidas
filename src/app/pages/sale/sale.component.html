@@ -91,6 +91,10 @@
                         <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary"
                           (click)="openModalDetail(data)"><i class="bx bx-detail"></i></a>
                       </li>
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Datos externo" *ngIf="isBackOffice()">
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-primary"
+                          (click)="openModalEditIDs(data)"><i class="mdi mdi-view-grid-plus"></i></a>
+                      </li>
   
                       <!-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
                           <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="getEditRow(data)"><i class="mdi mdi-pencil-outline"></i></a>
@@ -300,6 +304,27 @@
         </section>
       </cdk-step>
     </ng-stepper>
+  </div>
+  <div class="modal-footer">
+    <div class="hstack gap-2 justify-content-end">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+        (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CLOSE' | translate}}</button>
+      <!-- <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
+      <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button> -->
+    </div>
+  </div>
+</ng-template>
+<!--End Modal -->
+
+<!-- MODAL IDS RETAIL, SMART, DIRECCIÓN -->
+<ng-template #contentModalRetail role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{dataModalRetail.title}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <p>RETAIL</p>
   </div>
   <div class="modal-footer">
     <div class="hstack gap-2 justify-content-end">

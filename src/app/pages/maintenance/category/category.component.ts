@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Category, CategoryList, ResponseApi } from 'src/app/core/models';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, Category, CategoryList, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { ApiErrorFormattingService, CategoryService, FormService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
@@ -20,21 +20,33 @@ export class CategoryComponent {
   // bread crumb items
   titleBreadCrumb: string = 'Categorías';
   breadCrumbItems: Array<{}>;
-  
+
   // Form 
   isNewData: boolean = true;
   submitted: boolean = false;
   categoryForm: FormGroup;
 
 
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
+
   // Table data
   // content?: any;
   lists?: CategoryList[];
-  
+
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private modalService: BsModalService, 
+    private modalService: BsModalService,
     private _categoryService: CategoryService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -44,24 +56,32 @@ export class CategoryComponent {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'Categorías', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento' }, { label: 'Categorías', active: true }]);
 
     this.initForm();
     this.listDataApi();
     this.subscription.add(
       this._categoryService.listObserver$
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+        .pipe(
+          distinctUntilChanged(
+            (prevList, currentList) =>
+              prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+          )
         )
-      )
-      .subscribe((list: CategoryList[]) => {
-        this.lists = list;
-      })
+        .subscribe((list: CategoryList[]) => {
+          this.lists = list;
+        })
+    );
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        .subscribe((pagination: Pagination) => {
+          this.apiCategoryListPagination()
+        })
     );
   }
-  
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
@@ -71,17 +91,17 @@ export class CategoryComponent {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  public listDataApi(forceRefresh: boolean = false){
+  public listDataApi(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._categoryService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this.lists = response.data;
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
@@ -90,13 +110,13 @@ export class CategoryComponent {
     });
   }
 
-  private saveDataApi(data: Category){
+  private saveDataApi(data: Category) {
     this._sweetAlertService.loadingUp()
     this.subscription.add(
       this._categoryService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 201){
-          if(response.data[0]){
+        if (response.code == 201) {
+          if (response.data[0]) {
             const data: CategoryList = CategoryList.cast(response.data[0]);
             this._categoryService.addObjectObserver(data);
           }
@@ -104,16 +124,16 @@ export class CategoryComponent {
           this.modalRef?.hide();
         }
 
-        if(response.code == 422){
-          if(response.errors){
+        if (response.code == 422) {
+          if (response.errors) {
             const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
           }
         }
 
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
         }
       }, (error) => {
@@ -123,26 +143,26 @@ export class CategoryComponent {
     )
   }
 
-  private updateDataApi(data: Category, id: number){
+  private updateDataApi(data: Category, id: number) {
     this._sweetAlertService.loadingUp()
     this._categoryService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: CategoryList = CategoryList.cast(response.data[0]);
         this._categoryService.updateObjectObserver(data);
         this.modalRef?.hide();
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -151,25 +171,25 @@ export class CategoryComponent {
     });
   }
 
-  private deleteDataApi(id: number){
+  private deleteDataApi(id: number) {
     this._sweetAlertService.loadingUp()
     this._categoryService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: CategoryList = CategoryList.cast(response.data[0]);
         this._categoryService.removeObjectObserver(data.id);
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -178,6 +198,43 @@ export class CategoryComponent {
     });
   }
 
+  /**
+   * ****************************************************************
+   * OPERACIONES CON LA API - CARGA ASINCRONÍA
+   * ****************************************************************
+   */
+  public apiCategoryListPagination(): void {
+    this.subscription.add(
+      this._categoryService.getPagination(this.pagination.getValue())
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponsePagination) => {
+          if (response.code == 200) {
+            this.paginationResult = PaginationResult.cast(response.data);
+            this.lists = response.data.data;
+          }
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+          }
+        }, (error: any) => {
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar las categorías', message: error.message, timer: 2500 });
+          }
+        })
+    );
+  }
+
+
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+  }
+
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
+  }
 
 
   /**
@@ -191,7 +248,7 @@ export class CategoryComponent {
    * INICIAR FORMULARTO CON LAS VALIDACIONES
    * @param model 
    */
-  private initForm(){
+  private initForm() {
     const category = new Category();
     const formGroupData = this.getFormGroupData(category);
     this.categoryForm = this.formBuilder.group(formGroupData);
@@ -212,7 +269,7 @@ export class CategoryComponent {
   }
 
 
-  
+
   /**
    * Open modal
    * @param content modal content
@@ -223,7 +280,7 @@ export class CategoryComponent {
     this.dataModal.title = 'Crear Categoría';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.modalRef.onHide.subscribe(() => {});
+    this.modalRef.onHide.subscribe(() => { });
   }
 
 
@@ -231,22 +288,22 @@ export class CategoryComponent {
     * Save
   */
   saveData() {
-    if(!this.categoryForm.valid){
-      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    if (!this.categoryForm.valid) {
+      this._sweetAlertService.showTopEnd({ title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500 });
     } else {
       const values: Category = this.categoryForm.value;
 
-      if(this.isNewData){
+      if (this.isNewData) {
         // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la categoría?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar la categoría?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.updateDataApi(values, values.id);
           }
         });
@@ -268,7 +325,7 @@ export class CategoryComponent {
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const category = Category.cast(data);
-    this.categoryForm = this.formBuilder.group({...this._formService.modelToFormGroupData(category), id: [data.id]});
+    this.categoryForm = this.formBuilder.group({ ...this._formService.modelToFormGroupData(category), id: [data.id] });
   }
 
 
@@ -276,9 +333,9 @@ export class CategoryComponent {
    * Eliminar un registro
    * @param id id del registro a eliminar
    */
-  deleteRow(id: any){
+  deleteRow(id: any) {
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la categoría?').then((confirm) => {
-      if(confirm.isConfirmed){
+      if (confirm.isConfirmed) {
         this.deleteDataApi(id);
       }
     });

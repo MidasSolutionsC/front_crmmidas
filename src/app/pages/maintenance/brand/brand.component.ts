@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Brand, BrandList, Breadcrumb, ResponseApi } from 'src/app/core/models';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Brand, BrandList, Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, FormService, SweetAlertService } from 'src/app/core/services';
 
 @Component({
@@ -20,21 +20,32 @@ export class BrandComponent {
   // bread crumb items
   titleBreadCrumb: string = 'marcas';
   breadCrumbItems: Array<{}>;
-  
+
   // Form 
   isNewData: boolean = true;
   submitted: boolean = false;
   brandForm: FormGroup;
 
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
 
   // Table data
   // content?: any;
   lists?: BrandList[];
-  
+
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private modalService: BsModalService, 
+    private modalService: BsModalService,
     private _brandService: BrandService,
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
@@ -44,24 +55,33 @@ export class BrandComponent {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'}, { label: 'marcas', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento' }, { label: 'marcas', active: true }]);
 
     this.initForm();
     this.listDataApi();
     this.subscription.add(
       this._brandService.listObserver$
-      .pipe(
-        distinctUntilChanged(
-          (prevList, currentList) =>
-            prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+        .pipe(
+          distinctUntilChanged(
+            (prevList, currentList) =>
+              prevList.map(item => item.id).join(',') === currentList.map(item => item.id).join(',')
+          )
         )
-      )
-      .subscribe((list: BrandList[]) => {
-        this.lists = list;
-      })
+        .subscribe((list: BrandList[]) => {
+          this.lists = list;
+        })
+    );
+
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+      this.pagination.asObservable()
+        .subscribe((pagination: Pagination) => {
+          this.apiBrandListPagination()
+        })
     );
   }
-  
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
@@ -71,17 +91,17 @@ export class BrandComponent {
    * OPERACIONES CON LA API
    * ****************************************************************
    */
-  public listDataApi(forceRefresh: boolean = false){
+  public listDataApi(forceRefresh: boolean = false) {
     this._sweetAlertService.loadingUp('Obteniendo datos')
     this._brandService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         this.lists = response.data;
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: any) => {
@@ -90,13 +110,13 @@ export class BrandComponent {
     });
   }
 
-  private saveDataApi(data: Brand){
+  private saveDataApi(data: Brand) {
     this._sweetAlertService.loadingUp()
     this.subscription.add(
       this._brandService.register(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
-        if(response.code == 201){
-          if(response.data[0]){
+        if (response.code == 201) {
+          if (response.data[0]) {
             const data: BrandList = BrandList.cast(response.data[0]);
             this._brandService.addObjectObserver(data);
           }
@@ -104,16 +124,16 @@ export class BrandComponent {
           this.modalRef?.hide();
         }
 
-        if(response.code == 422){
-          if(response.errors){
+        if (response.code == 422) {
+          if (response.errors) {
             const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
           }
         }
 
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        if (response.code == 500) {
+          if (response.errors) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
           }
         }
       }, (error) => {
@@ -123,26 +143,26 @@ export class BrandComponent {
     )
   }
 
-  private updateDataApi(data: Brand, id: number){
+  private updateDataApi(data: Brand, id: number) {
     this._sweetAlertService.loadingUp()
     this._brandService.update(data, id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: BrandList = BrandList.cast(response.data[0]);
         this._brandService.updateObjectObserver(data);
         this.modalRef?.hide();
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -151,25 +171,25 @@ export class BrandComponent {
     });
   }
 
-  private deleteDataApi(id: number){
+  private deleteDataApi(id: number) {
     this._sweetAlertService.loadingUp()
     this._brandService.delete(id).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
-      if(response.code == 200){
+      if (response.code == 200) {
         const data: BrandList = BrandList.cast(response.data[0]);
         this._brandService.removeObjectObserver(data.id);
       }
 
-      if(response.code == 422){
-        if(response.errors){
+      if (response.code == 422) {
+        if (response.errors) {
           const textErrors = this._apiErrorFormattingService.formatAsHtml(response.errors);
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.message, message: textErrors});
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.message, message: textErrors });
         }
       }
 
-      if(response.code == 500){
-        if(response.errors){
-          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      if (response.code == 500) {
+        if (response.errors) {
+          this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
         }
       }
     }, (error: ResponseApi) => {
@@ -178,6 +198,43 @@ export class BrandComponent {
     });
   }
 
+  /**
+ * ****************************************************************
+ * OPERACIONES CON LA API - CARGA ASINCRONÍA
+ * ****************************************************************
+ */
+  public apiBrandListPagination(): void {
+    this.subscription.add(
+      this._brandService.getPagination(this.pagination.getValue())
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponsePagination) => {
+          if (response.code == 200) {
+            this.paginationResult = PaginationResult.cast(response.data);
+            this.lists = response.data.data;
+          }
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+          }
+        }, (error: any) => {
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar marcas', message: error.message, timer: 2500 });
+          }
+        })
+    );
+  }
+
+
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+  }
+
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
+  }
 
 
   /**
@@ -191,7 +248,7 @@ export class BrandComponent {
    * INICIAR FORMULARTO CON LAS VALIDACIONES
    * @param model 
    */
-  private initForm(){
+  private initForm() {
     const brand = new Brand();
     const formGroupData = this.getFormGroupData(brand);
     this.brandForm = this.formBuilder.group(formGroupData);
@@ -212,7 +269,7 @@ export class BrandComponent {
   }
 
 
-  
+
   /**
    * Open modal
    * @param content modal content
@@ -223,7 +280,7 @@ export class BrandComponent {
     this.dataModal.title = 'Crear marca';
     this.submitted = false;
     this.modalRef = this.modalService.show(content, { class: 'modal-md' });
-    this.modalRef.onHide.subscribe(() => {});
+    this.modalRef.onHide.subscribe(() => { });
   }
 
 
@@ -231,22 +288,22 @@ export class BrandComponent {
     * Save
   */
   saveData() {
-    if(!this.brandForm.valid){
-      this._sweetAlertService.showTopEnd({title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500});
+    if (!this.brandForm.valid) {
+      this._sweetAlertService.showTopEnd({ title: 'Validación de datos', message: 'Campos obligatorios vacíos', type: 'warning', timer: 1500 });
     } else {
       const values: Brand = this.brandForm.value;
 
-      if(this.isNewData){
+      if (this.isNewData) {
         // Crear nuevo registro
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de registrar la marca?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.saveDataApi(values);
           }
         });
       } else {
         // Actualizar datos
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de modificar la marca?').then((confirm) => {
-          if(confirm.isConfirmed){
+          if (confirm.isConfirmed) {
             this.updateDataApi(values, values.id);
           }
         });
@@ -268,7 +325,7 @@ export class BrandComponent {
     // Cargando datos al formulario 
     var data = this.lists.find((data: { id: any; }) => data.id === id);
     const brand = Brand.cast(data);
-    this.brandForm = this.formBuilder.group({...this._formService.modelToFormGroupData(brand), id: [data.id]});
+    this.brandForm = this.formBuilder.group({ ...this._formService.modelToFormGroupData(brand), id: [data.id] });
   }
 
 
@@ -276,9 +333,9 @@ export class BrandComponent {
    * Eliminar un registro
    * @param id id del registro a eliminar
    */
-  deleteRow(id: any){
+  deleteRow(id: any) {
     this._sweetAlertService.showConfirmationAlert('¿Estas seguro de eliminar la campaña?').then((confirm) => {
-      if(confirm.isConfirmed){
+      if (confirm.isConfirmed) {
         this.deleteDataApi(id);
       }
     });

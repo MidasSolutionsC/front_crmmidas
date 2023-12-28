@@ -74,7 +74,7 @@
               </thead>
               <tbody>
                 <tr *ngFor="let data of lists; let i = index">
-                  <th scope="row">{{i + 1}}</th>
+                  <th scope="row">{{data.index}}</th>
                   <td>{{data.sedes_nombre}}</td>
                   <td>{{data.nombre}}</td>
                   <td>{{data.descripcion}}</td>
@@ -113,7 +113,20 @@
             <!-- Pagination -->
             <div class="col-sm-12 col-md-6">
               <div class="text-md-right float-md-end pagination-rounded">
-                <pagination previousText="Anterior" nextText="Siguiente"  [totalItems]="groupTotal" [(ngModel)]="groupPage" [itemsPerPage]="groupPerPage" (pageChanged)="getPageGroup($event)"></pagination>
+                <pagination 
+                  previousText="Anterior" 
+                  nextText="Siguiente"   
+                  firstText="Primero"
+                  lastText="Ultimo"
+                  [boundaryLinks]="false" 
+                  [directionLinks]="true"  
+                  [totalItems]="groupTotal"
+                  [(ngModel)]="groupPage" 
+                  [itemsPerPage]="groupPerPage" 
+                  (pageChanged)="getPageGroup($event)" 
+                  [maxSize]="7" 
+                  [rotate]="false"
+                ></pagination>
               </div>
             </div>
             <!-- End Pagination -->

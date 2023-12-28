@@ -65,7 +65,7 @@ export class PaginationResult extends Model{
   constructor(data?: object){
     super(data);
     this.current_page = this.current_page || 0;
-    this.data = this.data || null;
+    this.data = this.data || [];
     this.first_page_url = this.first_page_url || '';
     this.from = this.from || 0;
     this.last_page = this.last_page || 0;
