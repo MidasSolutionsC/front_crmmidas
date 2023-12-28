@@ -55,7 +55,7 @@ export class SaleComponent implements OnInit {
 
   // PAGINACIÓN
   countElements: number[] = [2, 5, 10, 25, 50, 100];
-  paginationResult: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
     page: 1,
     perPage: 5,
     search: '',
@@ -63,7 +63,7 @@ export class SaleComponent implements OnInit {
     order: 'desc',
   });
 
-  pagination: PaginationResult = new PaginationResult();
+  paginationResult: PaginationResult = new PaginationResult();
 
 
   // Table data
@@ -126,7 +126,7 @@ export class SaleComponent implements OnInit {
 
     // PAGINACIÓN
     this.subscription.add(
-      this.paginationResult.asObservable()
+      this.pagination.asObservable()
         // .pipe(distinctUntilChanged())
         .subscribe((pagination: Pagination) => {
           this.apiSaleListPagination()
@@ -150,17 +150,11 @@ export class SaleComponent implements OnInit {
    */
   public apiSaleListPagination(): void {
     this.subscription.add(
-      this._saleService.getPagination({
-        page: this.page.toString(),
-        perPage: this.perPage.toString(),
-        search: this.search,
-        column: this.column,
-        order: this.order
-      })
+      this._saleService.getPagination(this.pagination.getValue())
       .pipe(debounceTime(250))
       .subscribe((response: ResponsePagination) => {
         if(response.code == 200){
-          this.pagination = PaginationResult.cast(response.data);
+          this.paginationResult = PaginationResult.cast(response.data);
           this.lists = response.data.data;
           this.page = response.data.current_page;
           this.total = response.data.total;
@@ -179,28 +173,14 @@ export class SaleComponent implements OnInit {
     ); 
   }
 
-  getPage(event: any) {
-    // const { page, itemsPerPage: perPage } = event;
-    // this.pagination.next({ ...this.pagination.getValue(), page, perPage })
-    const {page, itemsPerPage} = event;
-    this.page = page;
-    this.perPage = itemsPerPage;
-    this.cdr.detectChanges();
 
-    setTimeout(() => {
-      this.apiSaleListPagination();
-    }, 0);
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
   }
 
   getPageRefresh() {
-    // this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
-    this.page = 1;
-    this.perPage = 10;
-    this.cdr.detectChanges();
-
-    setTimeout(() => {
-      this.apiSaleListPagination();
-    }, 0);
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
   }
 
 
