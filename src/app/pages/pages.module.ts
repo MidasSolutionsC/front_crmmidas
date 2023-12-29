@@ -86,6 +86,7 @@ import { TableSaleDetailFullComponent } from './sale/tables/table-sale-detail-fu
 import { FormArrayContactComponent } from './sale/forms/form-client/form-client-contact/form-array-contact/form-array-contact.component';  
 import { FormComponent } from './sale/form/form.component';
 import { FormArrayBankAccountComponent } from './sale/forms/form-client/form-client-bank-account/form-array-bank-account/form-array-bank-account.component'; 
+import { ModalRetailComponent } from './sale/modals/modal-retail/modal-retail.component';
 
 import {ScrollingModule} from '@angular/cdk/scrolling';
 
@@ -138,7 +139,8 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
     FormSaleDetailFullComponent,
     TableSaleDetailFullComponent,
     FormArrayContactComponent,
-    FormArrayBankAccountComponent
+    FormArrayBankAccountComponent,
+    ModalRetailComponent
   ],
   imports: [
     CoreModule,

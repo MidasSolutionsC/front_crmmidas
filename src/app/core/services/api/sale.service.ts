@@ -81,8 +81,8 @@ export class SaleService {
   }
 
   public update(data: any, id: any): Observable<ResponseApi> {
-    const endpoint = `${this.baseUrl}/update/${id}`;
-    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+    const endpoint = `${this.baseUrl}/${id}`;
+    return this.http.put(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
   public finalProcess(data: any, id: any): Observable<ResponseApi>{

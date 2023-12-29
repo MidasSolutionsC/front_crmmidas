@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, CountryList, ResponseApi, TypeCurrency, TypeCurrencyList } from 'src/app/core/models';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Breadcrumb, CountryList, Pagination, PaginationResult, ResponseApi, ResponsePagination, TypeCurrency, TypeCurrencyList } from 'src/app/core/models';
 import { ApiErrorFormattingService, CountryService, FormService, SweetAlertService, TypeCurrencyService } from 'src/app/core/services';
 
 @Component({
@@ -27,6 +27,18 @@ export class TypeCurrencyComponent {
   typeCurrencyForm: FormGroup;
 
   // Table data
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
+  
   // content?: any;
   lists?: TypeCurrencyList[];
 
@@ -78,6 +90,14 @@ export class TypeCurrencyComponent {
             this.listCountries = list;
       })
     );
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+    this.pagination.asObservable()
+      .subscribe((pagination: Pagination) => {
+        this.apiTypeCurrencyListPagination()
+      })
+  );
   }
   
   ngOnDestroy(): void {
@@ -195,6 +215,41 @@ export class TypeCurrencyComponent {
       console.log(error);
     });
   }
+
+  public apiTypeCurrencyListPagination(): void {
+    this.subscription.add(
+      this._countryService.getPagination(this.pagination.getValue())
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponsePagination) => {
+          if (response.code == 200) {
+            this.paginationResult = PaginationResult.cast(response.data);
+            this.lists = response.data.data;
+          }
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+          }
+        }, (error: any) => {
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar tipo de monedas', message: error.message, timer: 2500 });
+          }
+        })
+    );
+  }
+
+
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+  }
+
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
+  }
+
+
 
   /**
    * *******************************************************

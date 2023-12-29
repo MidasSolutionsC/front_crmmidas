@@ -1,3 +1,4 @@
+import { CountryList } from "../country.model";
 import { Model } from "../model";
 
 export class Campus extends Model{
@@ -48,6 +49,7 @@ export class CampusList extends Model{
   public id: number;
   public paises_id: number;
   public paises_nombre: string;
+  public country?: CountryList;
   public ubigeos_ciudad: string;
   public codigo_ubigeo: string;
   public nombre: string;
@@ -71,6 +73,7 @@ export class CampusList extends Model{
     this.paises_id = this.paises_id || 0;
     this.nombre = this.nombre || '';
     this.paises_nombre = this.paises_nombre || '';
+    this.country = this.country || null;
     this.ubigeos_ciudad = this.ubigeos_ciudad || '';
     this.codigo_ubigeo = this.codigo_ubigeo || '';
     this.ciudad = this.ciudad || '';
@@ -89,8 +92,27 @@ export class CampusList extends Model{
 
   public static cast(data: object): CampusList{
     const campusList = new CampusList(data);
-    const {id, paises_id, nombre, paises_nombre, ubigeos_ciudad, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active, created_at, updated_at, deleted_at} = campusList;
-    return {id, paises_id, nombre, paises_nombre, ubigeos_ciudad, codigo_ubigeo, ciudad, direccion, codigo_postal, telefono, correo, responsable, fecha_apertura, logo, is_active, created_at, updated_at, deleted_at};
+    return {
+      id: campusList.id,
+      paises_id: campusList.paises_id,
+      nombre: campusList.nombre,
+      paises_nombre: campusList.paises_nombre,
+      country: campusList.country,
+      ubigeos_ciudad: campusList.ubigeos_ciudad,
+      codigo_ubigeo: campusList.codigo_ubigeo,
+      ciudad: campusList.ciudad,
+      direccion: campusList.direccion,
+      codigo_postal: campusList.codigo_postal,
+      telefono: campusList.telefono,
+      correo: campusList.correo,
+      responsable: campusList.responsable,
+      fecha_apertura: campusList.fecha_apertura,
+      logo: campusList.logo,
+      is_active: campusList.is_active,
+      created_at: campusList.created_at,
+      updated_at: campusList.updated_at,
+      deleted_at: campusList.deleted_at
+    }
   }
 
   public static casts(dataArray: object[]): CampusList[]{

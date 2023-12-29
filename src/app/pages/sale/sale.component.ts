@@ -11,6 +11,7 @@ import { ModalRegisterComponent } from './modals/modal-register/modal-register.c
 import { ModalUpdateComponent } from './modals/modal-update/modal-update.component';
 import { ModalDetailComponent } from './modals/modal-detail/modal-detail.component';
 import { ModalFormComponent } from './modals/modal-form/modal-form.component';
+import { ModalRetailComponent } from './modals/modal-retail/modal-retail.component';
 @Component({
   selector: 'app-sale',
   templateUrl: './sale.component.html',
@@ -23,6 +24,10 @@ export class SaleComponent implements OnInit {
 
   dataModal = {
     title: 'Crear Venta',
+  }
+
+  dataModalRetail = {
+    title: 'Modificación de IDs externos',
   }
 
   // bread crumb items
@@ -564,5 +569,33 @@ export class SaleComponent implements OnInit {
     this.modalRef.onHide.subscribe((next) => {
       // console.log(next);
     });
+  }
+
+  // EDICIÓIN DE VENTA - IDs
+  async openModalEditIDs(data: any){
+    // const [sale] = await this.getByIdWithAllReference(data.id);
+    // console.log(sale)
+    const initialState = {
+      dataInput: data
+    };
+    this.modalRef = this.modalService.show(ModalRetailComponent, {initialState, class: 'modal-md modal-dialog-centered modal-dialog-scrollable'});
+    this.modalRef.onHide.subscribe((next) => {
+      // console.log(next);
+      this.apiSaleListPagination()
+    });
+  }
+
+
+  // VALIDAR ROL BACKOFFICE
+  public isBackOffice(){
+    let dataUser: any = localStorage.getItem('dataUser');
+    dataUser = dataUser? JSON.parse(dataUser): null;
+
+    // backofice
+    if(dataUser?.user?.tipo_usuario.toLowerCase() == 'administrador'){
+      return true;
+    }
+
+    return false;
   }
 }

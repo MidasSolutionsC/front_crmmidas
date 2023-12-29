@@ -9,12 +9,36 @@
             <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
             <div class="flex-shrink-0 d-flex gap-1">
               <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
-              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+              <a href="javascript:void(0);" (click)="getPageRefresh();" class="btn btn-light"><i
+                  class="mdi mdi-refresh"></i></a>
             </div>
           </div>
         </div>
         <div class="card-body border-bottom">
-
+          <h4 class="card-title">Lista de tipo de cuentas bancarias</h4>
+          <p class="card-sub-title">
+            Tipo de cuentas bancarias registrados hasta el momento
+          </p>
+          <div class="row mb-md-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length" id="tickets-table_length"><label
+                class="d-inline-flex align-items-center">Mostrar
+                <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+                  [(ngModel)]="pagination.value.perPage" class="form-control form-control-sm mx-2" (change)="apiTypeBankAccountListPagination()">
+                  <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
+                </select> registros</label>
+              </div>
+            </div>
+            <!-- Search -->
+            <div class="col-sm-12 col-md-6">
+              <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
+                  class="d-inline-flex align-items-center">Buscar:
+                  <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
+                    aria-controls="tickets-table" [(ngModel)]="pagination.value.search" (input)="apiTypeBankAccountListPagination()"></label>
+              </div>
+            </div>
+            <!-- End search -->
+          </div>
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -32,30 +56,57 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of lists; let i = index">
-                  <th scope="row">{{i + 1}}</th>
+                <tr *ngFor="let data of paginationResult.data; let i = index">
+                  <th scope="row">{{data.index || i + 1}}</th>
                   <td>{{data.nombre}}</td>
                   <td>{{data.abreviacion}}</td>
                   <td>{{data.descripcion}}</td>
-                  <td><span class="badge text-md" [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active? 'Activo': 'Inactivo'}}</span></td>
+                  <td><span class="badge text-md"
+                      [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active?
+                      'Activo': 'Inactivo'}}</span></td>
                   <td>{{data.created_at}}</td>
                   <td>{{data.updated_at}}</td>
                   <td>
                     <ul class="list-unstyled hstack gap-1 mb-0">
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info"
+                          (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
                       </li>
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger" (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
+                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger"
+                          (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
                       </li>
                     </ul>
                   </td>
                 </tr>
-                <tr *ngIf="!lists.length"><td colspan="8" class="text-center">Sin registros.</td></tr>
+                <tr *ngIf="!paginationResult.data.length">
+                  <td colspan="8" class="text-center">Sin registros.</td>
+                </tr>
               </tbody>
             </table>
           </div>
 
+          <!-- End table -->
+          <div class="row justify-content-md-between align-items-md-center mt-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
+                Mostrando de
+                <b>{{paginationResult.from}}</b> al
+                <b>{{paginationResult.to}}</b> de <b>{{paginationResult.total}}</b>
+                registros
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="col-sm-12 col-md-6">
+              <div class="text-md-right float-md-end pagination-rounded">
+                <pagination previousText="Anterior" nextText="Siguiente" firstText="Primero" lastText="Ultimo"
+                  [boundaryLinks]="false" [directionLinks]="true" [totalItems]="paginationResult.total"
+                  [(ngModel)]="pagination.value.page" [itemsPerPage]="pagination.value.perPage"
+                  (pageChanged)="getPage($event)" [maxSize]="7" [rotate]="false"></pagination>
+              </div>
+            </div>
+            <!-- End Pagination -->
+          </div>
         </div>
       </div>
     </div>
@@ -66,15 +117,19 @@
 <ng-template #content role="document" let-modal>
   <div class="modal-header">
     <h5 class="modal-title" id="exampleModalLabel">{{dataModal.title}}</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modalRef?.hide()"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modalRef?.hide()"></button>
   </div>
   <form (keydown.enter)="$event.preventDefault()" [formGroup]="typeBankAccountForm" autocomplete="off">
     <div class="modal-body">
       <input type="hidden" name="id" value="" formControlName="id" />
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.name.label' | translate as translatedLabel;">
         <label for="nombre" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="nombre" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre" [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted) }" />
-        <div *ngIf="form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)" class="invalid-feedback" align="left">
+        <input type="text" id="nombre" class="form-control"
+          placeholder="{{'FORMS.FIELD_NAMES.name.placeholder' | translate}}" formControlName="nombre"
+          [ngClass]="{ 'is-invalid': form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted) }" />
+        <div *ngIf="form['nombre'].errors && (form.nombre.dirty || form.nombre.touched || submitted)"
+          class="invalid-feedback" align="left">
           <div *ngIf="form['nombre'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
           </div>
@@ -83,21 +138,28 @@
 
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.abbreviation.label' | translate as translatedLabel;">
         <label for="abreviacion" class="form-label">{{translatedLabel}}</label>
-        <input type="text" id="abreviacion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.abbreviation.placeholder' | translate}}" formControlName="abreviacion" [ngClass]="{ 'is-invalid': form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted) }" />
-        <div *ngIf="form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted)" class="invalid-feedback" align="left">
+        <input type="text" id="abreviacion" class="form-control"
+          placeholder="{{'FORMS.FIELD_NAMES.abbreviation.placeholder' | translate}}" formControlName="abreviacion"
+          [ngClass]="{ 'is-invalid': form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted) }" />
+        <div *ngIf="form['abreviacion'].errors && (form.abreviacion.dirty || form.abreviacion.touched || submitted)"
+          class="invalid-feedback" align="left">
           <div *ngIf="form['abreviacion'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
           </div>
           <div *ngIf="form['abreviacion'].errors['maxlength']">
-            {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': form['abreviacion'].errors.maxlength.requiredLength}}
+            {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel |
+            replaceAttribute: ':maxlength': form['abreviacion'].errors.maxlength.requiredLength}}
           </div>
         </div>
       </div>
 
       <div class="mb-3" *ngIf="'FORMS.FIELD_NAMES.description.label' | translate as translatedLabel;">
         <label for="descripcion" class="form-label">{{translatedLabel}}</label>
-        <textarea id="descripcion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion" [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
-        <div *ngIf="form.descripcion.errors && (form.descripcion.dirty || form.descripcion.touched || submitted)" class="invalid-feedback" align="left">
+        <textarea id="descripcion" class="form-control"
+          placeholder="{{'FORMS.FIELD_NAMES.description.placeholder' | translate}}" formControlName="descripcion"
+          [ngClass]="{ 'is-invalid': form['descripcion'].errors && (form.descripcion.dirty || form.descripcion.touched || submitted)}"></textarea>
+        <div *ngIf="form.descripcion.errors && (form.descripcion.dirty || form.descripcion.touched || submitted)"
+          class="invalid-feedback" align="left">
           <div *ngIf="form['descripcion'].errors['required']">
             {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
           </div>
@@ -106,9 +168,12 @@
     </div>
     <div class="modal-footer">
       <div class="hstack gap-2 justify-content-end">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
-        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' | translate}}</button>
-        <button type="button" class="btn btn-success"  *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' | translate}}</button>
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+          (click)="modalRef?.hide()">{{'MODALS.BUTTONS.CANCEL' | translate}}</button>
+        <button type="button" class="btn btn-info" *ngIf="!isNewData" (click)="saveData()">{{'MODALS.BUTTONS.UPDATE' |
+          translate}}</button>
+        <button type="button" class="btn btn-success" *ngIf="isNewData" (click)="saveData()">{{'MODALS.BUTTONS.ADD' |
+          translate}}</button>
       </div>
     </div>
   </form>

@@ -163,7 +163,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     const dataSession = localStorage.getItem('dataUser');
     const data = JSON.parse(dataSession);
 
-    if (item.roles) {
+    if (item?.roles && data) {
       return item.roles.some(r => r === data.user.tipo_usuario)
     }
 

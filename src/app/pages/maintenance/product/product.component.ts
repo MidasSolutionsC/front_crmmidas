@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BrandList, Breadcrumb, CategoryList, TypeCurrencyList, Pagination, Product, ProductList, ResponseApi, ResponsePagination, TypeServiceList, PaginationResult } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, CategoryService, TypeCurrencyService, FormService, ProductService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 import { CleanObject } from 'src/app/core/helpers/clean-object.util';
@@ -27,15 +27,17 @@ export class ProductComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
   productForm: FormGroup;
 
-  // TABLE SERVER SIDE
-  page: number = 1;
-  perPage: number = 5;
-  search: string = '';
-  column: string = '';
-  order: 'asc' | 'desc' = 'desc';
-  countElements: number[] = [5, 10, 25, 50, 100];
-  total: number = 0;
-  pagination: PaginationResult = new PaginationResult();
+  // PAGINACIÓN
+  countElements: number[] = [2, 5, 10, 25, 50, 100];
+  pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+    page: 1,
+    perPage: 5,
+    search: '',
+    column: '',
+    order: 'desc',
+  });
+
+  paginationResult: PaginationResult = new PaginationResult();
 
   // VALIDAR SI ES PRODUCTO FÍSICO O SERVICIO
   isInfoProduct: boolean = true;
@@ -135,6 +137,14 @@ export class ProductComponent implements OnInit, OnDestroy {
         this.listCurrencies = list;
       })
     );
+
+    // EMIT CONSULTA PAGINACIÓN
+    this.subscription.add(
+    this.pagination.asObservable()
+      .subscribe((pagination: Pagination) => {
+        this.apiProductListPagination()
+      })
+  );
   }
   
   ngOnDestroy(): void {
@@ -296,46 +306,37 @@ export class ProductComponent implements OnInit, OnDestroy {
  * SERVER SIDE - USERS
  * ***************************************************************
  */
-  apiProductListPagination(): void {
+  public apiProductListPagination(): void {
     this.subscription.add(
-      this._productService.getPagination({
-        page: this.page.toString(),
-        perPage: this.perPage.toString(),
-        search: this.search,
-        column: this.column,
-        order: this.order
-      })
-      .pipe(debounceTime(250))
-      .subscribe((response: ResponsePagination) => {
-        if(response.code == 200){
-          this.pagination = PaginationResult.cast(response.data);
-          this.lists = response.data.data;
-          this.page = response.data.current_page;
-          this.total = response.data.total;
-        }
-        
-        if(response.code == 500){
-          if(response.errors){
-            this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+      this._productService.getPagination(this.pagination.getValue())
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponsePagination) => {
+          if (response.code == 200) {
+            this.paginationResult = PaginationResult.cast(response.data);
+            this.lists = response.data.data;
           }
-        }
-      }, (error: any) => {
-        if(error.message){
-          this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar productos', message: error.message, timer: 2500});
-        }
-      })
-    ); 
+
+          if (response.code == 500) {
+            if (response.errors) {
+              this._sweetAlertService.showTopEnd({ type: 'error', title: response.errors?.message, message: response.errors?.error });
+            }
+          }
+        }, (error: any) => {
+          if (error.message) {
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar productos', message: error.message, timer: 2500 });
+          }
+        })
+    );
   }
 
-  getPage(event: any){
-    const {page, itemsPerPage} = event;
-    this.page = page;
-    this.perPage = itemsPerPage;
-    this.cdr.detectChanges();
 
-    setTimeout(() => {
-      this.apiProductListPagination();
-    }, 0);
+  getPage(event: any) {
+    const { page, itemsPerPage: perPage } = event;
+    this.pagination.next({ ...this.pagination.getValue(), page, perPage })
+  }
+
+  getPageRefresh() {
+    this.pagination.next({ ...this.pagination.getValue(), page: 1, perPage: 10 })
   }
   
   /**
