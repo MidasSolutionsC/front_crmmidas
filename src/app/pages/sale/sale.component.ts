@@ -591,7 +591,7 @@ export class SaleComponent implements OnInit {
     let dataUser: any = localStorage.getItem('dataUser');
     dataUser = dataUser? JSON.parse(dataUser): null;
 
-    // backofice
+    // backoffice
     if(dataUser?.user?.tipo_usuario.toLowerCase() == 'administrador'){
       return true;
     }

@@ -373,7 +373,7 @@ export interface Permiso {
      manuales: { ver: true, editar: true },
      reportes : { ver: true, editar: true }, //por vendedor a su cargo
   },
-  backofice: {
+  backoffice: {
     inicio: { ver: true },
     ventas: { ver: true, editar: true },//por vendedor a su cargo
     calendario: { ver: true, editar: true },
