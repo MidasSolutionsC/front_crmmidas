@@ -485,7 +485,9 @@ export class AdvertisementComponent implements OnInit {
 
       // Iterar a través de las propiedades de 'values' y agregarlas al FormData
       for (const key of Object.keys(values)) {
-        formData.append(key, values[key]);
+        if(values[key] != null){
+          formData.append(key, values[key]);
+        }
       }
 
       if (this.uploadFiles && this.uploadFiles.length > 0) {
