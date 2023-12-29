@@ -150,6 +150,12 @@
           {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute':
           translatedLabel}}
         </div>
+        <div *ngIf="f.codigo_postal.errors.minlength">
+          {{ 'FORMS.VALIDATION.minlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':minlength': f.codigo_postal.errors.minlength.requiredLength}}
+        </div>
+        <div *ngIf="f.codigo_postal.errors.maxlength">
+          {{ 'FORMS.VALIDATION.maxlength' | translate | replaceAttribute: ':attribute': translatedLabel | replaceAttribute: ':maxlength': f.codigo_postal.errors.maxlength.requiredLength}}
+        </div>
       </div>
     </div>
   </div>

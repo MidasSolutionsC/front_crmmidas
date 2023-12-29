@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { BehaviorSubject, Subscription, filter } from 'rxjs';
+import { BehaviorSubject, Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { CurrencyUtil } from 'src/app/core/helpers/currency.util';
-import { BrandList, Installation, InstallationList, ResponseApi, Sale, SaleDetailList } from 'src/app/core/models';
-import { ApiErrorFormattingService, BrandService, SaleDetailService, SharedSaleService, SweetAlertService } from 'src/app/core/services';
+import { BrandList, Installation, InstallationList, ResponseApi, Sale, SaleDetailList, TypeServiceList } from 'src/app/core/models';
+import { ApiErrorFormattingService, BrandService, SaleDetailService, SharedSaleService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
   selector: 'app-table-sale-detail-full',
@@ -29,6 +29,13 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
     address: 'S/N'
   };
 
+  // VALOR COMPARTIDO
+  shareTypeService: string = null;
+
+  // ID TIPO DE SERVICIO
+  typeServiceId: any = '';
+  typeServiceIcon: string = '';
+  typeServiceNombre: string = '';
 
   // DATOS INSTALACIÓN
   dataInstallation: Installation;
@@ -68,9 +75,13 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   // LISTA DE SERVICIOS AÑADIDOS A LA VENTA
   listSaleDetail: SaleDetailList[] = [];
 
+  // Lista de tipo de servicios
+  listTypeService: TypeServiceList[] = [];
+
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private _typeServiceService: TypeServiceService,
     private _brandService: BrandService,
     private _sharedSaleService: SharedSaleService,
     private _saleDetailService: SaleDetailService,
@@ -144,7 +155,16 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
           this.onReset()
         }
       })
-    )
+    );
+
+    // TIPO DE SERVICIOS
+    this.subscription.add(
+      this._typeServiceService.listObserver$
+      .pipe(distinctUntilChanged())
+      .subscribe((list: TypeServiceList[]) => {
+        this.listTypeService = list;
+      })
+    ); 
   }
 
   ngOnDestroy(): void {
@@ -159,13 +179,43 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   
 
 
+  
+  /**
+   * ****************************************************************
+   * SERVICIO SELECCIONADO - MOSTRAR FORMULARIO
+   * ****************************************************************
+   */
+  openFormService(){
+    if(!this.typeServiceId){
+      this._sweetAlertService.showCenter({type: 'warning', title: 'Error al agregar servicio', message: 'Por favor indique el tipo de servicio', timer: 2500});
+    } else {
+      this.toggleForm(false);
+      
+      const typeService = this.listTypeService.find((item) => item.id == this.typeServiceId);
+      this.typeServiceNombre = typeService.nombre;
+      this.typeServiceIcon = typeService.icono;
+      this._sharedSaleService.setTypeServiceId(this.typeServiceId);
+
+      if(typeService.nombre.toLowerCase().includes('movil')){
+        this.shareTypeService = 'mobile';
+      } else if (typeService.nombre.toLowerCase().includes('fija')){
+        this.shareTypeService = 'fixed';
+      } else if(typeService.nombre.toLowerCase().includes('tv')){
+        this.shareTypeService = 'tv';
+      }
+    }
+
+  }
+
+
+
   /**
    * ****************************************************************
    * ABRIR FORMULARIO 
    * ****************************************************************
    */
   toggleForm(collapse: boolean = null) {
-    this.isCollapseForm = collapse || !this.isCollapseForm;
+    this.isCollapseForm = collapse != null? collapse: !this.isCollapseForm;
     if (!this.isCollapseForm) {
       this.isCollapseList = true;
     } else {
@@ -248,6 +298,28 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Listar tipo de servicios
+  public apiTypeServiceList(forceRefresh: boolean = false){
+    this._sweetAlertService.loadingUp('Obteniendo datos')
+    this._typeServiceService.getAll(forceRefresh).subscribe((response: ResponseApi) => {
+      this._sweetAlertService.stop();
+      if(response.code == 200){
+        // this.lists = response.data;
+      }
+
+      if(response.code == 500){
+        if(response.errors){
+          this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+        }
+      }
+    }, (error: any) => {
+      this._sweetAlertService.stop();
+      if(error.message){
+        this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar tipos de servicios', message: error.message, timer: 2500});
+      }
+    });
+  }
+
 
   // CAMBIO DE MARCA
   onChangeBrand(brandId: any) {
@@ -293,5 +365,8 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
     });
   }
 
+  onCancel(event: any){
+    this.toggleForm(true);
+  }
 
 }
