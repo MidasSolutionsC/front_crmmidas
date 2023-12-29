@@ -592,7 +592,7 @@ export class SaleComponent implements OnInit {
     dataUser = dataUser? JSON.parse(dataUser): null;
 
     // backoffice
-    if(dataUser?.user?.tipo_usuario.toLowerCase() == 'administrador'){
+    if(dataUser?.user?.tipo_usuario.toLowerCase() == 'backofice'){
       return true;
     }
 
