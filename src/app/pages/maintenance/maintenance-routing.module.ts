@@ -13,12 +13,13 @@ import { ServiceComponent } from './service/service.component';
 import { CategoryComponent } from './category/category.component';
 
 
+
 const routes: Routes = [
   {
     path: 'country',
     component: CountryComponent
   },
- 
+
   {
     path: 'manual',
     component: ManualComponent
@@ -27,6 +28,7 @@ const routes: Routes = [
     path: 'advertisement',
     component: AdvertisementComponent
   },
+
   {
     path: 'promotion',
     component: PromotionComponent

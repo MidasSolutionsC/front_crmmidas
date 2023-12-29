@@ -9,119 +9,67 @@
             <h5 class="mb-0 card-title flex-grow-1">Listado</h5>
             <div class="flex-shrink-0 d-flex gap-1">
               <a href="javascript:void(0);" class="btn btn-primary" (click)="openModal(content)">Agregar nuevo</a>
-              <a href="javascript:void(0);" (click)="getPageRefresh();" class="btn btn-light"><i
+              <a href="javascript:void(0);" (click)="listDataApi(true);" class="btn btn-light"><i
                   class="mdi mdi-refresh"></i></a>
             </div>
           </div>
         </div>
-        <div class="card-body border-bottom">
-          <h4 class="card-title">Lista de anuncios</h4>
-          <p class="card-sub-title">
-            Anuncios registrados hasta el momento
-          </p>
-          <div class="row mb-md-2">
-            <div class="col-sm-12 col-md-6">
-              <div class="dataTables_length" id="tickets-table_length"><label
-                class="d-inline-flex align-items-center">Mostrar
-                <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
-                  [(ngModel)]="pagination.value.perPage" class="form-control form-control-sm mx-2" (change)="apiAdvertisementListPagination()">
-                  <option *ngFor="let count of countElements;" [ngValue]="count">{{count}}</option>
-                </select> registros</label>
-              </div>
-            </div>
-            <!-- Search -->
-            <div class="col-sm-12 col-md-6">
-              <div id="tickets-table_filter" class="dataTables_filter text-md-end"><label
-                  class="d-inline-flex align-items-center">Buscar:
-                  <input type="search" name="searchTerm" class="form-control form-control-sm ms-2"
-                    aria-controls="tickets-table" [(ngModel)]="pagination.value.search" (input)="apiAdvertisementListPagination()"></label>
-              </div>
-            </div>
-            <!-- End search -->
-          </div>
-        </div>
+
         <div class="card-body">
-          <div class="table-responsive">
-            <table class="table align-middle dt-responsive nowrap w-100 table-check" id="type-document-list">
-              <thead>
-                <tr>
-                  <th scope="col">N°</th>
-                  <th scope="col">Titulo</th>
-                  <th scope="col">Descripción</th>
-                  <th scope="col">tipo</th>
-                  <th scope="col">Imagen</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col">Fecha creado</th>
-                  <th scope="col">Fecha modificado</th>
-                  <th scope="col">Opciones</th>
-                </tr>
-              </thead>
-              <tbody cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-                <tr class="example-list" *ngFor="let data of paginationResult.data; let i = index" cdkDrag>
-                  <th scope="row">{{data.index || i + 1}}</th>
-                  <td>{{data.titulo}}</td>
-                  <td>{{data.descripcion}}</td>
-                  <td><span class="badge text-md"
-                      [ngClass]="{ 'bg-info': data.tipo == 'I', 'bg-primary': data.tipo == 'E'}">{{data.tipo_text}}</span>
-                  </td>
-                  <td><img *ngIf="data.imagen" [src]="URL_FILES + data.imagen" alt="render"
-                      style="max-height: 140px;"></td>
-                  <td><span class="badge text-md"
-                      [ngClass]="{ 'bg-success': data.is_active == 1, 'bg-danger': data.is_active == 0}">{{data.is_active?
-                      'Activo': 'Inactivo'}}</span></td>
-                  <td>{{data.created_at}}</td>
-                  <td>{{data.updated_at}}</td>
-                  <td>
-                    <ul class="list-unstyled hstack gap-1 mb-0">
-                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                        <a href="javascript:void(0);" class="btn btn-sm btn-soft-info"
-                          (click)="editDataGet(data.id,content)"><i class="mdi mdi-pencil-outline"></i></a>
-                      </li>
-                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-                        <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger"
-                          (click)="deleteRow(data.id)"><i class="mdi mdi-delete-outline"></i></a>
-                      </li>
-                    </ul>
-                  </td>
 
-                </tr>
-                <tr *ngIf="!paginationResult.data.length">
-                  <td colspan="9" class="text-center">Sin registros.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-body">
 
-           <!-- End table -->
-           <div class="row justify-content-md-between align-items-md-center mt-2">
-            <div class="col-sm-12 col-md-6">
-              <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
-                Mostrando de
-                <b>{{paginationResult.from}}</b> al
-                <b>{{paginationResult.to}}</b> de <b>{{paginationResult.total}}</b>
-                registros
+
+                  <h4 class="card-title mb-4">INTERNOS</h4>
+                  <div id="upcoming-task" class="pb-1 task-list" dndDropzone dndEffectAllowed="move"
+                    (dndDrop)="onDrop($event, internal,'upcoming-task')">
+                    <div class="dndPlaceholder" dndPlaceholderRef></div>
+
+                    <ng-container *ngFor="let task of internal; index as i">
+                      <div [dndDraggable]="task" dndEffectAllowed="move" (dndMoved)="onDragged(task, internal)">
+                        <ng-template [ngTemplateOutlet]="TaskContent" [ngTemplateOutletContext]="{task:task, index: i}">
+                        </ng-template>
+                      </div>
+                    </ng-container>
+
+                    <div class="text-center d-grid">
+                      <a href="javascript: void(0);" class="btn btn-primary" (click)="addnewTask('internal')">
+                        Guardar Orden</a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <!-- Pagination -->
-            <div class="col-sm-12 col-md-6">
-              <div class="text-md-right float-md-end pagination-rounded">
-                <pagination 
-                  previousText="Anterior" 
-                  nextText="Siguiente"   
-                  firstText="Primero"
-                  lastText="Ultimo"
-                  [boundaryLinks]="false" 
-                  [directionLinks]="true"  
-                  [totalItems]="paginationResult.total"
-                  [(ngModel)]="pagination.value.page" 
-                  [itemsPerPage]="pagination.value.perPage" 
-                  (pageChanged)="getPage($event)" 
-                  [maxSize]="7" 
-                  [rotate]="false"
-                  ></pagination>
+            <!-- end col -->
+
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-body">
+
+
+                  <h4 class="card-title mb-4">EXTERNOS</h4>
+                  <div id="Progress-task" class="pb-1 task-list" dndDropzone dndEffectAllowed="move"
+                    (dndDrop)="onDrop($event, external,'Progress-task')">
+                    <div class="dndPlaceholder" dndPlaceholderRef></div>
+                    <ng-container *ngFor="let task of external; index as i">
+                      <div [dndDraggable]="task" dndEffectAllowed="move" (dndMoved)="onDragged(task, external)">
+                        <ng-template [ngTemplateOutlet]="TaskContent" [ngTemplateOutletContext]="{task:task, index: i}">
+                        </ng-template>
+                      </div>
+                    </ng-container>
+                    <div class="text-center d-grid">
+                      <a href="javascript: void(0);" class="btn btn-primary" (click)="addnewTask('external')">
+                        Guardar Orden</a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <!-- End Pagination -->
+
+
           </div>
         </div>
       </div>
@@ -212,3 +160,66 @@
     </form>
   </ng-template>
   <!--End Modal -->
+
+  <!-- Task  -->
+  <ng-template #TaskContent let-task='task' let-i='index'>
+    <div class="card task-box">
+      <div class="card-body">
+        <div class="dropdown float-end" dropdown>
+          <a href="javascript:void(0);" class="dropdown-toggle arrow-none" data-bs-toggle="dropdown"
+            aria-expanded="false" dropdownToggle>
+            <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+            <a class="dropdown-item edittask-details" href="javascript:void(0);" id="taskedit" data-id="#uptask-2"
+              (click)="editDataGet(task.id,content)">Editar</a>
+            <a class="dropdown-item deletetask" href="javascript:void(0);" data-id="#uptask-2"
+              (click)="deleteRow(task.id)">Eliminar</a>
+
+            <!-- <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" (click)="editDataGet(task.id,content)"><i
+                class="mdi mdi-pencil-outline"></i></a>
+            <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger"
+              (click)="deleteRow(task.id)"><i class="mdi mdi-delete-outline"></i></a> -->
+          </div>
+        </div>
+        <div class="float-end ms-2">
+          <!-- <span class="badge rounded-pill badge-soft-secondary font-size-12" [ngClass]=" { 
+            'badge-soft-secondary': task.task === 'Waiting',
+            'badge-soft-success': task.task === 'Complete',
+            'badge-soft-primary': task.task === 'Approved',
+            'badge-soft-warning': task.task === 'Pending' }">{{task.task}}</span> -->
+        </div>
+        <div>
+          <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark">{{task.titulo}}</a>
+          </h5>
+          <p class="text-muted mb-4">{{task.descripcion}}</p>
+        </div>
+
+        <div class="avatar-group float-start">
+          <div class="avatar-group-item">
+            <a href="javascript: void(0);" class="d-inline-block">
+              <!-- <img src="{{ task.user[0]}}" class="rounded-circle avatar-xs" alt=""> -->
+              <img *ngIf="task.imagen" [src]="URL_FILES + task.imagen" alt="render" style="max-height: 140px;">
+            </a>
+          </div>
+          <!-- <div class="avatar-group-item" *ngIf="task.user[1]">
+            <a href="javascript: void(0);" class="d-inline-block">
+              <img src="{{ task.user[1]}}" class="rounded-circle avatar-xs" alt="">
+              <img *ngIf="task.imagen" [src]="URL_FILES + task.imagen" alt="render" style="max-height: 140px;">
+
+            </a>
+          </div> -->
+        </div>
+
+        <div class="text-end">
+          <!-- <h5 class="font-size-15 mb-1">$ {{task.budget}}</h5> -->
+          <p class="mb-0 text-muted"><b>{{task.tipo_text}}</b></p>
+          <p class="mb-0 text-muted">Creado: {{task.created_at}}</p>
+          <p class="mb-0 text-muted">Actualizado: {{task.updated_at}}</p>
+
+
+
+        </div>
+      </div>
+    </div>
+  </ng-template>
