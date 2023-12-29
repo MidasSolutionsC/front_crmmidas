@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
 import { BrandList, ResponseApi, TypeServiceList } from 'src/app/core/models';
@@ -9,11 +9,17 @@ import { ApiErrorFormattingService, BrandService, FormService, SharedSaleService
   templateUrl: './form-sale-detail-full.component.html',
   styleUrls: ['./form-sale-detail-full.component.scss']
 })
-export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
+export class FormSaleDetailFullComponent implements OnInit, OnDestroy, OnChanges{
 
   // DATOS DE ENTRADA
   // LISTA DE MARCAS (COMPAÑAS)
   @Input() listBrand: BrandList[] = [];
+  @Input() typeServiceId: any = '';
+  @Input() typeServiceIcon: string = '';
+  @Input() typeServiceNombre: string = '';
+  @Input() shareTypeService: string = null;
+
+  @Output() cancel = new EventEmitter<any>();
 
   // Datos de la venta
   dataBasicPreview: any = {
@@ -24,18 +30,18 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
   };
 
   // MOSTRAR FORMULARIO PARA INDICAR EL SERVICIO AÑADIR
-  showFormIndicationService: boolean = true;
+  showFormIndicationService: boolean = false;
 
   // MOSTRAR FORMULARIO DE SERVICIO
-  showFormService: boolean = false;
+  showFormService: boolean = true;
 
   // VALOR COMPARTIDO
-  shareTypeService: string = null;
+  // shareTypeService: string = null;
   
   // ID TIPO DE SERVICIO
-  typeServiceId: any = '';
-  typeServiceIcon: string = '';
-  typeServiceNombre: string = '';
+  // typeServiceId: any = '';
+  // typeServiceIcon: string = '';
+  // typeServiceNombre: string = '';
 
   // ID MARCA
   brandId: any = '';
@@ -75,6 +81,12 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // if(changes.shareTypeService.firstChange){
+
+    // }
   }
 
 
@@ -144,12 +156,18 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy{
 
   /**
    * ***********************************************************
-   * EVENTOS DEL FORMULARIO DETALLE
+   * EVENTOS DEL FORMULARIO DETALLE - EMITIR CAMBIO
    * ***********************************************************
    */
   onCancel(event: any){
+    this.typeServiceId = null;
+    this.typeServiceNombre = null;
+    this.typeServiceIcon = null;
+    this.shareTypeService = null;
+    this._sharedSaleService.setTypeServiceId(null);
+    this.cancel.emit({message: 'Cancelado'});
     // console.log(event);
-    this.showFormService = false;
-    this.showFormIndicationService = true;
+    // this.showFormService = false;
+    // this.showFormIndicationService = true;
   }
 }

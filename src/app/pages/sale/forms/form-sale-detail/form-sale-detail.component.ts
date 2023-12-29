@@ -183,7 +183,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     // TIPO DE SERVICIO ID
     this.subscription.add(
       this._sharedSaleService.getTypeServiceId()
-      .pipe(filter((value) => value != null))
+      // .pipe(filter((value) => value != null))
       .subscribe((value: number) => {
         this.typeServiceId = value;
         this.onResetSelectedProductAndPromotion();
