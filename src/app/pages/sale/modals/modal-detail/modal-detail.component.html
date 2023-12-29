@@ -1126,7 +1126,7 @@
             </div>
           </div> -->
           <div class="chat-conversation">
-            <div class="conversation-list" *ngFor="let item of listSaleComment">
+            <div class="conversation-list w-100" *ngFor="let item of listSaleComment">
               <div class="dropdown float-end" dropdown>
                 <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
                   <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
@@ -1148,7 +1148,6 @@
                 </div>
               </div>
             </div>
-
           </div>
           <div *ngIf="!listSaleComment?.length">
             <p class="text-start">Sin registros</p>

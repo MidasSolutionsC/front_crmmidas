@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BehaviorSubject, Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { CurrencyUtil } from 'src/app/core/helpers/currency.util';
-import { BrandList, Installation, InstallationList, ResponseApi, Sale, SaleDetailList, TypeServiceList } from 'src/app/core/models';
+import { BrandList, Installation, InstallationList, ResponseApi, Sale, SaleDetail, SaleDetailList, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, SaleDetailService, SharedSaleService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
@@ -74,6 +74,9 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
 
   // LISTA DE SERVICIOS AÑADIDOS A LA VENTA
   listSaleDetail: SaleDetailList[] = [];
+
+  // DATO SELECCIONADO PARA EDITAR
+  dataEdit: SaleDetail = null;
 
   // Lista de tipo de servicios
   listTypeService: TypeServiceList[] = [];
@@ -354,6 +357,8 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
    * ****************************************************************
    */
   getDataRow(data: any){
+    console.log("EDITAR SERVICIO:", data)
+    this.dataEdit = data;
     this.toggleForm(false);
   }
 
@@ -366,7 +371,13 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
   }
 
   onCancel(event: any){
+    this.typeServiceId = null;
+    this.typeServiceNombre = null;
+    this.typeServiceIcon = null;
+    this.shareTypeService = null;
+    this._sharedSaleService.setTypeServiceId(null);
     this.toggleForm(true);
+
   }
 
 }

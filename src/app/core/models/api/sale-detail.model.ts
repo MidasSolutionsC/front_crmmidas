@@ -213,7 +213,7 @@ export class DetailMobileLineList extends Model{
     this.tipo_documentos_abreviacion = this.tipo_documentos_abreviacion || null;
     this.documento_titular = this.documento_titular || null;
     this.titular = this.titular || null;
-    this.operador_donante_id = this.operador_donante_id || 0;
+    this.operador_donante_id = this.operador_donante_id || null;
     this.operador_donante_nombre = this.operador_donante_nombre || null;
     this.num_portar = this.num_portar || null;
     this.icc = this.icc || null;
@@ -258,7 +258,7 @@ export class DetailFixedLine extends Model{
     this.tipo_documentos_id = this.tipo_documentos_id || 0;
     this.documento_titular = this.documento_titular || null;
     this.titular = this.titular || null;
-    this.operador_donante_id = this.operador_donante_id || 0;
+    this.operador_donante_id = this.operador_donante_id || null;
     this.num_portar = this.num_portar || null;
     this.aop = this.aop || null;
   }
@@ -298,7 +298,7 @@ export class DetailFixedLineList extends Model{
     this.tipo_documentos_abreviacion = this.tipo_documentos_abreviacion || null;
     this.documento_titular = this.documento_titular || null;
     this.titular = this.titular || null;
-    this.operador_donante_id = this.operador_donante_id || 0;
+    this.operador_donante_id = this.operador_donante_id || null;
     this.operador_donante_nombre = this.operador_donante_nombre || null;
     this.num_portar = this.num_portar || null;
     this.aop = this.aop || null;

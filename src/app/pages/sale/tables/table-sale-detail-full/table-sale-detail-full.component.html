@@ -111,6 +111,7 @@
       [typeServiceNombre]="typeServiceNombre"
       [shareTypeService]="shareTypeService"
       (cancel)="onCancel($event)"
+      [dataEdit]="dataEdit"
       ></app-form-sale-detail-full>
   </div>
 
@@ -164,7 +165,8 @@
                 </ng-container>
                 <ng-container *ngSwitchCase="'P'">
                   <!-- <span class="text-danger fw-bold">{{data?.promotion?.descuento || 0}} %</span> -->
-                  <span class="text-danger fw-bold d-block">{{((data?.product?.latest_price?.precio * data?.promotion?.descuento ) / 100) || 0}} %</span>
+                  <!-- <span class="text-danger fw-bold d-block">{{((data?.product?.latest_price?.precio * data?.promotion?.descuento ) / 100) || 0}}</span> -->
+                  <span class="text-danger fw-bold d-block">{{convertCurrencyFormat(((data?.product?.latest_price?.precio * data?.promotion?.descuento ) / 100) || 0, data?.product?.latest_price?.type_currency?.iso_code)}}</span>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                   <span class="text-danger fw-bold d-block">{{data?.promotion?.descuento || 0}} %</span>

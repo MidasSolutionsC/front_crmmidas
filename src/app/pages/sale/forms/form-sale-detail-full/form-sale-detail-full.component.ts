@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription, distinctUntilChanged } from 'rxjs';
-import { BrandList, ResponseApi, TypeServiceList } from 'src/app/core/models';
+import { BrandList, ResponseApi, SaleDetail, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, FormService, SharedSaleService, SweetAlertService, TempSaleDetailService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
@@ -13,6 +13,7 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy, OnChanges
 
   // DATOS DE ENTRADA
   // LISTA DE MARCAS (COMPAÑAS)
+  @Input() dataEdit: SaleDetail = null;
   @Input() listBrand: BrandList[] = [];
   @Input() typeServiceId: any = '';
   @Input() typeServiceIcon: string = '';
@@ -160,14 +161,14 @@ export class FormSaleDetailFullComponent implements OnInit, OnDestroy, OnChanges
    * ***********************************************************
    */
   onCancel(event: any){
-    this.typeServiceId = null;
-    this.typeServiceNombre = null;
-    this.typeServiceIcon = null;
-    this.shareTypeService = null;
-    this._sharedSaleService.setTypeServiceId(null);
     this.cancel.emit({message: 'Cancelado'});
-    // console.log(event);
-    // this.showFormService = false;
-    // this.showFormIndicationService = true;
+  }
+
+  // DATOS SERVICIO
+  onDataTypeService(event: any){
+    if(event.data){
+      this.typeServiceIcon = event.data.icono;
+      this.typeServiceNombre = event.data.nombre;
+    }
   }
 }
