@@ -11,26 +11,26 @@ export class AdvertisementService {
   private cachedData: ResponseApi; // Almacena los datos en caché
   private listSubject: BehaviorSubject<AdvertisementList[]> = new BehaviorSubject<AdvertisementList[]>([]);
   public listObserver$: Observable<AdvertisementList[]> = this.listSubject.asObservable();
-  
+
   constructor(
     private http: HttpClient,
     private configService: ConfigService
-  ) { 
+  ) {
     this.listObserver$
       .pipe(distinctUntilChanged())
       .subscribe((list: AdvertisementList[]) => {
-        if(this.cachedData){
+        if (this.cachedData) {
           this.cachedData.data = list;
         }
-    })
+      })
   }
 
 
-  private get baseUrl(){
+  private get baseUrl() {
     return this.configService.apiUrl + 'advertisement';
   }
 
-  private get requestOptions(){
+  private get requestOptions() {
     return this.configService.requestOptions;
   }
 
@@ -65,24 +65,29 @@ export class AdvertisementService {
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
-  public register(data: any): Observable<ResponseApi>{
+  public register(data: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}`;
     return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
-  public update(data: any, id: any): Observable<ResponseApi>{
+  public update(data: any, id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/update/${id}`;
     return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
 
-  public delete(id: any): Observable<ResponseApi>{
+  public delete(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/${id}`;
     return this.http.delete(endpoint).pipe(map((res: ResponseApi) => res))
   }
 
-  public restore(id: any): Observable<ResponseApi>{
+  public restore(id: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/restore/${id}`;
     return this.http.get(endpoint).pipe(map((res: ResponseApi) => res))
+  }
+
+  public order(data: any): Observable<ResponseApi> {
+    const endpoint = `${this.baseUrl}/order`;
+    return this.http.post(endpoint, data, this.requestOptions).pipe(map((res: ResponseApi) => res))
   }
 
 
