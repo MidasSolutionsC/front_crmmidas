@@ -57,6 +57,6 @@
         </strong>
       <!-- <button type="button" (click)="onCancel()" class="btn btn-success"><i class="mdi mdi-plus me-1"></i> {{'FORMS.FIELD_NAMES.new_service.label' | translate}}</button> -->
     </div>
-    <app-form-sale-detail (cancel)="onCancel($event)" (submit)="onDataSaleDetail($event)" [typeService]="shareTypeService"></app-form-sale-detail>
+    <app-form-sale-detail (cancel)="onCancel($event)" (submit)="onDataSaleDetail($event)" (dataTypeService)="onDataTypeService($event)" [typeService]="shareTypeService" [data]="dataEdit"></app-form-sale-detail>
   </div>
 </div>

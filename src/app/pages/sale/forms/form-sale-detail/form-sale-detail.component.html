@@ -126,7 +126,7 @@
     </div>   
   </div>   -->
   <div class="row g-2">
-    <div class="col-lg-2 mb-3" *ngIf="'FORMS.FIELD_NAMES.different_address.label' | translate as translatedLabel;">
+    <!-- <div class="col-lg-2 mb-3" *ngIf="'FORMS.FIELD_NAMES.different_address.label' | translate as translatedLabel;">
       <label for="is_other_address" class="form-label w-100">¿{{translatedLabel}}?</label>
       <ui-switch id="is_other_address" name="is_other_address" color="#556ee6" formControlName="is_other_address" uncheckedLabel="No" checkedLabel="Si" size="small" class="me-1 w-100"></ui-switch>
     </div>
@@ -146,7 +146,7 @@
         <button type="button" class="btn btn-primary"><i class="mdi mdi-plus me-1"></i> {{'FORMS.BUTTONS.ADD' | translate}}</button>
       </div>
       
-    </div>
+    </div> -->
     <div class="col-md-12 mb-3" *ngIf="'FORMS.FIELD_NAMES.observation.label' | translate as translatedLabel;">
       <label for="observacion" class="form-label">{{translatedLabel}}</label>
       <textarea  id="observacion" cols="30" rows="1" formControlName="observacion" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.observation.placeholder' | translate}}" [ngClass]="{ 'is-invalid': f.observacion.errors && (f.observacion.dirty || f.observacion.touched || submitted) }" ></textarea>

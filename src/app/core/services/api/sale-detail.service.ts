@@ -17,7 +17,7 @@ export class SaleDetailService {
     private configService: ConfigService
   ) { 
     this.listObserver$
-      .pipe(distinctUntilChanged())
+      // .pipe(distinctUntilChanged
       .subscribe((list: SaleDetailList[]) => {
         if(this.cachedData){
           this.cachedData.data = list;

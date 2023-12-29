@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, distinctUntilChanged, filter } from 'rxjs';
-import { Company, DetailFixedLine, DetailMobileLine, InstallationList, OperatorList, Person, ProductList, PromotionList, ResponseApi, SaleDetail, TypeDocumentList, TypeStatusList } from 'src/app/core/models';
+import { Company, DetailFixedLine, DetailMobileLine, DetailTvLine, InstallationList, OperatorList, Person, ProductList, PromotionList, ResponseApi, SaleDetail, SaleDetailList, TypeDocumentList, TypeStatusList } from 'src/app/core/models';
 import { ApiErrorFormattingService, FormService, InstallationService, OperatorService, ProductService, PromotionService, SaleDetailService, SharedClientService, SharedSaleService, SweetAlertService, TempInstallationService, TempSaleDetailService, TypeDocumentService, TypeStatusService } from 'src/app/core/services';
 
 import { FormMobileComponent } from './form-mobile/form-mobile.component';
@@ -21,11 +21,12 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   // Datos de entrada
   @Input() typeService: string = null;
-  @Input() data: SaleDetail = null;
+  @Input() data: SaleDetailList = null;
 
   // Datos de salida
   @Output() submit = new EventEmitter<any>();
   @Output() cancel = new EventEmitter<any>();
+  @Output() dataTypeService = new EventEmitter<any>();
 
   // DETALLE SERVICIO
   isNewData: boolean = true;
@@ -48,15 +49,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
   // ENFOQUES
   focusTypeDocumentMobile: boolean = false;
 
-  // FORM LINEA FIJA
-  fixedLineForm: FormGroup;
   
-  // FORM LINEA MOVIL
-  mobileLineForm: FormGroup;
-  
-  // FORM LINEA TV
-  tvLineForm: FormGroup;
-
   // Tipo documentos
   listTypeDocuments?: TypeDocumentList[] = [];
 
@@ -228,63 +221,102 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   
   ngOnChanges(changes: SimpleChanges) { 
-    if((changes.data && !changes.data.firstChange) || (changes.typeService && !changes.typeService.firstChange)){
-      setTimeout(() => {
-        this.initializeForms();
-      }, 0);
+    if((changes.data && !changes.data.firstChange)){
+      this.onChanges();
     }   
+
+    // console.log("CAMBIOS DETECTADOS EN DETALLE:", changes.typeService)
   }
 
 
-  initializeForms(){
+  onChanges(){
     if(this.data){
       // this.apiTempInstallationSearch(''); // Filtrar direcciones
       this.apiInstallationSearch(''); // Filtrar direcciones
 
       if(this.saleDetailForm){
-        this.saleDetailForm.setValue(SaleDetail.cast(this.data));
+        this.saleDetailForm.setValue({...SaleDetail.cast(this.data), is_other_address: false});
+        this.saleDetailForm.get('productos_id').setValue(this.data.productos_id);
       }
-    } else {
-      this.data = null;
-      if(this.saleDetailForm){
-        this.saleDetailForm.reset();
-      }
-
-      if(this.mobileLineForm){
-        this.mobileLineForm.reset();
-      }
-
-      if(this.fixedLineForm){
-        this.fixedLineForm.reset();
-      }
-    }
-
-    if(this.typeService){
+ 
       const json = this.data?.datos_json && JSON.stringify(this.data?.datos_json) !== '{}'? this.data.datos_json: null;
-      console.log(json)
+      const tipoServicio = this.data.product.type_service;
+      this.typeServiceId = tipoServicio.id;
+      this.dataTypeService.emit({data: tipoServicio});
+      
 
+      if(tipoServicio.nombre.toLowerCase().includes('movil')){
+        this.typeService = 'mobile';
+      } else if (tipoServicio.nombre.toLowerCase().includes('fija')){
+        this.typeService = 'fixed';
+      } else if(tipoServicio.nombre.toLowerCase().includes('tv')){
+        this.typeService = 'tv';
+      }
+
+      // this._sharedSaleService.setTypeServiceId(tipoServicio.id);
+      this.onResetSelectedProductAndPromotion();
+        this.saleDetailForm.get('productos_id').setValue(this.data?.product?.nombre || '');
+        this.saleDetailForm.get('promociones_id').setValue(this.data?.promotion?.nombre || '');
+
+      setTimeout(() => {
+        this.saleDetailForm.get('productos_id').setValue(this.data?.productos_id);
+        this.saleDetailForm.get('promociones_id').setValue(this.data?.promociones_id);
+      }, 250);
+
+      // console.log("json del servicio:", this.typeService, json)
+      this.isNewData = false;
+
+      
       switch(this.typeService){
         case 'mobile':
           if(json != null){
             const value = DetailMobileLine.cast(json);
-            if(this.mobileLineForm){
-              this.mobileLineForm.setValue(value);          
+            if(this.mobileForm?.mobileLineForm){
+              this.mobileForm.mobileLineForm.setValue({...value, diferente_titular: false});          
             }
           }
           break;
         case 'fixed':
           if(json != null){
             const value = DetailFixedLine.cast(json);
-            if(this.fixedLineForm){
-              this.fixedLineForm.setValue(value);          
+            if(this.fixedForm?.fixedLineForm){
+              this.fixedForm.fixedLineForm.setValue({...value, diferente_titular: false});          
             }
           }
           break;
-        case 'tv':
-          // this.initFormTv();
+          case 'tv':
+            if(json != null){
+              const value = DetailTvLine.cast(json);
+              if(this.tvForm?.tvLineForm){
+                this.tvForm.tvLineForm.setValue({...value});          
+              }
+            }
+            // this.initFormTv();
           break;
 
         default: break;
+      }
+    } else {
+      this.data = null;
+
+      // FORM DETALLE
+      if(this.saleDetailForm){
+        this.saleDetailForm.reset();
+      }
+
+      // FORM LINEA MOBILE
+      if(this.mobileForm.mobileLineForm){
+        this.mobileForm.mobileLineForm.reset();
+      }
+
+      // FORM LINEA FIJA
+      if(this.fixedForm.fixedLineForm){
+        this.fixedForm.fixedLineForm.reset();
+      }
+
+      // FORM LINEA TV
+      if(this.tvForm.tvLineForm){
+        this.tvForm.tvLineForm.reset();
       }
     }
   }
@@ -372,8 +404,12 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       this._saleDetailService.update(data, id).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if(response.code == 200){
-          const result = response.data;
+          // const result = response.data;
+          const result = response.data[0];
+          this._saleDetailService.updateObjectObserver(result);
           // console.log(result);
+          this._sweetAlertService.showTopEnd({type: 'success', title: 'Registrado!', message: 'El Producto/Servicio se modifico con éxito.', timer: 1500});
+          this.resetSomeFieldSaleDetail();
         }
 
         if(response.code == 422){
@@ -686,7 +722,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       promociones_id: [model.promociones_id, [Validators.nullValidator, Validators.min(1)]],
       fecha_cierre: [model.fecha_cierre, [Validators.nullValidator]],
       observacion: [model.observacion, [Validators.nullValidator, Validators.maxLength(450)]],
-      is_active: [true, [Validators.nullValidator]],
+      // is_active: [true, [Validators.nullValidator]],
       is_other_address: [false, [Validators.nullValidator]],
     }
   }
@@ -698,6 +734,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     this.selectedPromotion = null;
     this.saleDetailForm.get('productos_id').setValue('');
     this.saleDetailForm.get('promociones_id').setValue('');
+    this.isNewData = true;
 
     if(this.typeService == 'mobile'){
       this.resetSomeFieldMobile();
@@ -713,11 +750,14 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
     this.mobileForm.mobileLineForm.get('es_linea_principal').setValue(false);
     this.mobileForm.mobileLineForm.get('es_contrato').setValue(false);
     this.mobileForm.mobileLineForm.get('aop').setValue('Alta');
+    this.mobileForm.mobileLineForm.get('terminal').setValue(false);
+    this.mobileForm.mobileLineForm.get('diferente_titular').setValue(false);
   }
 
   // RESPETAR ALGUNOS VALORES DE MOBILE
   private resetSomeFieldFixed(){
     this.fixedForm.fixedLineForm.get('aop').setValue('Alta');
+    this.fixedForm.fixedLineForm.get('diferente_titular').setValue(false);
   }
 
 
@@ -793,7 +833,7 @@ export class FormSaleDetailComponent implements OnInit, OnDestroy, OnChanges {
       } else {
         this._sweetAlertService.showConfirmationAlert('¿Estas seguro de actualizar el producto/servicio?').then((confirm) => {
           if(confirm.isConfirmed){
-            // this.apiTempSaleDetailUpdate(values, values.id);
+            this.apiSaleDetailUpdate(values, values.id);
           }
         });
       }
