@@ -51,9 +51,9 @@ export class AuthService {
       if (res.code == 200) {
         const login: boolean = Boolean(res?.data?.login);
         if (!login) {
-          this.cookieService.delete('token_auth');
           localStorage.removeItem('dataUser');
           localStorage.removeItem('ventas_id');
+          this.cookieService.delete('token_auth');
 
           if (this.cookieService.check('token_auth')) {
             console.log('La cookie aún existe.');
