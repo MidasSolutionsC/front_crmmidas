@@ -5,6 +5,7 @@ import { Subscription, distinctUntilChanged } from 'rxjs';
 import { Report, BrandList, Breadcrumb, ResponseApi, SaleList } from 'src/app/core/models';
 import { ApiErrorFormattingService, ReportService, FormService, SweetAlertService } from 'src/app/core/services';
 import { Chart, ChartType } from 'chart.js/auto';
+import { N } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-all',
@@ -16,6 +17,11 @@ export class AllComponent {
   public chart: Chart;
   public chartBySeller: Chart;
   public chartByCoordinator: Chart;
+
+  public count_user: Number;
+  public count_product: Number;
+  public count_sale: Number;
+
 
 
   modalRef?: BsModalRef;
@@ -39,7 +45,7 @@ export class AllComponent {
   listsByBrand?: [];
   listsBySeller?: [];
   listsByCoordinator?: [];
-  listsSale?:[];
+  listsSale?: [];
 
 
 
@@ -199,29 +205,33 @@ export class AllComponent {
       this._reportService.salesByCoordinator(data).subscribe((response: ResponseApi) => {
         this._sweetAlertService.stop();
         if (response.code == 200) {
-          if (response.data[0]) {
-            // const data: BrandList = BrandList.cast(response.data[0]);
+          if (response.data[0].data) {
+            // const data: BrandList = BrandList.cast(response.data[0].data);
             // this._brandService.addObjectObserver(data);
             if (this.chartByCoordinator) {
               this.chartByCoordinator.destroy();
             }
 
-            let labels = response.data[0].map((l: any) => l.coordinacion)
-            let count = response.data[0].map((l: any) => l.vendedores.reduce((total: number, dato: any) => total + dato.total_ventas, 0))
+            let labels = response.data[0].data.map((l: any) => l.coordinacion)
+            let count = response.data[0].data.map((l: any) => l.vendedores.reduce((total: number, dato: any) => total + dato.total_ventas, 0))
 
             let data = {
               labels: labels,
               datasets: [{
-                 label: 'Coordinador',
-                 data: count,
+                label: 'Coordinador',
+                data: count,
                 backgroundColor: ['rgba(255, 99, 132)', 'rgba(54, 162, 235)', 'rgba(54, 205, 86)', 'rgba(54, 105, 86)'],
                 hoverOffset: 4
               }]
-              
+
             };
             this.chartByCoordinator = new Chart("chartByCoordinator", { type: 'pie' as ChartType, data })
 
-            this.listsByCoordinator = response.data[0]
+            this.listsByCoordinator = response.data[0].data
+            this.count_product = response.data[0].count_product
+            this.count_sale = response.data[0].count_sale
+            this.count_user = response.data[0].count_user
+
 
           }
 
