@@ -123,7 +123,7 @@ let aMenu: MenuItem[] = [
     },
     {
         id: 16,
-        label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT',
+        label: 'MENUITEMS.MAINTENANCE.LIST.PRODUCT_AND_SERVICE',
         icon: 'mdi mdi-shopping',
         link: '/maintenances/product',
         roles: ['ADMINISTRADOR']

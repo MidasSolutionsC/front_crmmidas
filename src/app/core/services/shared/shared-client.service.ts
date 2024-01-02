@@ -12,6 +12,7 @@ export class SharedClientService {
   private personId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private companyId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private clientId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+  private dataDocumentSearch: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private typeClient: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   private legalPerson: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   private submitData: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
@@ -67,13 +68,21 @@ export class SharedClientService {
     this.companyId.next(value);
   }
 
-  // EMPRESA
+  // CLIENTE
   getClientId() {
     return this.clientId.asObservable();
   }
 
   setClientId(value: number) {
     this.clientId.next(value);
+  }
+
+  getDocumentSearch() {
+    return this.dataDocumentSearch.asObservable();
+  }
+
+  setDocumentSearch(value: any) {
+    this.dataDocumentSearch.next(value);
   }
 
   // PERSONA JURIDICA

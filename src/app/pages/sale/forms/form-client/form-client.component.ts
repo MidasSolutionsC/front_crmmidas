@@ -149,7 +149,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
       )
       .subscribe((value: boolean) =>  {
         this.legalPerson = value;
-        console.log("PERSONA LEGAL OBSERVADO:", value)
+        // console.log("PERSONA LEGAL OBSERVADO:", value)
         
         if(value){
           this.listTypeClientFilter = this.listTypeClientLocal.filter((item) => item.id !== 'RE');
@@ -239,7 +239,7 @@ export class FormClientComponent implements OnInit, OnDestroy, OnChanges{
     } 
   }
 
-  // RESPETAR FROMULARIOS
+  // RESETEAR FROMULARIOS
   onChangeReset(){
     if(this.dataReset){
       this.onReset();

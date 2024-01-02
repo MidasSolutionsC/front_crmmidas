@@ -5,13 +5,15 @@ import { ReplaceAttributePipe } from './pipes/replace-attribute.pipe';
 import { SortDirective } from './directives/table/sort.directive';
 import { TrimInputDirective } from './directives/form/trim-input.directive';
 import { FocusDirective } from './directives/form/focus.directive';
+import { ScrollListenerDirective } from './directives/scroll-listener.directive';
 
 @NgModule({
   declarations: [
     ReplaceAttributePipe,
     SortDirective,
     TrimInputDirective,
-    FocusDirective
+    FocusDirective,
+    ScrollListenerDirective
   ],
   imports: [
     CommonModule,
@@ -19,7 +21,8 @@ import { FocusDirective } from './directives/form/focus.directive';
   exports: [
     ReplaceAttributePipe,
     TrimInputDirective,
-    FocusDirective
+    FocusDirective,
+    ScrollListenerDirective
   ]
 })
 export class CoreModule { }

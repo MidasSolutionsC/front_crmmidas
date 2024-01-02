@@ -19,7 +19,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   // bread crumb items
-  titleBreadCrumb: string = 'Productos';
+  titleBreadCrumb: string = 'Productos y Servicios';
   breadCrumbItems: Array<{}>;
   
   // Form 
@@ -76,7 +76,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'},{ label: 'Productos', active: true }]);
+    this.breadCrumbItems = Breadcrumb.casts([{ label: 'Mantenimiento'},{ label: 'Productos y Servicios', active: true }]);
 
     this.initForm();
     // this.listDataApi();
@@ -323,7 +323,7 @@ export class ProductComponent implements OnInit, OnDestroy {
           }
         }, (error: any) => {
           if (error.message) {
-            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar productos', message: error.message, timer: 2500 });
+            this._sweetAlertService.showTopEnd({ type: 'error', title: 'Error al cargar Productos y Servicios', message: error.message, timer: 2500 });
           }
         })
     );

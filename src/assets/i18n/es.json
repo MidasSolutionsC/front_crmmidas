@@ -265,7 +265,8 @@
         "BRAND": "Marcas",
         "BELL": "Campañas",
         "PRODUCT": "Productos",
-        "SERVICE": "Servicios"
+        "SERVICE": "Servicios",
+        "PRODUCT_AND_SERVICE": "Productos y Servicios"
       }
     },
     "SETTINGS": {

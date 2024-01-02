@@ -38,3 +38,17 @@
   overflow-y: scroll;
   overflow-x: visible;
 }
+
+.content-editable{
+  outline: 0;
+  padding: 6px;
+  border-radius: 1rem;
+  transition: all 0.5s ease-in-out;
+  overflow-y: auto;
+  padding-right: 20px;
+
+  // &:active,
+  // &:hover{
+  //   border: 1px solid #1362d8c6;
+  // }
+}

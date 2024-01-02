@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BehaviorSubject, Subscription, distinctUntilChanged, filter } from 'rxjs';
 import { CurrencyUtil } from 'src/app/core/helpers/currency.util';
-import { BrandList, Installation, InstallationList, ResponseApi, Sale, SaleDetail, SaleDetailList, TypeServiceList } from 'src/app/core/models';
+import { BrandList, Installation, InstallationList, Pagination, PaginationResult, ResponseApi, Sale, SaleDetail, SaleDetailList, TypeServiceList } from 'src/app/core/models';
 import { ApiErrorFormattingService, BrandService, SaleDetailService, SharedSaleService, SweetAlertService, TypeServiceService } from 'src/app/core/services';
 
 @Component({
@@ -80,6 +80,19 @@ export class TableSaleDetailFullComponent implements OnInit, OnDestroy {
 
   // Lista de tipo de servicios
   listTypeService: TypeServiceList[] = [];
+
+  // SERVICIOS AÑADIDOS 
+  // PAGINACIÓN
+  // countElements: number[] = [2, 5, 10, 25, 50, 100];
+  // pagination: BehaviorSubject<Pagination> = new BehaviorSubject<Pagination>({
+  //   page: 1,
+  //   perPage: 5,
+  //   search: '',
+  //   column: '',
+  //   order: 'desc',
+  // });
+
+  // paginationResult: PaginationResult = new PaginationResult();  
 
   private subscription: Subscription = new Subscription();
 
