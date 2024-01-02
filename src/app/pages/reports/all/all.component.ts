@@ -170,7 +170,7 @@ export class AllComponent {
               datasets: [{
                 label: 'Ventas',
                 data: count,
-                backgroundColor: ['rgba(255, 99, 132)', 'rgba(54, 162, 235)', 'rgba(54, 205, 86)', 'rgba(54, 105, 86)'],
+                backgroundColor: ['rgba(255, 99, 132)',  'rgba(255, 159, 64)', 'rgba(255, 205, 86)','rgba(255,99,26)', 'rgba(255, 205, 50)', 'rgba(75, 192, 192)', 'rgba(255, 159, 20)','rgba(75, 192, 182)', 'rgba(54, 162, 235)','rgba(54, 162, 200)' ],
                 hoverOffset: 4
               }]
             };
@@ -220,7 +220,7 @@ export class AllComponent {
               datasets: [{
                 label: 'Coordinador',
                 data: count,
-                backgroundColor: ['rgba(255, 99, 132)', 'rgba(54, 162, 235)', 'rgba(54, 205, 86)', 'rgba(54, 105, 86)'],
+                backgroundColor: ['rgba(255, 99, 132)',  'rgba(255, 159, 64)', 'rgba(255, 205, 86)','rgba(255,99,26)', 'rgba(255, 205, 50)', 'rgba(75, 192, 192)', 'rgba(255, 159, 20)','rgba(75, 192, 182)', 'rgba(54, 162, 235)','rgba(54, 162, 200)' ],
                 hoverOffset: 4
               }]
 

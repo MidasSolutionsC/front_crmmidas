@@ -114,8 +114,8 @@ export class ByCommercialComponent implements OnInit{
               datasets: [{
                 label: 'Lista de ventas por Ventas',
                 data: count,
-                backgroundColor: [ 'rgba(255,99,132, 0.2', 'rgba(255,159,64, 0.2', 'rgba(255,205,86, 0.2', 'rgba(75,192,192, 0.2','rgba(54,162,235, 0.2'],
-                borderColor: ['rgba(255, 99, 132)', 'rgba(255, 159, 64)', 'rgba(255, 205, 86)', 'rgba(75, 192, 192)', 'rgba(54, 162, 235)' ],
+                backgroundColor: [ 'rgba(255,99,132, 0.2', 'rgba(255,99,36, 0.2','rgba(255,159,64, 0.2','rgba(255,159,170, 0.2', 'rgba(255,205,86, 0.2', 'rgba(255,205,50, 0.2','rgba(75,192,192, 0.2', 'rgba(75,192,182, 0.2','rgba(54,162,235, 0.2', 'rgba(54,162,200, 0.2'],
+                borderColor: ['rgba(255, 99, 132)', 'rgba(255,99,36)', 'rgba(255, 159, 64)', 'rgba(255, 159, 170)','rgba(255, 205, 86)', 'rgba(255, 205, 50)', 'rgba(75, 192, 192)', 'rgba(75, 192, 182)', 'rgba(54, 162, 235)','rgba(54, 162, 200)' ],
                 borderWidth: 1
               }]
             };
