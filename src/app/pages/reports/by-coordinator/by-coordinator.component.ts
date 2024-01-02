@@ -16,6 +16,10 @@ export class ByCoordinatorComponent implements OnInit{
   public chartBySeller: Chart;
   public chartByCoordinator: Chart;
   public chart: Chart;
+  public count_user: Number;
+  public count_product: Number;
+  public count_sale: Number;
+
   modalRef?: BsModalRef;
  // Form
  isNewData: boolean = true;
@@ -58,41 +62,45 @@ export class ByCoordinatorComponent implements OnInit{
    this.subscription.unsubscribe();
  }
 
- private listDataApi(data: Report) {
+private listDataApi(data: Report) {
   this._sweetAlertService.loadingUp()
   
 
+ 
   this.subscription.add(
     this._reportService.salesByCoordinator(data).subscribe((response: ResponseApi) => {
       this._sweetAlertService.stop();
       if (response.code == 200) {
-        if (response.data[0]) {
-          // const data: BrandList = BrandList.cast(response.data[0]);
+        if (response.data[0].data) {
+          // const data: BrandList = BrandList.cast(response.data[0].data);
           // this._brandService.addObjectObserver(data);
           if (this.chartByCoordinator) {
             this.chartByCoordinator.destroy();
           }
 
-          let labels = response.data[0].map((l: any) => l.coordinacion)
-          let count = response.data[0].map((l: any) => l.vendedores.reduce((total: number, dato: any) => total + dato.total_ventas, 0))
-
+          let labels = response.data[0].data.map((l: any) => l.coordinacion)
+          let count = response.data[0].data.map((l: any) => l.vendedores.reduce((total: number, dato: any) => total + dato.total_ventas, 0))
+          
           let data = {
             labels: labels,
             datasets: [{
-              label: 'Lista de ventas por Coordinador',
+              label: 'Lista de ventas por Comercial',
               data: count,
               backgroundColor: [ 'rgba(255,99,132, 0.2', 'rgba(255,159,64, 0.2', 'rgba(255,205,86, 0.2', 'rgba(75,192,192, 0.2','rgba(54,162,235, 0.2'],
               borderColor: ['rgba(255, 99, 132)', 'rgba(255, 159, 64)', 'rgba(255, 205, 86)', 'rgba(75, 192, 192)', 'rgba(54, 162, 235)' ],
               borderWidth: 1
             }]
-            
           };
-          this.chartByCoordinator = new Chart("chartByCoordinator", { type: 'bar' as ChartType, data })
+          this.chartByCoordinator= new Chart("chartByCoordinator", { type: 'bar' as ChartType, data })
 
-          this.listsByCoordinator = response.data[0]
+          this.listsByCoordinator = response.data[0].data
+          this.count_product = response.data[0].count_product
+          this.count_sale = response.data[0].count_sale
+          this.count_user = response.data[0].count_user
+
 
         }
-
+          
         this.modalRef?.hide();
       }
 
@@ -113,8 +121,7 @@ export class ByCoordinatorComponent implements OnInit{
       console.log(error);
     })
   )
-}
-
+  }
 
 
 
