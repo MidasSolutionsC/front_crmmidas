@@ -389,11 +389,15 @@ export class FormClientFullComponent implements OnInit, OnDestroy {
    */
   // Mostrar/ocultar formulario de registro
   toggleFormClient(collapse: boolean = null) {
-    this.isCollapseFormClient = collapse || !this.isCollapseFormClient;
+    this.isCollapseFormClient = collapse != null? collapse: !this.isCollapseFormClient;
     if (!this.isCollapseFormClient) {
       this.isCollapseFormSearchClient = true;
       this.alertMsg.show = true;
       // this.isCollapseClientList = true;
+
+      // OBTENER EL NRO DOCUMENTO SELECCIONADO
+      const values = this.searchClientForm.value;
+      this._sharedClientService.setDocumentSearch(values);
     } else {
       this.isCollapseFormSearchClient = false;
       this.alertMsg.show = false;

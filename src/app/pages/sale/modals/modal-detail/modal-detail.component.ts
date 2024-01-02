@@ -827,6 +827,74 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
+  // EDITAR EL CONTENIDO DEL MENSAJE
+  updateComentarioValue(saleDetailId: string, event: any) {
+    const keyCode = event.keyCode || event.which;
+    if(keyCode !== 13 && keyCode !== 27){
+      this.comentariosForm[saleDetailId].get('comentario').setValue(event.target.innerText);
+    }
+  }
+
+
+  /**=>  PERMITIR PEGAR SOLO TEXTO PLANO ***/
+  public onPasteMessage(event: ClipboardEvent) {
+    event.preventDefault();
+    const clipboardData = event.clipboardData;
+    if (clipboardData) {
+      const pastedItems = clipboardData.items;
+      const pastedText = clipboardData.getData('text/plain');
+      const truncatedContent = pastedText.slice(0, 500);
+      document.execCommand("insertHTML", false, truncatedContent); // Insertar texto plano
+    }
+  }
+
+  // AGREGAR MENSAJE AL ARRAY
+  public addCommentInDetail(saleId: number, saleDetailId: number, data: any): any {
+    const dataGroup = this.groupSaleDetail.find((obj: any) => {
+      const detail = obj.details.find((ob: any) => ob.ventas_id == saleId && ob.id == saleDetailId);
+      if (detail) {
+        detail.comments.push(data);
+        return true; // Termina la búsqueda después de encontrar el elemento
+      }
+      return false; // Continúa la búsqueda
+    });
+  
+    return dataGroup;
+  }
+
+  // Agregar y obtener el objeto actual del contenedor de mensajes
+  public addCommentDetail(saleId: number, saleDetailId: number, data: any): any {
+    const foundDetail = this.groupSaleDetail.map((obj: any) => {
+      const detail = obj.details.find((ob: any) => ob.ventas_id === saleId && ob.id === saleDetailId);
+      if (detail) {
+        detail.comments.push(data);
+      }
+      return detail;
+    }).find((detail: any) => detail !== undefined);
+  
+    return foundDetail || null;
+  }
+  
+
+  // OBTENER MENSAJE AL ARRAY
+  public getCommentDetail(saleId: number, saleDetailId: number): any {
+    const foundDetail = this.groupSaleDetail
+      .map((obj: any) => obj.details.find((ob: any) => ob.ventas_id === saleId && ob.id === saleDetailId))
+      .find(detail => detail !== undefined);
+  
+    return foundDetail || null;
+  }
+  
+  // LIMPIAR CONTENIDO DEL MENSAJE
+  public clearCommentCurrent(saleDetailId: number){
+    this.comentariosForm[saleDetailId].get('comentario').setValue('');
+
+    const commentElement = document.getElementById('comment' + saleDetailId);
+    if (commentElement) {
+      commentElement.innerText = '';
+    }
+  }
+    
 
   // REGISTRAR COMENTARIO EN EL SERVICIO
   public async registerCommentInSaleDetail(saleId: number, saleDetailId: number) {
@@ -835,12 +903,19 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
     const comentario = this.comentariosForm[saleDetailId].get('comentario')?.value;
     this.dataMsgComment.comentario = comentario;
     
-
-    const resComment = await this.apiSaleCommentSave(this.dataMsgComment);
+    this.comentariosForm[saleDetailId].get('comentario').setValue('');
+    
+    
+    const resComment: SaleComment = await this.apiSaleCommentSave(this.dataMsgComment);
     if (resComment) {
+      
       // console.log("RES COMENTARIO:", resComment)
       this.dataMsgComment = new SaleComment();
-      this.comentariosForm[saleDetailId].get('comentario')?.setValue('');
+      this.comentariosForm[saleDetailId].get('comentario').setValue('');
+      this.clearCommentCurrent(saleDetailId);
+
+      const objDetail = this.addCommentDetail(saleId, saleDetailId, SaleCommentList.cast(resComment))
+      // console.log("OBJETO SERVICIO:", objDetail);
     }
   }
 

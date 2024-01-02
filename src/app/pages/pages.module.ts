@@ -195,7 +195,7 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
     VirtualScrollerModule,
     SkeletonModule,
     TabViewModule,
-
+    
     // INFINITE SCROLL
     InfiniteScrollModule
   ],

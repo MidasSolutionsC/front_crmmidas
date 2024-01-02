@@ -120,6 +120,16 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
     //     }
     //   })
     // )
+
+    // DOCUMENTO DE BUSQUEDA EMITIDO
+    this.subscription.add(
+      this._sharedClientService.getDocumentSearch().subscribe((document: any) => {
+        if(this.formDataIdentification.controls.length > 0 && document){
+          this.formDataIdentification.controls[0].get('tipo_documentos_id').setValue(document?.tipo_documentos_id)
+          this.formDataIdentification.controls[0].get('documento').setValue(document?.documento)
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
@@ -182,15 +192,16 @@ export class FormIdentificationComponent implements OnInit, OnDestroy, OnChanges
   // FILTRAR TIPO DE DOCUMENTOS
   private filterDocumentList(){
     let selectedTypeDocumentId = null;
-    if(this.listTypeDocument.length > 0){
+    if(this.listTypeDocument?.length > 0){
       const index = this.formDataIdentification.controls.length - 1;
+
       if(!this.legalPerson){
-        this.listTypeDocumentFilter = this.listTypeDocument.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
-        selectedTypeDocumentId = this.listTypeDocument?.find((typeDocument) => typeDocument.abreviacion == 'DNI').id;
+        this.listTypeDocumentFilter = this.listTypeDocument?.filter((typeDocument) => typeDocument.abreviacion !== 'RUC');
+        selectedTypeDocumentId = this.listTypeDocument?.find((typeDocument) => typeDocument.abreviacion == 'DNI')?.id || null;
         this.formDataIdentification.controls[index].get('tipo_documentos_id').setValue(selectedTypeDocumentId);
       } else {
-        this.listTypeDocumentFilter = this.listTypeDocument.filter((typeDocument) => typeDocument.abreviacion !== 'DNI');
-        selectedTypeDocumentId = this.listTypeDocument.find((typeDocument) => typeDocument.abreviacion == 'RUC').id;
+        this.listTypeDocumentFilter = this.listTypeDocument?.filter((typeDocument) => typeDocument.abreviacion !== 'DNI');
+        selectedTypeDocumentId = this.listTypeDocument?.find((typeDocument) => typeDocument?.abreviacion == 'RUC')?.id || null;
         this.formDataIdentification.controls[index].get('tipo_documentos_id').setValue(selectedTypeDocumentId);
       }
     }

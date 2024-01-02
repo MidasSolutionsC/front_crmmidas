@@ -726,12 +726,13 @@
       <ng-template #templateContainerCommentMsg let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
         <div
           class="chat-conversation search-results-comments py-2"
-          infiniteScroll
+          appScrollListener
+          
           [infiniteScrollDistance]="2"
           [infiniteScrollUpDistance]="2"
           [infiniteScrollThrottle]="50"
-          (scrolledUp)="onScrollUpComment($event, saleId, saleDetailId)"
-          (scrolled)="onScrollDownComment($event, saleId, saleDetailId)"
+          (scrollUp)="onScrollUpComment($event, saleId, saleDetailId)"
+          (scrollDown)="onScrollDownComment($event, saleId, saleDetailId)"
           [scrollWindow]="false"
         >
           <ng-container *ngIf="comments.length > 0 else commentsEmpty">
@@ -749,7 +750,7 @@
               <div class="ctext-wrap">
                 <div class="conversation-name">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
                 <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
-                <p [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
+                <p class="truncate-text w-100" [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
                 <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
                 <div class="text-end">
                   <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
@@ -763,15 +764,24 @@
           </ng-template>
         </div>
         <div class="w-100 pt-2">
-          <div class="input-group-relative position-relative border border-primary" style="border-radius: 3rem;">
+          <div class="input-group-relative position-relative border border-primary" style="border-radius: 1rem; border-width: 2px;">
             <form [formGroup]="comentariosForm[saleDetailId]">
-              <textarea formControlName="comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea>
+              <!-- <textarea formControlName="comentario" (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)"  name="" id="" cols="30" rows="1" class="form-control" style="border-radius: 3rem;" placeholder="Escriba aquí..."></textarea> -->
+              <div contenteditable="true" 
+                [id]="'comment' + saleDetailId"
+                [innerTEXT]="comentariosForm[saleDetailId].get('comentario').value"
+                (keyup)="updateComentarioValue(saleDetailId, $event)" 
+                (paste)="onPasteMessage($event)"
+                (keyup.enter)="registerCommentInSaleDetail(saleId, saleDetailId)" 
+                class="content-editable" 
+                style="max-height: 90px;"></div>
               <button type="button" (click)="registerCommentInSaleDetail(saleId, saleDetailId)" class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
             </form>
           </div>
         </div>
       </ng-template>
 
+      <!-- TESTS - MSG -->
       <ng-template #templateContainerCommentMsg3 let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
 
         <p-virtualScroller 
@@ -1060,6 +1070,7 @@
       
 
 
+      <!-- ITEMS -->
       <!-- DOCUMENTOS -->
       <ng-template #templateContainerDocument>
         <div class="row g-2 mt-2">
@@ -1224,8 +1235,6 @@
         </div>
       </div>
     </div>
-
-
   </div>
   <div class="modal-footer">
     <div class="hstack gap-2 justify-content-end">
