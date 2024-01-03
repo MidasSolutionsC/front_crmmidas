@@ -47,6 +47,7 @@ export class SaleCommentList extends Model{
   public updated_at: string;
   public deleted_at: string;
   public is_active: boolean | number;
+  public user_create: any;
 
   constructor(data?: object){
     super(data);
@@ -63,6 +64,7 @@ export class SaleCommentList extends Model{
     this.updated_at = this.updated_at || null;
     this.deleted_at = this.deleted_at || null;
     this.is_active = this.is_active || 1;
+    this.user_create = this.user_create || null;
   }
 
   public static cast(data: object): SaleCommentList{
@@ -80,7 +82,8 @@ export class SaleCommentList extends Model{
       created_at: obj.created_at,
       updated_at: obj.updated_at,
       deleted_at: obj.deleted_at,
-      is_active: obj.is_active
+      is_active: obj.is_active,
+      user_create: obj.user_create,
     }
   }
 
