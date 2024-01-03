@@ -731,32 +731,46 @@
           [infiniteScrollDistance]="2"
           [infiniteScrollUpDistance]="2"
           [infiniteScrollThrottle]="50"
+
+          [scrollDownDefault]="true"
+          [startThreshold]="60"
+          [endThreshold]="60"
+          [loading]="loadingStates[saleDetailId]"
           (scrollUp)="onScrollUpComment($event, saleId, saleDetailId)"
           (scrollDown)="onScrollDownComment($event, saleId, saleDetailId)"
           [scrollWindow]="false"
+          [totalItems]="pagination.value.total"
+          #contentMsg
+          id="msg_{{ saleDetailId }}"
+          [attr.id]="'contentMsg_' + i"
         >
           <ng-container *ngIf="comments.length > 0 else commentsEmpty">
-            <div class="conversation-list" style="overflow: visible;" *ngFor="let item of comments">
-              <div class="dropdown" dropdown>
-
-                <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
-                  <i class="bx bx-dots-vertical-rounded"></i>
-                </a>
-                <div class="dropdown-menu" *dropdownMenu>
-                  <a class="dropdown-item" href="javascript: void(0);" (click)="copyMessage($event)">Copiar mensaje</a>
-                  <a class="dropdown-item" href="javascript: void(0);">Eliminar</a>
+            <div [ngClass]="{'right': true}">
+              <div class="conversation-list" style="overflow: visible;" *ngFor="let item of comments">
+                <div class="dropdown" dropdown>
+  
+                  <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
+                    <i class="bx bx-dots-vertical-rounded"></i>
+                  </a>
+                  <div class="dropdown-menu" *dropdownMenu>
+                    <a class="dropdown-item" href="javascript: void(0);" (click)="copyMessage($event)">Copiar mensaje</a>
+                    <a class="dropdown-item" href="javascript: void(0);">Eliminar</a>
+                  </div>
                 </div>
-              </div>
-              <div class="ctext-wrap">
-                <div class="conversation-name">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
-                <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
-                <p class="truncate-text w-100" [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
-                <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
-                <div class="text-end">
-                  <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
+                <div class="ctext-wrap text-start">
+                  <div class="conversation-name" [ngClass]="{'text-success': false}">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
+                  <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
+                  <p class="truncate-text w-100" [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
+                  <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
+                  <div class="text-end">
+                    <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
+                  </div>
                 </div>
+  
               </div>
-
+            </div>
+            <div class="w-100 text-center" *ngIf="loadingStates[saleDetailId]">
+              <h5 class="text-info w-100">Cargando...</h5>
             </div>
           </ng-container>
           <ng-template #commentsEmpty>

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, Renderer2, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, QueryList, Renderer2, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -6,6 +6,7 @@ import { AddressList, BankAccountList, CompanyList, ContactList, InstallationLis
 import { ClientList } from 'src/app/core/models/api/client.model';
 import { AddressService, ApiErrorFormattingService, BankAccountService, ClientService, ConfigService, ContactService, InstallationService, OperatorService, SaleCommentService, SaleDetailService, SaleDocumentService, SaleHistoryService, SaleService, SharedClientService, SweetAlertService, TypeDocumentService } from 'src/app/core/services';
 import { ValidateTextUtil } from 'src/app/core/utils';
+import { ScrollListenerDirective } from 'src/app/core/directives';
 
 @Component({
   selector: 'app-modal-detail',
@@ -17,6 +18,10 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('content') contentModal: TemplateRef<any>;
   @ViewChild('first') modalForm: any;
   @ViewChild('commentContainer') commentContainer: ElementRef;
+  // @ViewChild('contentMsg', { static: true }) contentMsgElement: ElementRef;
+  @ViewChildren('contentMsg') contentMsgElements: QueryList<ElementRef>;
+
+  @ViewChild(ScrollListenerDirective, { static: false }) ScrollListener: ScrollListenerDirective;
 
 
   // DATOS DE ENTRADAS
@@ -126,6 +131,9 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
   paginationResult: PaginationResult = new PaginationResult();
 
   dataPaginationComments: {pagination: Pagination, ventas_detalles_id: number}[] = [] 
+
+  // ACTUALIZAR CARGA DE LOS COMENTARIO - LOADING
+  loadingStates: { [key: string]: boolean } = {};
 
   private subscription: Subscription = new Subscription();
 
@@ -635,9 +643,9 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  private apiSaleCommentSave(data: SaleComment) {
+  private apiSaleCommentSave(data: SaleComment): any {
     return new Promise((resolve, reject) => {
-      this._sweetAlertService.loadingUp('Enviando comentario...')
+      // this._sweetAlertService.loadingUp('Enviando comentario...')
       this.subscription.add(
         this._saleCommentService.register(data).subscribe((response: ResponseApi) => {
           this._sweetAlertService.stop();
@@ -798,6 +806,35 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
     })
   }
 
+  // LISTAR LOS COMENTARIOS ASINCRONICAMENTE - ANTES O DESPUES DEL -MENSAJE ACTUAL
+  public apiSaleCommentListAdjacent(saleDetailId: number, messageId: number, direction: string = 'next'): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.subscription.add(
+        this._saleCommentService.getAdjacent({perPage: 20, ventas_detalles_id: saleDetailId, ventas_comentarios_id: messageId, direcion: direction })
+        .pipe(debounceTime(250))
+        .subscribe((response: ResponseApi) => {
+          if(response.code == 200){
+            const result = PaginationResult.cast(response.data);
+            resolve(result)
+          }
+          
+          if(response.code == 500){
+            if(response.errors){
+              this._sweetAlertService.showTopEnd({type: 'error', title: response.errors?.message, message: response.errors?.error});
+            }
+            reject(response.errors)
+          }
+        }, (error: any) => {
+          if(error.message){
+            this._sweetAlertService.showTopEnd({type: 'error', title: 'Error al cargar usuarios', message: error.message, timer: 2500});
+          }
+          reject(error)
+        })
+      ); 
+
+    })
+  }
+
   // CARGAR COMENTARIOS DEL SERVICIO
   public apiSaleCommentFilterDetailId(saleDetailId: number) {
     return new Promise((resolve, reject) => {
@@ -876,7 +913,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
   }
   
 
-  // OBTENER MENSAJE AL ARRAY
+  // OBTENER MENSAJE DEL ARRAY
   public getCommentDetail(saleId: number, saleDetailId: number): any {
     const foundDetail = this.groupSaleDetail
       .map((obj: any) => obj.details.find((ob: any) => ob.ventas_id === saleId && ob.id === saleDetailId))
@@ -906,7 +943,7 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
     this.comentariosForm[saleDetailId].get('comentario').setValue('');
     
     
-    const resComment: SaleComment = await this.apiSaleCommentSave(this.dataMsgComment);
+    const resComment: SaleCommentList = await this.apiSaleCommentSave(this.dataMsgComment);
     if (resComment) {
       
       // console.log("RES COMENTARIO:", resComment)
@@ -914,8 +951,25 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
       this.comentariosForm[saleDetailId].get('comentario').setValue('');
       this.clearCommentCurrent(saleDetailId);
 
-      const objDetail = this.addCommentDetail(saleId, saleDetailId, SaleCommentList.cast(resComment))
-      // console.log("OBJETO SERVICIO:", objDetail);
+      const objDetail = this.addCommentDetail(saleId, saleDetailId, resComment)
+
+      console.log("REFERENCIA:", this.contentMsgElements)
+
+      if(this.contentMsgElements){
+        const elementoEspecifico = this.contentMsgElements.find((elemento) => {
+          return elemento.nativeElement.id === 'msg_' + saleDetailId; // Cambia '2' al id que estás buscando
+        });
+
+        this.onScrollBottomDirective(elementoEspecifico)
+
+      }
+    }
+  }
+
+
+  onScrollBottomDirective(el: ElementRef){
+    if(this.ScrollListener){
+      this.ScrollListener.scrollToBottom(el)
     }
   }
 
@@ -931,14 +985,43 @@ export class ModalDetailComponent implements OnInit, OnDestroy, OnChanges {
     container.scrollTop = container.scrollHeight;
   }
 
-  onScrollUpComment(event: any, saleId: number, saleDetailId: number){
-    console.log(event)
+  /**
+   * CARGA CON EL SCROLL - COMENTARIOS
+   * @param saleDetailId 
+   * @param value 
+   */
+  // Método para cambiar el estado de carga de un elemento específico
+  toggleLoadingMsg(saleDetailId: number, value: boolean = null) {
+    this.loadingStates[saleDetailId] = value != null? value : !this.loadingStates[saleDetailId];
   }
 
+  // CARGAR MÁS REGISTRO HACIA ARRIBA
+  async onScrollUpComment(event: any, saleId: number, saleDetailId: number){    
+    const currentMsg = this.getCommentDetail(saleId, saleDetailId);
+    const firstMessageId = currentMsg?.comments[0]?.id || null;
+
+    // MOSTRAR LOADING
+    this.toggleLoadingMsg(saleDetailId, true);
+    // TRAER DATOS 
+    const response = await this.apiSaleCommentListAdjacent(saleDetailId, firstMessageId, 'previous');
+
+    if(response){
+      const {data: messages, total} = response;
+      this.toggleLoadingMsg(saleDetailId, false);
+      currentMsg.comments.unshift(...messages);
+    }
+  }
+
+  // CARGAR MÁS REGISTROS DEBAJO
   async onScrollDownComment(event: any, saleId: number, saleDetailId: number){
     this.pagination.value.page += this.pagination.value.page;
-    const commentCurrent = await this.apiSaleCommentListPagination(saleDetailId)
-    console.log(event, commentCurrent)
+
+    const currentMsg = this.getCommentDetail(saleId, saleDetailId);
+    const lastMessageId = currentMsg?.comments[currentMsg?.comments.length - 1]?.id || null;
+
+    // console.log(event, commentCurrent)
+    console.log("CHAT ACTUAL:", lastMessageId, currentMsg)
+    // const commentCurrent = await this.apiSaleCommentListPagination(saleDetailId)
   }
 
   // Copy Message
