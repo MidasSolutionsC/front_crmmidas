@@ -6,6 +6,7 @@ import { SortDirective } from './directives/table/sort.directive';
 import { TrimInputDirective } from './directives/form/trim-input.directive';
 import { FocusDirective } from './directives/form/focus.directive';
 import { ScrollListenerDirective } from './directives/scroll-listener.directive';
+import { AutoScrollDirective } from './directives/auto-scroll.directive';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { ScrollListenerDirective } from './directives/scroll-listener.directive'
     SortDirective,
     TrimInputDirective,
     FocusDirective,
-    ScrollListenerDirective
+    ScrollListenerDirective,
+    AutoScrollDirective
   ],
   imports: [
     CommonModule,
@@ -22,7 +24,8 @@ import { ScrollListenerDirective } from './directives/scroll-listener.directive'
     ReplaceAttributePipe,
     TrimInputDirective,
     FocusDirective,
-    ScrollListenerDirective
+    ScrollListenerDirective,
+    AutoScrollDirective
   ]
 })
 export class CoreModule { }

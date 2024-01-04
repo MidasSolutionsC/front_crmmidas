@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { LanguageService } from '../../core/services/config/language.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from 'src/app/core/services';
+import { AuthService, SessionUserService } from 'src/app/core/services';
 import { ResponseApi, User } from 'src/app/core/models';
 
 @Component({
@@ -33,7 +33,8 @@ export class TopbarComponent implements OnInit {
     public languageService: LanguageService,
     public translate: TranslateService,
     public _cookiesService: CookieService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _sessionUserService: SessionUserService,
   ) { }
 
   listLang = [
@@ -63,6 +64,8 @@ export class TopbarComponent implements OnInit {
     }
 
     this.getDataUserSession();
+
+
   }
 
   setLanguage(text: string, lang: string, flag: string) {
@@ -78,8 +81,11 @@ export class TopbarComponent implements OnInit {
     if (dataSession) {
       const data = JSON.parse(dataSession);
       this.dataUser = data.user;
-    }
 
+      const {user, person} = data;
+      this._sessionUserService.setDataPerson(person);
+      this._sessionUserService.setDataUser(user);
+    }
   }
 
   /**
@@ -110,6 +116,8 @@ export class TopbarComponent implements OnInit {
     } else {
       this.router.navigate(['/account/login']);
     }
+
+    this._sessionUserService.setClearData(true);
   }
 
   /**
