@@ -64,6 +64,10 @@ export class SaleCommentService {
     const endpoint = `${this.baseUrl}/getAdjacent`;
     return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
   }
+  public getLastRows(data: any): Observable<ResponseApi> {;
+    const endpoint = `${this.baseUrl}/getLastRows`;
+    return this.http.post(endpoint, data).pipe(map((res: ResponseApi) => res))
+  }
 
   public getFilterBySale(saleId: any): Observable<ResponseApi> {
     const endpoint = `${this.baseUrl}/filterSale/${saleId}`;

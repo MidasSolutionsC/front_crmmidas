@@ -9,7 +9,7 @@
 
       <accordion [isAnimated]="true" [closeOthers]="false" class="mb-5">
         <accordion-group heading="DATOS DEL CLIENTE" [isOpen]="true" class="border border-primary rounded text-primary">
-          <div class="dropdown float-end" dropdown>
+          <div class="dropdown float-end d-none" dropdown>
             <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
               <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
             </a>
@@ -201,7 +201,7 @@
       </ng-template>
       <ng-template #templateContact let-item="item" let-i="index">
         <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
-          <div class="dropdown float-end" dropdown>
+          <div class="dropdown float-end d-none" dropdown>
             <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
               <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
             </a>
@@ -244,7 +244,7 @@
       </ng-template>
       <ng-template #templateAddress let-item="item" let-i="index">
         <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
-          <div class="dropdown float-end" dropdown>
+          <div class="dropdown d-none float-end" dropdown>
             <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
               <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
             </a>
@@ -287,7 +287,7 @@
       </ng-template>
       <ng-template #templateInstallation let-item="item" let-i="index">
         <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
-          <div class="dropdown float-end" dropdown>
+          <div class="dropdown d-none float-end" dropdown>
             <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
               <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
             </a>
@@ -330,7 +330,7 @@
       </ng-template>
       <ng-template #templateBankAccount let-item="item" let-i="index">
         <li class="event-list pb-1" [ngClass]="{'active': item.is_primary == 1}">
-          <div class="dropdown float-end" dropdown>
+          <div class="dropdown d-none float-end" dropdown>
             <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
               <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
             </a>
@@ -382,7 +382,7 @@
       <!-- DETALLE VENTA -->
       <ng-template #templateContainerDetail>
         <div class="row g-2 mt-2">
-          <div class="col-lg-3" *ngFor="let typeServiceData of groupSaleDetail">            
+          <div class="col-md-6 col-lg-4 col-xl-3" *ngFor="let typeServiceData of groupSaleDetail">            
             <div>
               <div class="card card-header rounded mb-2 py-2 bg-success" 
                 [ngClass]="{
@@ -409,7 +409,7 @@
                     </a>
                   </div>
                   <div class="card-body border border-info rounded" style="overflow-x: visible;" *ngIf="item.visible">
-                    <div class="dropdown float-end" dropdown>
+                    <div class="dropdown float-end d-none" dropdown>
                       <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
                         <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
                       </a>
@@ -619,7 +619,6 @@
         </div>        
       </ng-template>
 
-
       <ng-template #templateMobile let-item>
         <div class="row g-2 mb-3" *ngIf="item.visible">
           <strong class="text-primary">Detalle del servicio</strong>
@@ -722,55 +721,61 @@
         </div>
       </ng-template>
 
-      <!-- COMENTARIOS MSG -->
+      <!-- COMENTARIOS MSG appScrollListener-->
       <ng-template #templateContainerCommentMsg let-comments="comments" let-saleDetailId="saleDetailId" let-saleId="saleId">
         <div
           class="chat-conversation search-results-comments py-2"
-          appScrollListener
+          
+          infiniteScroll 
+          appAutoScroll
           
           [infiniteScrollDistance]="2"
           [infiniteScrollUpDistance]="2"
-          [infiniteScrollThrottle]="50"
-
-          [scrollDownDefault]="true"
-          [startThreshold]="60"
-          [endThreshold]="60"
-          [loading]="loadingStates[saleDetailId]"
-          (scrollUp)="onScrollUpComment($event, saleId, saleDetailId)"
-          (scrollDown)="onScrollDownComment($event, saleId, saleDetailId)"
+          [infiniteScrollThrottle]="60"
+          (scrolled)="onScrollDownComment($event, saleId, saleDetailId)" 
+          (scrolledUp)="onScrollUpComment($event, saleId, saleDetailId)"
           [scrollWindow]="false"
-          [totalItems]="pagination.value.total"
           #contentMsg
           id="msg_{{ saleDetailId }}"
-          [attr.id]="'contentMsg_' + i"
+          [attr.id]="'msg_' + saleDetailId"
         >
           <ng-container *ngIf="comments.length > 0 else commentsEmpty">
-            <div [ngClass]="{'right': true}">
-              <div class="conversation-list" style="overflow: visible;" *ngFor="let item of comments">
-                <div class="dropdown" dropdown>
-  
-                  <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
-                    <i class="bx bx-dots-vertical-rounded"></i>
-                  </a>
-                  <div class="dropdown-menu" *dropdownMenu>
-                    <a class="dropdown-item" href="javascript: void(0);" (click)="copyMessage($event)">Copiar mensaje</a>
-                    <a class="dropdown-item" href="javascript: void(0);">Eliminar</a>
+            <ul class="list-unstyled">
+              <!-- <li>
+                <div class="chat-day-title">
+                  <span class="title">Hiy</span>
+                </div>
+              </li> -->
+              <li [ngClass]="{'right': item?.user_create?.id == dataUserSession?.id}" *ngFor="let item of comments">
+                <div class="conversation-list" style="overflow: visible;" >
+                  <div class="dropdown d-none" dropdown>
+    
+                    <a class="dropdown-toggle" href="javascript: void(0);" role="button" dropdownToggle>
+                      <i class="bx bx-dots-vertical-rounded"></i>
+                    </a>
+                    <div class="dropdown-menu" *dropdownMenu>
+                      <a class="dropdown-item" href="javascript: void(0);" (click)="copyMessage($event)">Copiar mensaje</a>
+                      <a class="dropdown-item" href="javascript: void(0);">Eliminar</a>
+                    </div>
+                  </div>
+                  <div class="ctext-wrap text-start">
+                    <div class="conversation-name" [ngClass]="{'text-success': false}">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
+                    <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
+                    <p class="truncate-text w-100" [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
+                    <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
+                    <div class="text-end">
+                      <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
+                    </div>
                   </div>
                 </div>
-                <div class="ctext-wrap text-start">
-                  <div class="conversation-name" [ngClass]="{'text-success': false}">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
-                  <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
-                  <p class="truncate-text w-100" [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
-                  <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
-                  <div class="text-end">
-                    <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
-                  </div>
-                </div>
-  
+              </li>
+            </ul>
+
+
+            <div class="w-100 text-center position-relative"  *ngIf="loadingStates[saleDetailId]">
+              <div class="">
+                <h5 class="text-info text-center w-100">Cargando...</h5>
               </div>
-            </div>
-            <div class="w-100 text-center" *ngIf="loadingStates[saleDetailId]">
-              <h5 class="text-info w-100">Cargando...</h5>
             </div>
           </ng-container>
           <ng-template #commentsEmpty>
@@ -1088,9 +1093,9 @@
       <!-- DOCUMENTOS -->
       <ng-template #templateContainerDocument>
         <div class="row g-2 mt-2">
-          <div class="col-md-6" *ngFor="let item of listSaleDocument">
+          <div class="col-lg-6" *ngFor="let item of listSaleDocument">
             <div class="card-body border border-info rounded p-2">
-              <div class="dropdown float-end" dropdown>
+              <div class="dropdown float-end d-none" dropdown>
                 <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
                   <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
                 </a>
@@ -1133,49 +1138,67 @@
 
       <!-- COMENTARIOS -->
       <ng-template #templateContainerComment>
-        <div class="row g-2 mt-2">
-          <!-- <div class="col-md-12" *ngFor="let item of listSaleComment">
-            <div class="card-body border border-info rounded p-2">
-              <div class="dropdown float-end" dropdown>
-                <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
-                  <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
-                  <a class="dropdown-item text-info" href="javascript: void(0);"><i class="mdi mdi-pencil-outline"></i>
-                    Editar</a>
-                  <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i>
-                    Eliminar</a>
-                </div>
+        <div class="row justify-content-center">
+          <div class="col-xl-10 ">
+            <div class="chat-conversation search-results-comments py-2"
+              style="max-height: 650px;"
+              infiniteScroll 
+              appAutoScroll
+              
+              [infiniteScrollDistance]="2"
+              [infiniteScrollUpDistance]="2"
+              [infiniteScrollThrottle]="60"
+              (scrolled)="onScrollDownCommentGeneral($event)" 
+              (scrolledUp)="onScrollUpCommentGeneral($event)"
+              [scrollWindow]="false"
+              #chatScrollRef
+            >
+              <ul class="list-unstyled">
+                 <!-- <li>
+                  <div class="chat-day-title">
+                    <span class="title">Hoy</span>
+                  </div>
+                </li> -->
+                <li [ngClass]="{'right': item?.user_create?.id == dataUserSession?.id}" *ngFor="let item of listSaleComment">
+                  <div class="conversation-list" >
+                    <div class="dropdown d-none" dropdown>
+                      <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
+                        <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
+                        <a class="dropdown-item text-info" href="javascript: void(0);"><i class="mdi mdi-pencil-outline"></i>
+                          Editar</a>
+                        <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i>
+                          Eliminar</a>
+                      </div>
+                    </div> <!-- end dropdown -->
+                    <div class="ctext-wrap">
+                      <div class="conversation-name">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
+                      <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
+                      <p [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
+                      <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
+                      <div class="text-end">
+                        <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li *ngIf="!listSaleComment?.length">
+                  <p class="text-center">Sin registros</p>
+                </li>
+              </ul>
+            </div> 
+            <div class="w-100 py-2 px-2 bg-light">
+              <div class="input-group-relative position-relative border border-primary" style="border-radius: 1rem; border-width: 2px;">
+                <div contenteditable="true" 
+                  #comentarioRef
+                  (paste)="onPasteMessage($event)"
+                  (keyup.enter)="registerCommentInSale(comentarioRef)" 
+                  class="content-editable" 
+                  style="max-height: 90px;"></div>
+                <button type="button" (click)="registerCommentInSale(comentarioRef)"  class="btn btn-primary rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 0; bottom: 0; height: 32px; width: 32px;"><i class="bx bx-send font-size-18"></i> </button>
               </div>
-              <ng-container *ngTemplateOutlet="templateComment; context: { $implicit: item }"></ng-container>
             </div>
-          </div> -->
-          <div class="chat-conversation">
-            <div class="conversation-list w-100" *ngFor="let item of listSaleComment">
-              <div class="dropdown float-end" dropdown>
-                <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
-                  <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
-                  <a class="dropdown-item text-info" href="javascript: void(0);"><i class="mdi mdi-pencil-outline"></i>
-                    Editar</a>
-                  <a class="dropdown-item text-danger" href="javascript: void(0);"><i class="mdi mdi-trash-can"></i>
-                    Eliminar</a>
-                </div>
-              </div> <!-- end dropdown -->
-              <div class="ctext-wrap">
-                <div class="conversation-name">{{ item?.user_create?.person?.nombres }} {{ item?.user_create?.person?.apellido_paterno}} {{ item?.user_create?.person?.apellido_materno}}</div>
-                <small class="fw-semibold">{{ item?.user_create?.type_user?.nombre }}</small>
-                <p [ngClass]="{'text-truncate-3': !item.more}">{{!item.more ? truncateMessage(item.comentario, 325): item.comentario}}</p>
-                <b type="button" (click)="toggleCommentMore(item)" *ngIf="validateLongitud(item.comentario, 325)">{{item.more? 'Menos': 'Más'}}</b>
-                <div class="text-end">
-                  <span class="blockquote-footer">{{ item?.created_at | date: 'yyyy-MM-dd hh:mm:ss a' }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div *ngIf="!listSaleComment?.length">
-            <p class="text-start">Sin registros</p>
           </div>
         </div>
       </ng-template>
@@ -1195,7 +1218,7 @@
         <div class="row g-2 mt-2">
           <div class="col-md-12" *ngFor="let item of listSaleHistory">
             <div class="card-body border border-info rounded p-2">
-              <div class="dropdown float-end" dropdown>
+              <div class="dropdown d-none float-end" dropdown>
                 <a href="javascript: void(0);" class="dropdown-toggle arrow-none" dropdownToggle>
                   <i class="mdi mdi-dots-vertical m-0 text-muted h5"></i>
                 </a>

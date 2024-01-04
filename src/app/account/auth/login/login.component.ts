@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 import { environment } from '../../../../environments/environment';
-import { ApiErrorFormattingService, FormService, IpAllowedService, LanguageService, SweetAlertService } from 'src/app/core/services';
+import { ApiErrorFormattingService, FormService, IpAllowedService, LanguageService, SessionUserService, SweetAlertService } from 'src/app/core/services';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { ResponseApi } from 'src/app/core/models';
@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
     private _authService: AuthService,
+    private _sessionUserService: SessionUserService,
     private route: ActivatedRoute,
     private router: Router,) {
     this.languageService.setLanguage('es');
@@ -70,6 +71,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       if (response.code == 200) {
         const result = response.data;
         if (result?.login) {
+          this._sessionUserService.setDataPerson(result.persona);
+          this._sessionUserService.setDataUser(result.usuario);
           this.router.navigate(['/main']);
         } else {
           this._sweetAlertService.showTopEnd({ type: 'error', title: 'Validación de credencial', message: result?.message });
