@@ -23,7 +23,7 @@
     <form (keydown.enter)="$event.preventDefault()" [formGroup]="searchClientForm" autocomplete="off">
       <div class="row g-1">
         <div class="col-lg-3 mb-3" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
-          <label for="tipo_documentos_id" class="form-label">{{translatedLabel}}</label>
+          <label  class="form-label">{{translatedLabel}}</label>
           <ng-select id="tipo_documentos_id" formControlName="tipo_documentos_id"
             [notFoundText]="'No se encontraron elementos'"
             [ngClass]="{ 'is-invalid': fs.tipo_documentos_id.errors && (fs.tipo_documentos_id.dirty || fs.tipo_documentos_id.touched || submittedSearchClient) }">
@@ -83,7 +83,7 @@
           </div>
         </div>
         <div class="col-lg-3 mb-3">
-          <label for="" class="form-label w-100">&nbsp;</label>
+          <label class="form-label w-100">&nbsp;</label>
           <div class="input-group">
             <button type="button" class="btn btn-warning" (click)="searchClient()">
               <i class="mdi mdi-magnify"></i>

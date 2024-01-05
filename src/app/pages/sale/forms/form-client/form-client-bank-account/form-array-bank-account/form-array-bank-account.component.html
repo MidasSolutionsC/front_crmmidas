@@ -11,7 +11,7 @@
               (click)="removeFieldBankAccount(i)"> <i class="fas fa-times" ></i></button>
           </div>
           <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.type_bank_account.label' | translate as translatedLabel;">
-            <label for="tipo_cuentas_bancarias_id" class="form-label">{{translatedLabel}}</label>
+            <label class="form-label">{{translatedLabel}}</label>
             <ng-select id="tipo_cuentas_bancarias_id" formControlName="tipo_cuentas_bancarias_id"
               [notFoundText]="'No se encontraron elementos'"
               [ngClass]="{ 'is-invalid': fi.get('tipo_cuentas_bancarias_id').errors && (fi.get('tipo_cuentas_bancarias_id').dirty || fi.get('tipo_cuentas_bancarias_id').touched || submitted) }">

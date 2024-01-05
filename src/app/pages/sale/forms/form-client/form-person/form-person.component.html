@@ -2,7 +2,7 @@
   <h5 class="card-title fw-semibold">Datos personales</h5>
   <div class="row g-2 d-none">
     <div class="col-md-8 mb-3" *ngIf="'FORMS.FIELD_NAMES.district.label' | translate as translatedLabel;">
-      <label for="codigo_ubigeo" class="form-label">{{translatedLabel}}</label>
+      <label class="form-label">{{translatedLabel}}</label>
       <ng-select 
                 id="codigo_ubigeo" [ngClass]="{ 'is-invalid': f.codigo_ubigeo.errors && (f.codigo_ubigeo.dirty || f.codigo_ubigeo.touched || submitted) }"
                 [items]="listUbigeos"
@@ -23,7 +23,7 @@
   <div class="row g-2">
     <div class="col-md-4 mb-3"
       *ngIf="'FORMS.FIELD_NAMES.country.label' | translate as translatedLabel;">
-      <label for="paises_id" class="form-label">{{translatedLabel}}</label>
+      <label class="form-label">{{translatedLabel}}</label>
       <ng-select id="paises_id" #paises_id formControlName="paises_id" autofocus
         (change)="onChangeCountry($event)"
         [notFoundText]="'No se encontraron elementos'"
@@ -118,7 +118,7 @@
     <div class="col-md-3 mb-3"
       *ngIf="'FORMS.FIELD_NAMES.birth_date.label' | translate as translatedLabel;">
       <label for="fecha_nacimiento" class="form-label">{{translatedLabel}}</label>
-      <input type="date" id="fecha_nacimientofecha_nacimiento" class="form-control"
+      <input type="date" id="fecha_nacimiento" class="form-control"
         formControlName="fecha_nacimiento"
         placeholder="{{'FORMS.FIELD_NAMES.birth_date.placeholder' | translate}}"
         [ngClass]="{ 'is-invalid': f.fecha_nacimiento.errors && (f.fecha_nacimiento.dirty || f.fecha_nacimiento.touched || submitted) }" />

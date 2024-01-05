@@ -3,7 +3,7 @@
   <div class="row g-2">
     <div class="col-lg-4 mb-3"
       *ngIf="'FORMS.FIELD_NAMES.country.label' | translate as translatedLabel;">
-      <label for="paises_id" class="form-label">{{translatedLabel}}</label>
+      <label class="form-label">{{translatedLabel}}</label>
       <ng-select id="paises_id" formControlName="paises_id" autofocus
         (change)="onChangeCountry($event)"
         [notFoundText]="'No se encontraron elementos'"

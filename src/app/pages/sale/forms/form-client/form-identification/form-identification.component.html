@@ -11,8 +11,8 @@
               (click)="removeFieldIdentification(i)"> <i class="fas fa-times" ></i></button>
           </div>
           <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.type_document.label' | translate as translatedLabel;">
-            <label for="tipo_documentos_id" class="form-label">{{translatedLabel}} (*)</label>
-            <select class="form-select custom-select" id="tipo_documentos_id" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fi.get('tipo_documentos_id').errors && (fi.get('tipo_documentos_id').dirty || fi.get('tipo_documentos_id').touched || submitted) }">
+            <label for="tipo_documentos_id{{i}}" class="form-label">{{translatedLabel}} (*)</label>
+            <select class="form-select custom-select" id="tipo_documentos_id{{i}}" formControlName="tipo_documentos_id" [ngClass]="{ 'is-invalid': fi.get('tipo_documentos_id').errors && (fi.get('tipo_documentos_id').dirty || fi.get('tipo_documentos_id').touched || submitted) }">
               <option value="">{{'FORMS.FIELD_NAMES.type_document.default_option' | translate}}</option>
               <option *ngFor="let typeDocument of listTypeDocumentFilter" [value]="typeDocument.id">{{typeDocument.abreviacion}}</option>
             </select>
@@ -23,8 +23,9 @@
             </div>
           </div>
           <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.document_number.label' | translate as translatedLabel;">
-            <label for="documento" class="form-label me-2">{{translatedLabel}} (*)</label>
+            <label for="documento{{i}}" class="form-label me-2">{{translatedLabel}} (*)</label>
             <!-- <ui-switch disabled="false" 
+              id="show_reverse{{i}}"
               defaultBgColor="#f2f2f2" 
               defaultBoColor="#556ee6"
               color="#556ee6"
@@ -32,7 +33,7 @@
               uncheckedTextColor="black"
               checkedTextColor="white" size="small" class="w-auto font-size-8">
             </ui-switch> -->
-            <input type="text" maxlength="11" id="documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document_number.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fi.get('documento').errors && (fi.get('documento').dirty || fi.get('documento').touched || submitted)}" />
+            <input type="text" maxlength="11" id="documento{{i}}" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document_number.placeholder' | translate}}" formControlName="documento" [ngClass]="{ 'is-invalid': fi.get('documento').errors && (fi.get('documento').dirty || fi.get('documento').touched || submitted)}" />
             <div *ngIf="fi.get('documento').errors && (fi.get('documento').dirty || fi.get('tipo_documentos_id').touched || submitted)" class="invalid-feedback" align="left">
               <div *ngIf="fi.get('documento').errors.required">
                 {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
@@ -46,8 +47,8 @@
             </div>
           </div>
           <div class="col-lg-4 mb-2" *ngIf="fi.get('show_reverse').value && 'FORMS.FIELD_NAMES.document_reverse.label' | translate as translatedLabel;">
-            <label for="reverso_documento" class="form-label">{{translatedLabel}}</label>
-            <input type="text" maxlength="250" id="reverso_documento" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="reverso_documento" [ngClass]="{ 'is-invalid': fi.get('reverso_documento').errors && (fi.get('reverso_documento').dirty || fi.get('reverso_documento').touched || submitted)}" />
+            <label for="reverso_documento{{i}}" class="form-label">{{translatedLabel}}</label>
+            <input type="text" maxlength="250" id="reverso_documento{{i}}" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.document.placeholder' | translate}}" formControlName="reverso_documento" [ngClass]="{ 'is-invalid': fi.get('reverso_documento').errors && (fi.get('reverso_documento').dirty || fi.get('reverso_documento').touched || submitted)}" />
             <div *ngIf="fi.get('reverso_documento').errors && (fi.get('reverso_documento').dirty || fi.get('reverso_documento').touched || submitted)" class="invalid-feedback" align="left">
               <div *ngIf="fi.get('reverso_documento').errors.required">
                 {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}

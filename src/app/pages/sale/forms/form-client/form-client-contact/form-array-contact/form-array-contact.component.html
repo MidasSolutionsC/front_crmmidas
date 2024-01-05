@@ -11,8 +11,8 @@
               (click)="removeFieldContact(i)"> <i class="fas fa-times" ></i></button>
           </div>
           <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.type.label' | translate as translatedLabel;">
-            <label for="tipo" class="form-label">{{translatedLabel}} (*)</label>
-            <select class="form-select custom-select" id="tipo" formControlName="tipo" [ngClass]="{ 'is-invalid': fi.get('tipo').errors && (fi.get('tipo').dirty || fi.get('tipo').touched || submitted) }">
+            <label for="tipo{{i}}" class="form-label">{{translatedLabel}} (*)</label>
+            <select class="form-select custom-select" id="tipo{{i}}" formControlName="tipo" [ngClass]="{ 'is-invalid': fi.get('tipo').errors && (fi.get('tipo').dirty || fi.get('tipo').touched || submitted) }">
               <option value="">{{'FORMS.FIELD_NAMES.type.default_option' | translate}}</option>
               <option *ngFor="let contact of listTypeContact" [value]="contact.id">{{contact.name}}</option>
             </select>
@@ -23,8 +23,8 @@
             </div>
           </div>
           <div class="col-lg-4 mb-2" *ngIf="'FORMS.FIELD_NAMES.contact.label' | translate as translatedLabel;">
-            <label for="contacto" class="form-label">{{translatedLabel}} (*)</label>
-            <input type="text" maxlength="250" id="contacto" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.contact.placeholder' | translate}}" formControlName="contacto" [ngClass]="{ 'is-invalid': fi.get('contacto').errors && (fi.get('contacto').dirty || fi.get('contacto').touched || submitted)}" />
+            <label for="contacto{{i}}" class="form-label">{{translatedLabel}} (*)</label>
+            <input type="text" maxlength="250" id="contacto{{i}}" class="form-control" placeholder="{{'FORMS.FIELD_NAMES.contact.placeholder' | translate}}" formControlName="contacto" [ngClass]="{ 'is-invalid': fi.get('contacto').errors && (fi.get('contacto').dirty || fi.get('contacto').touched || submitted)}" />
             <div *ngIf="fi.get('contacto').errors && (fi.get('contacto').dirty || fi.get('contacto').touched || submitted)" class="invalid-feedback" align="left">
               <div *ngIf="fi.get('contacto').errors.required">
                 {{'FORMS.VALIDATION.required' | translate | replaceAttribute:':attribute': translatedLabel}}
