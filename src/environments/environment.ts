@@ -20,7 +20,8 @@ export const environment = {
     apiUrl: 'http://localhost:8000/api/v1/', // Ruta de la API
     urlFiles: 'http://localhost:8000/files/', // Ruta archivos
     apiKey: 'CRM_MIDAS_2023', // Clave permitida 
-    apiUrlSocket: '',
+    apiKeySocket: 'CRM_MIDAS_WS', // Clave permitida 
+    apiUrlSocket: 'http://localhost:5000',
     configFile: {
       nroCharactersNameFile: 30,
       sizeMaxImg: 10490000, // 10.49 MB

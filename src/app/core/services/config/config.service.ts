@@ -32,6 +32,17 @@ export class ConfigService {
   }
 
   /**
+   * OBTENER LA URL SOCKET
+   */
+  public get apiUrlSocket(): any{
+    return environment.appConfig.apiUrlSocket;
+  }
+
+  public get nameRoomSocket(): any{
+    return environment.appConfig.apiKeySocket;
+  }
+
+  /**
    * OBTENER LA URL BASE DE LOS ARCHIVOS
    */
   public get urlFiles(): any{

@@ -2,10 +2,11 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { Breadcrumb, Manual, ManualList, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
-import { ApiErrorFormattingService, FormService, SweetAlertService } from 'src/app/core/services';
+import { Breadcrumb, Manual, ManualList, Pagination, PaginationResult, ResponseApi, ResponsePagination, SocketModel } from 'src/app/core/models';
+import { ApiErrorFormattingService, FormService, SessionUserService, SweetAlertService } from 'src/app/core/services';
 import { ManualService } from 'src/app/core/services';
 import { FileUploadUtil } from 'src/app/core/helpers';
+import { SocketService } from 'src/app/core/services/shared/socket.service';
 
 @Component({
   selector: 'app-manual',
@@ -68,6 +69,8 @@ export class ManualComponent {
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
+    private _socketService: SocketService,
+    private _sessionUserService: SessionUserService,
     private formBuilder: FormBuilder) {
 
   }
@@ -78,6 +81,9 @@ export class ManualComponent {
     this.initForm();
     this.listDataApi();
     this.apiManualListPagination();
+
+    // SOCKET 
+    // this.listenSocket()
 
     // this.subscription.add(
     //   this._manualService.listObserver$
@@ -101,11 +107,77 @@ export class ManualComponent {
           this.apiManualListPagination()
         })
     );
+
+    this.subscription.add(
+      this._socketService.outEven.subscribe((data: SocketModel) => {
+        // console.log("DATOS DEL SOCKET RECIBIDO:", data)
+        switch(data.process){
+          case 'manual':
+            const row = data.content;
+            // NUEVO
+            if(data.operation == 'nuevo'){
+              this.apiManualListPagination()
+            }
+            
+            // MODIFICADO
+            if(data.operation == 'modificado'){
+              this.apiManualListPagination()
+            }
+            
+            // ELIMINADO
+            if(data.operation == 'eliminado'){
+              this.apiManualListPagination()
+            }
+            break;
+
+          default:
+            break;
+        }
+      })
+    );
   }
   
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+
+
+  
+  /**
+   * *************************************************************************************
+   * DETECTAR CAMBIOS - SOCKET
+   * *************************************************************************************
+   */
+  listenSocket(){
+    this.subscription.add(
+      this._socketService.outEven.subscribe((data: SocketModel) => {
+        console.log("DATOS DEL SOCKET RECIBIDO:", data)
+        switch(data.process){
+          case 'manual':
+            const row = data.content;
+            // NUEVO
+            if(data.operation == 'nuevo'){
+              this.apiManualListPagination()
+            }
+            
+            // MODIFICADO
+            if(data.operation == 'modificado'){
+              this.apiManualListPagination()
+            }
+            
+            // ELIMINADO
+            if(data.operation == 'eliminado'){
+              this.apiManualListPagination()
+            }
+            break;
+
+          default:
+            break;
+        }
+      })
+    );
+  }
+  
 
   /**
    * ****************************************************************
@@ -140,6 +212,12 @@ export class ManualComponent {
           if(response.data[0]){
             const data: ManualList = ManualList.cast(response.data[0]);
             this._manualService.addObjectObserver(data);
+            this._socketService.emitEvent({
+              sender: this._sessionUserService.getDataUser(), 
+              process: 'manual', 
+              operation: 'nuevo',
+              content: data
+            });
           }
 
           this.apiManualListPagination();
@@ -175,6 +253,13 @@ export class ManualComponent {
 
         this.apiManualListPagination();
         this.modalRef?.hide();
+
+        this._socketService.emitEvent({
+          sender: this._sessionUserService.getDataUser(), 
+          process: 'manual', 
+          operation: 'modificado',
+          content: data
+        });
       }
 
       if(response.code == 422){
@@ -203,6 +288,12 @@ export class ManualComponent {
         const data: ManualList = ManualList.cast(response.data[0]);
         this._manualService.removeObjectObserver(data.id);
         this.apiManualListPagination();
+        this._socketService.emitEvent({
+          sender: this._sessionUserService.getDataUser(), 
+          process: 'manual', 
+          operation: 'eliminado',
+          content: data
+        });
       }
 
       if(response.code == 422){

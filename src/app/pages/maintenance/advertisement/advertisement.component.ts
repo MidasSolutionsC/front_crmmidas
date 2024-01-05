@@ -3,10 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FileUploadUtil } from 'src/app/core/helpers';
-import { Advertisement, AdvertisementList, Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination } from 'src/app/core/models';
-import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SweetAlertService } from 'src/app/core/services';
+import { Advertisement, AdvertisementList, Breadcrumb, Pagination, PaginationResult, ResponseApi, ResponsePagination, SocketModel } from 'src/app/core/models';
+import { AdvertisementService, ApiErrorFormattingService, ConfigService, FormService, SessionUserService, SweetAlertService } from 'src/app/core/services';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { AlertComponent } from 'ngx-bootstrap/alert';
+import { SocketService } from 'src/app/core/services/shared/socket.service';
 // import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDropList } from '@angular/cdk/drag-drop';
 
 
@@ -87,6 +88,8 @@ export class AdvertisementComponent implements OnInit {
     private _formService: FormService,
     private _apiErrorFormattingService: ApiErrorFormattingService,
     private _sweetAlertService: SweetAlertService,
+    private _socketService: SocketService,
+    private _sessionUserService: SessionUserService,
     private formBuilder: FormBuilder) {
 
     this.URL_FILES = this._configService.urlFiles + 'advertisement/';
@@ -118,6 +121,42 @@ export class AdvertisementComponent implements OnInit {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+
+
+  /**
+   * *************************************************************************************
+   * DETECTAR CAMBIOS - SOCKET
+   * *************************************************************************************
+   */
+  listenSocket(){
+    this.subscription.add(
+      this._socketService.outEven.subscribe((data: SocketModel) => {
+        switch(data.process){
+          case 'anuncio':
+            const row = data.content;
+            // NUEVO
+            if(data.operation == 'nuevo'){
+              this.apiAdvertisementListPagination()
+            }
+
+            // MODIFICADO
+            if(data.operation == 'modificado'){
+
+            }
+
+            // ELIMINADO
+            if(data.operation == 'eliminado'){
+
+            }
+            break;
+
+          default:
+            break;
+        }
+      })
+    );
+  }
+
 
   ///////////////
 
